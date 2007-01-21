@@ -1,0 +1,98 @@
+== CruiseControl.rb
+
+=== What's this?
+CruiseControl.rb is a continuous integration tool. Its basic purpose in life is to alert members of a software project 
+when one of them checks into a source control system something that breaks the build.
+
+CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ruby.
+
+=== The Concept
+See Martin Fowler's article about Continuous Integration: http://martinfowler.com/articles/continuousIntegration.html
+
+=== Basics
+CC.rb consists of a builder and a dashboard. 
+
+Builder is a daemon that polls source control every once in a while for new revisions.
+
+When someone performs a check in, the builder detects it, updates its own copy of the project, runs the build and
+notifies interested parties about build outcome.
+
+Dashboard is a web application to monitor and troubleshoot build status of projects.
+
+Each installation of CC.rb may have multiple projects, and multiple builders (one per project). There may also be
+multiple installations of CC.rb per computer.
+
+=== Prerequisites
+* Ruby 1.8.4 or later
+* Subversion client 1.3.2 or later. svn executable must be on the PATH.
+
+=== Assumptions
+* There are many source control systems, but CC.rb only works with Subversion.
+* To build your_project, builder needs to go to ~cruise/builds/your_project/work/ and execute 'rake' there.
+
+=== Installation
+1. Download and unpack CruiseControl.rb (we'll call the place you unpack it <cruise>)
+2. From <cruise>, run "ruby script/server" with Ruby 1.8.4 or greater.
+3. Browse to http://localhost:3000. If the dashboard is running fine and dandy, you will see a page with
+   CruiseControl.rb logo that says "No projects found".
+4. Create a directory for project's builds <cruise>/builds/<your_project>
+5. Refresh the dashboard. It should now display your_project, with status "Never built".
+6. Checkout your project's source code to <cruise>/builds/<your_project>/work, for example:
+     svn checkout http://localhost/svn/your_project/trunk builds/your_project/work
+7. Go to <cruise>/builds/<your_project>/work/ and run the build. Do whatever is necessary to make it pass.
+8. Go back to <cruise> and run "ruby script/builder -p <your_project>".
+
+   Hint: Monitor log/your_project_builder.log for any signs of trouble. Try to check in a change to your_project
+   and see if builder can detect and build it.  Check your_project status in the dashboard.
+
+   Hint: If you want to run your server on a different port, just use "ruby script/server -p <port>"
+
+=== Files and folders
+If CC.rb is unpacked into ~cruise directory, then:
+
+  ~cruise/builds/ is the projects directory.
+
+  ~cruise/builds/your_project/ is a directory for project called "your_project".
+
+  ~cruise/builds/your_project/work/ is a local copy of the your_project's source code. Builder keeps it up to date 
+  with the source control repository and runs builds against it.
+
+	~cruise/builds/your_project/build-123 contains status, list of changed files, and other "build artifacts" created 
+	while building revision 123.
+	
+	~cruise/builds/your_project/project_config.rb contains builder configuration for your_project.
+
+  ~cruise/config/site_config.rb is where you can make centralized changes to the configuration of dashboard and all 
+  builders.
+
+=== Email notification
+CruiseControl.rb can send email whenever build fails or is fixed. To make it happen, you need to tell it how to send 
+email, and who to send it to. Do the following:
+
+1. Configure SMTP server connection. Copy ~cruise/config/site_config.rb_example to ~cruise/config/site_config.rb, 
+   read it and edit according to your situation.
+
+2. Tell the builder who to email. Copy ~cruise/config/project_config.rb_example to 
+   ~cruise/builds/your_project/project_config.rb and edit the list of email addresses there.
+
+=== Troubleshooting and support
+Beware, at the time of this writing, CC.rb is very young and not very stable. Good news is that it's simple (much, much 
+simpler than other CruiseControl incarnations). The dashboard is just a small Rails app, and the builder is little 
+more than a dumb, single-threaded Ruby script. Therefore, it's easy to debug. So, you are your own support hotline. 
+Don't forget to send us patches, please!
+
+OK, that was the pep talk. If you have an issue that you cannot fix on your own, email Alex or Jeremy.
+
+===Download the latest release from:
+* http://rubyforge.org/frs/?group_id=2866 [Lipid's]
+
+===Project web site
+* http://lipid.rubyforge.org
+
+===License:
+* Apache Software License 2.0
+
+---
+Authors::
+* Developed by ThoughtWorks
+* Alexey Verkhovsky, Jeremy Stell-Smith, Stephen Chu

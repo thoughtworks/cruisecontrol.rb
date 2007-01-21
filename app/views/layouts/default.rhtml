@@ -1,0 +1,39 @@
+<html>
+<head>
+  <title>CruiseControl.rb</title>
+  <%= stylesheet_link_tag 'cruisecontrol', :media => 'all' %>
+  <%= javascript_include_tag :defaults %>
+</head>
+
+<body class="wholepage" topmargin="0" leftmargin="0" marginheight="0" marginwidth="0">
+
+  <%= link_to image_tag("cc_logo.png"), "http://lipid.rubyforge.org/" %>
+
+  <table class="TopControls" border="0" width="100%" cellpadding="3" cellspacing="0" height="25">
+    <tr>
+      <td valign="middle" align="left">
+        <div class="breadcrumbs"><%= @breadcrumbs %></div>
+      </td>
+      <td valign="middle" align="right"><p>version : <%= CCRB_VERSION %></p></td>
+    </tr>
+  </table>
+
+  <table border="0" align="center" cellpadding="0" cellspacing="0" width="100%" bgcolor="#333399">
+    <tr>
+      <td valign="top" id="LeftHandSide" bgcolor="#eeeedd" width="180">
+        <%= yield :left_side %>
+      </td>
+      <td width="2"><img src="/images/shim.gif" width="2"/></td>
+      <td valign="top" bgcolor="#ffffff">
+        <%= yield %>
+      </td>
+    </tr>
+  </table>
+
+  <div align="right">
+    <%= link_to image_tag("tw_dev_logo.gif"), "http://www.thoughtworks.com/" %>
+    <%= image_tag "shim.gif" %>
+  </div>
+</body>
+</html>
+

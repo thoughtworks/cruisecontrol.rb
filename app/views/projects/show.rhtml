@@ -1,0 +1,47 @@
+<% @breadcrumbs = "#{link_to("Dashboard", "/")} > #{link_to(@project.name, :action => "show", :id => @project.name)}" %>
+
+<% content_for(:left_side) do %>
+  <div><%= link_to("Latest", :action => "show", :id => @project.name) %></div>
+  <div class="gray">Next</div>
+  <div class="gray">Prev</div>
+  <br/>
+  <div><%= link_to("Settings", :action => "settings", :id => @project.name) %></div>
+  <br/>
+  <br/>
+  <% @project.builds.reverse.each do |build| %>
+    <%= link_to "<div class='#{build.status}'>build #{build.label}</div>", :id => @project.name, :build => build.label %>
+  <% end %>
+<% end %>
+
+<h2>BUILD <%= @build.label %></h2>
+
+<table>
+  <tr>
+    <td class="label">Project:</td>
+    <td><%= @project.name %></td>
+  </tr>
+  <tr>
+    <td class="label">Label:</td>
+    <td><%= @build.label %></td>
+  </tr>
+  <tr>
+    <td class="label">Status:</td>
+    <td class="build-status"><%= @build.status %></td>
+  </tr>
+  <tr>
+    <td class="label">Time:</td>
+    <td><%= @build.formatted_time %></td>
+  </tr>
+  <tr>
+    <td class="header-label">Running time:</td>
+    <td class="header-data">?????</td>
+  </tr>
+</table>
+
+<br/>
+
+<h3>Build Log</h3>
+<br/>
+<div class="logfile">
+  <%= format_build_log(@build.output) %>
+</div>

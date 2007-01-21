@@ -1,0 +1,15 @@
+uri        : http://rubyforge.org
+username   : stellsmi
+is_private : false
+group_ids:
+  lipid: 2866
+  cruisecontrolrb: 2918
+package_ids:
+  lipid: 3394
+  cruisecontrol: 3476
+type_ids:
+  .zip: 3000
+  .tgz: 5000
+  .gem: 1400
+processor_ids:
+  Any: 8000

@@ -1,0 +1,80 @@
+Before TW Release
+-----------------
+* finish build logs story
+  * add other logfiles to the web app to finish "Build Logs" story
+* how do the builders get started?  the webapp will need to be able to start / restart / stop them eventually,
+  can we do this now?  how?  can we do it in a way that works on windows / mac / *nix?
+
+If Possible...
+--------------
+* get a new UI from someone like Anne Brent
+* create "Add Project" story - add a project from the web app, should be easy
+* we need working breadcrumbs on the UI - should be easy
+* output from builder should be pretty - minimizing information that is not helpful, and spitting out info that is
+* cleanup the test output
+* better reaction to exceptions in builder (see concerns)
+
+Build
+-----
+* Configurable build command(s);
+* Make the website a proper "semantic XHTML + CSS" job
+* Configurable polling interval
+
+Dev
+---
+* Make rake call explicitly specified task OR default task otherwise
+* project.path setter after every call to Project.new is ugly. Move to the c'tor.
+* Error message when starting a builder for non-existant project is ugly (directory not found)
+* Check what happens with parsing "svn log" output if a project has svn:externals, and there is a new revision in there
+
+Concerns
+--------
+? Look at handling of timezones when parsing/displaying revision time. Especially, SubversionLogParser.
+  It may prove an interesting story (hopefully, not).
+
+? Need VERY careful consideration about what to do with exceptions within the main build loop, 
+  especially, all steps of Project#build_revision. Target audience here is the "build monkey" and the 
+  design objective here is "easy troubleshooting".
+    * this exception kills the builder :
+        svn: Can't connect to host 'rubyforge.org': A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.
+        D:/src/lipid/lib/builder/lib/subversion_log_parser.rb:25:in `readline': end of file reached (EOFError)
+                from D:/src/lipid/lib/builder/lib/subversion_log_parser.rb:25:in `parse_log'
+                from D:/src/lipid/lib/builder/lib/subversion.rb:51:in `new_revisions'
+                from D:/src/lipid/lib/builder/lib/command_line.rb:88:in `e'
+                from D:/src/lipid/lib/builder/lib/command_line.rb:86:in `e'
+                from D:/src/lipid/lib/builder/lib/command_line.rb:73:in `execute'
+                from D:/src/lipid/lib/builder/lib/command_line.rb:72:in `execute'
+                from D:/src/lipid/lib/builder/lib/subversion.rb:50:in `new_revisions'
+                from D:/src/lipid/lib/builder/lib/subversion.rb:46:in `new_revisions'
+                from D:/src/lipid/lib/builder/lib/project.rb:26:in `new_revisions'
+                from D:/src/lipid/lib/builder/lib/project.rb:18:in `build_new_checkin'
+                from D:/src/lipid/lib/builder/lib/project.rb:17:in `build_new_checkin'
+                from D:/src/lipid/lib/builder/lib/schedule.rb:9:in `run'
+                from D:/src/lipid/lib/builder/lib/runner.rb:51
+                from d:/dev/ruby/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:27:in `require'
+                from script/builder:2
+                
+? Builder should do something about local changes in the checked out copy of the project. Options are: ignore them (worst), 
+  write a warning, or overwrite these changes during 'svn update'
+  
+? What to do when we are building revision X, and there is already a directory from our previous attempt to 
+  build that same revision?
+
+  jss: delete it
+
+? Parser doesn't handle gracefully a situation when local copy is ahead of the repository (perhaps, after 
+  the repository was restored from a backup)
+    C:/projects/lipid/builds/passing_project/work averkhov$ svn log -r HEAD:BASE
+    svn: No such revision 7
+    ./subversion_log_parser.rb:7:in `readline': end of file reached (EOFError)
+            from ./subversion_log_parser.rb:7:in `parse'
+            ...
+
+? can subversion really be a connection to subversion?  so it can hold things like urls & user & pass?
+
+? we need to present times very readable manner in the timezone of one's browser
+  * 10:30 AM today, 1:30 PM yesterday, 3:00 AM 5 days ago, 5:30 PM May 3, 2006, etc
+
+? builds have NUMBERS not LABELS - I think - jss
+
+? Is 10 seconds a good default for polling interval? Methinks, it's not polite when dealing with rubyforge.org. Alex

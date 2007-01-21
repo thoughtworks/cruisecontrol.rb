@@ -1,0 +1,11 @@
+<h1><%= @project.name %></h1>
+
+<h2>Notification</h2>
+
+<h3>Email</h3>
+
+<p>When the build fails, send an e-mail to :<p>
+
+<ul id='email_list'>
+  <%= render :partial => 'list' %>
+</ul>

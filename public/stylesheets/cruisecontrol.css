@@ -1,0 +1,209 @@
+body, table, form, input, td, th, p, textarea, select {
+  font-family: verdana, helvetica, arial, sans-serif;
+  font-size: 11px;
+}
+
+img {
+  border: 0;
+}
+
+a:hover {
+  color: #FC0;
+}
+
+.main-panel {
+  color: #FC0;
+}
+
+.link {
+  color: #00F;
+}
+
+.buildresults-header {
+  color: #000;
+  font-weight: bold;
+}
+
+.buildresults-data {
+  color: #000;
+}
+
+.buildresults-data-failed {
+  color: #F30;
+}
+
+.stylesection {
+  margin-left: 4px;
+}
+
+.header-title {
+  font-size: 12px;
+  color: #000;
+  font-weight: bold;
+  padding-bottom: 10pt;
+}
+
+.header-label {
+  font-weight: bold;
+}
+
+.header-data {
+  color: #000;
+}
+
+.header-data-error {
+  color: #000;
+  white-space: pre;
+}
+
+.section-table {
+  margin-top: 10px;
+}
+
+.sectionheader {
+  background-color: #006;
+  color: #FFF;
+}
+
+.section-data {
+  font-size: 9px;
+  color: #000;
+}
+
+.section-oddrow {
+  background-color: #F0F7FF;
+}
+
+.section-evenrow {
+  background-color: #FFF;
+}
+
+.section-error {
+  font-size: 9px;
+  color: #F30;
+  white-space: pre;
+}
+
+.warning {
+  color: orange
+}
+
+.error {
+  color: red
+}
+
+.RecentBuildsPanel {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #333399;
+  margin-bottom: 5px;
+}
+
+.RecentBuildsPanel th {
+  background-color: #333399;
+  text-align: center;
+  font-weight: bold;
+  padding: 3px;
+  color: ivory;
+}
+
+.RecentBuildsPanel td {
+  padding: 3px;
+  background-color: white;
+}
+
+.breadcrumbs {
+  color: darkgray;
+}
+
+.breadcrumbs a {
+  color: ivory;
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  color: #FC0;
+}
+
+.ProjectGridHeader {
+  color: ivory;
+  font-weight: bold;
+}
+
+.ProjectGridHeader a {
+  color: ivory;
+  text-decoration: none;
+}
+
+.ProjectGridHeader a:hover {
+  color: #FC0;
+}
+
+.SideBar a {
+  text-decoration: none;
+  color: #333399;
+}
+
+.SideBar .build-passed-link {
+  color: Green;
+  text-decoration: none;
+}
+
+.SideBar .build-failed-link {
+  color: Red;
+  text-decoration: none;
+}
+
+.build-passed-link {
+  color: Green;
+  text-decoration: none;
+}
+
+.build-failed-link {
+  color: Red;
+  text-decoration: none;
+}
+
+.log {
+  overflow: auto;
+}
+
+.wholepage {
+  background-color: #000066;
+}
+
+.TopControls {
+  background-color: #333399;
+  color: ivory;
+}
+
+
+/* new stuff */
+
+.read .likes-save { display:none; }
+.read .likes-edit { display:none; }
+.edit .likes-read { display:none; }
+.edit .likes-save { display:none; }
+.save .likes-edit { display:none; }
+.save .likes-read { display:none; }
+
+.build-status {
+  font-weight: bold;
+  text-transform:uppercase;
+}
+
+.build-success .build-status { color: green;}
+.build-failed .build-status { color: red; }
+
+.success {
+  font-weight: bold;
+  color: green;
+}
+.failed {
+  font-weight: bold;
+  color: red;
+}
+
+.test-results {
+  font-weight: bold;
+}

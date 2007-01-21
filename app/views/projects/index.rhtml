@@ -1,0 +1,25 @@
+<% @breadcrumbs = "#{link_to("Dashboard", "/")}" %>
+
+<% content_for(:left_side) do %>
+  <%= link_to "Test E-Mail", :controller => "test", :action => "test_mail" %>
+<% end %>
+
+<table class="builds">
+  <tr>
+    <th>Project Name</th>
+    <th>Last Build Label</th>
+    <th>Last Build Status</th>
+    <th>Last Build Time</th>
+    <th>Builder State</th>
+  </tr>
+
+  <% @projects.each do |project| %>
+    <tr class="build-<%= project.last_build.status %>">
+      <td><%= link_to project.name, :action => 'show', :id => project.name %></td>
+      <td><%= project.last_build.label %></td>
+      <td class="build-status"><%= project.last_build.status %></td>
+      <td><%= project.last_build.formatted_time %></td>
+      <td>Sleeping</td><!-- stopped / building / checking for modifications / sleeping -->
+    </tr>
+  <% end %>
+</table>

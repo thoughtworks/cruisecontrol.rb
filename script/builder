@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+
+ENV["RAILS_ENV"] = 'builder'
+
+require File.dirname(__FILE__) + '/../config/boot'
+
+require 'optparse'
+
+OPTIONS = { :verbose => false }
+
+ARGV.options do |opts|
+  script_name = File.basename($0)
+  opts.banner = "Usage: ruby #{script_name} [options]"
+
+  opts.separator ""
+
+  opts.on("-p", "--project=name", String,
+          "Project name to build. This option must be specified.") { |v| OPTIONS[:project_name] = v }
+  opts.on("-c", "--checkout=directory", String,
+          "Where the project's local copy checked out from source control is",
+          "Default: ccrb/builds/<project_name>/work") { |v| OPTIONS[:checkout_directory] = v }
+  opts.on("-v", "--verbose", "Verbose logging") { OPTIONS[:verbose] = true }
+
+  opts.separator ""
+
+  opts.on("-h", "--help",
+          "Show this help message.") { puts opts; exit }
+
+  opts.parse!
+
+  unless OPTIONS[:project_name]
+    STDERR.puts "Project name not specified"
+    STDERR.puts
+    puts opts
+    exit(-1)
+  end
+
+  OPTIONS[:checkout_directory] ||= File.join(RAILS_ROOT, 'builds', OPTIONS[:project_name])
+  OPTIONS[:checkout_directory] = File.expand_path(OPTIONS[:checkout_directory])
+end
+
+require RAILS_ROOT + "/config/environment"
+
+begin
+  Log.verbose = OPTIONS[:verbose]
+  project = Project.load_or_create(OPTIONS[:checkout_directory])
+
+  # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else blow up saying 
+  # that something else is already locking it
+  ProjectBlocker.block(project)
+
+  STDOUT.puts "Builder for project '#{project.name}' started"
+  Log.event "Builder for project '#{project.name}' started"
+
+  Schedule.new(project, :poll_interval_sec => 10).run
+rescue => e
+  begin 
+    Log.error(e.message)
+    Log.error(e.backtrace)
+  rescue => logging_error
+    STDERR.puts e.message
+    STDERR.puts e.backtrace
+    STDERR.puts "Attempt to log the above error failed with this:"
+    STDERR.puts logging_error.message
+    STDERR.puts logging_error.backtrace
+  end
+  if (OPTIONS[:verbose])
+    raise
+  else
+    STDERR.puts e.message
+    exit(1)
+  end
+end
+
+
+at_exit do
+  begin 
+    Log.event "Builder for project '#{project.name}' stopped"
+    STDOUT.puts "Builder for project '#{project.name}' stopped"
+    ProjectBlocker.release(project)
+  rescue
+    # ignore logging errors
+  end
+end

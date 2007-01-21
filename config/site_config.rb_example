@@ -1,0 +1,32 @@
+# site_config.rb contains examples of various configuration options for the local installation
+# of CruiseControl.rb.
+
+# EMAIL NOTIFICATION
+# ------------------
+
+# CruiseControl.rb can notify you about build status via email. It uses ActionMailer component of Ruby on Rails 
+# framework. Obviously, ActionMailer needs to know how to send out email messages. 
+# If you have an SMTP server on your network, and it needs no authentication, write this in your site_config.rb:
+# 
+# ActionMailer::Base.server_settings = {
+#   :address =>        "yoursmtpserver",
+#   :domain =>         "yourdomain.com",
+# }
+#
+# If you have no SMTP server at hand, you can configure email notification to use GMail SMTP server, as follows
+# (of course, you'll need to create a GMail account):
+#
+# ActionMailer::Base.server_settings = {
+#   :address =>        "smtp.gmail.com",
+#   :port =>           587,
+#   :domain =>         "yourdomain.com",
+#   :authentication => :plain,
+#   :user_name =>      "yourgmailaccount",
+#   :password =>       "*****"
+# }
+# 
+# The same approach works for other SMTP servers thet require authentication. Note that GMail's SMTP server runs on a 
+# non-standard port 587 (standard port for SMTP is 25).
+#
+# For further details about configuring email notification, see Ruby On Rails documentation for ActionMailer::Base.
+

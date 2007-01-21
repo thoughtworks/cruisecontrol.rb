@@ -1,0 +1,8 @@
+$: << './lib'
+require 'command_line'
+
+Dir['**/*'].each do |path|
+  if File.file?(path) and not path.include?('.svn') and not path.include?('vendor/rails')
+    CommandLine.execute "svn propset svn:eol-style native #{path}" rescue nil
+  end
+end
