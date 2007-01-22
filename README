@@ -27,14 +27,14 @@ multiple installations of CC.rb per computer.
 * Subversion client 1.3.2 or later. svn executable must be on the PATH.
 
 === Assumptions
-* There are many source control systems, but CC.rb only works with Subversion.
+* CC.rb currently only works with Subversion.
 * To build your_project, builder needs to go to ~cruise/builds/your_project/work/ and execute 'rake' there.
 
 === Installation
 1. Download and unpack CruiseControl.rb (we'll call the place you unpack it <cruise>)
 2. From <cruise>, run "ruby script/server" with Ruby 1.8.4 or greater.
 3. Browse to http://localhost:3000. If the dashboard is running fine and dandy, you will see a page with
-   CruiseControl.rb logo that says "No projects found".
+   CruiseControl.rb logo.
 4. Create a directory for project's builds <cruise>/builds/<your_project>
 5. Refresh the dashboard. It should now display your_project, with status "Never built".
 6. Checkout your project's source code to <cruise>/builds/<your_project>/work, for example:
