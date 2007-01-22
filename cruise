@@ -53,9 +53,9 @@ def method_for_command(command)
   case command
   when 'start'                            then :start
   when 'add'                              then :add
-  when 'builder'                          then :builder
-  when '-v', '--version'                  then :version
-  when '-h', '--help', 'help', '/?', '-?' then :help
+  when 'build', 'builder'                 then :builder
+  when 'version', '-v', '--version'      then :version
+  when 'help', '-h', '--help', '/?', '-?' then :help
   else nil
   end
 end
