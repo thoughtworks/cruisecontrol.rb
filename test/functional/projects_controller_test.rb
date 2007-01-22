@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require File.expand_path(File.dirname(__FILE__) + '/../sandbox')
 require 'projects_controller'
 
 # Re-raise errors caught by the controller.
@@ -9,12 +8,14 @@ class ProjectsController
 end
 
 class ProjectsControllerTest < Test::Unit::TestCase
+  include FileSandbox
+
   def setup
     @controller = ProjectsController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
 
-    @sandbox = Sandbox.new
+    setup_sandbox
     @projects = new_project("one"), new_project("two"), new_project("three")
     @controller.load_projects = @projects
 
@@ -22,7 +23,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
   end
 
   def teardown
-    @sandbox.clean_up
+    teardown_sandbox
   end
 
   def test_index
@@ -105,7 +106,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
 
   def new_project(name)
     project = Project.new(name, Subversion.new)
-    project.path = "#{@sandbox.root}/#{name}"
+    project.path = file(name).name
     project
   end
 end

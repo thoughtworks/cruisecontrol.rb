@@ -1,9 +1,19 @@
-Before TW Release
------------------
-* finish build logs story
-  * add other logfiles to the web app to finish "Build Logs" story
+Bugs
+----
+* rake.cmd is not found for rolf for some reason...
+* tests are failing
+
+Before TW Release 2
+-------------------
 * how do the builders get started?  the webapp will need to be able to start / restart / stop them eventually,
   can we do this now?  how?  can we do it in a way that works on windows / mac / *nix?
+* builder
+  * should build if there is no build dir for the current revision
+    * this means, "kicking" the build is as simple as deleting the current build dir
+  * should reload project everytime it wakes up (so as to pick up changes from the webapp
+  * should sleep for at least 30 secs by default
+* webapp
+  * should have email settings / along w/ gmail stuff
 
 If Possible...
 --------------

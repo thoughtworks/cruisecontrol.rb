@@ -1,13 +1,11 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require File.dirname(__FILE__) + '/../sandbox'
 require 'fileutils'
 
 class CommandLineTest < Test::Unit::TestCase
-
-  include Sandbox::Helper
+  include FileSandbox
 
   def test_should_write_to_both_files_when_both_files_specified_and_no_block
-    in_sandbox do
+    in_total_sandbox do
       CommandLine.execute("echo \"<hello\" && echo world", {:dir => @dir, :stdout => @stdout, :stderr => @stderr})
       assert_match(/.* echo \"<hello\"\s*\n.?\<hello.?\s*\n.* echo world\s*\nworld/n, File.read(@stdout))
       assert_match(/.* echo \"<hello\"\s*\n.* echo world\s*/n, File.read(@stderr))
@@ -15,7 +13,7 @@ class CommandLineTest < Test::Unit::TestCase
   end
 
   def test_should_not_write_to_stdout_file_when_no_stdout_specified
-    in_sandbox do
+    in_total_sandbox do
       with_redirected_stdout do
         CommandLine.execute("echo hello", {:dir => @dir, :stderr => @stderr})
       end
@@ -26,7 +24,7 @@ class CommandLineTest < Test::Unit::TestCase
   end
 
   def test_should_only_write_command_to_stdout_when_block_specified
-    in_sandbox do
+    in_total_sandbox do
       CommandLine.execute("echo hello", {:dir => @dir, :stdout => @stdout, :stderr => @stderr}) do |io|
         assert_equal("hello", io.read.strip)
       end
@@ -36,7 +34,7 @@ class CommandLineTest < Test::Unit::TestCase
   end
 
   def test_should_raise_on_bad_command
-    in_sandbox do
+    in_total_sandbox do
       assert_raise(CommandLine::ExecutionError) do
         CommandLine.execute("xaswedf", {:dir => @dir, :stdout => @stdout, :stderr => @stderr})
       end
@@ -44,7 +42,7 @@ class CommandLineTest < Test::Unit::TestCase
   end
 
   def test_should_raise_on_bad_command_with_block
-    in_sandbox do
+    in_total_sandbox do
       assert_raise(CommandLine::ExecutionError) do
         CommandLine.execute("xaswedf", {:dir => @dir, :stdout => @stdout, :stderr => @stderr}) do |io|
           io.each_line do |line|
@@ -55,7 +53,7 @@ class CommandLineTest < Test::Unit::TestCase
   end
 
   def test_should_return_block_result
-    in_sandbox do
+    in_total_sandbox do
       result = CommandLine.execute("echo hello", {:dir => @dir, :stdout => @stdout, :stderr => @stderr}) do |io|
         io.read
       end
@@ -64,7 +62,7 @@ class CommandLineTest < Test::Unit::TestCase
   end
 
   def test_execute_should_raise_when_return_code_is_not_zero
-    in_sandbox do
+    in_total_sandbox do
       with_redirected_stdout do
         assert_raise(CommandLine::ExecutionError) do
           CommandLine.execute "ruby -e 'exit(-1)'"

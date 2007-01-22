@@ -29,7 +29,15 @@ class Projects
     raise "project named #{project.name.inspect} already exists" if @list.include?(project)
     @list << project
     save_project(project)
+
+    work_dir = "#{@dir}/#{project.name}/work"
+    FileUtils.mkdir_p work_dir
+    project.source_control.checkout work_dir
+    
     self
+  rescue
+    FileUtils.rm_rf "#{@dir}/#{project.name}"
+    raise
   end
 
   def save_project(project)

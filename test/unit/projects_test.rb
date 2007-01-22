@@ -1,16 +1,16 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
-require File.expand_path(File.dirname(__FILE__) + '/../sandbox')
 
 class ProjectsTest < Test::Unit::TestCase
+  include FileSandbox
 
   def setup
-    @svn = Subversion.new(:url => "http://rubyforge.org/svn/lemmings", :username => "bob", :password => 'cha')
+    @svn = FakeSourceControl.new("bob")
     @one = Project.new("one", @svn)
     @two = Project.new("two", @svn)
   end
 
   def test_load_all
-    Sandbox.create do |sandbox|
+    in_sandbox do |sandbox|
       sandbox.new :file => "one/project_config.rb", :with_content => @one.memento
       sandbox.new :file => "two/project_config.rb", :with_content => @two.memento
 
@@ -26,7 +26,7 @@ class ProjectsTest < Test::Unit::TestCase
   end
 
   def test_add
-    Sandbox.create do |sandbox|
+    in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
       projects << @one
       projects << @two
@@ -39,8 +39,34 @@ class ProjectsTest < Test::Unit::TestCase
     end
   end
 
+  def test_add_checkouts_fresh_project
+    in_sandbox do |sandbox|
+      projects = Projects.new(sandbox.root)
+
+      projects << @one
+
+      assert file('one/work').exists?
+      assert file('one/work/README').exists?
+      assert_equal @one.memento, file('one/project_config.rb').content
+    end
+  end
+
+  def test_add_cleans_up_after_itself_if_svn_throws_exception
+    in_sandbox do |sandbox|
+      projects = Projects.new(sandbox.root)
+      @svn.expects(:checkout).raises("svn error")
+
+      assert_raises('svn error') do
+        projects << @one
+      end
+
+      assert !file('one/work').exists?
+      assert !file('one').exists?
+    end
+  end
+
   def test_can_not_add_project_with_same_name
-    Sandbox.create do |sandbox|
+    in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
       projects << @one
       assert_raises('project named "one" already exists') do
@@ -50,7 +76,7 @@ class ProjectsTest < Test::Unit::TestCase
   end
 
   def test_load_project
-    Sandbox.create do |sandbox|
+    in_sandbox do |sandbox|
       sandbox.new :file => 'one/project_config.rb', :with_content => @one.memento
 
       new_project = Projects.load_project(File.join(sandbox.root, 'one'))
@@ -62,7 +88,7 @@ class ProjectsTest < Test::Unit::TestCase
   end
 
   def test_load_project_with_no_config
-    Sandbox.create do |sandbox|
+    in_sandbox do |sandbox|
       sandbox.new :file => "myproject/builds-1/__success__"
 
       new_project = Projects.load_project(sandbox.root + '/myproject')
@@ -74,7 +100,7 @@ class ProjectsTest < Test::Unit::TestCase
   end
 
   def test_each
-    Sandbox.create do |sandbox|
+    in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
       projects << @one << @two
 
@@ -84,6 +110,22 @@ class ProjectsTest < Test::Unit::TestCase
       end
 
       assert_equal("onetwo", out)
+    end
+  end
+
+  class FakeSourceControl
+    attr_reader :username
+    
+    def initialize(username)
+      @username = username
+    end
+
+    def checkout(dir)
+      File.open("#{dir}/README", "w") {|f| f << "some text"}
+    end
+
+    def memento
+      "project.source_control = ProjectsTest::FakeSourceControl.new('#{@username}')"
     end
   end
 end

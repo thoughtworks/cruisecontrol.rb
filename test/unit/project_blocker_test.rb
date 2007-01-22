@@ -1,12 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
-require File.dirname(__FILE__) + '/../sandbox'
 
 class ProjectBlockerTest < Test::Unit::TestCase
-  
-  include Sandbox::Helper
+  include FileSandbox
   
   def test_block_release
-    in_sandbox do |sandbox|
+    in_total_sandbox do |sandbox|
       project = Object.new
       project.stubs(:name).returns('foo')
       project.stubs(:path).returns(sandbox.root)

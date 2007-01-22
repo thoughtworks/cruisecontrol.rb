@@ -6,6 +6,6 @@ class Schedule
   end
 
   def run
-    @project.build_new_checkin or sleep(@poll_interval_sec) while(true)
+    @project.build_if_necessary or sleep(@poll_interval_sec) while(true)
   end
 end

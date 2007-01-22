@@ -56,39 +56,46 @@ integration test does a checkout
     svn.verify
   end
 
-  def test_new_revisions_should_reverse_the_log_entries_and_skip_the_one_corresponding_to_current_revision
+  def test_latest_revision
     svn = Subversion.new
 
-    svn.expects(:info).with(dummy_project).returns("Revision" => "15")
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:BASE --verbose").yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD --verbose").yields(StringIO.new(LOG_ENTRY))
 
-    revisions = svn.new_revisions(dummy_project)
+    revision = svn.latest_revision(dummy_project)
 
     svn.verify
-    revision_numbers =
+    assert_equal 18, revision.number
+  end
+
+  def test_revisions_since_should_reverse_the_log_entries_and_skip_the_one_corresponding_to_current_revision
+    svn = Subversion.new
+
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:15 --verbose").yields(StringIO.new(LOG_ENTRY))
+
+    revisions = svn.revisions_since(dummy_project, 15)
+
+    svn.verify
     assert_equal [17, 18], numbers(revisions)
   end
 
-  def test_new_revisions_should_return_all_revisions_when_curreent_revision_is_not_in_the_log_output
+  def test_revisions_since_should_return_all_revisions_when_curreent_revision_is_not_in_the_log_output
     svn = Subversion.new
 
-    svn.expects(:info).with(dummy_project).returns("Revision" => "14")
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:BASE --verbose").yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose").yields(StringIO.new(LOG_ENTRY))
 
-    revisions = svn.new_revisions(dummy_project)
+    revisions = svn.revisions_since(dummy_project, 14)
 
     svn.verify
 
     assert_equal [15, 17, 18], numbers(revisions)
   end
 
-  def test_new_revisions_should_return_an_empty_array_for_empty_log_output
+  def test_revisions_since_should_return_an_empty_array_for_empty_log_output
     svn = Subversion.new
 
-    svn.expects(:info).with(dummy_project).returns("Revision" => "14")
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:BASE --verbose").yields(StringIO.new(EMPTY_LOG))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose").yields(StringIO.new(EMPTY_LOG))
 
-    revisions = svn.new_revisions(dummy_project)
+    revisions = svn.revisions_since(dummy_project, 14)
 
     svn.verify
 
@@ -96,44 +103,39 @@ integration test does a checkout
   end
 
   def test_checkout_with_no_user_password
-    svn = Subversion.new
+    svn = Subversion.new(:url => 'http://foo.com/svn/project')
     svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project .")
 
-    svn.checkout(:url => 'http://foo.com/svn/project', :target_directory => '.')
+    svn.checkout('.')
 
     svn.verify
   end
 
   def test_checkout_with_user_password
-    svn = Subversion.new
+    svn = Subversion.new(:url => 'http://foo.com/svn/project', :username => 'jer', :password => "crap")
     svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project . --username jer --password crap")
 
-    svn.checkout(:url => 'http://foo.com/svn/project', :target_directory => '.', :username => 'jer', :password => "crap")
+    svn.checkout('.')
 
     svn.verify
   end
 
   def test_checkout_with_revision
-    svn = Subversion.new
+    svn = Subversion.new(:url => 'http://foo.com/svn/project')
     svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project . --revision 5")
 
-    svn.checkout(:url => 'http://foo.com/svn/project', :target_directory => '.', :revision => Revision.new(5))
+    svn.checkout('.', Revision.new(5))
 
     svn.verify
   end
 
   def test_checkout_requires_url
-    assert_raises('URL not specified') { Subversion.new.checkout(:target_directory => '.') }
+    assert_raises('URL not specified') { Subversion.new.checkout('.') }
   end
 
-  def test_checkout_requires_target_directory
-    assert_raises('target directory not specified') { Subversion.new.checkout(:url => 'file:///foo') }
-  end
-
-  def test_checkout_does_not_allow_random_params
+  def test_new_does_not_allow_random_params
     assert_raises("don't know how to handle 'lollipop'") do
-      Subversion.new.checkout(:url => 'http://foo.com/svn/project', :target_directory => '.',
-                              :lollipop => 'http://foo.com/svn/project')
+      Subversion.new(:url => 'http://foo.com/svn/project', :lollipop => 'http://foo.com/svn/project')
     end
   end
 

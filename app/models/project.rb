@@ -69,7 +69,7 @@ end
     EOL
   end
   
-  def build_new_checkin
+  def build_if_necessary
     notify(:polling_source_control)
     begin
       revisions = new_revisions()
@@ -86,7 +86,12 @@ end
   end
 
   def new_revisions
-    @source_control.new_revisions(self)
+    b = builds
+    if b.empty?
+      [@source_control.latest_revision(self)]
+    else
+      @source_control.revisions_since(self, b.last.label.to_i)
+    end
   end
 
   def build(revisions)

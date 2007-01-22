@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require File.dirname(__FILE__) + '/../sandbox'
 
 class IntegrationTest < Test::Unit::TestCase
+  include FileSandbox
 
   def test_checkout
     # with_project calls svn.checkout
@@ -24,13 +24,13 @@ class IntegrationTest < Test::Unit::TestCase
                        [ChangesetEntry.new('M', '/failing_project/revision_label.txt'),
                         ChangesetEntry.new('M', '/passing_project/revision_label.txt')])
           ]
-      assert_equal expected_revisions, svn.new_revisions(project)
+      assert_equal expected_revisions, svn.revisions_since(project, 2)
     end
   end
 
   def test_new_revisions_should_return_an_empty_array_for_uptodate_local_copy
     with_project 'passing_project' do |project, sandbox, svn|
-      assert_equal [],  svn.new_revisions(project)
+      assert_equal [],  svn.revisions_since(project, 7)
     end
   end
 
@@ -53,22 +53,23 @@ class IntegrationTest < Test::Unit::TestCase
 
   def test_build_new_checkin_for_a_failling_build
     with_project('failing_project', :revision => 6) do |project, sandbox, svn|
-      result = project.build_new_checkin
+      result = project.build_if_necessary
 
       assert result.is_a?(Build)
       assert_equal true, result.failed?
 
-      assert File.exists?("#{sandbox.root}/failing_project/build-7/build_status = failed")
-      assert_equal false, File.exists?("#{sandbox.root}/failing_project/build-7/build_status = success")
+      assert file("failing_project/build-7/build_status = failed").exists?
+      assert_equal false, file("failing_project/build-7/build_status = success").exists?
 
-      assert File.exists?("#{sandbox.root}/failing_project/build-7/changeset.log")
-      assert File.exists?("#{sandbox.root}/failing_project/build-7/build.log")
+      assert file("failing_project/build-7/changeset.log").exists?
+      assert file("failing_project/build-7/build.log").exists?
     end
   end
 
-  def test_build_new_checkin_should_return_nil_when_no_changes_were_made
+  def test_build_if_necessary_should_return_nil_when_no_changes_were_made
     with_project 'passing_project' do |project, sandbox, svn|
-      result = project.build_new_checkin
+      sandbox.new :file=>'passing_project/build-7/build_status = success'
+      result = project.build_if_necessary
       assert_nil result
       # test existence and contents of log files
     end
@@ -81,11 +82,9 @@ class IntegrationTest < Test::Unit::TestCase
   end
 
   def with_project(project_name, options = {}, &block)
-    Sandbox.create do |sandbox|
-      svn = Subversion.new
-      svn.checkout :url => "#{fixture_repository_url}/#{project_name}", 
-                   :target_directory => "#{sandbox.root}/#{project_name}/work", 
-                   :revision => (options[:revision] || nil)
+    in_sandbox do |sandbox|
+      svn = Subversion.new :url => "#{fixture_repository_url}/#{project_name}"
+      svn.checkout "#{sandbox.root}/#{project_name}/work", options[:revision]
       
       project = Project.new('passing_project', svn, "#{sandbox.root}/#{project_name}/work")
       project.path = "#{sandbox.root}/#{project_name}"

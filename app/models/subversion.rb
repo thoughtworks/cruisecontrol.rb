@@ -9,20 +9,18 @@ class Subversion
     raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
   end
 
-  # FIXME: options should be passed either to the constructor, or to the method, not both
-  def checkout(options = {})
-    url = options.delete(:url) or raise 'URL not specified'
-    target_directory = options.delete(:target_directory) or raise 'target directory not specified'
-
-    username = options.delete(:username)
-    password = options.delete(:password)
+  def self.checkout(target_directory, options)
     revision = options.delete(:revision)
+    Subversion.new(options).checkout(target_directory, revision)
+  end
+    
+  # FIXME: options should be passed either to the constructor, or to the method, not both
+  def checkout(target_directory, revision = nil)
+    @url or raise 'URL not specified'
 
-    raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
-
-    cmd = "svn --non-interactive co #{url} #{target_directory}"
-    cmd << " --username #{username}" if username
-    cmd << " --password #{password}" if password
+    cmd = "svn --non-interactive co #{@url} #{target_directory}"
+    cmd << " --username #{@username}" if username
+    cmd << " --password #{@password}" if password
     cmd << " --revision #{revision_number(revision)}" if revision
 
     # need to read from command output, because otherwise tests break
@@ -46,15 +44,19 @@ class Subversion
     result
   end
 
+  def latest_revision(project)
+    svn_output = execute_in_local_copy(project, "svn --non-interactive log --revision HEAD --verbose")
+    SubversionLogParser.new.parse_log(svn_output).first
+  end
+
   def current_revision(project)
     info(project)["Revision"].to_i
   end
 
-  def new_revisions(project)
-    current_revision_number = current_revision(project)
-    svn_output = execute_in_local_copy(project, "svn --non-interactive log --revision HEAD:BASE --verbose")
+  def revisions_since(project, revision_number)
+    svn_output = execute_in_local_copy(project, "svn --non-interactive log --revision HEAD:#{revision_number} --verbose")
     new_revisions = SubversionLogParser.new.parse_log(svn_output).reverse
-    new_revisions.delete_if { |r| r.number == current_revision_number }
+    new_revisions.delete_if { |r| r.number == revision_number }
     new_revisions
   end
 

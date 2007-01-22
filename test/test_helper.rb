@@ -15,6 +15,7 @@ require 'action_web_service/test_invoke'
 require 'breakpoint'
 require 'mocha'
 require 'stubba'
+require "#{RAILS_ROOT}/vendor/file_sandbox/lib/file_sandbox"
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
@@ -37,4 +38,21 @@ class Test::Unit::TestCase
     end
   end
 
+  def in_total_sandbox(&block)
+    in_sandbox do |sandbox|
+      @dir = File.expand_path(sandbox.root)
+      @stdout = "#{@dir}/stdout"
+      @stderr = "#{@dir}/stderr"
+      @prompt = "#{@dir} #{Platform.user}$"
+      yield(sandbox)
+    end
+  end
+
+  def with_sandbox_project(&block)
+    in_total_sandbox do |sandbox|
+      project = Project.new('my_project', nil, '.')
+      project.path = sandbox.root
+      yield(sandbox, project)
+    end
+  end
 end

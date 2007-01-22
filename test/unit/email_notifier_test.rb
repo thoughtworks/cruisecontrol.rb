@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require File.dirname(__FILE__) + '/../sandbox'
 
 class EmailNotifierTest < Test::Unit::TestCase
+  include FileSandbox
+  
   BUILD_LOG = <<-EOL
     blah blah blah
     something built
@@ -9,7 +10,7 @@ class EmailNotifierTest < Test::Unit::TestCase
   EOL
 
   def setup
-    @sandbox = Sandbox.new
+    setup_sandbox
 
     ActionMailer::Base.deliveries = []
 
@@ -22,7 +23,7 @@ class EmailNotifierTest < Test::Unit::TestCase
   end
   
   def teardown
-    @sandbox.clean_up
+    teardown_sandbox
   end
 
   def test_do_nothing_with_passing_build

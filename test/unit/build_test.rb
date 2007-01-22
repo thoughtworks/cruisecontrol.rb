@@ -1,9 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require File.expand_path(File.dirname(__FILE__) + '/../sandbox')
 
 class BuildTest < Test::Unit::TestCase
-
-  include Sandbox::Helper
+  include FileSandbox
 
   def test_initialize_should_load_status_file_and_build_log
     with_sandbox_project do |sandbox, project|

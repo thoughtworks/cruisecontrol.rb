@@ -1,8 +1,9 @@
 require 'date'
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
-require File.expand_path(File.dirname(__FILE__) + '/../sandbox')
 
 class ProjectTest < Test::Unit::TestCase
+  include FileSandbox
+  
   def setup
     @svn = Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')
     @project = Project.new("lemmings", @svn)
@@ -30,7 +31,7 @@ end
   end
 
   def test_builds
-    Sandbox.create do |sandbox|
+    in_sandbox do |sandbox|
       @project.path = sandbox.root
 
       sandbox.new :file => "build-1/build_status = success"
@@ -46,43 +47,107 @@ end
   end
 
   def test_builds_should_return_empty_array_when_project_has_no_builds
-    Sandbox.create do |sandbox|
+    in_sandbox do |sandbox|
       @project.path = sandbox.root
       assert_equal [], @project.builds
     end
   end
 
-  def test_build_new_checkin_should_generate_events
-    Sandbox.create do |sandbox|
+  def test_should_build_with_no_logs
+    in_sandbox do |sandbox|
       @project.path = sandbox.root
-      
-      
-      revision = Revision.new(1, 'alex', DateTime.new(2005, 1, 1), 'message', [])
-      mock_build = Object.new
-      
-      @svn.expects(:new_revisions).with(@project).returns([revision])
-      Build.expects(:new).with(@project, revision.number).returns(mock_build)
+
+      revision = new_revision(5)
+      build = new_mock_build(5)
+      build.stubs(:artifacts_directory).returns(sandbox.root)
+
+      @project.expects(:builds).returns([])
+      @svn.expects(:latest_revision).returns(revision)
       @svn.expects(:update).with(@project, revision)
-      mock_build.expects(:artifacts_directory).returns(sandbox.root)
-      mock_build.expects(:run)
-      
+
+      build.expects(:run)
+
+      @project.build_if_necessary
+
+      @svn.verify
+      build.verify
+    end
+  end
+
+  def test_build_if_necessary_should_generate_events
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+
+      revision = new_revision(5)
+      build = new_mock_build(5)
+      build.stubs(:artifacts_directory).returns(sandbox.root)
+
+      @project.expects(:builds).returns([])
+      @svn.expects(:latest_revision).returns(revision)
+      @svn.expects(:update).with(@project, revision)
+
+      build.expects(:run)
+
       # event expectations
       listener = Object.new
 
       listener.expects(:polling_source_control)
       listener.expects(:new_revisions_detected).with([revision])
-      listener.expects(:build_started).with(mock_build)
-      listener.expects(:build_finished).with(mock_build)
+      listener.expects(:build_started).with(build)
+      listener.expects(:build_finished).with(build)
       listener.expects(:sleeping)
-      
+
       @project.add_plugin listener
-      
-      @project.build_new_checkin
-      
+
+      @project.build_if_necessary
+
       listener.verify
     end
   end
-  
-  
 
+  def test_should_build_when_logs_are_not_current
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+
+      @project.expects(:builds).returns([Build.new(@project, 1)])
+      revision = new_revision(2)
+      build = new_mock_build(2)
+      build.stubs(:artifacts_directory).returns(sandbox.root)
+
+      @svn.expects(:revisions_since).with(@project, 1).returns([revision])
+      @svn.expects(:update).with(@project, revision)
+
+      build.expects(:run)
+
+      @project.build_if_necessary
+
+      @svn.verify
+      build.verify
+    end
+  end
+
+  def test_should_not_build_when_logs_are_current
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+
+      @project.expects(:builds).returns([Build.new(@project, 2)])
+      revision = new_revision(2)
+
+      @svn.expects(:revisions_since).with(@project, 2).returns([])
+
+      @project.build_if_necessary
+
+      @svn.verify
+    end
+  end
+
+  def new_revision(number)
+    Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
+  end
+
+  def new_mock_build(number)
+    build = Object.new
+    Build.expects(:new).with(@project, number).returns(build)
+    build
+  end
 end
