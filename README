@@ -41,7 +41,7 @@ multiple installations of CC.rb per computer.
      svn checkout http://localhost/svn/your_project/trunk builds/your_project/work
 7. Go to <cruise>/builds/<your_project>/work/ and run the build. Do whatever is necessary to make it pass.
 8. Go back to <cruise> and run "ruby script/builder -p <your_project>".
-
+ 
    Hint: Monitor log/your_project_builder.log for any signs of trouble. Try to check in a change to your_project
    and see if builder can detect and build it.  Check your_project status in the dashboard.
 
