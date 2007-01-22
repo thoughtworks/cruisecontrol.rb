@@ -72,7 +72,7 @@ class Build
   end
   
   def rake
-    RUBY_PLATFORM =~ /(:?mswin32|mingw32)/ ? %{ruby -e "load"} : 'rake'
+    %{ruby -e "require 'rake'; Rake.application.run"}
   end
 
   def last
@@ -84,9 +84,11 @@ class Build
     end
     nil
   end
-  
+
   def in_clean_environment_on_local_copy(&block)
     old_rails_env = ENV['RAILS_ENV']
+    # If we don't clean RAILS_ENV OS variable, tests of the project we are building would be 
+    # executed under 'builder' Rails environment
     ENV.delete('RAILS_ENV')
     begin 
       Dir.chdir(project.local_checkout, &block)

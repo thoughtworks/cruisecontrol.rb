@@ -158,5 +158,5 @@ class BuildTest < Test::Unit::TestCase
       Build.new(project, 123).status
     end
   end
-  
+
 end
