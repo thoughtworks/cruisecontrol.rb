@@ -34,22 +34,22 @@ class IntegrationTest < Test::Unit::TestCase
     end
   end
 
-  def test_build_new_checkin
-    with_project('passing_project', :revision => 2) do |project, sandbox, svn|
-
-      assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
-
-      result = project.build_new_checkin
-
-      assert result.is_a?(Build)
-
-      assert_equal true, result.successful?
-
-      assert File.exists?("#{sandbox.root}/passing_project/build-7/build_status = success")
-      assert File.exists?("#{sandbox.root}/passing_project/build-7/changeset.log")
-      assert File.exists?("#{sandbox.root}/passing_project/build-7/build.log")
-    end
-  end
+#  def test_build_new_checkin
+#    with_project('passing_project', :revision => 2) do |project, sandbox, svn|
+#
+#      assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
+#
+#      result = project.build_new_checkin
+#
+#      assert result.is_a?(Build)
+#
+#      assert_equal true, result.successful?
+#
+#      assert File.exists?("#{sandbox.root}/passing_project/build-7/build_status = success")
+#      assert File.exists?("#{sandbox.root}/passing_project/build-7/changeset.log")
+#      assert File.exists?("#{sandbox.root}/passing_project/build-7/build.log")
+#    end
+#  end
 
   def test_build_new_checkin_for_a_failling_build
     with_project('failing_project', :revision => 6) do |project, sandbox, svn|
