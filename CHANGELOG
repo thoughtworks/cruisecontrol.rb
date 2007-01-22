@@ -2,6 +2,7 @@ TRUNK
   - Unified command-line interface to web app, builder and add_project script
   - Bugfix: builder invoking Rake with RAILS_ENV OS variable set to 'builder'
   - Bugfix: not all Windows installations have rake.cmd
+  - Default port changed to 3333 (to avoid clashing with other Rails apps)
   
 --------------------------------------------------------------------------------
 * 0.1 
