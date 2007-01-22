@@ -52,12 +52,8 @@ Rails::Initializer.run do |config|
 end
 
 # Include your application configuration below
-# FIXME: this stuff should use Configuration variables, and should not have any mention of project_one
-PROJECTS_ROOT = "#{RAILS_ROOT}/builds"
-BUILDS_ROOT = "#{PROJECTS_ROOT}/project_one"
-CCRB_VERSION = "0.1"
 
-#$LOAD_PATH.unshift(RAILS_ROOT + '/lib/builder/lib')
+require 'cruisecontrol/version'
 
 # Local configuration, for example, details of the SMTP server for email notification, should be 
 # written in ./config/site_config.rb. See ./config/site_sonfig.rb_example for an example of what this file may 

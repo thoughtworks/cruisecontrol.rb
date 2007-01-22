@@ -29,7 +29,7 @@ RUBY_FORGE_USER    = "stellsmi"
 spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.name = PKG_NAME
-  s.summary = "Continuous Integration tool for Ruby."
+  s.summary = "Continuous Integration Server for Ruby."
   s.description = %q{Continuous Integration made easy.}
   s.version = PKG_VERSION
 
@@ -38,14 +38,17 @@ spec = Gem::Specification.new do |s|
   s.rubyforge_project = RUBY_FORGE_PROJECT
   s.homepage = "http://#{RUBY_FORGE_PROJECT}.rubyforge.org"
 
-  s.has_rdoc = true
+  s.has_rdoc = false
 #  s.requirements << 'none'
-#  s.require_path = 'lib'
+  s.require_path = 'lib'
 #  s.autorequire = 'action_mailer'
 
+  s.default_executable = 'cruise'
+  s.executables = ['cruise']
+
   s.files = [ "Rakefile", "README", "CHANGELOG", "LICENSE" ] +
-            Dir.glob( "{app,config,lib,public,script,test}/**/*" ) +
-            Dir.glob( "{app,config,lib,public,script,test}/**/.svn/*" ) +
+            Dir.glob( "{bin,app,config,lib,public,script,test}/**/*" ) +
+            Dir.glob( "{bin,app,config,lib,public,script,test}/**/.svn/*" ) +
             Dir.glob( "vendor/**/*" ).delete_if { |item| item.include?( "\.svn" ) }
 end
 

@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+ENV["RAILS_ENV"] = 'production'
+require File.dirname(__FILE__) + '/../config/boot'
+require 'optparse'
+
+project_name = nil
+scm_options = {}
+
+ARGV.options do |opts|
+  opts.banner = "usage: cruise add <project-name> --url <URL> [subversion options]"
+
+  opts.separator ""
+
+  opts.on("-u", "--url url", String,
+          "The subversion url for the project (eg. svn://rubyforge.org/var/svn/cruisecontrolrb)") { |v|
+            scm_options[:url] = v }
+  opts.on(nil, "--username username", String, "Specify a username for sourcecontrol") { |v| scm_options[:username] = v }
+  opts.on(nil, "--password password", String, "Specify a password for sourcecontrol") { |v| scm_options[:password] = v }
+
+  opts.separator ""
+
+  opts.on("-h", "--help",
+          "Show this help message.") { puts opts; exit 1 }
+
+  args = opts.parse!
+
+  unless args.length == 1 and scm_options[:url]
+    STDERR.puts "Project name and url are mandatory"
+    STDERR.puts
+    puts opts
+    exit(-1)
+  end
+
+  project_name = args[0]
+end
+
+puts "Adding Project '#{project_name}'"
+
+require RAILS_ROOT + "/config/environment"
+
+source_control = Subversion.new(scm_options)
+project = Project.new(project_name, source_control)
+
+projects = Projects.load_all
+projects << project

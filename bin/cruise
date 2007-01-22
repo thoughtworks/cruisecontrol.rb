@@ -1,0 +1,88 @@
+#!/usr/bin/env ruby
+ENV["RAILS_ENV"] = 'production'
+require File.dirname(__FILE__) + '/../config/boot'
+require 'optparse'
+require 'cruisecontrol/version'
+
+def find_builds
+  site_config = File.dirname(__FILE__) + "/../config/site_config.rb"
+  return if File.exist?(site_config)
+
+  print %{It looks like this is the first time you've run CruiseControl.rb.  Where would you like your us to
+build your projects?  eg. c:\\cruisecontrol or ~/builds
+
+   > }
+
+  builds_dir = $stdin.gets.strip
+  unless File.directory? builds_dir
+    require 'fileutils'
+    FileUtils.makedirs builds_dir
+    unless File.directory? builds_dir
+      STDERR.puts "couldn't create #{builds_dir}"
+      exit -1
+    end
+  end
+
+  File.open(site_config, 'w') {|f| f << "Configuration.builds_directory = '#{builds_dir}'" }
+end
+
+def start
+  ARGV.unshift "99"
+  ARGV.unshift "-p"
+  load File.dirname(__FILE__) + "/../script/server"
+end
+
+def add
+  load File.dirname(__FILE__) + "/add_project"
+end
+
+def builder
+  load File.dirname(__FILE__) + "/builder"
+end
+
+def version
+  puts <<-EOL
+CruiseControl.rb, version #{CruiseControl::VERSION::STRING}
+Copyright (C) 2007 ThoughtWorks
+  EOL
+end
+
+def general_help
+  puts <<-EOL
+usage: cruise <subcommand> [options] [args]
+
+CruiseControl.rb command-line client, version #{CruiseControl::VERSION::STRING}
+Type 'cruise <subcommand> -h' for help on a specific subcommand.
+Type 'svn --version' to see the version number.
+
+Available subcommands:
+ start      - starts the web server
+ add        - adds a project
+ builder    - starts the builder for an individual project
+
+CruiseControl.rb is a Continous Integration Server.
+For additional information, see http://cruisecontrolrb.rubyforge.org/
+  EOL
+end
+
+find_builds
+
+action = ARGV.shift
+case action
+  when 'start'      then start
+  when 'add'        then add
+  when 'builder'    then builder
+  when '-v'         then version
+  when '--version'  then version
+  when '-h'         then general_help
+  when 'help'       then general_help
+
+  when nil
+    STDERR.puts "Type 'cruise help' for usage."
+    exit -1
+
+  else
+    STDERR.puts "Unknown command : '#{action}'"
+    STDERR.puts "Type 'cruise help' for usage."
+    exit -1
+end

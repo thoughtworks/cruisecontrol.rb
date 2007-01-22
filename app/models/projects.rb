@@ -3,7 +3,7 @@ require 'fileutils'
 class Projects
 
   class << self
-    def load_all(dir = PROJECTS_ROOT)
+    def load_all(dir = Configuration.builds_directory)
       Projects.new(dir).load_all
     end
 
@@ -14,7 +14,7 @@ class Projects
     end
   end
   
-  def initialize(dir = PROJECTS_ROOT)
+  def initialize(dir = Configuration.builds_directory)
     @dir = dir
     @list = []
   end
