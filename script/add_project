@@ -3,8 +3,9 @@ ENV["RAILS_ENV"] = 'production'
 require File.dirname(__FILE__) + '/../config/boot'
 require 'optparse'
 
-project_name = nil
-scm_options = {}
+project_name = ARGV.shift
+trace = false
+scm_options = { }
 
 ARGV.options do |opts|
   opts.banner = "usage: cruise add <project-name> --url <URL> [subversion options]"
@@ -16,6 +17,7 @@ ARGV.options do |opts|
             scm_options[:url] = v }
   opts.on(nil, "--username username", String, "Specify a username for sourcecontrol") { |v| scm_options[:username] = v }
   opts.on(nil, "--password password", String, "Specify a password for sourcecontrol") { |v| scm_options[:password] = v }
+  opts.on('-t', '--trace', 'Print out exception stack traces') { trace = true }
 
   opts.separator ""
 
@@ -24,22 +26,32 @@ ARGV.options do |opts|
 
   args = opts.parse!
 
-  unless args.length == 1 and scm_options[:url]
+  unless project_name and scm_options[:url]
     STDERR.puts "Project name and url are mandatory"
     STDERR.puts
     puts opts
     exit(-1)
   end
 
-  project_name = args[0]
 end
 
-puts "Adding Project '#{project_name}'"
+puts "Adding project '#{project_name}'"
 
-require RAILS_ROOT + "/config/environment"
+begin 
+	require RAILS_ROOT + "/config/environment"
+	
+	source_control = Subversion.new(scm_options)
+	project = Project.new(project_name, source_control)
+	
+	projects = Projects.load_all
+	projects << project
+rescue => e
+  if trace
+    raise
+  else
+    STDERR.puts e.message
+    exit -1
+  end
+end
 
-source_control = Subversion.new(scm_options)
-project = Project.new(project_name, source_control)
-
-projects = Projects.load_all
-projects << project
+puts "Project '#{project_name}' added."

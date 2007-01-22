@@ -1,12 +1,7 @@
 #!/usr/bin/env ruby
-ENV["RAILS_ENV"] = 'production'
-require File.dirname(__FILE__) + '/config/boot'
-require 'optparse'
-require 'cruisecontrol/version'
+load "#{File.dirname(__FILE__)}/lib/cruisecontrol/version.rb"
 
 def start
-  ARGV.unshift "99"
-  ARGV.unshift "-p"
   load File.dirname(__FILE__) + "/script/server"
 end
 
@@ -25,41 +20,55 @@ Copyright (C) 2007 ThoughtWorks
   EOL
 end
 
-def general_help
-  puts <<-EOL
-usage: cruise <subcommand> [options] [args]
+def help
+  command = ARGV.shift
+  
+  ARGV.clear << '--help'
+  if command.nil?
+    puts <<-EOL
+Usage: cruise <command> [options] [args]
 
 CruiseControl.rb command-line client, version #{CruiseControl::VERSION::STRING}
-Type 'cruise <subcommand> -h' for help on a specific subcommand.
+Type 'cruise help <command>' for help on a specific command.
 Type 'svn --version' to see the version number.
 
-Available subcommands:
- start      - starts the web server
- add        - adds a project
- builder    - starts the builder for an individual project
+Available commands:
+  start      - starts the web server
+  add        - adds a project
+  builder    - starts the builder for an individual project
 
 CruiseControl.rb is a Continous Integration Server.
 For additional information, see http://cruisecontrolrb.rubyforge.org/
-  EOL
-end
-
-
-action = ARGV.shift
-case action
-  when 'start'      then start
-  when 'add'        then add
-  when 'builder'    then builder
-  when '-v'         then version
-  when '--version'  then version
-  when '-h'         then general_help
-  when 'help'       then general_help
-
-  when nil
-    STDERR.puts "Type 'cruise help' for usage."
-    exit -1
-
+    EOL
+  elsif method_for_command(command)
+    self.send(method_for_command(command))
   else
-    STDERR.puts "Unknown command : '#{action}'"
     STDERR.puts "Type 'cruise help' for usage."
     exit -1
+  end
+  
 end
+
+def method_for_command(command)
+  case command
+  when 'start'                            then :start
+  when 'add'                              then :add
+  when 'builder'                          then :builder
+  when '-v', '--version'                  then :version
+  when '-h', '--help', 'help', '/?', '-?' then :help
+  else nil
+  end
+end
+
+command = ARGV.shift
+if method_for_command(command)
+	self.send(method_for_command(command))
+elsif command.nil?
+  STDERR.puts "Type 'cruise --help' for usage."
+  exit -1
+else
+  STDERR.puts "Unknown command : '#{command}'"
+  STDERR.puts "Type 'cruise --help' for usage."
+  exit -1
+end
+

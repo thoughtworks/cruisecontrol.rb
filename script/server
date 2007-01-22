@@ -1,3 +1,10 @@
 #!/usr/bin/env ruby
 require File.dirname(__FILE__) + '/../config/boot'
+
+# change default port from Rails' usual 3000 to 3333, so that it doesn't clash with other Rails apps 
+# running on the same box.
+if (ARGV & ['-p', '--port']).empty?
+  ARGV << '-p' << '3333'
+end
+
 require 'commands/server'

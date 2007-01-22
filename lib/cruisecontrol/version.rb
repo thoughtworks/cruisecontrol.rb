@@ -1,8 +1,10 @@
 module CruiseControl
   module VERSION #:nodoc:
-    MAJOR = 0
-    MINOR = 2
+    unless defined? MAJOR
+      MAJOR = 0 
+      MINOR = 2
 
-    STRING = [MAJOR, MINOR].join('.')
+      STRING = [MAJOR, MINOR].join('.')
+    end
   end
 end

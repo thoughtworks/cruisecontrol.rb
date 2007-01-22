@@ -52,7 +52,6 @@ Rails::Initializer.run do |config|
 end
 
 # Include your application configuration below
-
 require 'cruisecontrol/version'
 
 # Local configuration, for example, details of the SMTP server for email notification, should be 

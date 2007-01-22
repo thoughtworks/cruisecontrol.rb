@@ -72,7 +72,7 @@ class Build
   end
   
   def rake
-    RUBY_PLATFORM =~ /(:?mswin32|mingw32)/ ? 'rake.cmd' : 'rake'
+    RUBY_PLATFORM =~ /(:?mswin32|mingw32)/ ? %{ruby -e "load"} : 'rake'
   end
 
   def last
