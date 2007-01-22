@@ -18,7 +18,7 @@ class Build
 
   def run
     build_log = artifact 'build.log'
-    Dir.chdir(project.local_checkout) do
+    in_clean_environment_on_local_copy do
       execute rake, :stdout => build_log, :stderr => build_log
     end
     @status.succeed!
@@ -83,6 +83,16 @@ class Build
       end
     end
     nil
+  end
+  
+  def in_clean_environment_on_local_copy(&block)
+    old_rails_env = ENV['RAILS_ENV']
+    ENV.delete('RAILS_ENV')
+    begin 
+      Dir.chdir(project.local_checkout, &block)
+    ensure
+      ENV['RAILS_ENV'] = old_rails_env
+    end
   end
   
   private

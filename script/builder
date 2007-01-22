@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-ENV["RAILS_ENV"] = 'production'
+ENV["RAILS_ENV"] = 'builder'
 require File.dirname(__FILE__) + '/../config/boot'
 require 'optparse'
 
@@ -13,7 +13,7 @@ ARGV.options do |opts|
 
   opts.separator ""
 
-  opts.on("-v", "--verbose", "Verbose logging") { OPTIONS[:verbose] = true }
+  opts.on("-t", "--trace", "Trace-level (verbose) logging") { OPTIONS[:verbose] = true }
   opts.on("-h", "--help",
           "Show this help message.") { puts opts; exit }
 
