@@ -102,7 +102,8 @@ class BuildTest < Test::Unit::TestCase
       expected_build_log = File.join(expected_build_directory, 'build.log')
       expected_redirect_options = {
           :stdout => expected_build_log,
-          :stderr => expected_build_log
+          :stderr => expected_build_log,
+          :escape_quotes => false
         }
       
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
@@ -126,7 +127,8 @@ class BuildTest < Test::Unit::TestCase
       expected_build_log = File.join(expected_build_directory, 'build.log')
       expected_redirect_options = {
         :stdout => expected_build_log,
-        :stderr => expected_build_log
+        :stderr => expected_build_log,
+        :escape_quotes => false
       }
   
       build.expects(:execute).with(build.rake, expected_redirect_options).raises(CommandLine::ExecutionError)

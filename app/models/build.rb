@@ -19,7 +19,7 @@ class Build
   def run
     build_log = artifact 'build.log'
     in_clean_environment_on_local_copy do
-      execute rake, :stdout => build_log, :stderr => build_log
+      execute rake, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
     @status.succeed!
   rescue => e

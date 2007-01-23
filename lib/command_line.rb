@@ -4,8 +4,8 @@ require 'English'
 # borrowed (with modifications) from the RSCM project
 module CommandLine
 
-  QUOTE_REPLACEMENT = (Platform.family == "mswin32") ? "\"" : "\\\""
-  LESS_THAN_REPLACEMENT = (Platform.family == "mswin32") ? "<" : "\\<"
+  QUOTE_REPLACEMENT = (Platform.family == "mswin32") ? '"' : '\\"'
+  LESS_THAN_REPLACEMENT = (Platform.family == "mswin32") ? '<' : '\\<'
 
   class OptionError < StandardError; end
   class ExecutionError < StandardError
@@ -61,6 +61,7 @@ module CommandLine
     raise "Can't have newline in cmd" if cmd =~ /\n/
     options = {
         :dir => Dir.pwd,
+        :escape_quotes => true,
         :env => {},
         :mode => 'r',
         :exitstatus => 0
@@ -117,7 +118,7 @@ module CommandLine
         ""
 
     full_cmd = commands.collect do |c|
-      escaped_command = c.gsub(/"/, QUOTE_REPLACEMENT).gsub(/</, LESS_THAN_REPLACEMENT)
+      escaped_command = options[:escape_quotes] ? c.gsub(/"/, QUOTE_REPLACEMENT).gsub(/</, LESS_THAN_REPLACEMENT) : c
       stdout_prompt_command = options[:stdout] ? "echo #{Platform.prompt} #{escaped_command} >> #{options[:stdout]} && " : ""
       stderr_prompt_command = options[:stderr] && options[:stderr] != options[:stdout] ?
                                 "echo #{Platform.prompt} #{escaped_command} >> #{options[:stderr]} && " :
