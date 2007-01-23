@@ -1,4 +1,6 @@
 TRUNK
+--------------------------------------------------------------------------------
+* 0.2
   - Unified command-line interface to web app, builder and add_project script
   - Default port changed to 3333 (to avoid clashing with other Rails apps)
   - Bugfix: builder invoking Rake with RAILS_ENV OS variable set to 'builder'
