@@ -37,7 +37,8 @@ multiple installations of CC.rb per computer.
 === Assumptions
 
 * CC.rb currently only works with Subversion.
-* To build your_project, builder goes to ~cruise/builds/your_project/work/ and executes 'rake' (i.e., builds the default task).
+* To build your_project, builder goes to ~cruise/builds/your_project/work/ and executes Rake, trying to build 
+  'cruise', 'test' or 'default' target, whichever is defined (see "What will it build?" section for details).
   We realize that this assumption is too narrow, and plan to allow customizable build command soon.
 
 
@@ -47,10 +48,10 @@ multiple installations of CC.rb per computer.
 2. From <cruise>, run "cruise start".
 3. Browse to http://localhost:3333. If the dashboard is running fine and dandy, you will see a page with
    CruiseControl.rb logo.
-4. Run "cruise add your_project --url http://your/project/svn/trunk". Optionally, you can specify username and password by
-   adding " --username <your_user> --password <your_password>" to the command. This create a directory for project's builds 
-   at <cruise>/builds/<your_project>/, and checks out your_project from subversion URL specified to 
-   <cruise>/builds/<your_project>/work/.
+4. Run "cruise add your_project --url <URL of your_project Subversion trunk>". Optionally, you can specify username 
+   and password by adding " --username <your_user> --password <your_password>" to the command. This creates a directory 
+   for project's builds at <cruise>/builds/<your_project>/, and checks out your_project from subversion URL specified 
+   to <cruise>/builds/<your_project>/work/.
 5. Refresh the dashboard. It should now display your_project, with status "Never built".
 6. Go to <cruise>/builds/<your_project>/work/ and run the build. Do whatever is necessary to make it pass.
 7. Go back to <cruise> and run "cruise build your_project". This should build your_project, place build outputs into
@@ -60,6 +61,7 @@ multiple installations of CC.rb per computer.
    and see if builder can detect and build it.  Check your_project status in the dashboard.
 
    Hint: If you want to run your server on a different port, just use "cruise start -p <port>". 
+
    Hint: "cruise help" displays a list of commands available, "cruise help <command>" displays options for each command.
 
 
@@ -82,6 +84,24 @@ If CC.rb is unpacked into <cruise> directory, then:
   <cruise>/config/site_config.rb is the file where you can make centralized changes to the configuration of dashboard 
   and all builders.
 
+
+=== What will it build?
+
+CC.rb assumes that your project is built by Rake, and Rakefile is in the root directory of the project. Just running 
+'default' Rake task is not good enough, because in a standard Rails application this task needs an up-to-date 
+development database to work. On a continuous build server there is usually no such thing. Therefore, CC.rb uses the 
+following logic to determine what to build:
+1. First, CC.rb loads all *.rake files from <cruise>/tasks/, and then the Rakefile of your_project. Then it invokes 
+   cc:build task (defined in <cruise>/tasks/cc_build.rake). That task sets RAILS_ENV to 'test' 
+   (unless your Rakefile already set it to something else), looks at other Rake tasks loaded, and 
+   decides what to do.
+2. If there is 'cruise' target, it simply invokes that target.
+3. If there is no 'cruise' target, then it will try to prepare the test database by executing 'db:test:purge'
+   and 'db:migrate' tasks (if they are defined in your build), then calling 'test' target.
+4. Finally, if there is no 'test' target, CC.rb will try to invoke 'default' target.
+
+Hint: if you define 'cruise' task in your_project, you should make it dependent on 'db:test:purge' and 
+'db:migrate', and/or whatever is necessary to bring test environment up to date.
 
 === Email notification
 

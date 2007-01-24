@@ -2,6 +2,8 @@ namespace :cc do
 
   task 'build' do
 
+    ENV['RAILS_ENV'] ||= 'test'
+
     # if the project defines 'cruise' Rake task, that's all we need to do
     if Rake.application.lookup('cruise')
       Rake::Task['cruise'].invoke
@@ -12,7 +14,6 @@ namespace :cc do
         Rake::Task['db:test:purge'].invoke
       end
       if Rake.application.lookup('db:migrate')
-        ENV['RAILS_ENV'] ||= 'test'
         Rake::Task['db:migrate'].invoke
       end
 

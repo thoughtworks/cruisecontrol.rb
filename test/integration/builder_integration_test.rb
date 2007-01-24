@@ -91,8 +91,8 @@ class IntegrationTest < Test::Unit::TestCase
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
       
-      assert build_log.include?("RAILS_ENV=nil\ncruise invoked\n"), 
-          '"RAILS_ENV=nil\ncruise invoked\n" not found in build log:' + "\n" + build_log
+      assert build_log.include?("RAILS_ENV=\"test\"\ncruise invoked\n"), 
+          '"RAILS_ENV="test"\ncruise invoked\n" not found in build log:' + "\n" + build_log
     end
     
   end
