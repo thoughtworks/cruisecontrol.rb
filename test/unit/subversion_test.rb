@@ -59,7 +59,7 @@ integration test does a checkout
   def test_latest_revision
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD --verbose").yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:BASE --verbose").yields(StringIO.new(LOG_ENTRY))
 
     revision = svn.latest_revision(dummy_project)
 
