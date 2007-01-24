@@ -51,7 +51,7 @@ class IntegrationTest < Test::Unit::TestCase
     end
   end
 
-  def test_build_if_necessary_for_a_failling_build
+  def test_build_if_necessary_for_a_failing_build
     with_project('failing_project', :revision => 6) do |project, sandbox, svn|
       result = project.build_if_necessary
 
@@ -88,7 +88,7 @@ class IntegrationTest < Test::Unit::TestCase
       
       project = Project.new('passing_project', svn, "#{sandbox.root}/#{project_name}/work")
       project.path = "#{sandbox.root}/#{project_name}"
-      
+
       block.call(project, sandbox, svn)
     end
   end
