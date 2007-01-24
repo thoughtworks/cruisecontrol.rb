@@ -94,7 +94,7 @@ end
     end
   end
 
-  def build(revisions)
+  def build(revisions = [@source_control.latest_revision(self)])
     last_revision = revisions.last
     build = Build.new(self, last_revision.number)
     log_changeset(build.artifacts_directory, revisions)

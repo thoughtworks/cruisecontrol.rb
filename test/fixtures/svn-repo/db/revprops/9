@@ -1,0 +1,13 @@
+K 10
+svn:author
+V 7
+alexeyv
+K 8
+svn:date
+V 27
+2007-01-24T22:03:49.375000Z
+K 7
+svn:log
+V 17
+display RAILS_ENV
+END

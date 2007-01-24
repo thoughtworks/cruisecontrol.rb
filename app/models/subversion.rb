@@ -45,7 +45,9 @@ class Subversion
   end
 
   def latest_revision(project)
-    svn_output = execute_in_local_copy(project, "svn --non-interactive log --revision HEAD:BASE --verbose")
+    last_locally_known_revision = info(project)['Last Changed Rev']
+    svn_output = execute_in_local_copy(project, 
+        "svn --non-interactive log --revision HEAD:#{last_locally_known_revision} --verbose")
     SubversionLogParser.new.parse_log(svn_output).first
   end
 

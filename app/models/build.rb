@@ -72,9 +72,8 @@ class Build
   end
   
   def rake
-    # Important note: --nosearch flag here prevents CC.rb from building itslef when a project has
-    # no Rakefile
-    %{ruby -e "require 'rake'; ARGV << '--nosearch'; Rake.application.run"}
+    # Important note: --nosearch flag here prevents CC.rb from building itslef when a project has no Rakefile
+    %{ruby -e "require 'rake'; load '#{RAILS_ROOT}/tasks/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'; Rake.application.run"}
   end
 
   def last

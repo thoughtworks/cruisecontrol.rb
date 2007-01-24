@@ -74,6 +74,29 @@ class IntegrationTest < Test::Unit::TestCase
       # test existence and contents of log files
     end
   end
+  
+  def test_builder_should_set_RAILS_ENV_to_test_and_invoke_db_migrate_and_test_instead_of_if_these_tasks_are_defined
+    with_project('project_with_db_migrate') do |project, sandbox, svn|
+      build = project.build
+      build_log = File.read("#{build.artifacts_directory}/build.log")
+      
+      assert build_log.include?("RAILS_ENV=test\ndb:migrate invoked\ndefault invoked\n"), 
+          '"RAILS_ENV=test\ndb:migrate invoked\ntest invoked\n" not found in build log:' + "\n" + build_log
+    end
+    
+  end
+
+  def test_builder_should_clear_RAILS_ENV_and_invoke_cruise_if_this_task_is_defined
+    with_project('project_with_cruise_and_default_tasks') do |project, sandbox, svn|
+      build = project.build
+      build_log = File.read("#{build.artifacts_directory}/build.log")
+      
+      assert build_log.include?("RAILS_ENV=nil\ncruise invoked\n"), 
+          '"RAILS_ENV=nil\ncruise invoked\n" not found in build log:' + "\n" + build_log
+    end
+    
+  end
+
 
   def fixture_repository_url
     repository_path = File.expand_path("#{RAILS_ROOT}/test/fixtures/svn-repo")
