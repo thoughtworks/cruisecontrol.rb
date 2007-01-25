@@ -3,6 +3,8 @@ TRUNK
   - when build is running, OS variable CC_BUILD_ARTIFACTS is pointing to the build artifacts directory
   - Bugfix: explicitly require 'rubygems' before trying to require 'rake', do not rely on RUBYOPT=-rubygems to be set.
   - customizable Rake task and build command
+  - customizable polling interval
+  - Bugfix: Adding a project a second time deletes the original
 --------------------------------------------------------------------------------
 * 0.2
   - Unified command-line interface to web app, builder and add_project script

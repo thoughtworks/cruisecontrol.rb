@@ -27,25 +27,29 @@ class Projects
   
   def <<(project)
     raise "project named #{project.name.inspect} already exists" if @list.include?(project)
-    @list << project
-    save_project(project)
-
-    work_dir = "#{@dir}/#{project.name}/work"
-    FileUtils.mkdir_p work_dir
-    project.source_control.checkout work_dir
-    
-    self
-  rescue
-    FileUtils.rm_rf "#{@dir}/#{project.name}"
-    raise
+    begin
+      @list << project
+      save_project(project)
+      checkout_local_copy(project)  
+      self
+    rescue
+      FileUtils.rm_rf "#{@dir}/#{project.name}"
+      raise
+    end
   end
 
   def save_project(project)
-    path = @dir + "/" + project.name
-    FileUtils::makedirs path
-    File.open(path + "/project_config.rb", "w") {|f| f << project.memento}
+    project.path = File.join(@dir, project.name)
+    FileUtils.mkdir_p project.path
+    File.open(File.join(project.path, "project_config.rb"), "w") { |f| f << project.memento }
   end
 
+  def checkout_local_copy(project)
+    work_dir = File.join(project.path, 'work')
+    FileUtils.mkdir_p work_dir
+    project.source_control.checkout work_dir
+  end
+  
   # delegate everything else to the underlying @list
   def method_missing(method, *args, &block)
     @list.send(method, *args, &block)

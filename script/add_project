@@ -42,14 +42,13 @@ begin
 	
 	source_control = Subversion.new(scm_options)
 	project = Project.new(project_name, source_control)
-	
 	projects = Projects.load_all
 	projects << project
 rescue => e
   if trace
     raise
   else
-    STDERR.puts e.message
+    STDERR.puts "FAILED: #{e.message}"
     exit -1
   end
 end

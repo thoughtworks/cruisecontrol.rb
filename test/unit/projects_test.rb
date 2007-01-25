@@ -39,7 +39,7 @@ class ProjectsTest < Test::Unit::TestCase
     end
   end
 
-  def test_add_checkouts_fresh_project
+  def test_add_checks_out_fresh_project
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
 
@@ -68,10 +68,11 @@ class ProjectsTest < Test::Unit::TestCase
   def test_can_not_add_project_with_same_name
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
-      projects << @one
+      projects << @one      
       assert_raises('project named "one" already exists') do
-        projects << @one
+        projects << @one        
       end
+      assert File.directory?(@one.path), "Project directory does not exist."
     end
   end
 
