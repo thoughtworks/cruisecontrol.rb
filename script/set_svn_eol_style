@@ -4,10 +4,14 @@ RAILS_DEFAULT_LOGGER = Logger.new(nil)
 require 'log'
 require 'command_line'
 
-VERBOTTEN_PATHS = ['.svn', 'scripts', 'builds', 'cruise.cmd', 'vendor', 'log', '.iml', '.ipr', '.cmd', 'svn-repo']
+VERBOTTEN_PATHS = ['.svn', /^script/, /^builds/, /^cruise.cmd$/, /^vendor/, /^log/, /.iml$/, /.ipr$/, /.cmd$/, 
+                   'svn-repo', /^tmp/, /^cruise$/]
 
 Dir['**/*'].each do |path|
-  if File.file?(path) and not VERBOTTEN_PATHS.any? { |verbotten_path| path.include?(verbotten_path) }
+  if File.file?(path) and 
+     not VERBOTTEN_PATHS.any? do |verbotten_path| 
+       verbotten_path.is_a?(Regexp) ? path =~ verbotten_path : path.include?(verbotten_path)
+     end
     begin
     	CommandLine.execute "svn propset svn:eol-style native #{path}" 
     	puts "OK"
