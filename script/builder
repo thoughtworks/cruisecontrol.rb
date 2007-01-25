@@ -47,7 +47,7 @@ begin
   STDOUT.puts "Builder for project '#{project.name}' started"
   Log.event "Builder for project '#{project.name}' started"
 
-  Schedule.new(project, :poll_interval_sec => 10).run
+  project.scheduler.run
 rescue => e
   begin 
     Log.error(e.message)

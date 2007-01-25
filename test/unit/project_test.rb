@@ -14,7 +14,20 @@ class ProjectTest < Test::Unit::TestCase
     assert_equal("bob", @project.source_control.username)
   end
 
-  def test_memento
+  def test_memento_with_all_defaults
+    default_project = Project.new("hamsters", Subversion.new)
+    
+    expected_result = <<-EOL
+Project.configure do |project|
+  project.email_notifier.emails = [
+
+  ]
+end
+    EOL
+    assert_equal expected_result, default_project.memento
+  end
+
+  def test_memento_with_email_notifications
     expected_result = <<-EOL
 Project.configure do |project|
   project.source_control = Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')
@@ -28,6 +41,25 @@ end
 
     @project.email_notifier.emails << "jss@thoughtworks.com" << "andrew@gmail.com" << "bob@andrews.com"
     assert_equal expected_result, @project.memento
+  end
+
+  def test_memento_with_custom_polling_interval
+    expected_result = <<-EOL
+Project.configure do |project|
+  project.source_control = Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')
+  project.scheduler.polling_interval = 30.seconds
+  project.email_notifier.emails = [
+
+  ]
+end
+    EOL
+    
+    @project.scheduler.polling_interval = 30
+    assert_equal expected_result, @project.memento
+  end
+
+  def test_default_scheduler
+    assert_equal PollingScheduler, @project.scheduler.class
   end
 
   def test_builds

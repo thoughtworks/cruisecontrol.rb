@@ -27,7 +27,7 @@ class Project
   end
 
   attr_reader :name, :plugins, :build_command, :rake_task
-  attr_accessor :source_control, :path, :local_checkout
+  attr_accessor :source_control, :path, :local_checkout, :scheduler
 
   def initialize(name, source_control, local_checkout = nil)
     @name, @source_control, @local_checkout = name, source_control, local_checkout
@@ -38,6 +38,7 @@ class Project
       plugin_instance = plugin_name.to_s.camelize.constantize.new(self)
       self.add_plugin(plugin_instance)
     end
+    @scheduler = PollingScheduler.new(self)
   end
 
   def ==(another)
@@ -70,11 +71,13 @@ class Project
   end
 
   def memento
-    memento = ["project.source_control = #{source_control.memento}"]
+    memento = []
+    memento << "  project.source_control = #{source_control.memento}" unless source_control.memento.nil?
+    memento << scheduler.memento
     memento += notify(:memento)
     return <<-EOL
 Project.configure do |project|
-  #{memento.join("\n")}
+#{memento.compact.join("\n")}
 end
     EOL
   end
@@ -152,9 +155,10 @@ end
       plugin.send(sym, *args) if plugin.respond_to?(sym)
     end.compact
   end
+
 end
 
 plugins = File.expand_path(File.dirname(__FILE__) + '/../../lib/cruise_plugins/*.rb')
 Dir[plugins].each do |plugin_file|
-  load plugin_file # this has to be load instead of require for the dev build
+  load plugin_file # this has to be loaded instead of required, for the dev build
 end

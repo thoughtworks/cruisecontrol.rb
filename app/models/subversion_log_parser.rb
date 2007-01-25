@@ -1,8 +1,5 @@
 require 'date'
 
-require 'revision'
-require 'changeset_entry'
-
 class SubversionLogParser
 
   def parse_log(lines)

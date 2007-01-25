@@ -45,9 +45,12 @@ multiple installations of CC.rb per computer.
 === Installation
 
 1. Download and unpack CruiseControl.rb (we'll call the place you unpack it <cruise>)
+
 2. From <cruise>, run "cruise start".
+
 3. Browse to http://localhost:3333. If the dashboard is running fine and dandy, you will see a page with
    CruiseControl.rb logo.
+
 4. Run "cruise add your_project --url <URL of your_project Subversion trunk>". Optionally, you can specify username 
    and password by adding " --username <your_user> --password <your_password>" to the command. This creates a directory 
    for project's builds at <cruise>/builds/<your_project>/, and checks out your_project from subversion URL specified 
@@ -58,9 +61,11 @@ multiple installations of CC.rb per computer.
    Rakefile then ends up in <cruise>/builds/<your_project>/work/trunk/ and CC.rb does not see it there.
 
 5. Refresh the dashboard. It should now display your_project, with status "Never built".
+
 6. Go to <cruise>/builds/<your_project>/work/ and make the build work. For a regular Rails app, this involves creating 
    test database, editing database.yml, performing "rake RAILSENV=test db:migrate"
    and making sure that "rake test" passes.
+
 7. Go back to <cruise> and run "cruise build your_project". This should build your_project, place build outputs into
    <cruise>/builds/<your_project>/build-<revision-number>/
  
@@ -98,13 +103,17 @@ CC.rb assumes that your project is built by Rake, and Rakefile is in the root di
 'default' Rake task is not good enough, because in a standard Rails application this task needs an up-to-date 
 development database to work. On a continuous build server there is usually no such thing. Therefore, CC.rb uses the 
 following logic to determine what to build:
+
 1. First, CC.rb loads all *.rake files from <cruise>/tasks/, and then the Rakefile of your_project. Then it invokes 
    cc:build task (defined in <cruise>/tasks/cc_build.rake). That task sets RAILS_ENV to 'test' 
    (unless your Rakefile already set it to something else), looks at other Rake tasks loaded, and 
    decides what to do.
+
 2. If there is 'cruise' target, it simply invokes that target.
+
 3. If there is no 'cruise' target, then it will try to prepare the test database by executing 'db:test:purge'
    and 'db:migrate' tasks (if they are defined in your build), then calling 'test' target.
+
 4. Finally, if there is no 'test' target, CC.rb will try to invoke 'default' target.
 
 Hint: if you define 'cruise' task in your_project, you should make it dependent on 'db:test:purge' and 
@@ -139,12 +148,10 @@ anyway.
 === What should I do with custom build artifacts?
 
   your_project may have a special build task, producing some output that you want to keep. Code coverage analysis is a 
-  good example.
-  
-  Before running the build, CC.rb sets OS variable CC_BUILD_ARTIFACTS to the directory where the build artifacts are 
+  good example. Before running the build, CC.rb sets OS variable CC_BUILD_ARTIFACTS to the directory where the build artifacts are 
   collected. Make sure that your special task writes its output to that directory.
   
-  Displaying custom task outputs on dashnoard is not implemented yet.
+  Displaying custom task outputs on the dashboard is not implemented yet.
   
 
 === Email notification
@@ -158,7 +165,39 @@ to send email, and who to send it to. Do the following:
 2. Tell the builder, whom do you want to receive build notices. Copy ~cruise/config/project_config.rb_example to 
    ~cruise/builds/your_project/project_config.rb and edit the list of email addresses there.
 
+
+=== Build scheduling
+
+By default, the builder polls Subversion every 10 seconds for new revisions. This can be changed by adding the 
+following line to the ~cruise/builds/your_project/project_config.rb:
+
+  Project.configure do |project|
+    ...
+    project.scheduler.polling_interval = 5.minutes
+    ...
+  end
+
+What if you want a scheduler with some interesting logic. Well, a default scheduler can be substituted by placing 
+your own scheduler implementation intpo the plugins directory and writing in 
+~cruise/builds/your_project/project_config.rb something like this:
+
+  Project.configure do |project|
+    ...
+    project.scheduler = MyCustomScheduler.new(project)
+    ...
+  end
+
+After initializing everything, and loading the project (step that includes evaluation of project_config.rb), the
+builder simply invokes project.scheduler.run. Look at app/models/polling_scheduler.rb to get the idea how 
+should scheduler interact with the project. 
+
+Beware that dashboard overwrites project_config.rb when you make changes to project configuration via web interface. 
+To play nicely with that, your custom scheduler must implement a memento() method, that 
+should return a line like this: "  project.scheduler = MyCustomScheduler.new(project)". Again, look at 
+app/models/polling_scheduler.rb for the inspiration.
+
 === Troubleshooting and support
+
 Beware, at the time of this writing, CC.rb is very young and not very stable. Good news is that it's simple (much, much 
 simpler than other CruiseControl incarnations). The dashboard is just a small Rails app, and the builder is little 
 more than a dumb, single-threaded Ruby script. Therefore, it's easy to debug. So, you are your own support hotline. 

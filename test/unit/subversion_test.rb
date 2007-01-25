@@ -45,6 +45,10 @@ integration test does a checkout
         "Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')",
         svn.memento)
   end
+
+  def test_memento_for_all_defaults
+    assert_nil Subversion.new.memento
+  end
   
   def test_update_with_revision_number
     revision_number = 10

@@ -76,7 +76,8 @@ class Subversion
     options << ":url => '#{url}'" if url
     options << ":username => '#{username}'" if username
     options << ":password => '#{password}'" if password
-    "Subversion.new(#{options.join(", ")})"
+    
+    options.empty? ? nil : "Subversion.new(#{options.join(", ")})"
   end
 
   def execute_in_local_copy(project, command)
