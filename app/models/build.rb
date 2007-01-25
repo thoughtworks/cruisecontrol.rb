@@ -91,7 +91,9 @@ class Build
     # If we don't clean RAILS_ENV OS variable, tests of the project we are building would be 
     # executed under 'builder' Rails environment
     ENV.delete('RAILS_ENV')
-    begin 
+    # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
+    ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
+    begin
       Dir.chdir(project.local_checkout, &block)
     ensure
       ENV['RAILS_ENV'] = old_rails_env

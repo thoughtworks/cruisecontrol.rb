@@ -1,4 +1,6 @@
 TRUNK
+  - builder is building 'cruise', 'test' or 'default' target, depending on what is defined in the project
+  - when build is running, OS variable CC_BUILD_ARTIFACTS is pointing to the build artifacts directory
 --------------------------------------------------------------------------------
 * 0.2
   - Unified command-line interface to web app, builder and add_project script

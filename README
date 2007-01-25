@@ -105,6 +105,18 @@ following logic to determine what to build:
 Hint: if you define 'cruise' task in your_project, you should make it dependent on 'db:test:purge' and 
 'db:migrate', and/or whatever is necessary to bring test environment up to date.
 
+
+=== What should I do with custom build artifacts?
+
+  your_project may have a special build task, producing some output that you want to keep. Code coverage analysis is a 
+  good example.
+  
+  Before running the build, CC.rb sets OS variable CC_BUILD_ARTIFACTS to the directory where the build artifacts are 
+  collected. Make sure that your special task writes its output to that directory.
+  
+  Displaying custom task outputs on dashnoard is not implemented yet.
+  
+
 === Email notification
 
 CruiseControl.rb can send email notices whenever build fails or is fixed. To make it happen, you need to tell it how 
