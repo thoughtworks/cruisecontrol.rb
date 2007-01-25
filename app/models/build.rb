@@ -103,6 +103,7 @@ class Build
     ENV.delete('RAILS_ENV')
     # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
     ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
+    ENV['CC_RAKE_TASK'] = self.rake_task
     begin
       Dir.chdir(project.local_checkout, &block)
     ensure

@@ -4,8 +4,13 @@ namespace :cc do
 
     ENV['RAILS_ENV'] ||= 'test'
 
+    # if custom rake task defined, invoke that
+    if ENV['CC_RAKE_TASK']
+      custom_task = ENV['CC_RAKE_TASK']
+      raise "Custom rake task '#{custom_task}' not defined" unless Rake.application.lookup(custom_task)
+      Rake::Task[custom_task].invoke
     # if the project defines 'cruise' Rake task, that's all we need to do
-    if Rake.application.lookup('cruise')
+    elsif Rake.application.lookup('cruise')
       Rake::Task['cruise'].invoke
     else
       # perform standard Rails database cleanup/preparation tasks if they are defined in project
