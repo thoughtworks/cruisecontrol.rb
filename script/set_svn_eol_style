@@ -4,7 +4,7 @@ RAILS_DEFAULT_LOGGER = Logger.new(nil)
 require 'log'
 require 'command_line'
 
-VERBOTTEN_PATHS = ['.svn', 'scripts', 'builds', 'cruise.cmd', 'vendor', 'log']
+VERBOTTEN_PATHS = ['.svn', 'scripts', 'builds', 'cruise.cmd', 'vendor', 'log', '.iml', '.ipr', '.cmd', 'svn-repo']
 
 Dir['**/*'].each do |path|
   if File.file?(path) and not VERBOTTEN_PATHS.any? { |verbotten_path| path.include?(verbotten_path) }
