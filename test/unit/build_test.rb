@@ -161,4 +161,24 @@ class BuildTest < Test::Unit::TestCase
     end
   end
 
+  def test_build_command_customization
+    with_sandbox_project do |sandbox, project|
+      build_with_defaults = Build.new(project, '1')
+      assert_match(/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'/, build_with_defaults.command)
+      assert_nil build_with_defaults.rake_task
+  
+      project.rake_task = 'my_build_task'
+      build_with_custom_rake_task = Build.new(project, '2')
+      assert_match(/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'/, build_with_custom_rake_task.command)
+      assert_equal 'my_build_task', build_with_custom_rake_task.rake_task
+  
+      project.rake_task = nil
+      project.build_command = 'my_build_script.sh'
+      build_with_custom_script = Build.new(project, '3')
+      assert_equal 'my_build_script.sh', build_with_custom_script.command
+      assert_nil build_with_custom_script.rake_task
+    end
+
+  end
+
 end

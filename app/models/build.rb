@@ -19,7 +19,7 @@ class Build
   def run
     build_log = artifact 'build.log'
     # it's important to figure out build command before doing chdir, because it may be expanding some relative paths
-    build_command = rake
+    build_command = self.command
     in_clean_environment_on_local_copy do
       execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
@@ -72,6 +72,14 @@ class Build
   def artifact(file_name)
     File.join(artifacts_directory, file_name)
   end
+
+  def command
+    project.build_command or rake
+  end
+  
+  def rake_task
+    project.rake_task
+  end
   
   def rake
     # Important note: --nosearch flag here prevents CC.rb from building itslef when a project has no Rakefile
@@ -101,7 +109,7 @@ class Build
       ENV['RAILS_ENV'] = old_rails_env
     end
   end
-  
+
   private
   
   class CoverageReportsRepository

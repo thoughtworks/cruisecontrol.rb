@@ -140,6 +140,19 @@ end
       @svn.verify
     end
   end
+  
+  def test_either_rake_task_or_build_command_can_be_set_but_not_both
+    @project.rake_task = 'foo'
+    assert_raises("Cannot set build_command when rake_task is already defined") do
+      @project.build_command = 'foo'
+    end
+
+    @project.rake_task = nil
+    @project.build_command = 'foo'
+    assert_raises("Cannot set rake_task when build_command is already defined") do
+      @project.rake_task = 'foo'
+    end
+  end
 
   def new_revision(number)
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])

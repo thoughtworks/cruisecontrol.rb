@@ -26,7 +26,7 @@ class Project
     yield @project
   end
 
-  attr_reader :name, :plugins
+  attr_reader :name, :plugins, :build_command, :rake_task
   attr_accessor :source_control, :path, :local_checkout
 
   def initialize(name, source_control, local_checkout = nil)
@@ -42,6 +42,16 @@ class Project
 
   def ==(another)
     another.is_a?(Project) and another.name == self.name
+  end
+
+  def build_command=(value)
+    raise 'Cannot set build_command when rake_task is already defined' if @rake_task
+    @build_command = value
+  end
+
+  def rake_task=(value)
+    raise 'Cannot set rake_task when build_command is already defined' if @build_command
+    @rake_task = value
   end
 
   def builds
