@@ -18,8 +18,10 @@ class Build
 
   def run
     build_log = artifact 'build.log'
+    # it's important to figure out build command before doing chdir, because it may be expanding some relative paths
+    build_command = rake
     in_clean_environment_on_local_copy do
-      execute rake, :stdout => build_log, :stderr => build_log, :escape_quotes => false
+      execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
     @status.succeed!
   rescue => e
@@ -73,7 +75,7 @@ class Build
   
   def rake
     # Important note: --nosearch flag here prevents CC.rb from building itslef when a project has no Rakefile
-    %{ruby -e "require 'rake'; load '#{RAILS_ROOT}/tasks/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'; Rake.application.run"}
+    %{ruby -e "require 'rubygems' rescue nil; require 'rake'; load '#{File.expand_path(RAILS_ROOT)}/tasks/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'; Rake.application.run"}
   end
 
   def last
@@ -109,7 +111,7 @@ class Build
 
     def [](coverage_type)
       File.read("#{@artifacts_directory}/coverage-#{coverage_type}.log") rescue ""
-    end    
+    end
   end
 
   # TODO: Does it need to exist? Can't a Struct/OpenStruct be used instead of this class?
