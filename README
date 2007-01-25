@@ -51,7 +51,12 @@ multiple installations of CC.rb per computer.
 4. Run "cruise add your_project --url <URL of your_project Subversion trunk>". Optionally, you can specify username 
    and password by adding " --username <your_user> --password <your_password>" to the command. This creates a directory 
    for project's builds at <cruise>/builds/<your_project>/, and checks out your_project from subversion URL specified 
-   to <cruise>/builds/<your_project>/work/.
+   to <cruise>/builds/<your_project>/work/. 
+
+   Hint: Rakefile of your_project should be in <cruise>/builds/<your_project>/work/ directory, not anywhere under 
+   it. A common mistake is to specify in --url option the root of project's SVN repository instead of the trunk. 
+   Rakefile then ends up in <cruise>/builds/<your_project>/work/trunk/ and CC.rb does not see it there.
+
 5. Refresh the dashboard. It should now display your_project, with status "Never built".
 6. Go to <cruise>/builds/<your_project>/work/ and make the build work. For a regular Rails app, this involves creating 
    test database, editing database.yml, performing "rake RAILSENV=test db:migrate"
