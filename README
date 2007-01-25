@@ -92,7 +92,7 @@ If CC.rb is unpacked into <cruise> directory, then:
   and all builders.
 
 
-=== What will it build?
+=== What will it build by default?
 
 CC.rb assumes that your project is built by Rake, and Rakefile is in the root directory of the project. Just running 
 'default' Rake task is not good enough, because in a standard Rails application this task needs an up-to-date 
@@ -110,6 +110,31 @@ following logic to determine what to build:
 Hint: if you define 'cruise' task in your_project, you should make it dependent on 'db:test:purge' and 
 'db:migrate', and/or whatever is necessary to bring test environment up to date.
 
+
+=== How to change what the build does?
+'cruise' may be the task for a quick build, but you may also want to run a long build with all acceptance tests 
+included. This can be done by assigning project.rake_task attribute in <cruise>/builds/your_project/project_config.rb:
+
+  Project.configure do |project|
+    ...
+    project.rake_task = 'Big_Bertha_build'
+    ...
+  end
+
+Or you may not want to deal with Rake at all, but build your project by shell script, make or Ant (yes, 
+CC.rb can cope with a Java project). This can be done by assigning project.build_command attribute in the 
+same <cruise>/builds/your_project/project_config.rb file, like this:
+  Project.configure do |project|
+    ...
+    project.build_command = 'my_build_script.sh'
+    ...
+  end
+
+Just like with Rake, CC.rb will change current working directory to <cruise>/builds/your_project/work/, invoke 
+specified command and look at the exit code to determine whether the build passed or failed.
+
+Note that you cannot specify both rake_task and build_command attributes project_config.rb. It doesn't make sense, 
+anyway.
 
 === What should I do with custom build artifacts?
 

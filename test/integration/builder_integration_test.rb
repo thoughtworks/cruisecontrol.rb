@@ -97,6 +97,32 @@ class IntegrationTest < Test::Unit::TestCase
     
   end
 
+  def test_custom_build_command
+    with_project('project_with_cruise_and_default_tasks') do |project, sandbox, svn|
+      project.build_command = 'echo Vasya_was_here'
+
+      build = project.build
+      build_log = File.read("#{build.artifacts_directory}/build.log")
+      
+      assert build_log.include?("Vasya_was_here"), 
+          '"Vasya_was_here" not found in build log:' + "\n" + build_log
+    end
+    
+  end
+
+  def test_custom_rake_task
+    with_project('project_with_custom_rake_task') do |project, sandbox, svn|
+      project.rake_task = 'my_build'
+
+      build = project.build
+      build_log = File.read("#{build.artifacts_directory}/build.log")
+      
+      assert build_log.include?("my_build invoked\n"), 
+          '"my_build invoked\n" not found in build log:' + "\n" + build_log
+    end
+    
+  end
+
 
   def fixture_repository_url
     repository_path = File.expand_path("#{RAILS_ROOT}/test/fixtures/svn-repo")
