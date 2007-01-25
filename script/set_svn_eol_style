@@ -1,8 +1,18 @@
 $: << './lib'
+require 'logger'
+RAILS_DEFAULT_LOGGER = Logger.new(nil)
+require 'log'
 require 'command_line'
 
+VERBOTTEN_PATHS = ['.svn', 'scripts', 'builds', 'cruise.cmd', 'vendor', 'log']
+
 Dir['**/*'].each do |path|
-  if File.file?(path) and not path.include?('.svn') and not path.include?('vendor/rails')
-    CommandLine.execute "svn propset svn:eol-style native #{path}" rescue nil
+  if File.file?(path) and not VERBOTTEN_PATHS.any? { |verbotten_path| path.include?(verbotten_path) }
+    begin
+    	CommandLine.execute "svn propset svn:eol-style native #{path}" 
+    	puts "OK"
+    rescue => e
+      puts "FAILED: #{e.message}"
+    end
   end
 end
