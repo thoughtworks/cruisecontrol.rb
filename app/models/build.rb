@@ -49,6 +49,10 @@ class Build
     @status = value
   end
 
+  def changeset
+    File.read(artifact('changeset.log')) rescue ""
+  end
+
   def output
     File.read(artifact('build.log')) rescue ""
   end
@@ -126,11 +130,11 @@ class Build
   # TODO: Does it need to exist? Can't a Struct/OpenStruct be used instead of this class?
   # Don't know how to put this class to use Status...
   class NilBuild
-    attr_reader :project, :label, :status, :time, :output
+    attr_reader :project, :label, :status, :time, :changeset, :output
 
     def initialize
       @project = nil
-      @label = @time = @output = '-'
+      @label = @time = @changeset = @output = '-'
       @status = :never_built
     end
     
