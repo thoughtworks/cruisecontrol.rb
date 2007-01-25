@@ -1,0 +1,13 @@
+K 10
+svn:author
+V 7
+alexeyv
+K 8
+svn:date
+V 27
+2007-01-25T00:37:14.234375Z
+K 7
+svn:log
+V 55
+Real Rails project with database and default rake tasks
+END

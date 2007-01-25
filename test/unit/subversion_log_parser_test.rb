@@ -64,6 +64,34 @@ EOF
     assert_equal expected, parse_log(LOG_ENTRY_WITH_MULTIPLE_ENTRIES)
   end
 
+DV_LOG = <<-EOL
+------------------------------------------------------------------------
+r127 | (no author) | 2007-01-02 06:56:05 +0300 (Tue, 02 Jan 2007) | 1 line
+Changed paths:
+   M /waypoints/app/controllers/categories_controller.rb
+   M /waypoints/app/controllers/mywaypoints_controller.rb
+   M /waypoints/app/models/category.rb
+   A /waypoints/app/views/categories/_form.rhtml
+   A /waypoints/app/views/categories/_list_stripes.rhtml
+   A /waypoints/app/views/categories/edit.rhtml
+   A /waypoints/app/views/categories/list.rhtml
+   A /waypoints/app/views/categories/new.rhtml
+   A /waypoints/app/views/layouts/_guest_left_tab.rhtml
+   A /waypoints/app/views/layouts/_user_left_tab.rhtml
+   M /waypoints/app/views/layouts/application.rhtml
+   M /waypoints/app/views/layouts/mywaypoints_show.rhtml
+   M /waypoints/app/views/layouts/waypoints_show.rhtml
+   M /waypoints/app/views/mywaypoints/list.rhtml
+   M /waypoints/public/stylesheets/scaffold.css
+
+categories added
+------------------------------------------------------------------------
+EOL
+
+  def test_DV
+    parse_log(LOG_ENTRY_WITH_MULTIPLE_ENTRIES)
+  end
+
   def test_can_parse_UPDATE_OUTPUT
     expected_result = [
       ChangesetEntry.new('A  ', 'failing_project'),

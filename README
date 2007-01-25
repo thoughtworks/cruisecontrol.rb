@@ -53,7 +53,9 @@ multiple installations of CC.rb per computer.
    for project's builds at <cruise>/builds/<your_project>/, and checks out your_project from subversion URL specified 
    to <cruise>/builds/<your_project>/work/.
 5. Refresh the dashboard. It should now display your_project, with status "Never built".
-6. Go to <cruise>/builds/<your_project>/work/ and run the build. Do whatever is necessary to make it pass.
+6. Go to <cruise>/builds/<your_project>/work/ and make the build work. For a regular Rails app, this involves creating 
+   test database, editing database.yml, performing "rake RAILSENV=test db:migrate"
+   and making sure that "rake test" passes.
 7. Go back to <cruise> and run "cruise build your_project". This should build your_project, place build outputs into
    <cruise>/builds/<your_project>/build-<revision-number>/
  
@@ -127,7 +129,9 @@ OK, that was the pep talk. If you have an issue that you cannot fix on your own,
 
 * http://rubyforge.org/frs/?group_id=2918
 
+
 ===Project web site
+
 * http://rubyforge.org/projects/cruisecontrolrb/
 
 
