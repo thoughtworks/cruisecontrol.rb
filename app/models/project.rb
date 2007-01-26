@@ -166,7 +166,7 @@ end
 
 end
 
-plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', '*.rb')]
+plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*.rb')]
 plugins.each do |plugin|
   plugin_name_without_extension = File.basename(plugin)[0..-4]
   require plugin_name_without_extension

@@ -58,3 +58,5 @@ require 'cruisecontrol/version'
 # written in ./config/site_config.rb. See ./config/site_sonfig.rb_example for an example of what this file may 
 # look like.
 require 'site_config' if File.exists?("#{RAILS_ROOT}/config/site_config.rb")
+
+$: << File.join(RAILS_ROOT, 'builder_plugins', 'installed')
