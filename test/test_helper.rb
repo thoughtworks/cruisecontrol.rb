@@ -23,6 +23,7 @@ ActionMailer::Base.perform_deliveries = true
 class Test::Unit::TestCase
 
   def assert_raises(arg1 = nil, arg2 = nil)
+    expected_error = arg1.is_a?(Exception) ? arg1 : nil
     expected_class = arg1.is_a?(Class) ? arg1 : nil
     expected_message = arg1.is_a?(String) ? arg1 : arg2
     begin 
@@ -32,6 +33,7 @@ class Test::Unit::TestCase
       raise
     rescue => e
       raise if e.message == "expected error was not raised"
+      assert_equal(expected_error, e) if expected_error
       assert_equal(expected_class, e.class, "Unexpected error type raised") if expected_class
       assert_equal(expected_message, e.message, "Unexpected error message") if expected_message.is_a? String
       assert_matched(expected_message, e.message, "Unexpected error message") if expected_message.is_a? Regexp

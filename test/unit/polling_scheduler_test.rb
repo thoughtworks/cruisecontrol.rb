@@ -31,5 +31,19 @@ class PollingSchedulerTest < Test::Unit::TestCase
     @scheduler.polling_interval = 5.minutes
     assert_equal "project.scheduler.polling_interval = 300.seconds", @scheduler.memento
   end
+  
+  def test_last_logged_less_than_an_hour_ago
+    assert !@scheduler.last_logged_less_than_an_hour_ago
+  
+    @scheduler.instance_eval("@last_build_loop_error_time = DateTime.new(2005, 1, 1)")
+
+    time = DateTime.new(2005, 1, 1)
+
+    Time.stubs(:now).returns(time + 1.hour)
+    assert @scheduler.last_logged_less_than_an_hour_ago
+    
+    Time.stubs(:now).returns(time + 1.hour + 1.second)
+    assert !@scheduler.last_logged_less_than_an_hour_ago
+  end
 
 end

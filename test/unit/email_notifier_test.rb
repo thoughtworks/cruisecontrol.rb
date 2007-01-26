@@ -18,8 +18,9 @@ class EmailNotifierTest < Test::Unit::TestCase
     @project.path = @sandbox.root
     @build = Build.new(@project, 5)
 
-    @notifier = @project.email_notifier
+    @notifier = EmailNotifier.new
     @notifier.emails = ["jeremystellsmith@gmail.com", "jeremy@thoughtworks.com"]
+    @project.add_plugin(@notifier)
   end
   
   def teardown

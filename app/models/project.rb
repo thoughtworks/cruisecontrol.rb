@@ -4,7 +4,9 @@ class Project
   @@plugin_names = []
 
   def self.plugin(plugin_name)
-    @@plugin_names << plugin_name unless @@plugin_names.include? plugin_name
+    unless RAILS_ENV == 'test'
+      @@plugin_names << plugin_name unless @@plugin_names.include? plugin_name
+    end      
   end
 
   def self.load_or_create(dir)
@@ -42,7 +44,7 @@ class Project
   end
 
   def url_name
-    name.downcase.gsub /[^a-z0-9]/, ''
+    name.downcase.gsub(/[^a-z0-9]/, '')
   end
   
   def ==(another)
@@ -169,7 +171,14 @@ end
 
 end
 
-plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*.rb')]
-plugins.each do |plugin|
-  load plugin
+unless RAILS_ENV == 'test'
+  plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*.rb')]
+  plugins.each do |plugin|
+    if RAILS_ENV == 'development'
+      load plugin
+    else
+      plugin_name_without_extension = File.basename(plugin)[0..-4]
+      require plugin_name_without_extension
+    end
+  end
 end

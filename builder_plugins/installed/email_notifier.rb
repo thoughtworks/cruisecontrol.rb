@@ -27,10 +27,10 @@ class EmailNotifier
   end
 end
 
-class Project
+Project.module_eval <<-EOL
   plugin :email_notifier
 
   def emails
     self.email_notifier.emails
   end
-end
+EOL

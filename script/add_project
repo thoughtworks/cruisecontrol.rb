@@ -35,7 +35,7 @@ ARGV.options do |opts|
 
 end
 
-puts "Adding project '#{project_name}'"
+puts "Adding project '#{project_name}'..."
 
 begin 
 	require RAILS_ROOT + "/config/environment"

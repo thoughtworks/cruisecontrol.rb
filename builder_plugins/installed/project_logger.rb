@@ -34,3 +34,5 @@ class ProjectLogger
   end
 
 end
+
+Project.plugin :project_logger

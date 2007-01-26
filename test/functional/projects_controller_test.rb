@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'projects_controller'
+require 'email_notifier'
 
 # Re-raise errors caught by the controller.
 class ProjectsController
@@ -135,6 +136,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
   def new_project(name)
     project = Project.new(name, Subversion.new)
     project.path = file(name).name
+    project.add_plugin(EmailNotifier.new)
     project
   end
 end

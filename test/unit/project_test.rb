@@ -1,5 +1,6 @@
 require 'date'
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'email_notifier'
 
 class ProjectTest < Test::Unit::TestCase
   include FileSandbox
@@ -45,7 +46,8 @@ Project.configure do |project|
   ]
 end
     EOL
-    
+
+    @project.add_plugin(EmailNotifier.new)
     @project.email_notifier.emails << "jss@thoughtworks.com" << "andrew@gmail.com" << "bob@andrews.com"
     assert_equal expected_result, @project.memento
   end
@@ -159,6 +161,29 @@ end
       @project.add_plugin listener
 
       @project.build_if_necessary
+
+      listener.verify
+    end
+  end
+
+  def test_build_should_generate_event_when_build_loop_crashes
+    in_sandbox do |sandbox|
+      @project.source_control = @svn
+      @project.path = sandbox.root
+
+      @project.expects(:builds).returns([])
+      error = StandardError.new   
+      @svn.expects(:latest_revision).raises(error)
+
+      # event expectations
+      listener = Object.new
+
+      listener.expects(:polling_source_control)
+      listener.expects(:build_loop_failed).with(error)
+      listener.expects(:sleeping)
+
+      @project.add_plugin listener
+      assert_raises(error) { @project.build_if_necessary }
 
       listener.verify
     end
