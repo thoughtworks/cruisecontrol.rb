@@ -3,6 +3,10 @@ class Log
   def self.verbose=(verbose)
     @verbose = verbose
   end
+  
+  def self.verbose?
+    @verbose or false
+  end
 
   def self.event(description, severity = :info)
     message = "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}] #{description}"

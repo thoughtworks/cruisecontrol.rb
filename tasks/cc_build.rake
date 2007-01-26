@@ -28,6 +28,7 @@ namespace :cc do
 
       # invoke 'test' or 'default' task
       if Rake.application.lookup('test')
+        Rake::Task['test'].invoke
       elsif Rake.application.lookup('default')
         Rake::Task['default'].invoke
       else

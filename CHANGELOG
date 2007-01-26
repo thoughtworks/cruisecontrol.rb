@@ -5,6 +5,7 @@ TRUNK
   - customizable polling interval
   - Handling of build loop errors (other than 'Build Failed')
   - improved logging
+  - trace option added when performing "cruise build <project>"
   - Bugfix: explicitly require 'rubygems' before trying to require 'rake', do not rely on RUBYOPT=-rubygems to be set.
   - Bugfix: Adding a project a second time deletes the original
   - Bugfix: Parsing SVN log output for a revision made by anonymous author
