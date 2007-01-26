@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'project_logger'
 
 class ProjectLoggerTest < Test::Unit::TestCase
   
@@ -60,6 +61,19 @@ class ProjectLoggerTest < Test::Unit::TestCase
     Log.expects(:event).with("New revision 9 detected")
 
     @logger.new_revisions_detected([@mock_revision])
+
+    Log.verify
+  end
+  
+  def test_build_loop_failed
+    @mock_error = Object.new
+    @mock_error.expects(:message).returns("Blown up")
+    @mock_error.expects(:backtrace).returns(["here:10"])
+    
+    Log.expects(:event).with("Build loop failed", :debug)
+    Log.expects(:debug).with("Object: Blown up\n  here:10")
+
+    @logger.build_loop_failed(@mock_error)
 
     Log.verify
   end

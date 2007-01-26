@@ -98,8 +98,11 @@ end
         notify(:new_revisions_detected, revisions)
         return build(revisions)
       end
+    rescue => e
+      notify(:build_loop_failed, e) rescue nil
+      raise
     ensure
-      notify(:sleeping)
+      notify(:sleeping) rescue nil
     end
   end
 
@@ -163,7 +166,8 @@ end
 
 end
 
-plugins = File.expand_path(File.dirname(__FILE__) + '/../../lib/cruise_plugins/*.rb')
-Dir[plugins].each do |plugin_file|
-  load plugin_file # this has to be loaded instead of required, for the dev build
+plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', '*.rb')]
+plugins.each do |plugin|
+  plugin_name_without_extension = File.basename(plugin)[0..-4]
+  require plugin_name_without_extension
 end
