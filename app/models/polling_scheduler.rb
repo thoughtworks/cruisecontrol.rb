@@ -26,7 +26,7 @@ class PollingScheduler
 
   def memento
     @custom_polling_interval ? 
-      "  project.scheduler.polling_interval = #{@custom_polling_interval}.seconds" : 
+      "project.scheduler.polling_interval = #{@custom_polling_interval}.seconds" : 
       nil
   end
 

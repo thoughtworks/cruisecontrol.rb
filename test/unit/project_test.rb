@@ -6,31 +6,38 @@ class ProjectTest < Test::Unit::TestCase
   
   def setup
     @svn = Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')
-    @project = Project.new("lemmings", @svn)
+    @project = Project.new("lemmings")
   end
 
   def test_properties
+    @project = Project.new("lemmings", Subversion.new(:username => 'bob'))
     assert_equal("lemmings", @project.name)
     assert_equal("bob", @project.source_control.username)
   end
-
-  def test_memento_with_all_defaults
-    default_project = Project.new("hamsters", Subversion.new)
-    
+  
+  def test_minimal_memento
     expected_result = <<-EOL
 Project.configure do |project|
-  project.email_notifier.emails = [
-
-  ]
 end
     EOL
-    assert_equal expected_result, default_project.memento
+
+    assert_equal expected_result, @project.memento
   end
 
-  def test_memento_with_email_notifications
+  def test_memento_with_svn
     expected_result = <<-EOL
 Project.configure do |project|
-  project.source_control = Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')
+  project.source_control = Subversion.new :url => 'file://foo', :username => 'bob', :password => 'cha'
+end
+    EOL
+
+    @project.source_control = Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')
+    assert_equal expected_result, @project.memento
+  end
+
+  def test_memento_with_email
+    expected_result = <<-EOL
+Project.configure do |project|
   project.email_notifier.emails = [
     "jss@thoughtworks.com",
     "andrew@gmail.com",
@@ -38,7 +45,7 @@ Project.configure do |project|
   ]
 end
     EOL
-
+    
     @project.email_notifier.emails << "jss@thoughtworks.com" << "andrew@gmail.com" << "bob@andrews.com"
     assert_equal expected_result, @project.memento
   end
@@ -46,11 +53,7 @@ end
   def test_memento_with_custom_polling_interval
     expected_result = <<-EOL
 Project.configure do |project|
-  project.source_control = Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')
   project.scheduler.polling_interval = 30.seconds
-  project.email_notifier.emails = [
-
-  ]
 end
     EOL
     
@@ -87,6 +90,7 @@ end
 
   def test_should_build_with_no_logs
     in_sandbox do |sandbox|
+      @project.source_control = @svn
       @project.path = sandbox.root
 
       revision = new_revision(5)
@@ -108,6 +112,7 @@ end
 
   def test_build_if_necessary_should_generate_events
     in_sandbox do |sandbox|
+      @project.source_control = @svn
       @project.path = sandbox.root
 
       revision = new_revision(5)
@@ -139,6 +144,7 @@ end
 
   def test_should_build_when_logs_are_not_current
     in_sandbox do |sandbox|
+      @project.source_control = @svn
       @project.path = sandbox.root
 
       @project.expects(:builds).returns([Build.new(@project, 1)])
@@ -160,6 +166,7 @@ end
 
   def test_should_not_build_when_logs_are_current
     in_sandbox do |sandbox|
+      @project.source_control = @svn
       @project.path = sandbox.root
 
       @project.expects(:builds).returns([Build.new(@project, 2)])

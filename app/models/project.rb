@@ -29,7 +29,7 @@ class Project
   attr_reader :name, :plugins, :build_command, :rake_task
   attr_accessor :source_control, :path, :local_checkout, :scheduler
 
-  def initialize(name, source_control, local_checkout = nil)
+  def initialize(name, source_control = Subversion.new, local_checkout = nil)
     @name, @source_control, @local_checkout = name, source_control, local_checkout
     @path = File.join(Configuration.builds_directory, @name)
     @plugins = []
@@ -71,13 +71,18 @@ class Project
   end
 
   def memento
-    memento = []
-    memento << "  project.source_control = #{source_control.memento}" unless source_control.memento.nil?
-    memento << scheduler.memento
-    memento += notify(:memento)
-    return <<-EOL
-Project.configure do |project|
-#{memento.compact.join("\n")}
+    mementos = [source_control.memento] 
+    mementos << scheduler.memento
+    mementos += notify(:memento)
+    
+    if mementos.compact.empty?
+      mementos = ''
+    else
+      mementos = ("\n" + mementos.compact.join("\n")).gsub(/\n/, "\n  ")
+    end
+    
+    <<-EOL
+Project.configure do |project|#{mementos}
 end
     EOL
   end

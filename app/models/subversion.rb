@@ -1,5 +1,4 @@
 class Subversion
-
   include CommandLine
 
   attr_accessor :url, :username, :password
@@ -77,7 +76,7 @@ class Subversion
     options << ":username => '#{username}'" if username
     options << ":password => '#{password}'" if password
     
-    options.empty? ? nil : "Subversion.new(#{options.join(", ")})"
+    options.empty? ? nil : "project.source_control = Subversion.new #{options.join(", ")}"
   end
 
   def execute_in_local_copy(project, command)

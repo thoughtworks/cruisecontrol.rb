@@ -29,7 +29,7 @@ class PollingSchedulerTest < Test::Unit::TestCase
     assert_nil @scheduler.memento
     
     @scheduler.polling_interval = 5.minutes
-    assert_equal "  project.scheduler.polling_interval = 300.seconds", @scheduler.memento
+    assert_equal "project.scheduler.polling_interval = 300.seconds", @scheduler.memento
   end
 
 end

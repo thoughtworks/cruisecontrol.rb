@@ -42,7 +42,7 @@ integration test does a checkout
     svn = Subversion.new(:url => "file://foo", :username => "bob", :password => 'cha')
 
     assert_equal(
-        "Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')",
+        "project.source_control = Subversion.new :url => 'file://foo', :username => 'bob', :password => 'cha'",
         svn.memento)
   end
 

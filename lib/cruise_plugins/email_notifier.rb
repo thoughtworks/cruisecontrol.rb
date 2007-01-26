@@ -19,9 +19,11 @@ class EmailNotifier
   end
 
   def memento
-    "  project.email_notifier.emails = [\n" +
-    @emails.collect {|email| '    ' + email.to_s.strip.inspect }.join(",\n") + "\n" +
-    "  ]"
+    return nil if @emails.empty?
+
+    "project.email_notifier.emails = [\n" +
+    @emails.collect {|email| '  ' + email.to_s.strip.inspect }.join(",\n") + "\n" +
+    "]"
   end
 end
 
