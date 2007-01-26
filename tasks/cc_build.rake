@@ -6,9 +6,13 @@ namespace :cc do
 
     # if custom rake task defined, invoke that
     if ENV['CC_RAKE_TASK']
-      custom_task = ENV['CC_RAKE_TASK']
-      raise "Custom rake task '#{custom_task}' not defined" unless Rake.application.lookup(custom_task)
-      Rake::Task[custom_task].invoke
+      tasks = ENV['CC_RAKE_TASK'].split(/\s+/)
+
+      undefined_tasks = tasks.collect { |task| Rake.application.lookup(task) ? nil : task }.compact
+      raise "Custom rake task(s) '#{undefined_tasks.join(", ")}' not defined" unless undefined_tasks.empty?
+
+      tasks.each { |task| Rake::Task[task].invoke }
+
     # if the project defines 'cruise' Rake task, that's all we need to do
     elsif Rake.application.lookup('cruise')
       Rake::Task['cruise'].invoke
@@ -29,7 +33,7 @@ namespace :cc do
       else
         raise "'cruise', test' or 'default' tasks not found. CruiseControl doesn't know what to build."
       end
-      
+
     end
   end
 

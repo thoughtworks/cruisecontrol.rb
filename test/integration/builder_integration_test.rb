@@ -123,6 +123,19 @@ class IntegrationTest < Test::Unit::TestCase
     
   end
 
+  def test_multiple_custom_rake_tasks
+    with_project('project_with_custom_rake_task') do |project, sandbox, svn|
+      project.rake_task = 'my_build my_deploy'
+
+      build = project.build
+      build_log = File.read("#{build.artifacts_directory}/build.log")
+      
+      assert build_log.include?("my_build invoked\nmy_deploy invoked\n"), 
+          '"my_build invoked\nmy_deploy invoked\n" not found in build log:' + "\n" + build_log
+    end
+    
+  end
+
 
   def fixture_repository_url
     repository_path = File.expand_path("#{RAILS_ROOT}/test/fixtures/svn-repo")

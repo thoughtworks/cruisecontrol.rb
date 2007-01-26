@@ -35,7 +35,7 @@ Type 'svn --version' to see the version number.
 Available commands:
   start      - starts the web server
   add        - adds a project
-  builder    - starts the builder for an individual project
+  build      - starts the builder for an individual project
 
 CruiseControl.rb is a Continous Integration Server.
 For additional information, see http://cruisecontrolrb.rubyforge.org/
