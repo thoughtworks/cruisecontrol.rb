@@ -14,6 +14,16 @@ versioning
 ------------------------------------------------------------------------
 EOF
 
+LOG_ENTRY_WITH_ANONYMOUS_AUTHOR = <<EOF
+------------------------------------------------------------------------
+r127 | (no author) | 2007-01-02 06:56:05 +0300 (Tue, 02 Jan 2007) | 1 line
+Changed paths:
+   A /trunk/app/models/category.rb
+
+categories added
+------------------------------------------------------------------------
+EOF
+
 LOG_ENTRY_WITH_MULTIPLE_ENTRIES = <<EOF
 ------------------------------------------------------------------------
 r359 | aslak | 2006-05-22 13:23:29 -0600 (Mon, 22 May 2006) | 1 line
@@ -51,6 +61,13 @@ EOF
                                     [ChangesetEntry.new('A', '/trunk/foo.txt')])]
     assert_equal expected_result, parse_log(SIMPLE_LOG_ENTRY)
   end
+
+  def test_can_parse_LOG_ENTRY_WITH_ANONYMOUS_AUTHOR
+    expected_result = [Revision.new(127, '(no author)', DateTime.parse('2007-01-02 06:56:05 +0300'), 'categories added',
+                                    [ChangesetEntry.new('A', '/trunk/app/models/category.rb')])]
+    assert_equal expected_result, parse_log(LOG_ENTRY_WITH_ANONYMOUS_AUTHOR)
+  end
+
 
   def test_can_parse_LOG_ENTRY_WITH_MULTIPLE_ENTRIES
     expected = [

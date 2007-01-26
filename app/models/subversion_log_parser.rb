@@ -30,7 +30,7 @@ class SubversionLogParser
 
   private
 
-  REVISION_PATTERN = /^r(\d+) \| ([^ ]+) \| ([^|]+) \| .*$/
+  REVISION_PATTERN = /^r(\d+) \| ([^|]+) \| ([^|]+) \| .*$/
   CHANGESET_PATTERN = /^\s*(\S+)\s+(.*)$/
   def parse_revision(lines)
     number, committed_by, time = REVISION_PATTERN.match(lines.shift)[1..3]
