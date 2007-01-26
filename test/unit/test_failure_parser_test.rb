@@ -62,19 +62,7 @@ EOF
     assert_equal expectedFirstTestFailure, testFailures[0]
     assert_equal expectedSecondTestFailure, testFailures[1]
   end
-    
-  def test_should_fail_due_to_comparing_different_numbers
-    assert_equal 1, 2
-  end
-    
-  def test_should_fail_due_to_comparing_different_objects
-    assert_equal String.new, expectedFirstTestFailure
-  end
-    
-  def test_should_fail_due_to_comparing_same_objects_with_different_data
-    assert_equal expectedFirstTestFixture, expectedSecondTestFixture
-  end
-    
+        
   def expectedFirstTestFailure
     TestFailureEntry.new("<1> expected but was\n<\"abc\">.",
                          "./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'\n" +
