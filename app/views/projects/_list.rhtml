@@ -1,7 +1,7 @@
 <% @project.emails.each do |email| %>
   <li>
     <%= email %>
-    <%= link_to_remote('[x]', {:url => {:action => "remove_email", :id => @project.name, :value => email}}) %>
+    <%= link_to_remote('[x]', {:url => {:action => "remove_email", :id => @project.url_name, :value => email}}) %>
     </div>
   </li>
 <% end %>
@@ -9,7 +9,7 @@
 <li id='new_email' class='read'>
 
   <a class="likes-read" href="#" onclick="mark_for_edit_and_focus($('new_email'), $('new_email_text'))">add</a>
-  <% form_remote_tag(:url => {:action => "add_email", :id => @project.name},
+  <% form_remote_tag(:url => {:action => "add_email", :id => @project.url_name},
                       :html => {:id => 'new_email_form', :class => 'inplaceeditor-form, likes-edit'},
                       :before => "$('new_email').className='save'") do %>
     <input type="text" id="new_email_text" name="value" style="background-color:#ff9;" class="editor-field" size="50"/>

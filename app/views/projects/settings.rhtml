@@ -1,8 +1,47 @@
+<% project_settings_page_breadcrumb %>
+
 <h1><%= @project.name %></h1>
 
-<h2>Notification</h2>
+<h3>Project Settings</h3>
 
-<h3>Email</h3>
+<% form_for :project, @project, :url => { :action => 'update', :id => @project.url_name } do |f| %>
+<table class="settings">
+  <tr>
+    <td class='label'>Rake Task :</td>
+    <td><%= f.text_field :rake_task %></td>
+    <td class='help'>
+      e.g. "selenium_tests"<br/>
+      cruise has good defaults, but you can override them here by typing they task you want cruise to run, 
+      read more <%= link_to 'here', 'http://cruisecontrolrb.rubyforge.org/rake_tasks.html' %>
+    </td>
+  </tr>
+  <tr>
+    <td class='label'>Build Command :</td>
+    <td><%= f.text_field :build_command %></td>
+    <td class='help'>
+      e.g. "ant build test"<br/>
+      if you'd rather just replace rake altogether, you can specify the build command of your choice here
+    </td>
+  </tr>
+  <tr>
+    <td class='label'>Polling Interval :</td>
+    <td><input id="project_scheduler_polling_interval" name="project[scheduler][polling_interval]" size="10" type="text" 
+      value="<%= @project.scheduler.polling_interval %>"/></td>
+    <td class='help'>
+      in seconds
+    </td>
+  </tr>
+</table>
+
+<br/>
+<div align="right"><%= submit_tag "Save Settings"%></div>
+
+<% end %>
+
+<br/>
+<hr/>
+
+<h3>Email Notification</h3>
 
 <p>When the build fails, send an e-mail to :<p>
 

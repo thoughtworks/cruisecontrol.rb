@@ -207,3 +207,20 @@ a:hover {
 .test-results {
   font-weight: bold;
 }
+
+.label {
+  font-weight: bold;
+  text-align: right;
+}
+
+table.settings {
+  padding: 5px;
+}
+
+.help {
+  color: #888;
+}
+
+.help a {
+  color: #666;
+}

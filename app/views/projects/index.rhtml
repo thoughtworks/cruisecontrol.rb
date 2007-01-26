@@ -1,4 +1,4 @@
-<% @breadcrumbs = "#{link_to("Dashboard", "/")}" %>
+<% dashboard_breadcrumb %>
 
 <% content_for(:left_side) do %>
   <%= link_to "Test E-Mail", :controller => "test", :action => "test_mail" %>
@@ -15,7 +15,7 @@
 
   <% @projects.each do |project| %>
     <tr class="build-<%= project.last_build.status %>">
-      <td><%= link_to project.name, :action => 'show', :id => project.name %></td>
+      <td><%= link_to project.name, :action => 'show', :id => project.url_name %></td>
       <td><%= project.last_build.label %></td>
       <td class="build-status"><%= project.last_build.status %></td>
       <td><%= project.last_build.formatted_time %></td>

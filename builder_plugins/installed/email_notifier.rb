@@ -33,12 +33,4 @@ class Project
   def emails
     self.email_notifier.emails
   end
-
-  def add_email(email)
-    emails << email
-  end
-
-  def delete_email(email)
-    emails.delete(email)
-  end
 end

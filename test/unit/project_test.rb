@@ -9,6 +9,11 @@ class ProjectTest < Test::Unit::TestCase
     @project = Project.new("lemmings")
   end
 
+  def test_url_name
+    assert_equal('somename', Project.new('some name').url_name)
+    assert_equal('52somename', Project.new(' 52 some? name!').url_name)
+  end
+  
   def test_properties
     @project = Project.new("lemmings", Subversion.new(:username => 'bob'))
     assert_equal("lemmings", @project.name)
@@ -16,12 +21,7 @@ class ProjectTest < Test::Unit::TestCase
   end
   
   def test_minimal_memento
-    expected_result = <<-EOL
-Project.configure do |project|
-end
-    EOL
-
-    assert_equal expected_result, @project.memento
+    assert_equal '', @project.memento
   end
 
   def test_memento_with_svn
@@ -58,6 +58,28 @@ end
     EOL
     
     @project.scheduler.polling_interval = 30
+    assert_equal expected_result, @project.memento
+  end
+  
+  def test_memento_with_rake_task
+    expected_result = <<-EOL
+Project.configure do |project|
+  project.rake_task = "build test"
+end
+    EOL
+
+    @project.rake_task = 'build test'
+    assert_equal expected_result, @project.memento
+  end
+  
+  def test_memento_with_build_commands
+    expected_result = <<-EOL
+Project.configure do |project|
+  project.build_command = "ant test"
+end
+    EOL
+
+    @project.build_command = 'ant test'
     assert_equal expected_result, @project.memento
   end
 

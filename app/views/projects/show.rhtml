@@ -1,15 +1,15 @@
-<% @breadcrumbs = "#{link_to("Dashboard", "/")} > #{link_to(@project.name, :action => "show", :id => @project.name)}" %>
+<% project_page_breadcrumb %>
 
 <% content_for(:left_side) do %>
-  <div><%= link_to("Latest", :action => "show", :id => @project.name) %></div>
+  <div><%= link_to("Latest", :action => "show", :id => @project.url_name) %></div>
   <div class="gray">Next</div>
   <div class="gray">Prev</div>
   <br/>
-  <div><%= link_to("Settings", :action => "settings", :id => @project.name) %></div>
+  <div><%= link_to("Settings", :action => "settings", :id => @project.url_name) %></div>
   <br/>
   <br/>
   <% @project.builds.reverse.each do |build| %>
-    <%= link_to "<div class='#{build.status}'>build #{build.label}</div>", :id => @project.name, :build => build.label %>
+    <%= link_to "<div class='#{build.status}'>build #{build.label}</div>", :id => @project.url_name, :build => build.label %>
   <% end %>
 <% end %>
 

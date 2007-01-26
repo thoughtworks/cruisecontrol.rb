@@ -63,7 +63,35 @@ class ProjectsControllerTest < Test::Unit::TestCase
 
     assert_equal @two, assigns(:project)
   end
+  
+  def test_update
+    @projects.expects(:save_project).with(@two)
 
+    post :update, :id => "two", :project => {:rake_task => 'build', :scheduler => {:polling_interval => 20}}
+    
+    assert_response :success
+    assert_template 'settings'
+    assert_equal 'build', @two.rake_task
+    assert_equal 20, @two.scheduler.polling_interval
+    @projects.verify
+  end
+
+  def test_update_rake_task_build_command_precedence
+    @projects.stubs(:save_project)
+
+    post :update, :id => "two", :project => {:rake_task => 'build', :build_command => 'ant test'}
+    assert_equal nil, @two.rake_task
+    assert_equal 'ant test', @two.build_command
+    
+    post :update, :id => "two", :project => {:rake_task => 'build'}
+    assert_equal 'build', @two.rake_task
+    assert_equal nil, @two.build_command
+
+    post :update, :id => "two", :project => {:build_command => 'ant test'}
+    assert_equal nil, @two.rake_task
+    assert_equal 'ant test', @two.build_command
+  end
+  
   def test_add_email
     @projects.expects(:save_project).with(@two)
 

@@ -41,17 +41,21 @@ class Project
     @scheduler = PollingScheduler.new(self)
   end
 
+  def url_name
+    name.downcase.gsub /[^a-z0-9]/, ''
+  end
+  
   def ==(another)
     another.is_a?(Project) and another.name == self.name
   end
 
   def build_command=(value)
-    raise 'Cannot set build_command when rake_task is already defined' if @rake_task
+    raise 'Cannot set build_command when rake_task is already defined' if value and @rake_task
     @build_command = value
   end
 
   def rake_task=(value)
-    raise 'Cannot set rake_task when build_command is already defined' if @build_command
+    raise 'Cannot set rake_task when build_command is already defined' if value and @build_command
     @rake_task = value
   end
 
@@ -71,18 +75,17 @@ class Project
   end
 
   def memento
-    mementos = [source_control.memento] 
-    mementos << scheduler.memento
+    mementos = [source_control.memento, scheduler.memento]
+    mementos << "project.rake_task = #{@rake_task.inspect}" if @rake_task
+    mementos << "project.build_command = #{@build_command.inspect}" if @build_command
+    
     mementos += notify(:memento)
     
-    if mementos.compact.empty?
-      mementos = ''
-    else
-      mementos = ("\n" + mementos.compact.join("\n")).gsub(/\n/, "\n  ")
-    end
-    
+    return '' if mementos.compact.empty?
+
     <<-EOL
-Project.configure do |project|#{mementos}
+Project.configure do |project|
+  #{mementos.compact.join("\n").gsub(/\n/, "\n  ")}
 end
     EOL
   end
@@ -168,6 +171,5 @@ end
 
 plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*.rb')]
 plugins.each do |plugin|
-  plugin_name_without_extension = File.basename(plugin)[0..-4]
-  require plugin_name_without_extension
+  load plugin
 end

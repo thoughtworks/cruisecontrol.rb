@@ -1,0 +1,36 @@
+<html>
+<head>
+  <title>CruiseControl.rb - Rake Tasts</title>
+</head>
+<body>
+  <h1>Rake Tasks</h1>
+  <p>
+CC.rb assumes that your project is built by Rake, and Rakefile is in the root directory of the project. Just running 
+'default' Rake task is not good enough, because in a standard Rails application this task needs an up-to-date 
+development database to work. On a continuous build server there is usually no such thing. Therefore, CC.rb uses the 
+following logic to determine what to build:
+  </p>
+  <ol>
+    <li>
+    First, CC.rb loads all *.rake files from <cruise>/tasks/, and then the Rakefile of your_project. Then it invokes 
+    cc:build task (defined in <cruise>/tasks/cc_build.rake). That task sets RAILS_ENV to 'test' 
+    (unless your Rakefile already set it to something else), looks at other Rake tasks loaded, and 
+    decides what to do.
+    </li>
+    <li>
+    If there is 'cruise' target, it simply invokes that target.
+    </li>
+    <li>
+    If there is no 'cruise' target, then it will try to prepare the test database by executing 'db:test:purge'
+    and 'db:migrate' tasks (if they are defined in your build), then calling 'test' target.
+    </li>
+    <li>
+    Finally, if there is no 'test' target, CC.rb will try to invoke 'default' target.
+    </li>
+  </ol>
+  <p>
+  Hint: if you define 'cruise' task in your_project, you should make it dependent on 'db:test:purge' and 
+  'db:migrate', and/or whatever is necessary to bring test environment up to date.
+  </p>
+</body>
+</html>

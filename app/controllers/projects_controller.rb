@@ -21,13 +21,27 @@ class ProjectsController < ApplicationController
     @project = find_project(load_projects)
   end
 
+  def update
+    projects = load_projects
+    @project = find_project(projects)
+
+    # we can only have one of rake_task or build_command
+    params[:project][:rake_task] = nil if params[:project][:build_command] and !params[:project][:build_command].empty?
+    @project.rake_task = @project.build_command = nil
+    
+    update_attributes(@project, params[:project])
+    
+    projects.save_project @project
+    render :action => 'settings'
+  end
+  
   def add_email
     projects = load_projects
     @project = find_project(projects)
 
-    @project.add_email(params[:value])
+    @project.emails << params[:value]
 
-    projects.save_project(@project)
+    projects.save_project @project
     update_emails
   end
 
@@ -35,7 +49,7 @@ class ProjectsController < ApplicationController
     projects = load_projects
     @project = find_project(projects)
 
-    @project.delete_email(params[:value])
+    @project.emails.delete params[:value]
 
     projects.save_project(@project)
     update_emails
@@ -54,6 +68,21 @@ class ProjectsController < ApplicationController
   end
 
   def find_project(projects)
-    projects.find {|p| p.name == params[:id] }
+    projects.find {|p| p.url_name == params[:id] }
+  end
+  
+  def update_attributes(obj, hash)
+    hash.each do |key, value|
+      if value.is_a? Hash
+        update_attributes(obj.send(key.to_sym), value)
+      else
+        if value == ''
+          value = nil
+        elsif value =~ /^[0-9]+$/
+          value = value.to_i
+        end
+        obj.send("#{key}=", value)
+      end
+    end
   end
 end
