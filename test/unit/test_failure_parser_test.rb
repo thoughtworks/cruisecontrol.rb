@@ -60,20 +60,30 @@ EOF
     testFailures = TestFailureParser.new.get_test_failures(LOG_OUTPUT_WITH_TEST_FAILURE)
     assert_equal 2, testFailures.length
     assert_equal expectedFirstTestFailure, testFailures[0]
-    assert_equal expectedSecondTestFailure.stacktrace, testFailures[1].stacktrace
+    assert_equal expectedSecondTestFailure, testFailures[1]
+  end
+    
+  def test_should_fail_due_to_comparing_different_numbers
+    assert_equal 1, 2
+  end
+    
+  def test_should_fail_due_to_comparing_different_objects
+    assert_equal String.new, expectedFirstTestFailure
+  end
+    
+  def test_should_fail_due_to_comparing_same_objects_with_different_data
+    assert_equal expectedFirstTestFixture, expectedSecondTestFixture
   end
     
   def expectedFirstTestFailure
-    TestFailureEntry.new("test_should_fail(SubversionLogParserTest)",
-                         "<1> expected but was\n<\"abc\">.",
+    TestFailureEntry.new("<1> expected but was\n<\"abc\">.",
                          "./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'\n" +
                          "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
                          "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
   end
     
   def expectedSecondTestFailure
-    TestFailureEntry.new("test_should_fail_two(SubversionLogParserTest)",
-                         "<1> expected but was\n<\"abc\">.",
+    TestFailureEntry.new("<1> expected but was\n<\"abc\">.",
                          "./test/unit/subversion_log_parser_test.rb:129:in `test_should_fail_two'\n" +
                          "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
                          "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
