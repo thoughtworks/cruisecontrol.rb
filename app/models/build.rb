@@ -18,7 +18,7 @@ class Build
 
   def run
     build_log = artifact 'build.log'
-    # it's important to figure out build command before doing chdir, because it may be expanding some relative paths
+    # build_command must be set before doing chdir, because there may be some relative paths
     build_command = self.command
     in_clean_environment_on_local_copy do
       execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
@@ -86,7 +86,7 @@ class Build
   end
   
   def rake
-    # Important note: --nosearch flag here prevents CC.rb from building itslef when a project has no Rakefile
+    # --nosearch flag here prevents CC.rb from building itslef when a project has no Rakefile
     %{ruby -e "require 'rubygems' rescue nil; require 'rake'; load '#{File.expand_path(RAILS_ROOT)}/tasks/cc_build.rake'; ARGV << '--nosearch'#{Log.verbose? ? " << '--trace'" : ""} << 'cc:build'; Rake.application.run"}
   end
 
