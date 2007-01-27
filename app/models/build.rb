@@ -25,8 +25,7 @@ class Build
     end
     @status.succeed!
   rescue => e
-    Log.debug "BUILD FAILED"
-    Log.debug e
+    Log.verbose? ? Log.debug(e) : Log.info(e.message)
     @status.fail!
   end
   

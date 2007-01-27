@@ -45,6 +45,7 @@ begin
   ProjectBlocker.block(project)
 
   STDOUT.puts "Builder for project '#{project.name}' started"
+  STDOUT.puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
   Log.event "Builder for project '#{project.name}' started"
 
   project.scheduler.run
