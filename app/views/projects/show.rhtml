@@ -45,6 +45,11 @@
 <%= format_changeset_log(@build.changeset) %>
 </pre>
 
+<h3>Test Failures</h3>
+<pre>
+<%= display_test_failures_if_any(@build.output) %>
+</pre>
+
 <h3>Build Log</h3>
 <br/>
 <div class="logfile">
