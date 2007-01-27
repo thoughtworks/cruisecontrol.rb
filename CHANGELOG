@@ -1,4 +1,7 @@
 TRUNK
+
+--------------------------------------------------------------------------------
+* 0.3.0
   - builder is building 'cruise', 'test' or 'default' target, depending on what is defined in the project
   - when build is running, OS variable CC_BUILD_ARTIFACTS is pointing to the build artifacts directory
   - customizable Rake task and build command
@@ -10,7 +13,7 @@ TRUNK
   - Bugfix: Adding a project a second time deletes the original
   - Bugfix: Parsing SVN log output for a revision made by anonymous author
 --------------------------------------------------------------------------------
-* 0.2
+* 0.2.0
   - Unified command-line interface to web app, builder and add_project script
   - Default port changed to 3333 (to avoid clashing with other Rails apps)
   - Bugfix: builder invoking Rake with RAILS_ENV OS variable set to 'builder'
