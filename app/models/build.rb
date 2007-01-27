@@ -25,9 +25,8 @@ class Build
     end
     @status.succeed!
   rescue => e
-    Log.info "==================== BUILD FAILED ========================="
-    Log.info e.message
-    Log.info e.backtrace.join("\n")
+    Log.debug "BUILD FAILED"
+    Log.debug e
     @status.fail!
   end
   
