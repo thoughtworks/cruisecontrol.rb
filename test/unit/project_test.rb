@@ -240,6 +240,28 @@ end
     end
   end
 
+  def test_notify_should_handle_plugin_error
+    plugin = Object.new
+    
+    @project.plugins << plugin
+    
+    plugin.expects(:hey_you).raises("Plugin talking")
+    
+    assert_raises("Plugin error: Object: Plugin talking") { @project.notify(:hey_you) }
+  end
+  
+  def test_notify_should_handle_multiple_plugin_errors
+    plugin1 = Object.new
+    plugin2 = Object.new
+    
+    @project.plugins << plugin1 << plugin2
+    
+    plugin1.expects(:hey_you).raises("Plugin 1 talking")
+    plugin2.expects(:hey_you).raises("Plugin 2 talking")
+
+    assert_raises("Plugin error:\n  Object: Plugin 1 talking\n  Object: Plugin 2 talking") { @project.notify(:hey_you) }
+  end
+
   def new_revision(number)
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
   end

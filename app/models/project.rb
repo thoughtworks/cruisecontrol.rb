@@ -132,8 +132,25 @@ end
   end
 
   def notify(event, *event_parameters)
-    @plugins.each do |plugin|
-      plugin.send(event, *event_parameters) if plugin.respond_to?(event)
+    errors = []
+    results = @plugins.collect do |plugin|
+      begin
+        plugin.send(event, *event_parameters) if plugin.respond_to?(event)
+      rescue => plugin_error
+        Log.error(plugin_error)
+        errors << "#{plugin.class}: #{plugin_error.message}"
+      end
+    end
+    
+    if errors.empty?
+      return results.compact
+    else
+      if errors.size == 1
+        error_message = "Plugin error: #{errors.first}"
+      else
+        error_message = "Plugin error:\n" + errors.map { |e| "  #{e}" }.join("\n")
+      end
+      raise error_message
     end
   end
   
@@ -161,12 +178,6 @@ end
   
   def respond_to?(method_name)
     @plugins_by_name.key?(method_name) or super
-  end
-
-  def notify(sym, *args)
-    @plugins.collect do |plugin|
-      plugin.send(sym, *args) if plugin.respond_to?(sym)
-    end.compact
   end
 
 end
