@@ -1,5 +1,6 @@
 TRUNK
-
+  - builder plugin may be packaged as a directory with multiple files. It must have init.rb then.
+  
 --------------------------------------------------------------------------------
 * 0.3.0
   - builder is building 'cruise', 'test' or 'default' target, depending on what is defined in the project
