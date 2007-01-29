@@ -171,14 +171,45 @@ end
 
 end
 
-unless RAILS_ENV == 'test'
-  plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*.rb')]
-  plugins.each do |plugin|
-    if RAILS_ENV == 'development'
-      load plugin
-    else
-      plugin_name_without_extension = File.basename(plugin)[0..-4]
-      require plugin_name_without_extension
-    end
+# TODO make me pretty, move me to another file, invoke me from environment.rb
+# TODO consider using Rails autoloading mechanism
+# TODO what to do when plugin initializer raises an error?
+
+plugin_loader = Object.new
+
+def plugin_loader.load_plugin(path)
+  if RAILS_ENV == 'development'
+    load path
+  else
+    require path
   end
 end
+
+def plugin_loader.load_all
+  plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*')]
+
+  plugins.each do |plugin|
+    if File.file?(plugin)
+      if plugin[-3..-1] == '.rb' 
+        load_plugin(File.basename(plugin))
+      else
+        # a file without .rb extension, ignore
+      end
+    elsif File.directory?(plugin)
+      # ignore Subversion directory (although it should be considered hidden by Dir[], but just in case)
+      next if plugin[-4..-1] == '.svn'
+      init_path = File.join(plugin, 'init.rb')
+      if File.file?(init_path)
+        load_plugin(File.join(File.basename(plugin), 'init'))
+      else
+        log.error("No init.rb found in plugin directory #{plugin}")
+      end
+    else 
+      # a path is neither file nor directory. whatever else it may be, let's ignore it.
+      # TODO: find out what happens with symlinks on a Linux here? how about broken symlinks?
+    end
+  end
+  
+end
+
+plugin_loader.load_all unless RAILS_ENV == 'test'
