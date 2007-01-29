@@ -36,16 +36,27 @@ unless File.exist? project_path
   exit(-1)
 end
 
+Log.verbose = OPTIONS[:verbose]
+
+def cleanup(project)
+  puts "Builder for project '#{OPTIONS[:project_name]}' exited" rescue nil
+  Log.event "Builder for project '#{OPTIONS[:project_name]}' exited" rescue nil
+  if project
+    ProjectBlocker.release(project) rescue nil
+  end
+end
+
+project = nil
+
 begin
-  Log.verbose = OPTIONS[:verbose]
   project = Project.load_or_create(project_path)
 
   # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else blow up saying 
   # that something else is already locking it
   ProjectBlocker.block(project)
 
-  STDOUT.puts "Builder for project '#{project.name}' started"
-  STDOUT.puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
+  puts "Builder for project '#{project.name}' started"
+  puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
   Log.event "Builder for project '#{project.name}' started"
 
   project.scheduler.run
@@ -60,21 +71,8 @@ rescue => e
     STDERR.puts logging_error.message
     STDERR.puts logging_error.backtrace
   end
-  if (OPTIONS[:verbose])
-    raise
-  else
-    STDERR.puts e.message
-    exit(1)
-  end
-end
-
-
-at_exit do
-  begin 
-    Log.event "Builder for project '#{project.name}' stopped"
-    STDOUT.puts "Builder for project '#{project.name}' stopped"
-    ProjectBlocker.release(project)
-  rescue
-    # ignore logging errors
-  end
+  STDERR.puts "[error] #{e.message}"
+  OPTIONS[:verbose] ? raise : exit(1)
+ensure 
+  cleanup(project)
 end

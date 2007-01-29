@@ -1,5 +1,8 @@
 TRUNK
   - builder plugin may be packaged as a directory with multiple files. It must have init.rb then.
+  - plugin error handler: if a plugin raises an error in response to notification, builder logs the error, 
+    notifies all other plugins, then raises an error of its own (thus triggering the build_loop_failed event)
+  - improved error handling on builder initialization
   
 --------------------------------------------------------------------------------
 * 0.3.0
@@ -22,5 +25,5 @@ TRUNK
   - Bugfix: CC.rb trying to build itself when a project has no Rakefile
   
 --------------------------------------------------------------------------------
-* 0.1 
+* 0.1.0
   - Initial release.
