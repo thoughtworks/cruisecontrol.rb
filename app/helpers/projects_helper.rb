@@ -10,25 +10,16 @@ def display_test_failures_and_errors_if_any(log)
   output = String.new
   
   testFailures = TestFailureParser.new.get_test_failures(log)
-  testFailures.each {|testFailure| output << format_test_failure_output(testFailure)}
-  
+  testFailures.each {|testFailure| output << format_test_error_output(testFailure)}
+    
   testErrors = TestErrorParser.new.get_test_errors(log)
   testErrors.each {|testError| output << format_test_error_output(testError)}
-  
+    
   if output != String.new
     output.strip
   else
     "None"
   end
-end
-
-def format_test_failure_output(testFailure)
-  message = testFailure.message.gsub(/\\n/, "\n");
-
-  "Name: #{testFailure.test_name}\n" +
-  "Type: Failure\n" +
-  "Message: #{message}\n\n" +
-  "<span class=\"error\">#{testFailure.stacktrace}</span>\n\n\n"
 end
 
 def format_test_error_output(testError)

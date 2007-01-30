@@ -3,7 +3,7 @@ require 'test_error_parser'
 require 'test_error_entry'
 
 class TestErrorParserTest < Test::Unit::TestCase
-  
+    
 LOG_OUTPUT_WITH_NO_TEST_ERRORS = <<EOF
 Started
 ..................................................................................
@@ -52,11 +52,11 @@ EOF
   end
   
   def expected_test_error
-    TestErrorEntry.new("test_should_fail_due_to_comparing_same_objects_with_different_data(TestFailureParserTest)",
-                       "NameError: undefined local variable or method `expectedFirstTestFixture' for #<TestFailureParserTest:0x3f65a60>",
-                       "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/rails/actionpack/lib/action_controller/test_process.rb:456:in `method_missing'\n" +
-                       "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
-                       "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")    
+    TestErrorEntry.create_error("test_should_fail_due_to_comparing_same_objects_with_different_data(TestFailureParserTest)",
+                                "NameError: undefined local variable or method `expectedFirstTestFixture' for #<TestFailureParserTest:0x3f65a60>",
+                                "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/rails/actionpack/lib/action_controller/test_process.rb:456:in `method_missing'\n" +
+                                "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
+                                "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")    
   end
   
 end

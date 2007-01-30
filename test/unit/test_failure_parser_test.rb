@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'test_failure_parser'
-require 'test_failure_entry'
+require 'test_error_entry'
 
 class TestFailureParserTest < Test::Unit::TestCase
 
@@ -64,19 +64,19 @@ EOF
   end
         
   def expectedFirstTestFailure
-    TestFailureEntry.new("test_should_fail(SubversionLogParserTest)",
-                         "<1> expected but was\n<\"abc\">.",
-                         "./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'\n" +
-                         "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
-                         "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
+    TestErrorEntry.create_failure("test_should_fail(SubversionLogParserTest)",
+                                  "<1> expected but was\n<\"abc\">.",
+                                  "./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'\n" +
+                                  "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
+                                  "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
   end
     
   def expectedSecondTestFailure
-    TestFailureEntry.new("test_should_fail_two(SubversionLogParserTest)",
-                         "<1> expected but was\n<\"abc\">.",
-                         "./test/unit/subversion_log_parser_test.rb:129:in `test_should_fail_two'\n" +
-                         "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
-                         "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
+    TestErrorEntry.create_failure("test_should_fail_two(SubversionLogParserTest)",
+                                  "<1> expected but was\n<\"abc\">.",
+                                  "./test/unit/subversion_log_parser_test.rb:129:in `test_should_fail_two'\n" +
+                                  "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
+                                  "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
   end
   
 end
