@@ -1,1 +1,1 @@
-TestFailureEntry = Struct.new :message, :stacktrace
+TestFailureEntry = Struct.new :test_name, :message, :stacktrace
