@@ -1,0 +1,13 @@
+K 10
+svn:author
+V 5
+qzhao
+K 8
+svn:date
+V 27
+2007-01-30T19:45:52.984375Z
+K 7
+svn:log
+V 83
+added db\migrate and config\database.yml to the projects which need migrate target.
+END

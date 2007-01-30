@@ -31,16 +31,20 @@ namespace :cc do
     elsif Rake.application.lookup('cruise')
       Rake::Task['cruise'].invoke
     else
-      # perform standard Rails database cleanup/preparation tasks if they are defined in project
-      # this is necessary because there is no up-to-date development database on a continuous integration box
-      if Rake.application.lookup('db:test:purge')
-        Rake::Task['db:test:purge'].invoke
+      if File.exists?(Dir.pwd + "/config/database.yml") 
+        raise "No migration scripts found in db/migrate/ but database.yml exists, CruiseControl won't be able to build the latest test database.  Build aborted." if Dir[Dir.pwd + "/db/migrate/*.rb"].empty?
+        
+        # perform standard Rails database cleanup/preparation tasks if they are defined in project
+        # this is necessary because there is no up-to-date development database on a continuous integration box
+        if Rake.application.lookup('db:test:purge')
+          Rake::Task['db:test:purge'].invoke
+        end
+        if Rake.application.lookup('db:migrate')
+          ActiveRecordHelper.connect
+          Rake::Task['db:migrate'].invoke
+        end
       end
-      if Rake.application.lookup('db:migrate')
-        ActiveRecordHelper.connect
-        Rake::Task['db:migrate'].invoke
-      end
-
+      
       # invoke 'test' or 'default' task
       if Rake.application.lookup('test')
         Rake::Task['test'].invoke

@@ -146,6 +146,18 @@ class IntegrationTest < Test::Unit::TestCase
     
   end
   
+  def test_should_break_build_if_no_migration_scripts_but_database_yml_exists
+    with_project 'project_with_no_migration_scripts_but_database_yml_exists' do |project, sandbox, svn|
+      build = project.build
+      build_log = File.read("#{build.artifacts_directory}/build.log")
+      assert !build_log.include?("db-test-purge") 
+      assert !build_log.include?("db-migrate")       
+      error_message = "No migration scripts found in db/migrate/ but database.yml exists, CruiseControl won't be able to build the latest test database.  Build aborted."
+      assert build_log.include?(error_message), 
+          '"'+error_message+'" not found in build log:' + "\n" + build_log
+    end
+  end
+  
   def fixture_repository_url
     repository_path = File.expand_path("#{RAILS_ROOT}/test/fixtures/svn-repo")
     urlified_path = repository_path.sub(/^[a-zA-Z]:/, '').gsub('\\', '/')
