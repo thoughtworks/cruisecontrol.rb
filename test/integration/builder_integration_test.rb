@@ -136,7 +136,16 @@ class IntegrationTest < Test::Unit::TestCase
     
   end
 
-
+  def test_should_reconnect_to_database_after_db_test_purge_in_cc_build
+    with_project 'project_with_db_test_purge_and_migrate' do |project, sandbox, svn|
+      build = project.build
+      build_log = File.read("#{build.artifacts_directory}/build.log")
+      assert build_log.include?("db-test-purge\nESTABLISH_CONNECTION\ndb-migrate\n") , 
+          '"db-test-purge\nESTABLISH_CONNECTION\ndb-migrate\n" not found in build log:' + "\n" + build_log
+    end
+    
+  end
+  
   def fixture_repository_url
     repository_path = File.expand_path("#{RAILS_ROOT}/test/fixtures/svn-repo")
     urlified_path = repository_path.sub(/^[a-zA-Z]:/, '').gsub('\\', '/')
@@ -148,10 +157,11 @@ class IntegrationTest < Test::Unit::TestCase
       svn = Subversion.new :url => "#{fixture_repository_url}/#{project_name}"
       svn.checkout "#{sandbox.root}/#{project_name}/work", options[:revision]
       
-      project = Project.new('passing_project', svn, "#{sandbox.root}/#{project_name}/work")
+      project = Project.new(project_name, svn, "#{sandbox.root}/#{project_name}/work")
       project.path = "#{sandbox.root}/#{project_name}"
 
       block.call(project, sandbox, svn)
     end
   end
 end
+

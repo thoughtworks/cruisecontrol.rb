@@ -1,3 +1,17 @@
+class ActiveRecordHelper  
+  def self.connect
+    require 'active_record'
+    abcs = ActiveRecord::Base.configurations
+    return if abcs.nil? || abcs["test"].nil?
+    case abcs["test"]["adapter"]
+      when "mysql"
+        ActiveRecord::Base.establish_connection(:test)      
+    end
+  end
+end
+
+
+
 namespace :cc do
 
   task 'build' do
@@ -23,6 +37,7 @@ namespace :cc do
         Rake::Task['db:test:purge'].invoke
       end
       if Rake.application.lookup('db:migrate')
+        ActiveRecordHelper.connect
         Rake::Task['db:migrate'].invoke
       end
 
@@ -39,3 +54,6 @@ namespace :cc do
   end
 
 end
+
+
+
