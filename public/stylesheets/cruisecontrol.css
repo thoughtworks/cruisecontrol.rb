@@ -1,15 +1,85 @@
-body, table, form, input, td, th, p, textarea, select {
+body {
   font-family: verdana, helvetica, arial, sans-serif;
-  font-size: 11px;
-}
-
-img {
+  font-size: 0.9em;
+  margin: 0;
   border: 0;
+  color: #000;
+  background-color: #FFF;
 }
 
-a:hover {
-  color: #FC0;
+img { border: 0; }
+a, a:visited { color: #306; }
+a:hover { color: #FC0; }
+
+/* default layout classes */
+
+.header, .footer {
+  color: #FFF;
+  background-color: #306;
+  font-weight: bold;
 }
+
+.footer {
+  text-align: right;
+}
+
+.version {
+  font-size: 0.75em;
+  padding: 0.3em;
+  float: right;
+}
+
+.breadcrumbs {
+  background-color: #309;
+  vertical-align: middle;
+  border: 0;
+  padding: 0.2em 0.4em;
+  border-spacing: 0; 
+}
+
+.breadcrumbs a, .breadcrumbs a:visited {
+  color: #FFF;
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  color: #FC0;
+  text-decoration: underline;
+}
+
+#columns_layout {
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+  border-spacing: 0;
+  width: 100%;
+}
+
+#columns_layout td {
+  vertical-align: top;
+  padding: 0.5em;
+}
+
+#left_column {
+  width: 20%;
+  color: #000;
+  background-color: #F8FFE6;
+}
+#left_column a, #left_column a:visited {
+  color: #333399;
+  text-decoration: none;
+}
+
+#left_column a:hover {
+  text-decoration: underline;
+}
+
+#content {
+  color: #000;
+  background-color: #FFF;
+}
+
+/* other classes */
 
 .main-panel {
   color: #FC0;
@@ -112,19 +182,6 @@ a:hover {
   background-color: white;
 }
 
-.breadcrumbs {
-  color: darkgray;
-}
-
-.breadcrumbs a {
-  color: ivory;
-  text-decoration: none;
-}
-
-.breadcrumbs a:hover {
-  color: #FC0;
-}
-
 .ProjectGridHeader {
   color: ivory;
   font-weight: bold;
@@ -139,43 +196,28 @@ a:hover {
   color: #FC0;
 }
 
-.SideBar a {
-  text-decoration: none;
-  color: #333399;
-}
-
-.SideBar .build-passed-link {
+a.build-passed-link, a.build-passed-link:visited {
   color: Green;
   text-decoration: none;
 }
 
-.SideBar .build-failed-link {
-  color: Red;
+a.build-passed-link:hover {
+  text-decoration: underline;
+}
+
+a.build-failed-link, a.build-failed-link:visited {
+  color: #A00;
   text-decoration: none;
 }
 
-.build-passed-link {
-  color: Green;
-  text-decoration: none;
-}
-
-.build-failed-link {
-  color: Red;
-  text-decoration: none;
+a.build-failed-link:hover {
+  text-decoration: underline;
 }
 
 .log {
   overflow: auto;
 }
 
-.wholepage {
-  background-color: #000066;
-}
-
-.TopControls {
-  background-color: #333399;
-  color: ivory;
-}
 
 
 /* new stuff */
