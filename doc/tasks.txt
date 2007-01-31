@@ -2,26 +2,17 @@ Bugs
 ----
 * if project has no rake file, rake uses cruise's rake file and builds cruise... whoops...
 
-Before TW Release 2
--------------------
+Necessary
+---------
 * how do the builders get started?  the webapp will need to be able to start / restart / stop them eventually,
   can we do this now?  how?  can we do it in a way that works on windows / mac / *nix?
 * builder
-  * should build if there is no build dir for the current revision - done
-    * this means, "kicking" the build is as simple as deleting the current build dir
-  * should reload project everytime it wakes up (so as to pick up changes from the webapp
+  * should reload project everytime it wakes up (so as to pick up changes from the webapp)
+  * should reload server settings every time it wakes up, too
   * should sleep for at least 30 secs by default
-* webapp
-  * should have email settings / along w/ gmail stuff
 * should we just go from a rails gem?  why not?  if we're a gem ourselves...?
-
-If Possible...
---------------
 * get a new UI from someone like Anne Brent
 * create "Add Project" story - add a project from the web app, should be easy
-* we need working breadcrumbs on the UI - should be easy
-* output from builder should be pretty - minimizing information that is not helpful, and spitting out info that is
-* cleanup the test output
 * better reaction to exceptions in builder (see concerns)
 
 Build
@@ -32,7 +23,6 @@ Build
 
 Dev
 ---
-* Make rake call explicitly specified task OR default task otherwise
 * project.path setter after every call to Project.new is ugly. Move to the c'tor.
 * Error message when starting a builder for non-existant project is ugly (directory not found)
 * Check what happens with parsing "svn log" output if a project has svn:externals, and there is a new revision in there
