@@ -1,8 +1,0 @@
-<p>Send a test e-mail to :<p>
-
-<%= form_remote_tag(:url => {:action => 'send_test_mail'}, :update => "email_result") %>
-  <%= text_field "email", "recipients" %>
-  <%= submit_tag "send" %>
-<%= end_form_tag %>
-
-<div id="email_result"></div>

@@ -23,6 +23,16 @@ a:hover { color: #FC0; }
   text-align: right;
 }
 
+.header .commands {
+  float:right;
+  font-size: 0.9em;
+  padding: 0.3em;
+}
+
+.header a {
+  color: #FFF;
+}
+
 .version {
   font-size: 0.75em;
   padding: 0.3em;
@@ -265,4 +275,20 @@ table.settings {
 
 .help a {
   color: #666;
+}
+
+.select_gmail_email_settings .manual_email_settings { display:none; }
+.select_gmail_email_settings .no_authentication_email_settings { display:none; }
+
+.select_manual_email_settings .gmail_email_settings { display:none; }
+.select_manual_email_settings .no_authentication_email_settings { display:none; }
+
+.select_no_authentication_email_settings .manual_email_settings { display:none; }
+.select_no_authentication_email_settings .gmail_email_settings { display:none; }
+
+.flash_notice {
+  border: 1px solid #F87900;
+  background-color: #FED;
+  color: #F87900;
+  padding: 1ex;
 }

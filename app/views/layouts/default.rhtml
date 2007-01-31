@@ -10,6 +10,10 @@
 <body>
 
   <div class="header">
+    <div class="commands">
+      <%= link_to "settings", :controller => 'admin', :action => 'server_settings' %>
+    </div>
+
     <%= link_to image_tag("cc_logo.png"), "http://cruisecontrolrb.rubyforge.org/" %>
     <div class="version">version : <%= CruiseControl::VERSION::STRING %></div>
     <div class="breadcrumbs"/><%= @breadcrumbs %></div>
@@ -18,7 +22,12 @@
   <table id="columns_layout">
     <tr>
       <td id="left_column"><%= yield :left_side %></td>
-      <td id="content"><%= yield %></td>
+      <td id="content">
+        <% if flash[:notice] and !flash[:notice].blank? -%>
+          <p class="flash_notice"><%= h flash[:notice] %></p>
+        <% end -%>
+        <%= yield %>
+      </td>
     </tr>
   </table>
 
