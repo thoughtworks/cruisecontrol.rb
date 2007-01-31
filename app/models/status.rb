@@ -1,5 +1,8 @@
 class Status
   
+  RUNNING = "Running"
+  NOT_RUNNING = "Not Started"
+  
   def initialize(artifacts_directory)
     @artifacts_directory = artifacts_directory
   end

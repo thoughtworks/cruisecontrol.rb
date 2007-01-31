@@ -42,4 +42,22 @@ class ProjectBlockerTest < Test::Unit::TestCase
     end
   end
   
+  def test_block_on_pid_file
+   in_total_sandbox do |sandbox|
+      project = Object.new
+      project.stubs(:name).returns('foo')
+      project.stubs(:path).returns(sandbox.root)   
+      expected_pid_file = "#{sandbox.root}/builder.pid"
+      assert ProjectBlocker.block?(project)
+      
+      lock = File.open(expected_pid_file, 'w')
+      begin
+        lock.flock(File::LOCK_EX | File::LOCK_NB)                      
+        assert_false ProjectBlocker.block?(project)
+      ensure
+        lock.flock(File::LOCK_UN | File::LOCK_NB)
+        lock.close
+      end            
+   end
+  end
 end

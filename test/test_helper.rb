@@ -57,4 +57,8 @@ class Test::Unit::TestCase
       yield(sandbox, project)
     end
   end
+  
+  def assert_false(expression)
+    assert_equal false, expression
+  end
 end

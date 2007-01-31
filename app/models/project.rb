@@ -72,6 +72,14 @@ class Project
     end.sort_by { |build| build.label }
   end
 
+  def builder_state       
+    if (ProjectBlocker.block? self)
+      Status::NOT_RUNNING
+    else
+      Status::RUNNING
+    end
+  end
+  
   def last_build
     builds.last || Build.nil
   end

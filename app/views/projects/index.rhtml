@@ -10,7 +10,7 @@
     <th>Last Build Label</th>
     <th>Last Build Status</th>
     <th>Last Build Time</th>
-    <!--<th>Builder State</th>-->
+    <th>Builder State</th>
   </tr>
 
   <% @projects.each do |project| %>
@@ -19,6 +19,7 @@
       <td><%= project.last_build.label %></td>
       <td class="build-status"><%= project.last_build.status %></td>
       <td><%= project.last_build.formatted_time %></td>
+      <td><%= project.builder_state %></td>
       <!--<td>Sleeping</td>--><!-- stopped / building / checking for modifications / sleeping -->
     </tr>
   <% end %>

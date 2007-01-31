@@ -15,6 +15,17 @@ class ProjectBlocker
     end
   end
   
+  def self.block?(project)
+    return false if @@pid_files.include?(project.name)    
+    lock = File.open(pid_file(project), 'w')
+    begin
+      lock.flock(File::LOCK_EX | File::LOCK_NB)
+    ensure
+      lock.flock(File::LOCK_UN)
+      lock.close
+    end
+  end
+  
   def self.release(project)
     lock = @@pid_files[project.name]
     if lock

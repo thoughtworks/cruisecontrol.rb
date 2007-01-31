@@ -28,6 +28,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
   end
 
   def test_index
+    create_pid_files_for_projects
     get :index
     assert_equal @projects, assigns(:projects)
   end
@@ -138,5 +139,11 @@ class ProjectsControllerTest < Test::Unit::TestCase
     project.path = file(name).name
     project.add_plugin(EmailNotifier.new)
     project
+  end
+  
+  def create_pid_files_for_projects
+    @sandbox.new :file => "one/builder.pid"
+    @sandbox.new :file => "two/builder.pid"
+    @sandbox.new :file => "three/builder.pid" 
   end
 end

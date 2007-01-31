@@ -262,6 +262,14 @@ end
     assert_raises("Plugin error:\n  Object: Plugin 1 talking\n  Object: Plugin 2 talking") { @project.notify(:hey_you) }
   end
 
+  def test_determine_builder_state
+    ProjectBlocker.expects(:block?).with(@project).returns(true)
+    assert_equal Status::NOT_RUNNING, @project.builder_state
+    
+    ProjectBlocker.expects(:block?).with(@project).returns(false)
+    assert_equal Status::RUNNING, @project.builder_state
+  end
+  
   def new_revision(number)
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
   end
