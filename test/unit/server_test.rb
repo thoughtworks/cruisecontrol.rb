@@ -7,8 +7,6 @@ class ServerTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       ActionMailer::Base.server_settings = {:foo => 'crap', :port => 13}
       Server.new(sandbox.root).save
-      sandbox.assert :file => 'server_config.rb', 
-                     :has_contents => 'ActionMailer::Base.server_settings = {:foo=>"crap", :port=>13}'
       
       ActionMailer::Base.server_settings = {:bar => 'cat'}
       Server.new(sandbox.root).load
