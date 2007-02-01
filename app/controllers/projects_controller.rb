@@ -3,6 +3,7 @@ class ProjectsController < ApplicationController
   
   def index
     @projects = load_projects
+    @build_states = get_build_states(@projects)
   end
 
   def show
@@ -55,6 +56,23 @@ class ProjectsController < ApplicationController
     update_emails
   end
 
+  def refresh_projects
+    current_projects = load_projects
+    changed_projects = []
+    @build_states = get_build_states(current_projects)
+    params[:build_states].split(';').each do |build_state|
+      project = current_projects.find {|proj| proj.name == build_state.split(':')[0] }
+      if(!project.nil?)
+        if (project.build_state_tag != build_state.split(':')[1])
+          changed_projects << project          
+        end
+        current_projects.delete(project)
+      end
+    end     
+    @projects = changed_projects
+    @new_projects = current_projects
+  end
+  
   private
 
   def update_emails
@@ -84,5 +102,13 @@ class ProjectsController < ApplicationController
         obj.send("#{key}=", value)
       end
     end
+  end
+  
+  def get_build_states(projects)
+    states = ""
+    projects.each do |project|
+      states += project.name + ":" + project.build_state_tag + ";"
+    end
+    states
   end
 end

@@ -269,7 +269,17 @@ end
     ProjectBlocker.expects(:block?).with(@project).returns(false)
     assert_equal Status::RUNNING, @project.builder_state
   end
+
+  def test_build_state_tag
+    build = MockBuild.new
+    build.expects(:label).at_least(1).returns('2')
+    build.expects(:status).at_least(1).returns('pingpong')
+    @project.expects(:builder_state).at_least(1).returns('Not Started')
+    @project.expects(:builds).at_least(1).returns([build])
+    assert_equal "NotStarted2pingpong", @project.build_state_tag
+  end
   
+  private
   def new_revision(number)
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
   end
@@ -278,5 +288,10 @@ end
     build = Object.new
     Build.expects(:new).with(@project, number).returns(build)
     build
+  end
+end
+
+class MockBuild < Build    
+  def initialize
   end
 end

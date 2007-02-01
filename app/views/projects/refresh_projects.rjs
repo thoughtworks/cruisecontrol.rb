@@ -1,0 +1,13 @@
+@projects.each do |project|
+  project_id = 'project_' + project.name
+  page.replace_html project_id, {:partial => 'project', :locals=> {:project => project}} 
+  page.visual_effect :highlight, project_id
+end
+
+@new_projects.each do |new_project|  
+  project_id = 'project_' + new_project.name
+  page.insert_html :bottom, 'projects', '<div id="' + project_id + '">'+ render( :partial => "project", :locals => {:project => new_project }) +'</div>'
+  page.visual_effect :highlight, project_id
+end
+
+page.replace_html 'buid_states_hidden_div', hidden_field_tag('build_states', @build_states)

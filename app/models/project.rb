@@ -43,6 +43,13 @@ class Project
     @scheduler = PollingScheduler.new(self)
   end
 
+  #used by rjs to refresh project if build state tag changed.
+  def build_state_tag    
+    builder_state.to_s.gsub(' ', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
+  end
+  
+  
+  
   def url_name
     name.downcase.gsub(/[^a-z0-9]/, '')
   end
@@ -206,7 +213,7 @@ plugin_loader = Object.new
 
 def plugin_loader.load_plugin(path)
   plugin_name = File.basename(path).sub(/\.rb$/, '')
-  Log.debug("Loading plugin #{plugin_name}")
+#  Log.debug("Loading plugin #{plugin_name}")
   if RAILS_ENV == 'development'
     load path
   else
