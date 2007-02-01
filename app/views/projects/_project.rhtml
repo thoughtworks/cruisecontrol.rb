@@ -1,0 +1,30 @@
+<table class="project build_<%= project.last_build_status %>">
+<tr>
+  <td class="project_summary">
+    <div>
+      <span class="project_name">
+        <%= link_to project.name, :action => 'show', :id => project.url_name %>
+      </span>
+      <span class="builder_status"><%= project.builder_state.downcase %></span>
+    </div>
+    <div class="last_build">
+      <% if project.last_build %>
+        build <%= project.last_build.label %> 
+        <span class="build_status"><%= project.last_build_status.to_s.gsub('_', ' ') %></span>
+        <span><%= format_time(project.last_build.time, :human) %></span>
+      <% else %>
+        <span class="build_status">Never built</span>
+      <% end %>
+    </div>
+  </td>
+  <td class="recent_builds">
+    <% project.last_five_builds.each do |build| %>
+      <div class="build_summary">
+        <%= link_to "build #{build.label} (#{format_time(build.time, :human)})", {:action => 'show', :id => project.url_name, :build => build.label}, 
+                                 :class => build.status %>
+      </div>
+    <% end %>
+  </td>
+  <td class="filler"></td>
+</tr>
+</table>

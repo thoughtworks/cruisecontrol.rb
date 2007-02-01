@@ -25,7 +25,9 @@
       <span class="menu_item">
         <%= link_to 'Home', :controller => 'projects', :action => 'index' %>
       </span>
-      <span class="menu_item"><a href="not_implemented.html">Settings</a></span>
+      <span class="menu_item">
+        <%= link_to 'Settings', :controller => 'admin', :action => 'server_settings' %>
+      </span>
       <span class="menu_item"><%= link_to 'Test email', :controller => 'test', :action => 'test_mail' %></span>
     </div>
 
@@ -33,10 +35,6 @@
       <div class="flash_notice"><%= h flash[:notice] %></div>
     <% end -%>
  
-    <div class="commands">
-      <%= link_to "settings", :controller => 'admin', :action => 'server_settings' %>
-    </div>
-
   </div>
 
   <div id="content"><%= yield %></div>

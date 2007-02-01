@@ -11,7 +11,10 @@
     <br/>
     <br/>
     <% @project.builds.reverse.each do |build| %>
-      <%= link_to "<div class='#{build.status}'>build #{build.label}</div>", :id => @project.url_name, :build => build.label %>
+      <div>
+      <%= link_to "build #{build.label}", {:id => @project.url_name, :build => build.label}, 
+                                          :class => build.status %>
+      </div>
     <% end %>
   </td>
   

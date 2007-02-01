@@ -76,16 +76,6 @@ a:hover {
   float: right;
 }
 
-.header .commands {
-  float:right;
-  font-size: 0.9em;
-  padding: 0.3em;
-}
-
-.header a {
-  color: #FFF;
-}
-
 .version {
   font-size: 0.75em;
   padding: 0.3em;
@@ -94,6 +84,7 @@ a:hover {
 .main_menu .menu_item a, .main_menu .menu_item a:visited {
   text-decoration: none;
   padding: 0.2em 0.3em;
+  color: #309;
 }
 
 .main_menu .menu_item a:hover {
@@ -130,17 +121,17 @@ a:hover {
 .build_failed .build_status { color: #A00; }
 .build_never_built .build_status { color: #888; }
 
-.success {
+a.success, a.success:visited, td.left_column a.success, td.left_column a.success:visited  {
   font-weight: bold;
   color: #0A0;
 }
 
-.failed {
+a.failed, a.failed:visited, td.left_column a.failed, td.left_column a.failed:visited  {
   font-weight: bold;
   color: #A00;
 }
 
-.never_built {
+a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_column a.never_built:visited  {
   font-weight: bold;
   color: #888;
 }
@@ -340,29 +331,9 @@ td.left_column a:hover {
   color: #FC0;
 }
 
-a.build-passed-link, a.build-passed-link:visited {
-  color: Green;
-  text-decoration: none;
-}
-
-a.build-passed-link:hover {
-  text-decoration: underline;
-}
-
-a.build-failed-link, a.build-failed-link:visited {
-  color: #A00;
-  text-decoration: none;
-}
-
-a.build-failed-link:hover {
-  text-decoration: underline;
-}
-
 .log {
   overflow: auto;
 }
-
-
 
 /* new stuff */
 

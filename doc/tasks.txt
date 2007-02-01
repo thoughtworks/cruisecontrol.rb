@@ -1,7 +1,3 @@
-Bugs
-----
-* if project has no rake file, rake uses cruise's rake file and builds cruise... whoops...
-
 Necessary
 ---------
 * how do the builders get started?  the webapp will need to be able to start / restart / stop them eventually,
@@ -23,9 +19,9 @@ Build
 
 Dev
 ---
-* project.path setter after every call to Project.new is ugly. Move to the c'tor.
-* Error message when starting a builder for non-existant project is ugly (directory not found)
+* project.path setter after every call to Project.new is ugly. Move to the c'tor (? or not ?)
 * Check what happens with parsing "svn log" output if a project has svn:externals, and there is a new revision in there
+* RESTful URLs everywhere
 
 Concerns
 --------
