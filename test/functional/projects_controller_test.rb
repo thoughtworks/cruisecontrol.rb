@@ -56,8 +56,10 @@ class ProjectsControllerTest < Test::Unit::TestCase
   def test_show_with_no_build
     get :show, :id => "two"
 
+    assert_response :success
+
     assert_equal @two, assigns(:project)
-    assert_equal Build::NilBuild, assigns(:build).class
+    assert_nil assigns(:build)
   end
 
   def test_settings

@@ -71,4 +71,3 @@ else
   STDERR.puts "Type 'cruise --help' for usage."
   exit -1
 end
-

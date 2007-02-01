@@ -28,6 +28,7 @@ ARGV.options do |opts|
 end
 
 require RAILS_ROOT + "/config/environment"
+Log.verbose = OPTIONS[:verbose]
 
 project_path = File.expand_path(File.join(Configuration.builds_directory, OPTIONS[:project_name]))
 
@@ -35,8 +36,6 @@ unless File.exist? project_path
   STDERR.puts "Project '#{OPTIONS[:project_name]}' not found in '#{project_path}'"
   exit(-1)
 end
-
-Log.verbose = OPTIONS[:verbose]
 
 def cleanup(project)
   puts "Builder for project '#{OPTIONS[:project_name]}' exited" rescue nil

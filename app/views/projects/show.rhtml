@@ -1,57 +1,67 @@
 <% project_page_breadcrumb %>
 
-<% content_for(:left_side) do %>
-  <div><%= link_to("Latest", :action => "show", :id => @project.url_name) %></div>
-  <div class="gray">Next</div>
-  <div class="gray">Prev</div>
-  <br/>
-  <div><%= link_to("Settings", :action => "settings", :id => @project.url_name) %></div>
-  <br/>
-  <br/>
-  <% @project.builds.reverse.each do |build| %>
-    <%= link_to "<div class='#{build.status}'>build #{build.label}</div>", :id => @project.url_name, :build => build.label %>
-  <% end %>
-<% end %>
-
-<h2>BUILD <%= @build.label %></h2>
-
-<table>
-  <tr>
-    <td class="label">Project:</td>
-    <td><%= @project.name %></td>
-  </tr>
-  <tr>
-    <td class="label">Label:</td>
-    <td><%= @build.label %></td>
-  </tr>
-  <tr>
-    <td class="label">Status:</td>
-    <td class="build-status"><%= @build.status %></td>
-  </tr>
-  <tr>
-    <td class="label">Time:</td>
-    <td><%= @build.formatted_time %></td>
-  </tr>
-  <tr>
-    <td class="header-label">Running time:</td>
-    <td class="header-data">?????</td>
-  </tr>
+<table class="two_columns_layout">
+<tr>
+  <td class="left_column">
+    <div><%= link_to("Latest", :action => "show", :id => @project.url_name) %></div>
+    <div class="gray">Next</div>
+    <div class="gray">Prev</div>
+    <br/>
+    <div><%= link_to("Settings", :action => "settings", :id => @project.url_name) %></div>
+    <br/>
+    <br/>
+    <% @project.builds.reverse.each do |build| %>
+      <%= link_to "<div class='#{build.status}'>build #{build.label}</div>", :id => @project.url_name, :build => build.label %>
+    <% end %>
+  </td>
+  
+  <td class="content_column">
+    <% if @build %>
+      <h2>Build <%= @build.label %></h2>
+      
+      <table>
+        <tr>
+          <td class="label">Project:</td>
+          <td><%= @project.name %></td>
+        </tr>
+        <tr>
+          <td class="label">Label:</td>
+          <td><%= @build.label %></td>
+        </tr>
+        <tr>
+          <td class="label">Status:</td>
+          <td class="build-status"><%= @build.status %></td>
+        </tr>
+        <tr>
+          <td class="label">Time:</td>
+          <td><%= format_time @build.time %></td>
+        </tr>
+        <tr>
+          <td class="header-label">Running time:</td>
+          <td class="header-data">?????</td>
+        </tr>
+      </table>
+      
+      <br/>
+      
+      <h3>Build Changeset</h3>
+      <pre class="changeset">
+      <%= format_changeset_log(@build.changeset) %>
+      </pre>
+      
+      <h3>Test Failures and Errors</h3>
+      <pre>
+      <%= display_test_failures_and_errors_if_any(@build.output) %>
+      </pre>
+      
+      <h3>Build Log</h3>
+      <br/>
+      <div class="logfile">
+        <%= format_build_log(@build.output) %>
+      </div>
+    <% else %>
+      <div class="error"> No build specified</div>
+    <% end %>
+  </td>
+</tr>
 </table>
-
-<br/>
-
-<h3>Build Changeset</h3>
-<pre class="changeset">
-<%= format_changeset_log(@build.changeset) %>
-</pre>
-
-<h3>Test Failures and Errors</h3>
-<pre>
-<%= display_test_failures_and_errors_if_any(@build.output) %>
-</pre>
-
-<h3>Build Log</h3>
-<br/>
-<div class="logfile">
-  <%= format_build_log(@build.output) %>
-</div>

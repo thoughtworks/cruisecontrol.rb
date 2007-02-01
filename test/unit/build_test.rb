@@ -69,27 +69,6 @@ class BuildTest < Test::Unit::TestCase
     end
   end
 
-  def test_nil_build
-    assert_equal '-', Build.nil.time
-    assert_equal '-', Build.nil.label
-    assert_equal '-', Build.nil.output
-    assert_equal :never_built, Build.nil.status
-  end
-
-  def test_formatted_time_when_status_file_does_not_exist
-    with_sandbox_project do |sandbox, project|
-      assert_equal '-', Build.new(project, 1).formatted_time
-    end
-  end
-  
-  def test_formatted_time_when_status_file_exists
-    with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-1/build_status = success"
-      Status.any_instance.expects(:created_at).returns(Time.local(2006, 5, 3, 14, 33, 50))
-      assert_equal "02:33 PM May 03, 2006", Build.new(project, 1).formatted_time
-    end
-  end
-  
   def test_run_successful_build
     with_sandbox_project do |sandbox, project|
       expected_build_directory = File.join(sandbox.root, 'build-123')

@@ -42,7 +42,7 @@ Rails::Initializer.run do |config|
   # config.plugins = %W( exception_notification ssl_requirement )
 
   # Add additional load paths for your own custom dirs
-  # config.load_paths += %W( #{RAILS_ROOT}/extras )
+  config.load_paths << "#{RAILS_ROOT}/builder_plugins/installed"
 
   # Use the database for sessions instead of the file system
   # (create the session table with 'rake db:sessions:create')
@@ -58,5 +58,3 @@ require 'cruisecontrol/version'
 # written in ./config/site_config.rb. See ./config/site_sonfig.rb_example for an example of what this file may 
 # look like.
 require 'site_config' if File.exists?("#{RAILS_ROOT}/config/site_config.rb")
-
-$: << File.join(RAILS_ROOT, 'builder_plugins', 'installed')

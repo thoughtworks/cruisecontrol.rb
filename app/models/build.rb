@@ -1,12 +1,6 @@
 class Build
   include CommandLine
 
-  class << self
-    def nil
-      NilBuild.new
-    end
-  end
-
   attr_reader :project, :label
 
   def initialize(project, label)
@@ -59,12 +53,8 @@ class Build
     CoverageReportsRepository.new(artifacts_directory)
   end
   
-  def formatted_time
-    if time = @status.created_at
-      time.strftime('%I:%M %p %b %d, %Y')
-    else
-      '-'
-    end
+  def time
+    @status.created_at
   end
 
   def artifacts_directory
@@ -122,26 +112,6 @@ class Build
 
     def [](coverage_type)
       File.read("#{@artifacts_directory}/coverage-#{coverage_type}.log") rescue ""
-    end
-  end
-
-  # TODO: Does it need to exist? Can't a Struct/OpenStruct be used instead of this class?
-  # Don't know how to put this class to use Status...
-  class NilBuild
-    attr_reader :project, :label, :status, :time, :changeset, :output
-
-    def initialize
-      @project = nil
-      @label = @time = @changeset = @output = '-'
-      @status = :never_built
-    end
-    
-    def formatted_time
-      '-'
-    end
-
-    def successful?
-      false
     end
   end
 

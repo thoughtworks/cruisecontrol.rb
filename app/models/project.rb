@@ -81,7 +81,15 @@ class Project
   end
   
   def last_build
-    builds.last || Build.nil
+    builds.last
+  end
+  
+  def last_build_status
+    builds.empty? ? :never_built : last_build.status
+  end
+
+  def last_five_builds
+    builds.reverse[0..4]
   end
 
   def memento
@@ -197,10 +205,14 @@ end
 plugin_loader = Object.new
 
 def plugin_loader.load_plugin(path)
+  plugin_name = File.basename(path).sub(/\.rb$/, '')
+  Log.debug("Loading plugin #{plugin_name}")
   if RAILS_ENV == 'development'
     load path
   else
-    require path
+    #convert path to something like 'my_plugin/init'
+    require_path = plugin_name == 'init' ? File.basename(File.dirname(path)) + '/' + plugin_name : plugin_name
+    require require_path
   end
 end
 
@@ -219,7 +231,7 @@ def plugin_loader.load_all
       next if plugin[-4..-1] == '.svn'
       init_path = File.join(plugin, 'init.rb')
       if File.file?(init_path)
-        load_plugin(File.join(File.basename(plugin), 'init'))
+        load_plugin(init_path)
       else
         log.error("No init.rb found in plugin directory #{plugin}")
       end

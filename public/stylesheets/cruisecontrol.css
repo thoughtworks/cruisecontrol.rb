@@ -4,23 +4,76 @@ body {
   margin: 0;
   border: 0;
   color: #000;
-  background-color: #FFF;
+  background-color: #F8FFE6;
 }
 
 img { border: 0; }
-a, a:visited { color: #306; }
-a:hover { color: #FC0; }
+
+a, a:visited { 
+  color: #306; 
+}
+
+a:hover { 
+  text-decoration: underline;
+}
 
 /* default layout classes */
 
-.header, .footer {
+.header {
   color: #FFF;
   background-color: #306;
   font-weight: bold;
 }
 
+.header .tw_logo { 
+  float: right; 
+  padding-top: 5px;
+  padding-right: 5px;
+}
+
+.header .title {
+  font-family: georgia, helvetica, arial, sans-serif;
+  font-weight: bold;
+  font-size: 1.8em;
+  color: #FAFAFF;
+  padding: 0.1em 1em 0 0.25em;
+}
+
+.header .subtitle {
+  font-family: arial, helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 0.8em;
+  color: #FAFAFF;
+  padding: 0 1em 0.3em 1.5em;
+}
+
 .footer {
+  font-size: 0.6em;
+  color: #999;
   text-align: right;
+  padding: 2em 1em 0em 0em;
+}
+
+.footer a, .footer a:visited {
+  color: #666;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #FFF;
+  background-color: #666;
+}
+
+.main_menu {
+  /* TODO: a better color? */
+  color: #309;
+  /* TODO: put a neutral color from the color scheme here */
+  background-color: #DDF;
+  padding: 0.2em 0;
+}
+
+.main_menu .right_aligned {
+  float: right;
 }
 
 .header .commands {
@@ -36,28 +89,109 @@ a:hover { color: #FC0; }
 .version {
   font-size: 0.75em;
   padding: 0.3em;
-  float: right;
 }
 
-.breadcrumbs {
-  background-color: #309;
-  vertical-align: middle;
-  border: 0;
-  padding: 0.2em 0.4em;
-  border-spacing: 0; 
+.main_menu .menu_item a, .main_menu .menu_item a:visited {
+  text-decoration: none;
+  padding: 0.2em 0.3em;
 }
 
-.breadcrumbs a, .breadcrumbs a:visited {
-  color: #FFF;
+.main_menu .menu_item a:hover {
+  color: #309;
+  background-color: #FFF2BF;
   text-decoration: none;
 }
 
-.breadcrumbs a:hover {
-  color: #FC0;
+#content {
+  color: #000;
+  background-color: #FFF;
+  padding: 0 0.5em;
+}
+
+/* build status stuff */
+.build_success { 
+  background-color: #F8FFE6; 
+  border-top: 2px solid #DFE6CF;
+  border-left: 2px solid #DFE6CF;
+}
+.build_failed { 
+  background-color: #FFE6FC; 
+  border-top: 2px solid #E6CFE2;
+  border-left: 2px solid #E6CFE2;
+}
+.build_never_built {
+  background-color: #F6F6F6; 
+  border-top: 2px solid #CCC;
+  border-left: 2px solid #CCC;
+}
+
+.build_status { font-weight: bold; }
+.build_success .build_status { color: #0A0;}
+.build_failed .build_status { color: #A00; }
+.build_never_built .build_status { color: #888; }
+
+.success {
+  font-weight: bold;
+  color: #0A0;
+}
+
+.failed {
+  font-weight: bold;
+  color: #A00;
+}
+
+.never_built {
+  font-weight: bold;
+  color: #888;
+}
+
+/* Project dashboard */
+
+.project {
+  padding: 0.5em;
+  margin: 0.5em 0;
+  width: 100%;
+}
+
+.project td { 
+  vertical-align: top;
+  text-align: left;
+}
+
+.project .project_summary {
+  width: 40%;
+}
+
+.project .recent_builds {
+  padding-top: 1em;
+  font-size: 0.7em;
+  width: 20%;
+}
+
+.project .filler {
+  padding-top: 5em;
+}
+
+.project .project_name {
+  font-family: georgia, helvetica, arial, sans-serif;
+  padding: 0;
+  margin: 0;
+  font-size: 1.6em;
+  font-weight: bold;
+}
+
+.project .project_name a, .project .project_name a:visited {
+  color: #309;
+  text-decoration: none;
+}
+.project .project_name a:hover {
+  color: #309;
   text-decoration: underline;
 }
 
-#columns_layout {
+/* 2-columns layout */
+
+table.two_columns_layout {
   border: 0;
   padding: 0;
   font-size: 1em;
@@ -65,32 +199,32 @@ a:hover { color: #FC0; }
   width: 100%;
 }
 
-#columns_layout td {
+table.two_columns_layout td {
   vertical-align: top;
-  padding: 0.5em;
 }
 
-#left_column {
+td.left_column {
   width: 20%;
   color: #000;
   background-color: #F8FFE6;
+  padding: 0.5em;
 }
-#left_column a, #left_column a:visited {
+
+td.content_column {
+  width: 80%;
+  padding: 0.5em;
+}
+
+td.left_column a, td.left_column a:visited {
   color: #333399;
   text-decoration: none;
 }
 
-#left_column a:hover {
+td.left_column a:hover {
   text-decoration: underline;
 }
 
-#content {
-  color: #000;
-  background-color: #FFF;
-}
-
-/* other classes */
-
+/* Other classes */
 .main-panel {
   color: #FC0;
 }
@@ -238,23 +372,6 @@ a.build-failed-link:hover {
 .edit .likes-save { display:none; }
 .save .likes-edit { display:none; }
 .save .likes-read { display:none; }
-
-.build-status {
-  font-weight: bold;
-  text-transform:uppercase;
-}
-
-.build-success .build-status { color: green;}
-.build-failed .build-status { color: red; }
-
-.success {
-  font-weight: bold;
-  color: green;
-}
-.failed {
-  font-weight: bold;
-  color: red;
-}
 
 .test-results {
   font-weight: bold;

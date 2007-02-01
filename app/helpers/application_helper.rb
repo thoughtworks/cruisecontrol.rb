@@ -1,5 +1,6 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+
   def add_breadcrumb(name, link)
     if @breadcrumbs
       @breadcrumbs << " > "
@@ -37,6 +38,19 @@ module ApplicationHelper
   def color_for_status(build)
     build.successful? ? 'green' : 'red'
   end
+
+  def format_time(time, format = :iso)
+    case format
+    when :human
+      Time.now > time + 24.hours ?
+        time.strftime('on %b %d') :
+        time.strftime('at %H:%M')
+    when :iso
+      time.strftime('%Y-%m-%d %H:%M:%S')
+    else
+      raise "Unknown time format #{format.inspect}"
+    end
+  end
   
   def setting_row(label, value, help = '&nbsp;')
     <<-EOL
@@ -47,4 +61,5 @@ module ApplicationHelper
     </tr>
     EOL
   end
+
 end
