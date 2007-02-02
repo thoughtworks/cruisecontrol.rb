@@ -11,9 +11,11 @@
                   e.g. "selenium_tests"<br/>
                   cruise has good defaults, but you can override them here by typing they task you want cruise to run, 
                   read more #{link_to 'here', 'http://cruisecontrolrb.rubyforge.org/rake_tasks.html'}})%>
-  <%= setting_row('Build Command', f.text_field(:build_command), %{
-                  e.g. "ant build test"<br/>
-                  if you'd rather just replace rake altogether, you can specify the build command of your choice here})%>
+  <%= 
+#  setting_row('Build Command', f.text_field(:build_command), %{
+#                  e.g. "ant build test"<br/>
+#                  if you'd rather just replace rake altogether, you can specify the build command of your choice here})
+%>
   <%= setting_row('Polling Interval',
                   "<input id='project_scheduler_polling_interval' name='project[scheduler][polling_interval]'
                           size='10' type='text' value='#{@project.scheduler.polling_interval}'/>",
