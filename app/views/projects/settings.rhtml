@@ -1,7 +1,8 @@
 <% project_settings_page_breadcrumb %>
 
-<h1><%= @project.name %></h1>
+<h1><%= @project.name %> Settings</h1>
 
+<fieldset>
 <h3>Project Settings</h3>
 
 <% form_for :project, @project, :url => { :action => 'update', :id => @project.url_name } do |f| %>
@@ -23,10 +24,11 @@
 <div align="right"><%= submit_tag "Save Settings"%></div>
 
 <% end %>
+</fieldset>
 
 <br/>
-<hr/>
 
+<fieldset>
 <h3>Email Notification</h3>
 
 <p>When the build fails, send an e-mail to :<p>
@@ -36,3 +38,4 @@
 </ul>
 
 <p>Configure how email is sent from <%= link_to "Email Settings", :controller => 'admin', :action => 'email_settings' %></p>
+</fieldset>

@@ -40,22 +40,24 @@ module ApplicationHelper
   end
 
   def format_time(time, format = :iso)
-    remove_leading_zeros(
-      case format
-      when :human
+    case format
+    when :human
+      remove_leading_zeros(
         Time.now > time + 24.hours ?
-          time.strftime('on %b %d') :
-          time.strftime('at %H:%M')
-      when :iso
-        time.strftime('%Y-%m-%d %H:%M:%S')
-      when :verbose
-        time.strftime('%I:%M %p on %B %d, %Y')
-      else
-        raise "Unknown time format #{format.inspect}"
-      end
-    )
+          time.strftime('at %b %d') :
+          time.strftime('on %H:%M'))
+    when :iso
+      time.strftime('%Y-%m-%d %H:%M:%S')
+    when :iso_date
+      time.strftime('%Y-%m-%d')
+    when :verbose
+      remove_leading_zeros(time.strftime('%I:%M %p on %B %d, %Y'))
+    else
+      raise "Unknown time format #{format.inspect}"
+    end
   end
   
+  # surely there's a way to do this with strftime, but I couldn't find it... - jss
   def remove_leading_zeros(string)
     string.gsub(/(^| |,)0+/, '\1')
   end

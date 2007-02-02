@@ -26,6 +26,7 @@ Bugs
 
 Necessary
 ---------
+* test application_helper
 * how do the builders get started?  the webapp will need to be able to start / restart / stop them eventually,
   can we do this now?  how?  can we do it in a way that works on windows / mac / *nix?
 * builder

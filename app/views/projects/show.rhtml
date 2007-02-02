@@ -1,57 +1,42 @@
 <% project_page_breadcrumb %>
 
+<div id="build-list">
+  <% @project.builds.reverse.each do |build| %>
+    <div class="build-link<%= @build.label == build.label ? ' selected' : ''%>">
+    <%= link_to_build(build) %>
+    </div>
+  <% end %>
+</div>
 
-<table class="two_columns_layout">
-<tr>
-  <td class="left_column">
-    <div><%= link_to("Latest", :action => "show", :id => @project.url_name) %></div>
-    <div class="gray">Next</div>
-    <div class="gray">Prev</div>
-    <br/>
-    <div><%= link_to("Settings", :action => "settings", :id => @project.url_name) %></div>
-    <br/>
-    <br/>
-    <% @project.builds.reverse.each do |build| %>
-      <div>
-      <%= link_to "build #{build.label}", {:id => @project.url_name, :build => build.label}, 
-                                          :class => build.status %>
-      </div>
-    <% end %>
-  </td>
-  
-  <td class="content_column">
-      <h1>
-        <%= @project.name %> build <%= @build.label %> 
-        <% if @build.failed? %><font class="error">FAILED</font><% end %>
-      </h1>
-      <div class="build-time">
-        finished at <%= format_time @build.time, :verbose %>
-      </div>
-      
-      <br/>
+<h1>
+  <%= @project.name %> build <%= @build.label %> 
+  <% if @build.failed? %><span class="error">FAILED</span><% end %>
+</h1>
+<div class="build-time">
+  finished at <%= format_time @build.time, :verbose %>
+</div>
 
-      <div class="section-open">
-        <div class="section-header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
-        <div class="section-content">
-          <pre class="changeset"><%= format_changeset_log(@build.changeset) %></pre>
-        </div>
-      </div>
-      
-      <div class="section-closed">
-        <div class="section-header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
-        <div class="section-content">
-          <pre><%= display_test_failures_and_errors_if_any(@build.output) %></pre>
-        </div>
-      </div>
+<br/>
 
-      <div class="section-closed">
-        <div class="section-header" onclick="toggle_section(this.parentNode)">Build Log</div>
-        <div class="section-content">
-          <div class="logfile">
-            <%= format_build_log(@build.output) %>
-          </div>
-        </div>
-      </div>
-  </td>
-</tr>
-</table>
+<div class="section-open">
+  <div class="section-header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
+  <div class="section-content">
+    <pre class="changeset"><%= format_changeset_log(@build.changeset) %></pre>
+  </div>
+</div>
+
+<div class="section-closed">
+  <div class="section-header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
+  <div class="section-content">
+    <pre><%= display_test_failures_and_errors_if_any(@build.output) %></pre>
+  </div>
+</div>
+
+<div class="section-closed">
+  <div class="section-header" onclick="toggle_section(this.parentNode)">Build Log</div>
+  <div class="section-content">
+    <div class="logfile">
+      <%= format_build_log(@build.output) %>
+    </div>
+  </div>
+</div>

@@ -2,7 +2,6 @@
   <li>
     <%= email %>
     <%= link_to_remote('[x]', {:url => {:action => "remove_email", :id => @project.url_name, :value => email}}) %>
-    </div>
   </li>
 <% end %>
 

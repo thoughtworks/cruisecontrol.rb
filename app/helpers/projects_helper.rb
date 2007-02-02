@@ -2,6 +2,12 @@ def format_changeset_log(log)
   log.strip
 end
 
+def link_to_build(build)
+  text = "#{format_time(build.time, :iso_date)} build #{build.label}"
+  text += " <span class='error'>FAILED</span>" if build.failed?
+  link_to text, :id => @project.url_name, :build => build.label
+end
+
 def format_build_log(log)
   convert_new_lines(log.gsub(/(\d+ tests, \d+ assertions, \d+ failures, \d+ errors)/, '<div class="test-results">\1</div>'))
 end

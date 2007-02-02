@@ -5,6 +5,9 @@
       <span class="project_name">
         <%= link_to project.name, :action => 'show', :id => project.url_name %>
       </span>
+      <span class="project_settings">
+        (<%= link_to("edit", :action => "settings", :id => project.url_name) %>)
+      </span>
       <span class="builder_status"><%= project.builder_state.downcase %>
       <% if project.builder_state == Status::RUNNING %>
         (<%= project.builder_activity.to_s %>)
