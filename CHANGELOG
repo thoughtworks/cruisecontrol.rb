@@ -3,7 +3,7 @@ TRUNK
   - plugin error handler: if a plugin raises an error in response to notification, builder logs the error, 
     notifies all other plugins, then raises an error of its own (thus triggering the build_loop_failed event)
   - improved error handling during builder initialization
-  
+  - builder status - not running, running(building | sleeping | checking for modifications | error)
 --------------------------------------------------------------------------------
 * 0.3.0
   - builder is building 'cruise', 'test' or 'default' target, depending on what is defined in the project
