@@ -44,8 +44,8 @@ module ApplicationHelper
     when :human
       remove_leading_zeros(
         Time.now > time + 24.hours ?
-          time.strftime('at %b %d') :
-          time.strftime('on %H:%M'))
+          time.strftime('on %b %d') :
+          time.strftime('at %H:%M'))
     when :iso
       time.strftime('%Y-%m-%d %H:%M:%S')
     when :iso_date

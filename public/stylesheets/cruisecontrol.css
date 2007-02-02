@@ -7,10 +7,14 @@ body {
   background-color: #FFF;
 }
 
+h3 {
+  margin-top: .4em;
+}
+
 img { border: 0; }
 
 a, a:visited { 
-  color: #306; 
+  color: #44a; 
 }
 
 a:hover { 
@@ -41,18 +45,16 @@ a:hover {
   color: #666;
   text-decoration: none;
 }
-
+/* this looks weird - jss
 .footer a:hover {
   color: #FFF;
   background-color: #666;
 }
-
+*/
 .main_menu {
   /* TODO: a better color? */
-  color: #309;
-  /* TODO: put a neutral color from the color scheme here */
-  background-color: #DDF;
-  padding: 0.2em 0;
+  color: #66c;
+  padding: 0.2em 0.5em 0 0.5em;
 }
 
 .main_menu .right_aligned {
@@ -67,18 +69,15 @@ a:hover {
 .main_menu .menu_item a, .main_menu .menu_item a:visited {
   text-decoration: none;
   padding: 0.2em 0.3em;
-  color: #309;
+  color: #66c;
 }
 
 .main_menu .menu_item a:hover {
-  color: #309;
-  background-color: #FFF2BF;
+  color: #339;
   text-decoration: none;
 }
 
 #content {
-  color: #000;
-  background-color: #FFF;
   padding: 0 0.5em;
 }
 
@@ -163,115 +162,7 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   text-decoration: underline;
 }
 
-/* 2-columns layout */
-
-table.two_columns_layout {
-  border: 0;
-  padding: 0;
-  font-size: 1em;
-  border-spacing: 0;
-  width: 100%;
-}
-
-table.two_columns_layout td {
-  vertical-align: top;
-}
-
-td.left_column {
-  width: 20%;
-  color: #000;
-  background-color: #F8FFE6;
-  padding: 0.5em;
-}
-
-td.content_column {
-  width: 80%;
-  padding: 0.5em;
-}
-
-td.left_column a, td.left_column a:visited {
-  color: #333399;
-  text-decoration: none;
-}
-
-td.left_column a:hover {
-  text-decoration: underline;
-}
-
 /* Other classes */
-.main-panel {
-  color: #FC0;
-}
-
-.link {
-  color: #00F;
-}
-
-.buildresults-header {
-  color: #000;
-  font-weight: bold;
-}
-
-.buildresults-data {
-  color: #000;
-}
-
-.buildresults-data-failed {
-  color: #F30;
-}
-
-.stylesection {
-  margin-left: 4px;
-}
-
-.header-title {
-  font-size: 12px;
-  color: #000;
-  font-weight: bold;
-  padding-bottom: 10pt;
-}
-
-.header-label {
-  font-weight: bold;
-}
-
-.header-data {
-  color: #000;
-}
-
-.header-data-error {
-  color: #000;
-  white-space: pre;
-}
-
-.section-table {
-  margin-top: 10px;
-}
-
-.sectionheader {
-  background-color: #006;
-  color: #FFF;
-}
-
-.section-data {
-  font-size: 9px;
-  color: #000;
-}
-
-.section-oddrow {
-  background-color: #F0F7FF;
-}
-
-.section-evenrow {
-  background-color: #FFF;
-}
-
-.section-error {
-  font-size: 9px;
-  color: #F30;
-  white-space: pre;
-}
-
 .warning {
   color: orange
 }
