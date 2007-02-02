@@ -279,6 +279,20 @@ end
     assert_equal "NotStarted2pingpong", @project.build_state_tag
   end
   
+  def test_return_builder_activity
+    @builder_status = Object.new
+    @project.builder_status = @builder_status
+    
+    ProjectBlocker.expects(:block?).with(@project).returns(false) 
+    @builder_status.expects(:status).returns(:working)
+    assert_equal :working, @project.builder_activity
+  end
+    
+  def test_return__not_running__as_builder_activity_when_builder_is_not_running
+    ProjectBlocker.expects(:block?).with(@project).returns(true)  
+    assert_equal Status::NOT_RUNNING, @project.builder_activity
+  end
+    
   private
   def new_revision(number)
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])

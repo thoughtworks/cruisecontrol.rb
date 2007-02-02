@@ -6,7 +6,7 @@ class Project
   def self.plugin(plugin_name)
     unless RAILS_ENV == 'test'
       @@plugin_names << plugin_name unless @@plugin_names.include? plugin_name
-    end      
+    end
   end
 
   def self.load_or_create(dir)
@@ -29,7 +29,7 @@ class Project
   end
 
   attr_reader :name, :plugins, :build_command, :rake_task
-  attr_accessor :source_control, :path, :local_checkout, :scheduler
+  attr_accessor :source_control, :path, :local_checkout, :scheduler, :builder_status
 
   def initialize(name, source_control = Subversion.new, local_checkout = nil)
     @name, @source_control, @local_checkout = name, source_control, local_checkout
@@ -40,7 +40,12 @@ class Project
       plugin_instance = plugin_name.to_s.camelize.constantize.new(self)
       self.add_plugin(plugin_instance)
     end
-    @scheduler = PollingScheduler.new(self)
+    @scheduler = PollingScheduler.new(self)    
+    @builder_status = ProjectBuilderStatus.new("builds/#{@name}")
+    # TODO: Not sure if we should exclude this like so or mock it out for testing? (Joe/Arty)
+    unless RAILS_ENV == 'test'
+      add_plugin @builder_status
+    end
   end
 
   #used by rjs to refresh project if build state tag changed.
@@ -85,6 +90,11 @@ class Project
     else
       Status::RUNNING
     end
+  end
+  
+  def builder_activity
+    state = builder_state
+    state == Status::RUNNING ? @builder_status.status : state
   end
   
   def last_build
@@ -156,7 +166,7 @@ end
 
   def notify(event, *event_parameters)
     errors = []
-    results = @plugins.collect do |plugin|
+    results = @plugins.collect do |plugin| 
       begin
         plugin.send(event, *event_parameters) if plugin.respond_to?(event)
       rescue => plugin_error
