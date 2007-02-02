@@ -2,6 +2,7 @@ class ProjectsController < ApplicationController
   layout "default"
   
   def index
+    flash[:notice] = nil
     @projects = load_projects
     @build_states = get_build_states(@projects)
   end
@@ -16,6 +17,8 @@ class ProjectsController < ApplicationController
     if !@build
       @build = @project.last_build
     end
+    
+    render :action => 'no_builds_yet' if !@build
   end
 
   def settings

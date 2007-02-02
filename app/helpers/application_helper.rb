@@ -40,16 +40,24 @@ module ApplicationHelper
   end
 
   def format_time(time, format = :iso)
-    case format
-    when :human
-      Time.now > time + 24.hours ?
-        time.strftime('on %b %d') :
-        time.strftime('at %H:%M')
-    when :iso
-      time.strftime('%Y-%m-%d %H:%M:%S')
-    else
-      raise "Unknown time format #{format.inspect}"
-    end
+    remove_leading_zeros(
+      case format
+      when :human
+        Time.now > time + 24.hours ?
+          time.strftime('on %b %d') :
+          time.strftime('at %H:%M')
+      when :iso
+        time.strftime('%Y-%m-%d %H:%M:%S')
+      when :verbose
+        time.strftime('%I:%M %p on %B %d, %Y')
+      else
+        raise "Unknown time format #{format.inspect}"
+      end
+    )
+  end
+  
+  def remove_leading_zeros(string)
+    string.gsub(/(^| |,)0+/, '\1')
   end
   
   def setting_row(label, value, help = '&nbsp;')

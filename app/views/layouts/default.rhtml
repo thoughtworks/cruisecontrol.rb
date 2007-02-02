@@ -10,13 +10,9 @@
 <body>
 
   <div class="header">
-
-    <div class="tw_logo">
-      <%= link_to image_tag("tw_dev_logo.gif"), "http://www.thoughtworks.com/" %>
-    </div>
-    
-    <div class="title">CruiseControl.rb</div>
-    <div class="subtitle">CONTINUOUS INTEGRATION SERVER</div>
+    <div class="cc_logo">
+      <%= link_to image_tag("cc_logo.png"), "http://cruisecontrolrb.rubyforge.org/" %>
+    </div>    
     
     <div class="main_menu"/>
       <div class="right_aligned">
@@ -40,6 +36,9 @@
   <div id="content"><%= yield %></div>
 
   <div class="footer">
+    <div class="tw_logo">
+      <%= link_to image_tag("tw_logo.gif"), "http://www.thoughtworks.com/" %>
+    </div>
     <div>Version <%= CruiseControl::VERSION::STRING %></div>
     <div>Powered by <a href="htp://rubyonrails.org">Ruby on Rails</a></div>
   </div>

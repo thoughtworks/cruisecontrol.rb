@@ -1,3 +1,29 @@
+UI Stuff
+--------
+* sorting for > 5 projects
+* last build time END in label
+* last build ended ('5 minutes ago', '3 hours ago', etc)
+  * more concise date / time - follow gmail
+* project w/ edit link in dashboard
+* admin in top left for settings
+* tests summary should only be there if we found tests
+  * 5 / 5 tests passed
+  * 4 / 7 tests passed
+  * no tests run
+* collapsable sections - make sure interesting sections are expanded by default
+* include historical read-only project settings on build page
+* color of builds - needs more indicators (icons)
+* show build progress bar or something - "build 78 in progress, started 5 minutes ago"
+  * on project page & dashboard
+
+
+* icons?
+
+* story : archive builds based on # of builds / date
+
+Bugs
+----
+
 Necessary
 ---------
 * how do the builders get started?  the webapp will need to be able to start / restart / stop them eventually,
@@ -7,7 +33,6 @@ Necessary
   * should reload server settings every time it wakes up, too
   * should sleep for at least 30 secs by default
 * should we just go from a rails gem?  why not?  if we're a gem ourselves...?
-* get a new UI from someone like Anne Brent
 * create "Add Project" story - add a project from the web app, should be easy
 * better reaction to exceptions in builder (see concerns)
 
@@ -65,8 +90,6 @@ Concerns
     ./subversion_log_parser.rb:7:in `readline': end of file reached (EOFError)
             from ./subversion_log_parser.rb:7:in `parse'
             ...
-
-? can subversion really be a connection to subversion?  so it can hold things like urls & user & pass?
 
 ? we need to present times very readable manner in the timezone of one's browser
   * 10:30 AM today, 1:30 PM yesterday, 3:00 AM 5 days ago, 5:30 PM May 3, 2006, etc

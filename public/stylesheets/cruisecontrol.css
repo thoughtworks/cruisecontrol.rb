@@ -4,7 +4,7 @@ body {
   margin: 0;
   border: 0;
   color: #000;
-  background-color: #F8FFE6;
+  background-color: #FFF;
 }
 
 img { border: 0; }
@@ -20,8 +20,7 @@ a:hover {
 /* default layout classes */
 
 .header {
-  color: #FFF;
-  background-color: #306;
+  background-image: url(/images/header_background.gif);
   font-weight: bold;
 }
 
@@ -380,3 +379,21 @@ table.settings {
   color: #F87900;
   padding: 1ex;
 }
+
+/* section stuff */
+.section-header {
+  cursor: pointer;
+  font-size: 1.3em;
+  padding-left: 25px;
+  background: no-repeat center left;
+}
+
+.section-closed .section-header {
+  background-image: url(/images/closed_twisty.png);
+}
+
+.section-open .section-header {
+  background-image: url(/images/open_twisty.png);
+}
+
+.section-closed .section-content { display: none; }

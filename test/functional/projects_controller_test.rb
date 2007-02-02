@@ -60,6 +60,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
 
     assert_equal @two, assigns(:project)
     assert_nil assigns(:build)
+    assert_template 'no_builds_yet'
   end
 
   def test_settings

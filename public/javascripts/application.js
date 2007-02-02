@@ -20,3 +20,10 @@ function show_tab(name) {
     labels[i].className = "tab_item" + (labels[i].id == label_name ? " selected" : "")
   }
 }
+
+function toggle_section(section) {
+  if (section.className == "section-open")
+    section.className = "section-closed"
+  else
+    section.className = "section-open"
+}

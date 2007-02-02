@@ -1,5 +1,6 @@
 <% project_page_breadcrumb %>
 
+
 <table class="two_columns_layout">
 <tr>
   <td class="left_column">
@@ -19,52 +20,38 @@
   </td>
   
   <td class="content_column">
-    <% if @build %>
-      <h2>Build <%= @build.label %></h2>
-      
-      <table>
-        <tr>
-          <td class="label">Project:</td>
-          <td><%= @project.name %></td>
-        </tr>
-        <tr>
-          <td class="label">Label:</td>
-          <td><%= @build.label %></td>
-        </tr>
-        <tr>
-          <td class="label">Status:</td>
-          <td class="build-status"><%= @build.status %></td>
-        </tr>
-        <tr>
-          <td class="label">Time:</td>
-          <td><%= format_time @build.time %></td>
-        </tr>
-        <tr>
-          <td class="header-label">Running time:</td>
-          <td class="header-data">?????</td>
-        </tr>
-      </table>
-      
-      <br/>
-      
-      <h3>Build Changeset</h3>
-      <pre class="changeset">
-      <%= format_changeset_log(@build.changeset) %>
-      </pre>
-      
-      <h3>Test Failures and Errors</h3>
-      <pre>
-      <%= display_test_failures_and_errors_if_any(@build.output) %>
-      </pre>
-      
-      <h3>Build Log</h3>
-      <br/>
-      <div class="logfile">
-        <%= format_build_log(@build.output) %>
+      <h1>
+        <%= @project.name %> build <%= @build.label %> 
+        <% if @build.failed? %><font class="error">FAILED</font><% end %>
+      </h1>
+      <div class="build-time">
+        finished at <%= format_time @build.time, :verbose %>
       </div>
-    <% else %>
-      <div class="error"> No build specified</div>
-    <% end %>
+      
+      <br/>
+
+      <div class="section-open">
+        <div class="section-header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
+        <div class="section-content">
+          <pre class="changeset"><%= format_changeset_log(@build.changeset) %></pre>
+        </div>
+      </div>
+      
+      <div class="section-closed">
+        <div class="section-header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
+        <div class="section-content">
+          <pre><%= display_test_failures_and_errors_if_any(@build.output) %></pre>
+        </div>
+      </div>
+
+      <div class="section-closed">
+        <div class="section-header" onclick="toggle_section(this.parentNode)">Build Log</div>
+        <div class="section-content">
+          <div class="logfile">
+            <%= format_build_log(@build.output) %>
+          </div>
+        </div>
+      </div>
   </td>
 </tr>
 </table>
