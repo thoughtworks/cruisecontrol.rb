@@ -20,6 +20,7 @@ class AdminController < ApplicationController
   end
   
   def update_email_settings
+    server.load
     ActionMailer::Base.server_settings = params[:email_settings]
     server.save
     flash[:notice] = "Settings updated."
@@ -28,6 +29,7 @@ class AdminController < ApplicationController
   end
   
   def server_settings
+    server.load
   end
   
   def send_test_mail

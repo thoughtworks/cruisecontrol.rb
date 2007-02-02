@@ -4,7 +4,7 @@ require 'admin_controller'
 # Re-raise errors caught by the controller.
 class AdminController
   def server
-    @server ||= Struct.new('StubServer', :save).new(nil)
+    @server ||= Struct.new('StubServer', :save, :load).new(nil)
   end
   
   def rescue_action(e) raise e end
