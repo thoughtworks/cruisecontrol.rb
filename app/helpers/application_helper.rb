@@ -52,6 +52,8 @@ module ApplicationHelper
       time.strftime('%Y-%m-%d')
     when :verbose
       remove_leading_zeros(time.strftime('%I:%M %p on %B %d, %Y'))
+    when :round_trip_local
+      time.strftime('%Y-%m-%dT%H:%M:%S.0000000-00:00') # yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK)
     else
       raise "Unknown time format #{format.inspect}"
     end

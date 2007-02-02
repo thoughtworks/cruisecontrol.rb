@@ -16,8 +16,8 @@ ActionController::Routing::Routes.draw do |map|
   # map.resources :products, :member => { :short => :get, :toggle => :post }, :collection => { :sold => :get }
   
   # map.connect 'build', :controller => 'build', :action => "index"
-  map.connect '', :controller => 'projects', :action => 'index'  
-
+  map.connect '', :controller => 'projects', :action => 'index'   
+  
   # You can have the root of your site routed with map.root
   # map.root '', :controller => "builds", :action => "index"
   
@@ -26,4 +26,5 @@ ActionController::Routing::Routes.draw do |map|
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'
+  map.connect 'XmlStatusReport.aspx', :controller => 'status', :action => 'projects'
 end
