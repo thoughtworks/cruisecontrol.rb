@@ -1,0 +1,11 @@
+---
+title: ''
+inMenu: false
+directoryName: Home
+---
+Welcome to CruiseControl.rb
+
+* "RubyForge Project":http://rubyforge.org/projects/cruisecontrolrb"
+* "Wiki":/wiki/wiki.pl
+* Documentation
+** "Rake Tasks":rake_tasks.html

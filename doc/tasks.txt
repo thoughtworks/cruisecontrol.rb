@@ -1,3 +1,25 @@
+In Standup, talk about
+----------------------
+* plan IPM
+* look at cruise.onemanswalk.com
+* plan UI meeting w/ at least josh, darci, me, and alex - chad & jason yip
+  * which fonts are which? psd?
+  * breadcrumbs?
+  * more or less content in dashboard? and headers?
+  * colored rows for passing / failing?
+  * which format for previous builds?
+  * is there a way to make the logo stay at the bottom AND scroll if it needs to?
+  * what about version # and rails?
+* how do we force a build?
+  * restful interface?
+* license story - I added rolf to it
+* my stuff
+  * working on ui
+  * public cc instance
+    * need to work through darwin ports
+* let's put a contributor list up on the wiki
+* when you're done w/ a story, mark it done on the wiki, and put it in the changelog w/ your name(s)  
+
 UI Stuff
 --------
 * sorting for > 5 projects

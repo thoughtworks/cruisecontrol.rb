@@ -1,0 +1,44 @@
+--- content, html
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{lang:}">
+  <head>
+    <title>{title: }</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="Your description goes here..." />
+    <meta name="keywords" content="your,keywords,goes,here" />
+    <link href="{relocatable: default.css}" rel="stylesheet" type="text/css" />
+    <link href="{resource: webgen-css}" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="header">
+      <div class="cc_logo">
+        <a href="http://cruisecontrolrb.rubyforge.org/"><img alt="Cc_logo" src="images/cc_logo.png" /></a>
+      </div>    
+    </div>
+
+    <div class="headerbar">
+      <span class="left">{breadcrumbTrail: }</span>
+      <span class="right"></span>
+      <div style="clear:both"></div>
+    </div>
+
+    <div id="menu">
+      {menu: vertical}
+    </div>
+
+    <div id="body">
+      <h1>{title: }</h1>
+      {block: }
+    </div>
+
+    <div class="footer">
+      <span class="left">
+        <a href="http://webgen.rubyforge.org">generated</a> on {date: }
+      </span>
+      <span class="right">
+        <a href="http://www.thoughtworks.com/"><img alt="Tw_logo" src="images/tw_logo.gif" /></a>
+      </span>
+    </div>
+  </body>
+</html>
