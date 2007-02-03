@@ -1,3 +1,4 @@
+#TODO: Should we rename the CruiseControl.rb statuses to match those in CruiseControl.NET?
 def map_project_status_to_ccnet_project_status(value)
   return "Success" if value == :success
   return "Unknown" if value == :never_built
