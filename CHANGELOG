@@ -5,7 +5,7 @@ TRUNK
   - improved error handling during builder initialization
   - builder status - not running, running(building | sleeping | checking for modifications | error)
   - initial steps to allow monitoring of cruisecontrol.rb using CCTray.net
-    (cruisecontrol.rb statuses are mapped to CCTray.net expected statuses)
+    (cruisecontrol.rb statuses are mapped to CCTray.net expected statuses )
 --------------------------------------------------------------------------------
 * 0.3.0
   - builder is building 'cruise', 'test' or 'default' target, depending on what is defined in the project
