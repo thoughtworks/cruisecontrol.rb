@@ -13,6 +13,7 @@ class ProjectTest < Test::Unit::TestCase
   def test_url_name
     assert_equal('somename', Project.new('some name').url_name)
     assert_equal('52somename', Project.new(' 52 some? name!').url_name)
+    assert_equal('52_some_name', Project.new('52_some_name').url_name)
   end
   
   def test_properties
@@ -270,13 +271,14 @@ end
     assert_equal Status::RUNNING, @project.builder_state
   end
 
-  def test_build_state_tag
-    build = MockBuild.new
+  def test_builder_and_build_states_tag
+    build = Object.new    
     build.expects(:label).at_least(1).returns('2')
     build.expects(:status).at_least(1).returns('pingpong')
-    @project.expects(:builder_state).at_least(1).returns('Not Started')
+    
+    @project.expects(:builder_state_and_activity).at_least(1).returns('running (sleeping)')
     @project.expects(:builds).at_least(1).returns([build])
-    assert_equal "NotStarted2pingpong", @project.build_state_tag
+    assert_equal "running(sleeping)2pingpong", @project.builder_and_build_states_tag
   end
   
   def test_return_builder_activity
@@ -292,7 +294,27 @@ end
     ProjectBlocker.expects(:block?).with(@project).returns(true)  
     assert_equal Status::NOT_RUNNING, @project.builder_activity
   end
-    
+  
+  def test_build_should_return_nil_if_lock_build_blocker_failed 
+      BuildBlocker.expects(:block).with(@project).raises()
+      BuildBlocker.expects(:release).with(@project)
+      assert_nil @project.build(Object.new) 
+  end
+
+  def test_should_not_return_builder_activity_when_status_is_not_running
+    @project.expects(:builder_state).at_least(1).returns(Status::NOT_RUNNING)
+    @project.expects(:builder_activity).times(0)
+
+    assert_equal "not started", @project.builder_state_and_activity
+  end
+
+  def test_should_return_builder_activity_when_status_is_running
+    @project.expects(:builder_state).at_least(1).returns(Status::RUNNING)
+    @project.expects(:builder_activity).at_least(1).returns('mock status')
+
+    assert_equal "running (mock status)", @project.builder_state_and_activity
+  end
+      
   private
   def new_revision(number)
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
@@ -305,7 +327,3 @@ end
   end
 end
 
-class MockBuild < Build    
-  def initialize
-  end
-end

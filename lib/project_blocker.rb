@@ -1,22 +1,21 @@
 class ProjectBlocker
 
   @@pid_files = {}
-
+  
   def self.block(project)
-    raise "Already holding a lock on project '#{project.name}'" if @@pid_files.include?(project.name)
+    raise already_locked_error_message(project) if @@pid_files.include?(pid_file(project))
     lock = File.open(pid_file(project), 'w')
     locked = lock.flock(File::LOCK_EX | File::LOCK_NB)
     if locked
-      @@pid_files[project.name] = lock
+      @@pid_files[pid_file(project)] = lock
     else
       lock.close
-      raise "Another process (probably another builder) holds a lock on project '#{project.name}'.\n" + 
-            "Look for a process with a lock on file #{pid_file(project)}"
+      raise cannot_lock_error_message(project)
     end
   end
   
   def self.block?(project)
-    return false if @@pid_files.include?(project.name)    
+    return false if @@pid_files.include?(pid_file(project))    
     lock = File.open(pid_file(project), 'w')
     begin
       lock.flock(File::LOCK_EX | File::LOCK_NB)
@@ -27,17 +26,29 @@ class ProjectBlocker
   end
   
   def self.release(project)
-    lock = @@pid_files[project.name]
+    lock = @@pid_files[pid_file(project)]
     if lock
       lock.flock(File::LOCK_UN | File::LOCK_NB)
       lock.close
       File.delete(lock.path)
-      @@pid_files.delete(project.name)
+      @@pid_files.delete(pid_file(project))
     end
   end
   
   def self.pid_file(project)
-    File.expand_path(File.join(project.path, "builder.pid"))
+    File.expand_path(File.join(project.path, pid_file_name))
   end
 
+  def self.cannot_lock_error_message(project)
+    "Another process (probably another builder) holds a lock on project '#{project.name}'.\n" + 
+            "Look for a process with a lock on file #{pid_file(project)}"
+  end
+  
+  def self.already_locked_error_message(project)
+    "Already holding a lock on project '#{project.name}'"
+  end
+  
+  def self.pid_file_name
+    "builder.pid"
+  end
 end

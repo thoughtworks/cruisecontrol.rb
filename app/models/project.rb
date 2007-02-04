@@ -49,14 +49,14 @@ class Project
   end
 
   #used by rjs to refresh project if build state tag changed.
-  def build_state_tag    
-    builder_state.to_s.gsub(' ', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
+  def builder_and_build_states_tag    
+    builder_state_and_activity.gsub(' ', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
   end
   
   
   
   def url_name
-    name.downcase.gsub(/[^a-z0-9]/, '')
+    name.downcase.gsub(/[^a-z0-9_]/, '')
   end
   
   def ==(another)
@@ -96,6 +96,12 @@ class Project
     state = builder_state
     state == Status::RUNNING ? @builder_status.status : state
   end
+  
+  def builder_state_and_activity
+    result = builder_state.downcase
+    result += " (#{builder_activity.to_s})" if (builder_state == Status::RUNNING)
+    result
+  end 
   
   def last_build
     builds.last
@@ -154,14 +160,21 @@ end
   end
 
   def build(revisions = [@source_control.latest_revision(self)])
-    last_revision = revisions.last
-    build = Build.new(self, last_revision.number)
-    log_changeset(build.artifacts_directory, revisions)
-    @source_control.update(self, last_revision)
-    notify(:build_started, build)
-    build.run
-    notify(:build_finished, build)
-    build
+    begin
+      BuildBlocker.block(self)
+      last_revision = revisions.last
+      build = Build.new(self, last_revision.number)
+      log_changeset(build.artifacts_directory, revisions)
+      @source_control.update(self, last_revision)
+      notify(:build_started, build)
+      build.run
+      notify(:build_finished, build)
+      build
+    rescue => error
+      return nil
+    ensure
+      BuildBlocker.release(self)   rescue nil 
+    end
   end
 
   def notify(event, *event_parameters)

@@ -8,6 +8,14 @@ class ProjectsController
   def rescue_action(e) raise end
 end
 
+class ProjectsControllerWithFindProjectStubbed < ProjectsController
+  attr_accessor :project
+  def rescue_action(e) raise end
+  
+  def find_project(ignored_projects) project end
+  def render(ignored_options={});end 
+end
+
 class ProjectsControllerTest < Test::Unit::TestCase
   include FileSandbox
 
@@ -125,11 +133,11 @@ class ProjectsControllerTest < Test::Unit::TestCase
   end
   
   
-  def test_should_refresh_projects_if_build_state_tag_changed
+  def test_should_refresh_projects_if_builder_and_build_states_tag_changed
     @controller.load_projects = new_project("one"), new_project("two")
     @sandbox.new :file => "one/build-24/build_status = pingpong"
     @sandbox.new :file => "two/build-24/build_status = new_status"
-    post :refresh_projects, :build_states => 'one:NotStarted24pingpong;two:NotStarted24old_status;'
+    post :refresh_projects, :build_states => 'one:notstarted24pingpong;two:notstarted24old_status;'
     assert_equal [@two], assigns(:projects)   
   end
   
@@ -138,7 +146,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @sandbox.new :file => "one/build-24/build_status = pingpong"
     @sandbox.new :file => "two/build-24/build_status = new_status"
     post :refresh_projects, :build_states => 'one:NotStarted24pingpong;two:NotStarted24old_status;'
-    assert_equal('one:NotStarted24pingpong;two:NotStarted24new_status;', assigns(:build_states))
+    assert_equal 'one:notstarted24pingpong;two:notstarted24new_status;', assigns(:build_states)
   end
   
   def test_index_should_set_build_states
@@ -146,17 +154,25 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @sandbox.new :file => "one/build-24/build_status = pingpong"
     @sandbox.new :file => "two/build-24/build_status = some_status"
     get :index
-    assert_equal('one:NotStarted24pingpong;two:NotStarted24some_status;', assigns(:build_states))
+    assert_equal 'one:notstarted24pingpong;two:notstarted24some_status;', assigns(:build_states)
   end
   
   def test_should_show_new_added_project_when_refresh_projects
     @sandbox.new :file => "one/build-24/build_status = pingpong"
     @sandbox.new :file => "two/build-24/build_status = pingpong"
     @sandbox.new :file => "three/build-24/build_status = pingpong"
-    post :refresh_projects, :build_states => 'one:NotStarted24pingpong;three:NotStarted24pingpong;'
-    assert_equal('one:NotStarted24pingpong;two:NotStarted24pingpong;three:NotStarted24pingpong;', assigns(:build_states))
+    post :refresh_projects, :build_states => 'one:notstarted24pingpong;three:notstarted24pingpong;'
+    assert_equal 'one:notstarted24pingpong;two:notstarted24pingpong;three:notstarted24pingpong;', assigns(:build_states)
     assert_equal [@two], assigns(:new_projects)
     assert_equal [], assigns(:projects)
+  end
+
+  def test_should_force_build_a_project_by_calling_project_build
+    setup_using_controller(ProjectsControllerWithFindProjectStubbed.new)
+    @controller.project= @two
+    @controller.expects(:redirect_to).times(1).with({:action => :index})
+    @two.expects(:build).times(1).with()
+    post :force_build, :id => "two" 
   end
 
 #  def test_new
@@ -183,5 +199,10 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @sandbox.new :file => "one/builder.pid"
     @sandbox.new :file => "two/builder.pid"
     @sandbox.new :file => "three/builder.pid" 
+  end
+  
+  def setup_using_controller(controller)
+    @controller = controller
+    @controller.load_projects = @projects
   end
 end

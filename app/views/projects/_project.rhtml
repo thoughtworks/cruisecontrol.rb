@@ -8,10 +8,7 @@
       <span class="project_settings">
         (<%= link_to("edit", :action => "settings", :id => project.url_name) %>)
       </span>
-      <span class="builder_status"><%= project.builder_state.downcase %>
-      <% if project.builder_state == Status::RUNNING %>
-        (<%= project.builder_activity.to_s %>)
-      <% end %>
+      <span class="builder_status"><%= project.builder_state_and_activity %>
       </span>
     </div>
     <div class="last_build">
@@ -22,6 +19,12 @@
       <% else %>
         <span class="build_status">Never built</span>
       <% end %>
+    </div>
+    <div>
+        <% form_tag :action => 'force_build' do %>
+           <%= hidden_field_tag 'id', project.url_name %>
+           <%= submit_tag 'Force Build', :id => 'force_build_button' %>
+        <% end %>
     </div>
   </td>
   <td class="recent_builds">

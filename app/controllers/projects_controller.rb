@@ -66,7 +66,7 @@ class ProjectsController < ApplicationController
     params[:build_states].split(';').each do |build_state|
       project = current_projects.find {|proj| proj.name == build_state.split(':')[0] }
       if(!project.nil?)
-        if (project.build_state_tag != build_state.split(':')[1])
+        if (project.builder_and_build_states_tag != build_state.split(':')[1])
           changed_projects << project          
         end
         current_projects.delete(project)
@@ -74,6 +74,12 @@ class ProjectsController < ApplicationController
     end     
     @projects = changed_projects
     @new_projects = current_projects
+  end
+  
+  def force_build
+    @project = find_project(load_projects)
+    @project.build
+    redirect_to :action => :index
   end
   
   private
@@ -110,7 +116,7 @@ class ProjectsController < ApplicationController
   def get_build_states(projects)
     states = ""
     projects.each do |project|
-      states += project.name + ":" + project.build_state_tag + ";"
+      states += project.name + ":" + project.builder_and_build_states_tag + ";"
     end
     states
   end

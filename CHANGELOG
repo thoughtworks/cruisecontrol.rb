@@ -6,6 +6,8 @@ TRUNK
   - builder status - not running, running(building | sleeping | checking for modifications | error)
   - initial steps to allow monitoring of cruisecontrol.rb using CCTray.net
     (cruisecontrol.rb statuses are mapped to CCTray.net expected statuses )
+  - browser autorefresh - seeing latest build statuses without hitting 'refresh' on browser
+  - force build a project by clicking the 'force build' button
 --------------------------------------------------------------------------------
 * 0.3.0
   - builder is building 'cruise', 'test' or 'default' target, depending on what is defined in the project
