@@ -32,7 +32,10 @@ namespace :cc do
       Rake::Task['cruise'].invoke
     else
       if File.exists?(Dir.pwd + "/config/database.yml") 
-        raise "No migration scripts found in db/migrate/ but database.yml exists, CruiseControl won't be able to build the latest test database.  Build aborted." if Dir[Dir.pwd + "/db/migrate/*.rb"].empty?
+        if Dir[Dir.pwd + "/db/migrate/*.rb"].empty?
+          raise "No migration scripts found in db/migrate/ but database.yml exists, " +
+                "CruiseControl won't be able to build the latest test database. Build aborted." 
+        end
         
         # perform standard Rails database cleanup/preparation tasks if they are defined in project
         # this is necessary because there is no up-to-date development database on a continuous integration box

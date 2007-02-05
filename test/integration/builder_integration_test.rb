@@ -172,7 +172,8 @@ class IntegrationTest < Test::Unit::TestCase
       build_log = File.read("#{build.artifacts_directory}/build.log")
       assert !build_log.include?("db-test-purge") 
       assert !build_log.include?("db-migrate")       
-      error_message = "No migration scripts found in db/migrate/ but database.yml exists, CruiseControl won't be able to build the latest test database.  Build aborted."
+      error_message = "No migration scripts found in db/migrate/ but database.yml exists, " + 
+                      "CruiseControl won't be able to build the latest test database. Build aborted."
       assert build_log.include?(error_message), 
           '"'+error_message+'" not found in build log:' + "\n" + build_log
     end
@@ -195,5 +196,5 @@ class IntegrationTest < Test::Unit::TestCase
       block.call(project, sandbox, svn)
     end
   end
-end
 
+end
