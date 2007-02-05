@@ -290,7 +290,7 @@ end
     assert_equal :working, @project.builder_activity
   end
     
-  def test_return__not_running__as_builder_activity_when_builder_is_not_running
+  def test_return_not_running_as_builder_activity_when_builder_is_not_running
     ProjectBlocker.expects(:block?).with(@project).returns(true)  
     assert_equal Status::NOT_RUNNING, @project.builder_activity
   end

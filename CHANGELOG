@@ -1,4 +1,7 @@
 TRUNK
+  - improved UI look & feel and HTML markup
+  - dashboard displays projects as panels, not table rows
+  - displaying builder's current activity (down/sleeping/checking for modifications/building) on the dashboard
   - builder plugin may be packaged as a directory with multiple files. It must have init.rb then.
   - plugin error handler: if a plugin raises an error in response to notification, builder logs the error, 
     notifies all other plugins, then raises an error of its own (thus triggering the build_loop_failed event)

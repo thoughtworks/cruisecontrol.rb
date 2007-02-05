@@ -15,7 +15,7 @@ class BuildTest < Test::Unit::TestCase
     end
   end
 
-  def test_initialize_should_load__failed_status_file
+  def test_initialize_should_load_failed_status_file
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => "build-2/build_status = failed"
       build = Build.new(project, 2)
@@ -157,7 +157,6 @@ class BuildTest < Test::Unit::TestCase
       assert_equal 'my_build_script.sh', build_with_custom_script.command
       assert_nil build_with_custom_script.rake_task
     end
-
   end
 
 end
