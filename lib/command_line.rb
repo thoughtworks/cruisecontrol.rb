@@ -1,6 +1,5 @@
 require 'platform'
 require 'English'
-require 'Log'
 
 # borrowed (with modifications) from the RSCM project
 module CommandLine
