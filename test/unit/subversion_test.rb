@@ -38,18 +38,6 @@ integration test does a checkout
     end
   end
 
-  def test_memento
-    svn = Subversion.new(:url => "file://foo", :username => "bob", :password => 'cha')
-
-    assert_equal(
-        "project.source_control = Subversion.new :url => 'file://foo', :username => 'bob', :password => 'cha'",
-        svn.memento)
-  end
-
-  def test_memento_for_all_defaults
-    assert_nil Subversion.new.memento
-  end
-  
   def test_update_with_revision_number
     revision_number = 10
 

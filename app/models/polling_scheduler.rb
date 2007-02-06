@@ -34,12 +34,6 @@ class PollingScheduler
     @custom_polling_interval = value
   end
 
-  def memento
-    @custom_polling_interval ? 
-      "project.scheduler.polling_interval = #{@custom_polling_interval}.seconds" : 
-      nil
-  end
-
   def same_error_as_before(error)
     @last_build_loop_error_source and (error.backtrace.first == @last_build_loop_error_source)
   end

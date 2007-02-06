@@ -11,17 +11,15 @@ class ProjectsTest < Test::Unit::TestCase
 
   def test_load_all
     in_sandbox do |sandbox|
-      sandbox.new :file => "one/project_config.rb", :with_content => @one.memento
-      sandbox.new :file => "two/project_config.rb", :with_content => @two.memento
+      sandbox.new :file => "one/project_config.rb", :with_content => ""
+      sandbox.new :file => "two/project_config.rb", :with_content => ""
 
       projects = Projects.new(sandbox.root)
       projects.load_all
 
       assert_equal("one", projects[0].name)
-      assert_equal("bob", projects[0].source_control.username)
 
       assert_equal("two", projects[1].name)
-      assert_equal("bob", projects[1].source_control.username)
     end
   end
 
@@ -47,7 +45,6 @@ class ProjectsTest < Test::Unit::TestCase
 
       assert file('one/work').exists?
       assert file('one/work/README').exists?
-      assert_equal @one.memento, file('one/project_config.rb').content
     end
   end
 
@@ -78,12 +75,11 @@ class ProjectsTest < Test::Unit::TestCase
 
   def test_load_project
     in_sandbox do |sandbox|
-      sandbox.new :file => 'one/project_config.rb', :with_content => @one.memento
+      sandbox.new :file => 'one/project_config.rb', :with_content => ''
 
       new_project = Projects.load_project(File.join(sandbox.root, 'one'))
 
       assert_equal('one', new_project.name)
-      assert_equal('bob', new_project.source_control.username)
       assert_equal(File.join(sandbox.root, 'one'), new_project.path)
     end
   end
@@ -125,8 +121,5 @@ class ProjectsTest < Test::Unit::TestCase
       File.open("#{dir}/README", "w") {|f| f << "some text"}
     end
 
-    def memento
-      "project.source_control = ProjectsTest::FakeSourceControl.new('#{@username}')"
-    end
   end
 end

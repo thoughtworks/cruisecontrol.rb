@@ -71,68 +71,6 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_template 'no_builds_yet'
   end
 
-  def test_settings
-    get :settings, :id => "two"
-
-    assert_equal @two, assigns(:project)
-  end
-  
-  def test_update
-    @projects.expects(:save_project).with(@two)
-
-    post :update, :id => "two", :project => {:rake_task => 'build', :scheduler => {:polling_interval => 20}}
-    
-    assert_response :success
-    assert_template 'settings'
-    assert_equal 'build', @two.rake_task
-    assert_equal 20, @two.scheduler.polling_interval
-    @projects.verify
-  end
-
-  def test_update_rake_task_build_command_precedence
-    @projects.stubs(:save_project)
-
-    post :update, :id => "two", :project => {:rake_task => 'build', :build_command => 'ant test'}
-    assert_equal nil, @two.rake_task
-    assert_equal 'ant test', @two.build_command
-    
-    post :update, :id => "two", :project => {:rake_task => 'build'}
-    assert_equal 'build', @two.rake_task
-    assert_equal nil, @two.build_command
-
-    post :update, :id => "two", :project => {:build_command => 'ant test'}
-    assert_equal nil, @two.rake_task
-    assert_equal 'ant test', @two.build_command
-  end
-  
-  def test_add_email
-    @projects.expects(:save_project).with(@two)
-
-    post :add_email, :id => "two", :value => "jss@gmail.com"
-
-    assert_equal ["jss@gmail.com"], @two.emails
-
-    @projects.verify
-  end
-
-  def test_add_remove_email
-    @projects.stubs(:save_project)
-
-    post :add_email, :id => "two", :value => "jss@gmail.com"
-
-    assert_equal ["jss@gmail.com"], @two.emails
-
-    post :add_email, :id => "two", :value => "art@gmail.com"
-    post :add_email, :id => "two", :value => "stephan@gmail.com"
-
-    assert_equal ["jss@gmail.com", "art@gmail.com", "stephan@gmail.com"], @two.emails
-
-    post :remove_email, :id => "two", :value => "art@gmail.com"
-
-    assert_equal ["jss@gmail.com", "stephan@gmail.com"], @two.emails
-  end
-  
-  
   def test_should_refresh_projects_if_builder_and_build_states_tag_changed
     @controller.load_projects = new_project("one"), new_project("two")
     @sandbox.new :file => "one/build-24/build_status = pingpong"
@@ -174,17 +112,6 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @two.expects(:build).times(1).with()
     post :force_build, :id => "two" 
   end
-
-#  def test_new
-#    get :new_project
-#  end
-#
-#  def test_create
-#    get :create_project, :id => "myproject", :source_control => {:type => 'subversion',
-#                                                                 :url => "http://svn/myproj",
-#                                                                 :username => "foo",
-#                                                                 :password => "bar"}
-#  end
 
   private
 

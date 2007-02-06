@@ -41,7 +41,6 @@ class Projects
   def save_project(project)
     project.path = File.join(@dir, project.name)
     FileUtils.mkdir_p project.path
-    File.open(File.join(project.path, "project_config.rb"), "w") { |f| f << project.memento }
   end
 
   def checkout_local_copy(project)

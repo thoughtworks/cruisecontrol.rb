@@ -25,13 +25,6 @@ class PollingSchedulerTest < Test::Unit::TestCase
     end
   end
 
-  def test_memento
-    assert_nil @scheduler.memento
-    
-    @scheduler.polling_interval = 5.minutes
-    assert_equal "project.scheduler.polling_interval = 300.seconds", @scheduler.memento
-  end
-  
   def test_last_logged_less_than_an_hour_ago
     assert !@scheduler.last_logged_less_than_an_hour_ago
   

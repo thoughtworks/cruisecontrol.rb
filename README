@@ -175,12 +175,7 @@ After initializing everything, and loading the project (step that includes evalu
 builder simply invokes project.scheduler.run. Look at app/models/polling_scheduler.rb to get the idea how 
 should scheduler interact with the project. 
 
-Beware that dashboard overwrites project_config.rb when you make changes to project configuration via web interface. 
-To play nicely with that, your custom scheduler must implement a memento() method, that 
-should return a line like this: "  project.scheduler = MyCustomScheduler.new(project)". Again, look at 
-app/models/polling_scheduler.rb for the inspiration.
-
-=== Troubleshooting and support
+== Troubleshooting and support
 
 Beware, at the time of this writing, CC.rb is very young and not very stable. Good news is that it's simple (much, much 
 simpler than other CruiseControl incarnations). The dashboard is just a small Rails app, and the builder is little 

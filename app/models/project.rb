@@ -115,22 +115,6 @@ class Project
     builds.reverse[0..4]
   end
 
-  def memento
-    mementos = [source_control.memento, scheduler.memento]
-    mementos << "project.rake_task = #{@rake_task.inspect}" if @rake_task
-    mementos << "project.build_command = #{@build_command.inspect}" if @build_command
-    
-    mementos += notify(:memento)
-    
-    return '' if mementos.compact.empty?
-
-    <<-EOL
-Project.configure do |project|
-  #{mementos.compact.join("\n").gsub(/\n/, "\n  ")}
-end
-    EOL
-  end
-  
   def build_if_necessary
     notify(:polling_source_control)
     begin

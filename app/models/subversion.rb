@@ -70,15 +70,6 @@ class Subversion
     revision.respond_to?(:number) ? revision.number : revision.to_i
   end
 
-  def memento
-    options = []
-    options << ":url => '#{url}'" if url
-    options << ":username => '#{username}'" if username
-    options << ":password => '#{password}'" if password
-    
-    options.empty? ? nil : "project.source_control = Subversion.new #{options.join(", ")}"
-  end
-
   def execute_in_local_copy(project, command)
     Dir.chdir(project.local_checkout) do
       execute(command) { |io| return io.readlines }
