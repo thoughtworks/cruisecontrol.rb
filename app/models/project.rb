@@ -148,12 +148,12 @@ class Project
     File.file?(force_tag_file_name)
   end
   
-  def request_force_build(comment)
+  def request_force_build()
     result = ""
     begin
       ForceBuildBlocker.block(self)
       if ! force_build_requested?
-        touch_force_tag_file comment
+        touch_force_tag_file 
         result = "The force build is pending now!"  
       else
         result =  "Another build is pending already!"     
@@ -297,9 +297,8 @@ private
       FileUtils.rm_f(Dir[force_tag_file_name])
     end
     
-    def touch_force_tag_file comment
-      FileUtils.touch(force_tag_file_name)
-      File.open(force_tag_file_name, "w") {|f| f << (comment || '')}
+    def touch_force_tag_file 
+      FileUtils.touch(force_tag_file_name)   
     end
     
     def force_tag_file_name

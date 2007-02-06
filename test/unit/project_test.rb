@@ -250,9 +250,8 @@ class ProjectTest < Test::Unit::TestCase
     ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      assert_equal "The force build is pending now!"   , @project.request_force_build("some comments")  
-      assert File.file?("#{@project.path}/#{Project::ForceBuildTagFileName}")
-      assert_equal "some comments", File.read("#{@project.path}/#{Project::ForceBuildTagFileName}")
+      assert_equal "The force build is pending now!"   , @project.request_force_build()  
+      assert File.file?("#{@project.path}/#{Project::ForceBuildTagFileName}")     
     end
   end
   
@@ -261,7 +260,7 @@ class ProjectTest < Test::Unit::TestCase
     ForceBuildBlocker.expects(:release).with(@project)  
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      assert_equal "Another build is pending already!" , @project.request_force_build("some comments")  
+      assert_equal "Another build is pending already!" , @project.request_force_build()  
       assert !File.file?("#{@project.path}/#{Project::ForceBuildTagFileName}")
     end
   end
@@ -273,7 +272,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.path = sandbox.root
       sandbox.new :file => Project::ForceBuildTagFileName
       @project.expects(:touch_force_tag_file).never
-      assert_equal "Another build is pending already!" , @project.request_force_build("some comments")  
+      assert_equal "Another build is pending already!" , @project.request_force_build()  
    end
   end
   
@@ -282,7 +281,7 @@ class ProjectTest < Test::Unit::TestCase
     ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|      
       @project.path = sandbox.root
-      sandbox.new :file => Project::ForceBuildTagFileName, :with_content => "some contents"
+      sandbox.new :file => Project::ForceBuildTagFileName
       @project.expects(:remove_force_tag_file)
       @project.expects(:build)
       @project.force_build_if_requested
