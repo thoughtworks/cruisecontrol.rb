@@ -288,6 +288,18 @@ class ProjectTest < Test::Unit::TestCase
       @project.force_build_if_requested
     end
   end
+    
+  def test_force_build_request_should_be_allowed_if_builder_sleeping_and_no_other_force_builder_exists
+    @project.expects(:builder_activity).returns("sleeping")
+    @project.expects(:force_build_requested?).returns(false)    
+    assert @project.force_build_request_allowed?
+  end
+  
+  def test_should_check_force_build_requested_by_checking_if_tag_file_existing
+    @project.expects(:path).returns("a_path")
+    File.expects(:file?).with(File.join("a_path",Project::ForceBuildTagFileName)).returns(true)
+    assert @project.force_build_requested?
+  end
       
   private
   def new_revision(number)

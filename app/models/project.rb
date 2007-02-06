@@ -42,7 +42,7 @@ class Project
       self.add_plugin(plugin_instance)
     end
     @scheduler = PollingScheduler.new(self)    
-    @builder_status = ProjectBuilderStatus.new(@path)
+    @builder_status = ProjectBuilderStatus.new(path)
     # TODO: Not sure if we should exclude this like so or mock it out for testing? (Joe/Arty)
     unless RAILS_ENV == 'test'
       add_plugin @builder_status
@@ -75,9 +75,9 @@ class Project
   end
 
   def builds
-    raise "Project #{name.inspect} has no path" unless @path
+    raise "Project #{name.inspect} has no path" unless path
 
-    Dir["#{@path}/build-*/build_status = *"].collect do |status_file|
+    Dir["#{path}/build-*/build_status = *"].collect do |status_file|
       dir = File.dirname(status_file)
       number = File.basename(dir)[6..-1].to_i
 
@@ -175,8 +175,11 @@ class Project
       remove_force_tag_file
     rescue => error
     ensure ForceBuildBlocker.release(self) rescue nil
-    end  
-    
+    end      
+  end
+  
+  def force_build_request_allowed?
+    builder_activity.to_s == "sleeping" and !force_build_requested?
   end
 
   def build(revisions = [@source_control.latest_revision(self)])   
@@ -247,14 +250,14 @@ end
 
 plugin_loader = Object.new
 
-def plugin_loader.load_plugin(path)
-  plugin_name = File.basename(path).sub(/\.rb$/, '')
+def plugin_loader.load_plugin(plugin_path)
+  plugin_name = File.basename(plugin_path).sub(/\.rb$/, '')
 #  Log.debug("Loading plugin #{plugin_name}")
   if RAILS_ENV == 'development'
-    load path
+    load plugin_path
   else
     #convert path to something like 'my_plugin/init'
-    require_path = plugin_name == 'init' ? File.basename(File.dirname(path)) + '/' + plugin_name : plugin_name
+    require_path = plugin_name == 'init' ? File.basename(File.dirname(plugin_path)) + '/' + plugin_name : plugin_name
     require require_path
   end
 end
@@ -300,5 +303,5 @@ private
     end
     
     def force_tag_file_name
-      "#{@path}/#{Project::ForceBuildTagFileName}"
+      File.join(path,Project::ForceBuildTagFileName)
     end
