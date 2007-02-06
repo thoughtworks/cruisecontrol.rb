@@ -58,7 +58,7 @@ class ProjectTest < Test::Unit::TestCase
       build = new_mock_build(5)
       build.stubs(:artifacts_directory).returns(sandbox.root)
 
-      @project.expects(:builds).returns([])
+      @project.stubs(:builds).returns([])
       @svn.expects(:latest_revision).returns(revision)
       @svn.expects(:update).with(@project, revision)
 
@@ -80,7 +80,7 @@ class ProjectTest < Test::Unit::TestCase
       build = new_mock_build(5)
       build.stubs(:artifacts_directory).returns(sandbox.root)
 
-      @project.expects(:builds).returns([])
+      @project.stubs(:builds).returns([])
       @svn.expects(:latest_revision).returns(revision)
       @svn.expects(:update).with(@project, revision)
 
@@ -131,7 +131,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.source_control = @svn
       @project.path = sandbox.root
 
-      @project.expects(:builds).returns([Build.new(@project, 1)])
+      @project.stubs(:builds).returns([Build.new(@project, 1)])
       revision = new_revision(2)
       build = new_mock_build(2)
       build.stubs(:artifacts_directory).returns(sandbox.root)
@@ -299,8 +299,34 @@ class ProjectTest < Test::Unit::TestCase
     File.expects(:file?).with(File.join("a_path",Project::ForceBuildTagFileName)).returns(true)
     assert @project.force_build_requested?
   end
+  
+  def test_build_should_generate_new_label_if_same_name_label_exists    
+    existing_build = stubs_build(2.0)
+    existing_build2 = stubs_build(2.1)
+    new_build = stubs_build(2.2) 
+             
+    revision = new_revision(2) 
+    
+    project = Project.new('project1', @svn)
+    @svn.stubs(:update)
+    project.stubs(:log_changeset) 
+    project.stubs(:builds).returns([existing_build, existing_build2])
+          
+    Build.expects(:new).with(project,2.2).returns(new_build) 
+      
+    assert_equal new_build, project.build([revision])   
+  end
       
   private
+  
+  def stubs_build(label)
+    build = Object.new
+    build.stubs(:label).returns(label)
+    build.stubs(:artifacts_directory).returns("project1/build_#{label}")
+    build.stubs(:run)
+    build    
+  end
+  
   def new_revision(number)
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
   end

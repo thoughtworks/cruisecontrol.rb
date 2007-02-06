@@ -79,7 +79,7 @@ class Project
 
     Dir["#{path}/build-*/build_status = *"].collect do |status_file|
       dir = File.dirname(status_file)
-      number = File.basename(dir)[6..-1].to_i
+      number = File.basename(dir)[6..-1].to_f
 
       Build.new(self, number)
     end.sort_by { |build| build.label }
@@ -180,7 +180,7 @@ class Project
 
   def build(revisions = [@source_control.latest_revision(self)])   
       last_revision = revisions.last
-      build = Build.new(self, last_revision.number)
+      build = Build.new(self, validate_build_label(last_revision.number))
       log_changeset(build.artifacts_directory, revisions)
       @source_control.update(self, last_revision)
       notify(:build_started, build)
@@ -288,6 +288,19 @@ end
 plugin_loader.load_all unless RAILS_ENV == 'test'
 
 private
+
+    def validate_build_label(label)
+      existing_build = builds.find { |build| build.label == label}
+      if( existing_build.nil?)
+        label
+      else
+        validate_build_label(increment_label(label))
+      end
+    end
+    
+    def increment_label(label)
+      ( label.to_i.to_s + '.' + (label.to_f.to_s.split('.')[1].to_i + 1).to_s ).to_f
+    end
 
     def remove_force_tag_file
       FileUtils.rm_f(Dir[force_tag_file_name])

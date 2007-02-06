@@ -78,21 +78,16 @@ class IntegrationTest < Test::Unit::TestCase
   def test_build_should_still_build_even_when_no_changes_were_made
     with_project('passing_project', :revision => 7) do |project, sandbox, svn|
       status_file_path = 'passing_project/build-7/build_status = success'
-      sandbox.new :file=> status_file_path
-      assert_equal '7', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp.chomp
-      status_file_full_path = "#{sandbox.root}/#{status_file_path}"
-      assert File.exists?(status_file_full_path)
-      
-      File.utime(0, 0, status_file_full_path) #set file mtime and atime back to Epoch 1970
-      assert_equal Time.at(0), File.mtime(status_file_full_path)
-
+      sandbox.new :file=> status_file_path      
+      new_status_file_path = 'passing_project/build-7.1/build_status = success'    
+      new_status_file_full_path = "#{sandbox.root}/#{new_status_file_path}"
+    
       result = project.build
       assert result.is_a?(Build)
       assert_equal true, result.successful?
 
-      assert File.exists?(status_file_full_path)
-      assert 10 > (Time.now - File.mtime(status_file_full_path)) # File timestamp should be within 10 secs or less
-    end
+      assert File.exists?(new_status_file_full_path)
+     end
   end  
   
   def test_builder_should_set_RAILS_ENV_to_test_and_invoke_db_migrate_and_test_instead_of_if_these_tasks_are_defined
