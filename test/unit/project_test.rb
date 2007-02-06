@@ -200,10 +200,10 @@ class ProjectTest < Test::Unit::TestCase
   end
 
   def test_determine_builder_state
-    ProjectBlocker.expects(:block?).with(@project).returns(true)
+    ProjectBlocker.expects(:blocked?).with(@project).returns(false)
     assert_equal Status::NOT_RUNNING, @project.builder_state
     
-    ProjectBlocker.expects(:block?).with(@project).returns(false)
+    ProjectBlocker.expects(:blocked?).with(@project).returns(true)
     assert_equal Status::RUNNING, @project.builder_state
   end
 
@@ -221,13 +221,13 @@ class ProjectTest < Test::Unit::TestCase
     @builder_status = Object.new
     @project.builder_status = @builder_status
     
-    ProjectBlocker.expects(:block?).with(@project).returns(false) 
+    ProjectBlocker.expects(:blocked?).with(@project).returns(true) 
     @builder_status.expects(:status).returns(:working)
     assert_equal :working, @project.builder_activity
   end
     
   def test_return_not_running_as_builder_activity_when_builder_is_not_running
-    ProjectBlocker.expects(:block?).with(@project).returns(true)  
+    ProjectBlocker.expects(:blocked?).with(@project).returns(false)  
     assert_equal Status::NOT_RUNNING, @project.builder_activity
   end
   

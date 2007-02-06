@@ -86,11 +86,7 @@ class Project
   end
 
   def builder_state       
-    if (ProjectBlocker.block? self)
-      Status::NOT_RUNNING
-    else
-      Status::RUNNING
-    end
+    ProjectBlocker.blocked?(self) ? Status::RUNNING : Status::NOT_RUNNING
   end
   
   def builder_activity

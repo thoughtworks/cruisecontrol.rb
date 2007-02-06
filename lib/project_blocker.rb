@@ -14,13 +14,14 @@ class ProjectBlocker
     end
   end
   
-  def self.block?(project)
-    return false if @@pid_files.include?(pid_file(project))    
+  def self.blocked?(project)
+    return true if @@pid_files.include?(pid_file(project))
+
     lock = File.open(pid_file(project), 'w')
     begin
-      lock.flock(File::LOCK_EX | File::LOCK_NB)
+      return !lock.flock(File::LOCK_EX | File::LOCK_NB)
     ensure
-      lock.flock(File::LOCK_UN)
+      lock.flock(File::LOCK_UN | File::LOCK_NB)
       lock.close
     end
   end

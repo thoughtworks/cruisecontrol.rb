@@ -26,11 +26,11 @@
   </td>
    <td class="filler">
     <% if project.force_build_request_allowed? %>
-        <div>
-             <% form_tag :action => 'force_build', :id => project.url_name do %>
-                <%= submit_tag 'Force', :id => 'force_build_button' %>
-            <% end %>        
-        </div>
+      <div>
+        <% form_tag :action => 'force_build', :id => project.url_name do %>
+          <%= image_submit_tag 'build_now.png' %>
+        <% end %>        
+      </div>
     <% end %>
   <td>
 </tr>
