@@ -1,6 +1,6 @@
 body {
-  font-family: verdana, helvetica, arial, sans-serif;
-  font-size: 0.9em;
+  font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
+  font-size: .8em;
   margin: 0;
   border: 0;
   color: #000;
@@ -13,12 +13,13 @@ h3 {
 
 img { border: 0; }
 
-a, a:visited { 
-  color: #44a;
+a, a:link, a:visited { 
+  color: #507ec0;
   text-decoration: none;
 }
 
-a:hover { 
+a:hover {
+  color: #507ec0;
   text-decoration: underline;
 }
 
@@ -26,7 +27,7 @@ a:hover {
 
 .header {
   background-image: url(/images/header_background.gif);
-  font-weight: bold;
+  font-weight: normal;
   clear: both;
 }
 
@@ -45,7 +46,7 @@ a:hover {
 }
 
 .footer a, .footer a:visited {
-  color: #666;
+  color: #507ec0;
 }
 
 .version {
@@ -54,6 +55,7 @@ a:hover {
 }
 
 .main_menu {
+  color: #507ec0;
   padding: 0.5em 0.5em 0 0.5em;
   float: right;
 }
@@ -67,47 +69,38 @@ a:hover {
 }
 
 .main_menu .menu_item a, .main_menu .menu_item a:visited {
-  color: #66c;
+  color: #507ec0;
 }
 
 #content {
-  padding: 0 0.5em;
 }
 
 /* build status stuff */
 
 .build_success { 
   background-color: #FFF; 
-  border-top: 2px solid #FFF;
-  border-left: 2px solid #FFF;
 }
 
 .build_failed { 
   background-color: #FFE6FC; 
-  border-top: 2px solid #E6CFE2;
-  border-left: 2px solid #E6CFE2;
 }
 
 .build_never_built {
   background-color: #F6F6F6; 
-  border-top: 2px solid #CCC;
-  border-left: 2px solid #CCC;
 }
 
 .build_status { font-weight: bold; }
 .build_failed .build_status, .build_never_built .build_status { text-transform: uppercase; }
 .build_success .build_status { color: #0A0; }
-.build_failed .build_status { color: #A00; }
+.build_failed .build_status { color: #C00; }
 .build_never_built .build_status { color: #888; }
 
-a.success, a.success:visited, td.left_column a.success, td.left_column a.success:visited  {
-  font-weight: bold;
-  color: #0A0;
+a.success, a.success:visited {
 }
 
-a.failed, a.failed:visited, td.left_column a.failed, td.left_column a.failed:visited  {
+a.failed, a.failed:visited {
   font-weight: bold;
-  color: #A00;
+  color: #C00;
 }
 
 a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_column a.never_built:visited  {
@@ -118,8 +111,8 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 /* Project dashboard */
 
 .project {
-  padding: 0.5em;
   margin: 0.5em 0;
+  padding: 0.5em 1.5em;
   width: 100%;
 }
 
@@ -130,6 +123,9 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 
 .project .project_summary {
   width: 40%;
+}
+
+.project .build_summary {
 }
 
 .project .recent_builds {
@@ -145,27 +141,19 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 }
 
 .project .project_name {
-  font-family: georgia, helvetica, arial, sans-serif;
   padding: 0;
   margin: 0;
-  font-size: 1.6em;
-  font-weight: bold;
-}
-
-.project .project_name a, .project .project_name a:visited {
-  color: #309;
-}
-.project .project_name a:hover {
-  color: #309;
+  font-size: 2.5em;
+  font-weight: normal;
 }
 
 /* Other classes */
 .warning {
-  color: orange
+  color: #F28218;
 }
 
 .error {
-  color: red
+  color: #C00;
 }
 
 .RecentBuildsPanel {
@@ -253,6 +241,11 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 
 .section-content {
   padding-left: 2em;
+  font-family: courier, serif;
+}
+
+.section-content pre {
+  font-family: courier, serif;
 }
 
 .section-closed .section-header { background-image: url(/images/closed_twisty.png); }
@@ -262,7 +255,6 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 
 .logfile {
   padding-top: 1em;
-  
 }
 
 #build-list {
@@ -271,16 +263,12 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   padding: 1em;
 }
 
-#build-list a {
-  color: #66c;
-}
-
 #build-list .selected {
-  background-color: #66c;
+  background-color: #507ec0;
   color: white;
 }
 
-#build-list .selected a {
+#build-list .selected a, #build-list .selected a:visited {
   color: #fff;
 }
 
