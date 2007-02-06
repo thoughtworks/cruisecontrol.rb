@@ -54,22 +54,6 @@ class ProjectsController < ApplicationController
     projects.find {|p| p.url_name == params[:id] }
   end
 
-  # FIXME what is this for?  
-  def update_attributes(obj, hash)
-    hash.each do |key, value|
-      if value.is_a? Hash
-        update_attributes(obj.send(key.to_sym), value)
-      else
-        if value == ''
-          value = nil
-        elsif value =~ /^[0-9]+$/
-          value = value.to_i
-        end
-        obj.send("#{key}=", value)
-      end
-    end
-  end
-  
   def get_build_states(projects)
     states = ""
     projects.each do |project|
@@ -77,4 +61,5 @@ class ProjectsController < ApplicationController
     end
     states
   end
+
 end

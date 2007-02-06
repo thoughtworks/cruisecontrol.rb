@@ -52,9 +52,10 @@ Rails::Initializer.run do |config|
 end
 
 # Include your application configuration below
+
 require 'cruisecontrol/version'
 
 # Local configuration, for example, details of the SMTP server for email notification, should be 
-# written in ./config/site_config.rb. See ./config/site_sonfig.rb_example for an example of what this file may 
+# written in ./config/site_config.rb. See ./config/site_config.rb_example for an example of what this file may 
 # look like.
 require 'site_config' if File.exists?("#{RAILS_ROOT}/config/site_config.rb")

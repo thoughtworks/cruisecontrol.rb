@@ -1,5 +1,6 @@
 == CruiseControl.rb
 
+
 === What's this?
 CruiseControl.rb is a continuous integration tool. Its basic purpose in life is to alert members of a software project 
 when one of them checks into a source control system something that breaks the build.

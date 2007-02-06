@@ -1,5 +1,6 @@
 TRUNK
 
+  - [bugfix] Debug-level messages are logged in development mode
   - [bugfix] Running builder doesn't block the dashboard on Windows
 ------------------------------------------------------------------------------------------------------------------------
 * 0.4.0
