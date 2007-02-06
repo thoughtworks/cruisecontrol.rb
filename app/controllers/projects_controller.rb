@@ -1,4 +1,5 @@
 class ProjectsController < ApplicationController
+  layout 'default'
   
   def index
     flash[:notice] = nil
