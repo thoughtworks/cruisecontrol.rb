@@ -7,4 +7,9 @@ if (ARGV & ['-p', '--port']).empty?
   ARGV << '-p' << '3333'
 end
 
+# change default environment to production
+if (ARGV & ['-e', '--environment']).empty?
+  ARGV << '-e' << 'production'
+end
+
 require 'commands/server'

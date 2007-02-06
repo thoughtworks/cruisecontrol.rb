@@ -1,5 +1,5 @@
 TRUNK
-
+  - 'cruise start' starts dashboard in production environment. Use 'cruise start -e development' for development.
   - [bugfix] Debug-level messages are logged in development mode
   - [bugfix] Running builder doesn't block the dashboard on Windows
 ------------------------------------------------------------------------------------------------------------------------
