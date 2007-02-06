@@ -10,7 +10,7 @@ class PollingScheduler
   def run
     while(true) do
       begin
-        @project.build_if_necessary or sleep(polling_interval) 
+        @project.build_if_necessary or check_force_build_until_next_polling
         clean_last_build_loop_error
       rescue => e
         log_error(e) unless (same_error_as_before(e) and last_logged_less_than_an_hour_ago)
@@ -18,6 +18,16 @@ class PollingScheduler
       end
     end
   end
+  
+  def check_force_build_until_next_polling
+    time_to_go = Time.now + polling_interval
+    while Time.now < time_to_go
+      @project.force_build_if_requested
+      sleep 2
+    end
+  end
+  
+ 
 
   def polling_interval
     @custom_polling_interval or Configuration.default_polling_interval

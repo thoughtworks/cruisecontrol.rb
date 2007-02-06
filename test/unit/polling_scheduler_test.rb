@@ -38,5 +38,11 @@ class PollingSchedulerTest < Test::Unit::TestCase
     Time.stubs(:now).returns(time + 1.hour + 1.second)
     assert !@scheduler.last_logged_less_than_an_hour_ago
   end
+  
+  def test_should_check_force_build
+    @scheduler.expects(:polling_interval).returns(2.seconds)
+    @mock_project.expects(:force_build_if_requested)
+    @scheduler.check_force_build_until_next_polling
+  end
 
 end

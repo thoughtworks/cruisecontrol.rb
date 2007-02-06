@@ -2,6 +2,7 @@ require 'fileutils'
 
 class Project
   @@plugin_names = []
+  ForceBuildTagFileName = "force_build_requested"
 
   def self.plugin(plugin_name)
     unless RAILS_ENV == 'test'
@@ -41,7 +42,7 @@ class Project
       self.add_plugin(plugin_instance)
     end
     @scheduler = PollingScheduler.new(self)    
-    @builder_status = ProjectBuilderStatus.new("builds/#{@name}")
+    @builder_status = ProjectBuilderStatus.new(@path)
     # TODO: Not sure if we should exclude this like so or mock it out for testing? (Joe/Arty)
     unless RAILS_ENV == 'test'
       add_plugin @builder_status
@@ -142,10 +143,43 @@ class Project
       @source_control.revisions_since(self, b.last.label.to_i)
     end
   end
-
-  def build(revisions = [@source_control.latest_revision(self)])
+  
+  def force_build_requested?
+    File.file?(force_tag_file_name)
+  end
+  
+  def request_force_build(comment)
+    result = ""
     begin
-      BuildBlocker.block(self)
+      ForceBuildBlocker.block(self)
+      if ! force_build_requested?
+        touch_force_tag_file comment
+        result = "The force build is pending now!"  
+      else
+        result =  "Another build is pending already!"     
+      end
+      rescue => lock_error
+        result =  "Another build is pending already!"     
+      ensure 
+        ForceBuildBlocker.release(self) rescue nil
+    end
+    return result
+  end
+  
+  def force_build_if_requested
+    return if !force_build_requested?
+    begin
+      ForceBuildBlocker.block(self)
+      comment = File.read(force_tag_file_name)
+      build
+      remove_force_tag_file
+    rescue => error
+    ensure ForceBuildBlocker.release(self) rescue nil
+    end  
+    
+  end
+
+  def build(revisions = [@source_control.latest_revision(self)])   
       last_revision = revisions.last
       build = Build.new(self, last_revision.number)
       log_changeset(build.artifacts_directory, revisions)
@@ -153,12 +187,7 @@ class Project
       notify(:build_started, build)
       build.run
       notify(:build_finished, build)
-      build
-    rescue => error
-      return nil
-    ensure
-      BuildBlocker.release(self)   rescue nil 
-    end
+      build    
   end
 
   def notify(event, *event_parameters)
@@ -258,3 +287,18 @@ def plugin_loader.load_all
 end
 
 plugin_loader.load_all unless RAILS_ENV == 'test'
+
+private
+
+    def remove_force_tag_file
+      FileUtils.rm_f(Dir[force_tag_file_name])
+    end
+    
+    def touch_force_tag_file comment
+      FileUtils.touch(force_tag_file_name)
+      File.open(force_tag_file_name, "w") {|f| f << (comment || '')}
+    end
+    
+    def force_tag_file_name
+      "#{@path}/#{Project::ForceBuildTagFileName}"
+    end

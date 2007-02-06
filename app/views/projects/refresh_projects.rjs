@@ -11,3 +11,5 @@ end
 end
 
 page.replace_html 'buid_states_hidden_div', hidden_field_tag('build_states', @build_states)
+
+page.replace_html 'projects_flash', h(flash[:projects_flash] || '')

@@ -35,8 +35,8 @@ class ProjectsController < ApplicationController
   end
   
   def force_build
-    @project = find_project(load_projects)
-    @project.build
+    project = find_project(load_projects)
+    flash[:projects_flash] = project.request_force_build(params[:comment])      
     redirect_to :action => :index
   end
   

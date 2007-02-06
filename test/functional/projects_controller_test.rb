@@ -105,12 +105,13 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal [], assigns(:projects)
   end
 
-  def test_should_force_build_a_project_by_calling_project_build
+  def test_should_request_force_build_a_project_by_calling_project_build
     setup_using_controller(ProjectsControllerWithFindProjectStubbed.new)
     @controller.project= @two
     @controller.expects(:redirect_to).times(1).with({:action => :index})
-    @two.expects(:build).times(1).with()
-    post :force_build, :id => "two" 
+    @two.expects(:request_force_build).times(1).with("some comments").returns("result")
+    post :force_build, :id => "two" , :comment => "some comments"
+    assert_equal "result", flash[:projects_flash]
   end
 
   private

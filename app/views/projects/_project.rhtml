@@ -26,11 +26,14 @@
       </div>
     <% end %>
   </td>
-  <td class="filler">
-      <% form_tag :action => 'force_build' do %>
-         <%= hidden_field_tag 'id', project.url_name %>
-         <%= submit_tag 'Build now' %>
-      <% end %>
-  </td>
+   <td class="filler">
+    <% if project.builder_state != Status::NOT_RUNNING and project.builder_activity.to_s != "building" and !project.force_build_requested?%>
+        <div>
+             <% form_tag :action => 'force_build', :id => project.url_name do %>
+                <%= submit_tag 'Force', :id => 'force_build_button' %>
+            <% end %>        
+        </div>
+    <% end %>
+  <td>
 </tr>
 </table>

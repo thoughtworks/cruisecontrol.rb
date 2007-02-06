@@ -231,12 +231,6 @@ class ProjectTest < Test::Unit::TestCase
     assert_equal Status::NOT_RUNNING, @project.builder_activity
   end
   
-  def test_build_should_return_nil_if_lock_build_blocker_failed 
-      BuildBlocker.expects(:block).with(@project).raises()
-      BuildBlocker.expects(:release).with(@project)
-      assert_nil @project.build(Object.new) 
-  end
-
   def test_should_not_return_builder_activity_when_status_is_not_running
     @project.expects(:builder_state).at_least(1).returns(Status::NOT_RUNNING)
     @project.expects(:builder_activity).times(0)
@@ -249,6 +243,50 @@ class ProjectTest < Test::Unit::TestCase
     @project.expects(:builder_activity).at_least(1).returns('mock status')
 
     assert_equal "running (mock status)", @project.builder_state_and_activity
+  end
+  
+  def test_request_force_build_should_generate_force_tag_file
+    ForceBuildBlocker.expects(:block).with(@project)
+    ForceBuildBlocker.expects(:release).with(@project)
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      assert_equal "The force build is pending now!"   , @project.request_force_build("some comments")  
+      assert File.file?("#{@project.path}/#{Project::ForceBuildTagFileName}")
+      assert_equal "some comments", File.read("#{@project.path}/#{Project::ForceBuildTagFileName}")
+    end
+  end
+  
+  def test_request_force_build_should_take_no_effect_when_acquire_build_blocker_failed
+    ForceBuildBlocker.expects(:block).with(@project).raises("failed to lock exception")
+    ForceBuildBlocker.expects(:release).with(@project)  
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      assert_equal "Another build is pending already!" , @project.request_force_build("some comments")  
+      assert !File.file?("#{@project.path}/#{Project::ForceBuildTagFileName}")
+    end
+  end
+  
+   def test_request_force_build_should_take_no_effect_if_force_build_tag_file_exists
+    ForceBuildBlocker.expects(:block).with(@project)
+    ForceBuildBlocker.expects(:release).with(@project)
+    in_sandbox do |sandbox|      
+      @project.path = sandbox.root
+      sandbox.new :file => Project::ForceBuildTagFileName
+      @project.expects(:touch_force_tag_file).never
+      assert_equal "Another build is pending already!" , @project.request_force_build("some comments")  
+   end
+  end
+  
+  def test_should_force_build_if_force_build_tag_file_exists
+    ForceBuildBlocker.expects(:block).with(@project)
+    ForceBuildBlocker.expects(:release).with(@project)
+    in_sandbox do |sandbox|      
+      @project.path = sandbox.root
+      sandbox.new :file => Project::ForceBuildTagFileName, :with_content => "some contents"
+      @project.expects(:remove_force_tag_file)
+      @project.expects(:build)
+      @project.force_build_if_requested
+    end
   end
       
   private

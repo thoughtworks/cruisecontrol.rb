@@ -232,3 +232,10 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   padding: 1px;
   padding-left: .2em;
 }
+
+.projects_flash
+{
+    padding: 10px;
+    font-weight: bold;
+    font-size: 120%;
+}
