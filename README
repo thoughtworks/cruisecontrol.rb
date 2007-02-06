@@ -21,9 +21,9 @@ Builder is a daemon that polls source control every once in a while for new revi
 When someone performs a check in, the builder detects it, updates its own copy of the project, runs the build and
 notifies interested parties about build outcome.
 
-Dashboard is a web application to monitor and troubleshoot build status of projects.
+Dashboard is a web application to monitor the status of project build and troubleshoot build failures.
 
-Each installation of CC.rb may have multiple projects, and multiple builders (one per project). There may also be
+Each installation of CC.rb may have multiple projects and multiple builders (one per project). There may also be
 multiple installations of CC.rb per computer.
 
 
@@ -34,17 +34,15 @@ multiple installations of CC.rb per computer.
 * svn and ruby executables must both be on the PATH.
 
 
-=== Assumptions
+=== Assumptions and limitations
 
 * CC.rb currently only works with Subversion.
-* To build your_project, builder goes to ~cruise/builds/your_project/work/ and executes Rake, trying to build 
-  'cruise', 'test' or 'default' target, whichever is defined (see "What will it build?" section for details).
-  We realize that this assumption is too narrow, and plan to allow customizable build command soon.
+* Dashboard and all builders should run on the same computer.
 
 
 === Installation
 
-1. Download and unpack CruiseControl.rb (we'll call the place you unpack it <cruise>)
+1. Download and unpack CruiseControl.rb (below, we will refer to the place where you unpack it as <cruise>)
 
 2. From <cruise>, run "cruise start".
 
@@ -53,28 +51,28 @@ multiple installations of CC.rb per computer.
 
 4. Run "cruise add your_project --url <URL of your_project Subversion trunk>". Optionally, you can specify username 
    and password by adding " --username <your_user> --password <your_password>" to the command. This creates a directory 
-   for project's builds at <cruise>/builds/<your_project>/, and checks out your_project from subversion URL specified 
-   to <cruise>/builds/<your_project>/work/. 
+   for your_project's builds at <cruise>/builds/your_project/, and checks out your_project from subversion URL specified 
+   to <cruise>/builds/your_project/work/. 
 
-   Hint: Rakefile of your_project should be in <cruise>/builds/<your_project>/work/ directory, not anywhere under 
+   Hint: Rakefile of your_project should be in <cruise>/builds/your_project/work/ directory, not anywhere under 
    it. A common mistake is to specify in --url option the root of project's SVN repository instead of the trunk. 
-   Rakefile then ends up in <cruise>/builds/<your_project>/work/trunk/ and CC.rb does not see it there.
+   Rakefile then ends up in <cruise>/builds/your_project/work/trunk/ and CC.rb does not see it there.
 
 5. Refresh the dashboard. It should now display your_project, with status "Never built".
 
-6. Go to <cruise>/builds/<your_project>/work/ and make the build work. For a regular Rails app, this involves creating 
-   test database, editing database.yml, performing "rake RAILSENV=test db:migrate"
+6. Go to <cruise>/builds/your_project/work/ and make the build pass. For a regular Rails app, this involves creating 
+   a test database, editing database.yml to connect to that database, performing "rake RAILS_ENV=test db:migrate"
    and making sure that "rake test" passes.
 
 7. Go back to <cruise> and run "cruise build your_project". This should build your_project, place build outputs into
-   <cruise>/builds/<your_project>/build-<revision-number>/
+   <cruise>/builds/your_project/build-<revision-number>/
  
    Hint: Monitor log/your_project_builder.log for any signs of trouble. Try to check in a change to your_project
    and see if builder can detect and build it.  Check your_project status in the dashboard.
 
    Hint: If you want to run your server on a different port, just use "cruise start -p <port>". 
 
-   Hint: "cruise help" displays a list of commands available, "cruise help <command>" displays options for each command.
+   Hint: "cruise help" displays a list of commands, "cruise help <command>" displays options available for each command.
 
 
 === Files and folders
@@ -83,15 +81,15 @@ If CC.rb is unpacked into <cruise> directory, then:
 
   <cruise>/builds/ is the projects directory.
 
-  <cruise>/builds/your_project/ is a directory for project called "your_project".
+  <cruise>/builds/your_project/ is a directory for the project called "your_project".
 
-  <cruise>/builds/your_project/work/ is a local copy of the your_project's source code. Builder keeps it up to date 
+  <cruise>/builds/your_project/work/ is a local copy of your_project's source code. Builder keeps it up to date 
   with the source control repository and runs builds against it.
 
-    <cruise>/builds/your_project/build-123/ contains build status file, list of changed files, 
-    and other "build artifacts" created while building revision 123.
+  <cruise>/builds/your_project/build-123/ contains build status file, list of changed files, 
+  and other "build artifacts" created while building revision 123.
     
-    <cruise>/builds/your_project/project_config.rb is builder configuration for your_project.
+  <cruise>/builds/your_project/project_config.rb is builder configuration for your_project.
 
   <cruise>/config/site_config.rb is the file where you can make centralized changes to the configuration of dashboard 
   and all builders.
@@ -99,12 +97,13 @@ If CC.rb is unpacked into <cruise> directory, then:
 
 === What will it build by default?
 
-If cruise doesn't by default build what you want you can customize it, read more at 
-
-http://cruisecontrolrb.rubyforge.org/rake_tasks.html
+By default, it will try to execute 'cruise' task if it is defined in your_project/Rakefile, otherwise it will try to 
+perform standard Rails tasks that prepare a test database and run all tests. For a more detailed description, 
+read http://cruisecontrolrb.rubyforge.org/rake_tasks.html
 
 
 === How to change what the build does?
+
 'cruise' may be the task for a quick build, but you may also want to run a long build with all acceptance tests 
 included. This can be done by assigning project.rake_task attribute in <cruise>/builds/your_project/project_config.rb:
 
@@ -114,8 +113,8 @@ included. This can be done by assigning project.rake_task attribute in <cruise>/
     ...
   end
 
-Or you may not want to deal with Rake at all, but build your project by shell script, make or Ant (yes, 
-CC.rb can cope with a Java project). This can be done by assigning project.build_command attribute in the 
+Or you may not want to deal with Rake at all, but build your project by make, Ant or MSBuild (yes, 
+CC.rb can cope with non-Ruby projects!). This can be done by assigning project.build_command attribute in the 
 same <cruise>/builds/your_project/project_config.rb file, like this:
   Project.configure do |project|
     ...
@@ -123,20 +122,21 @@ same <cruise>/builds/your_project/project_config.rb file, like this:
     ...
   end
 
-Just like with Rake, CC.rb will change current working directory to <cruise>/builds/your_project/work/, invoke 
-specified command and look at the exit code to determine whether the build passed or failed.
+If project.build_command is set, CC.rb will change current working directory to <cruise>/builds/your_project/work/, 
+invoke specified command and look at the exit code to determine whether the build passed or failed.
 
 Note that you cannot specify both rake_task and build_command attributes project_config.rb. It doesn't make sense, 
 anyway.
 
+
 === What should I do with custom build artifacts?
 
-  your_project may have a special build task, producing some output that you want to keep. Code coverage analysis is a 
-  good example. Before running the build, CC.rb sets OS variable CC_BUILD_ARTIFACTS to the directory where the build artifacts are 
-  collected. Make sure that your special task writes its output to that directory.
+your_project may have a special build task, producing some output that you want to keep. Code coverage analysis is a 
+good example. Before running the build, CC.rb sets OS variable CC_BUILD_ARTIFACTS to the directory where the build 
+artifacts are collected. Make sure that your special task writes its output to that directory.
   
-  Displaying custom task outputs on the dashboard is not implemented yet.
-  
+Displaying custom task outputs on the dashboard is not implemented yet.
+
 
 === Email notification
 
@@ -150,6 +150,17 @@ to send email, and who to send it to. Do the following:
    ~cruise/builds/your_project/project_config.rb and edit the list of email addresses there.
 
 
+=== Monitoring build status with CCTray
+
+CCTray is a utility developed as part of CruiseControl.NET project that displays an icon in the bottom right corner of 
+the screen. The icon changes its color to red when a build fails, and back to green when the 
+build is fixed.
+
+CruiseControl.rb can be monitored by CCTray (point it to http://<cruise_host>:<cruise_port>/projects).
+
+This works only on a Windows desktop. Other build notification options (Atom feeds, Growl and Jabber) are in the works.
+
+
 === Build scheduling
 
 By default, the builder polls Subversion every 10 seconds for new revisions. This can be changed by adding the 
@@ -161,7 +172,7 @@ following line to the ~cruise/builds/your_project/project_config.rb:
     ...
   end
 
-What if you want a scheduler with some interesting logic. Well, a default scheduler can be substituted by placing 
+What if you want a scheduler with some interesting logic? Well, a default scheduler can be substituted by placing 
 your own scheduler implementation intpo the plugins directory and writing in 
 ~cruise/builds/your_project/project_config.rb something like this:
 
@@ -172,8 +183,9 @@ your own scheduler implementation intpo the plugins directory and writing in
   end
 
 After initializing everything, and loading the project (step that includes evaluation of project_config.rb), the
-builder simply invokes project.scheduler.run. Look at app/models/polling_scheduler.rb to get the idea how 
-should scheduler interact with the project. 
+builder simply invokes project.scheduler.run. Look at app/models/polling_scheduler.rb to understand how 
+a scheduler interacts with a project.
+
 
 == Troubleshooting and support
 
@@ -199,7 +211,13 @@ OK, that was the pep talk. If you have an issue that you cannot fix on your own,
 
 * Apache Software License 2.0
 
+
 ---
-Authors::
-* Alexey Verkhovsky, Jeremy Stell-Smith, Stephen Chu
-* (C) ThoughtWorks 2007
+Maintainers::
+* Alexey Verkhovsky [averkhov at thoughtworks.com]
+* Jeremy Stell-Smith [JStell-Smith at thoughtworks.com]
+
+Contributors::
+* Arthur Tam, Dmitry Verkhovsky, Joe Poon, Josh Evnin, Peter Zhao, Ricky Lui, Stephen Chu
+
+(C) ThoughtWorks 2007
