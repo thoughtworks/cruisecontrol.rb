@@ -14,7 +14,8 @@ h3 {
 img { border: 0; }
 
 a, a:visited { 
-  color: #44a; 
+  color: #44a;
+  text-decoration: none;
 }
 
 a:hover { 
@@ -26,6 +27,7 @@ a:hover {
 .header {
   background-image: url(/images/header_background.gif);
   font-weight: bold;
+  clear: both;
 }
 
 .header .tw_logo { 
@@ -39,26 +41,11 @@ a:hover {
   color: #999;
   text-align: right;
   padding: 2em 1em 0em 0em;
+  clear: both;
 }
 
 .footer a, .footer a:visited {
   color: #666;
-  text-decoration: none;
-}
-/* this looks weird - jss
-.footer a:hover {
-  color: #FFF;
-  background-color: #666;
-}
-*/
-.main_menu {
-  /* TODO: a better color? */
-  color: #66c;
-  padding: 0.2em 0.5em 0 0.5em;
-}
-
-.main_menu .right_aligned {
-  float: right;
 }
 
 .version {
@@ -66,15 +53,21 @@ a:hover {
   padding: 0.3em;
 }
 
-.main_menu .menu_item a, .main_menu .menu_item a:visited {
-  text-decoration: none;
-  padding: 0.2em 0.3em;
-  color: #66c;
+.main_menu {
+  padding: 0.5em 0.5em 0 0.5em;
+  float: right;
 }
 
-.main_menu .menu_item a:hover {
-  color: #339;
-  text-decoration: none;
+.main_menu .menu_item {
+  color: #666;
+  display: block;
+  font-size: 0.8em;
+  text-align: right;
+  padding-bottom: 0.2em;
+}
+
+.main_menu .menu_item a, .main_menu .menu_item a:visited {
+  color: #66c;
 }
 
 #content {
@@ -82,16 +75,19 @@ a:hover {
 }
 
 /* build status stuff */
+
 .build_success { 
-  background-color: #F8FFE6; 
-  border-top: 2px solid #DFE6CF;
-  border-left: 2px solid #DFE6CF;
+  background-color: #FFF; 
+  border-top: 2px solid #FFF;
+  border-left: 2px solid #FFF;
 }
+
 .build_failed { 
   background-color: #FFE6FC; 
   border-top: 2px solid #E6CFE2;
   border-left: 2px solid #E6CFE2;
 }
+
 .build_never_built {
   background-color: #F6F6F6; 
   border-top: 2px solid #CCC;
@@ -99,7 +95,8 @@ a:hover {
 }
 
 .build_status { font-weight: bold; }
-.build_success .build_status { color: #0A0;}
+.build_failed .build_status, .build_never_built .build_status { text-transform: uppercase; }
+.build_success .build_status { color: #0A0; }
 .build_failed .build_status { color: #A00; }
 .build_never_built .build_status { color: #888; }
 
@@ -142,7 +139,9 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 }
 
 .project .filler {
-  padding-top: 5em;
+  padding-bottom: 3em;
+  text-align: right;
+  vertical-align: top;
 }
 
 .project .project_name {
@@ -155,11 +154,9 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 
 .project .project_name a, .project .project_name a:visited {
   color: #309;
-  text-decoration: none;
 }
 .project .project_name a:hover {
   color: #309;
-  text-decoration: underline;
 }
 
 /* Other classes */
@@ -198,7 +195,6 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 
 .ProjectGridHeader a {
   color: ivory;
-  text-decoration: none;
 }
 
 .ProjectGridHeader a:hover {
@@ -227,10 +223,6 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   text-align: right;
 }
 
-table.settings {
-  padding: 5px;
-}
-
 .help {
   color: #888;
 }
@@ -238,15 +230,6 @@ table.settings {
 .help a {
   color: #666;
 }
-
-.select_gmail_email_settings .manual_email_settings { display:none; }
-.select_gmail_email_settings .no_authentication_email_settings { display:none; }
-
-.select_manual_email_settings .gmail_email_settings { display:none; }
-.select_manual_email_settings .no_authentication_email_settings { display:none; }
-
-.select_no_authentication_email_settings .manual_email_settings { display:none; }
-.select_no_authentication_email_settings .gmail_email_settings { display:none; }
 
 .flash_notice {
   border: 1px solid #F87900;
@@ -290,7 +273,6 @@ table.settings {
 
 #build-list a {
   color: #66c;
-  text-decoration: none;
 }
 
 #build-list .selected {

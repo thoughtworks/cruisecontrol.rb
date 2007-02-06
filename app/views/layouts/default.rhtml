@@ -1,3 +1,4 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 
 <html>
@@ -10,21 +11,18 @@
 <body>
 
   <div class="header">
-    <div class="cc_logo">
-      <%= link_to image_tag("cc_logo.png"), "http://cruisecontrolrb.rubyforge.org/" %>
-    </div>    
-    
     <div class="main_menu"/>
-      <div class="right_aligned">
-        <span class="menu_item"><a href="http://cruisecontrolrb.rubyforge.org">Documentation</a></span>
-      </div>
       <span class="menu_item">
-        <%= link_to 'Home', :controller => 'projects', :action => 'index' %>
+        <%= link_to_unless_current 'Dashboard', :controller => 'projects', :action => 'index' %>
       </span>
       <span class="menu_item">
-        <%= link_to 'Settings', :controller => 'admin', :action => 'server_settings' %>
+        <a href="http://cruisecontrolrb.rubyforge.org">Documentation</a>
       </span>
     </div>
+
+    <div class="cc_logo">
+      <%= link_to image_tag("cc_logo.png"), :controller => 'projects', :action => 'index' %>
+    </div>    
 
     <% if flash[:notice] and !flash[:notice].blank? -%>
       <div class="flash_notice"><%= h flash[:notice] %></div>

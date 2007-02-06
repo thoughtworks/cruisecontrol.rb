@@ -4,7 +4,6 @@ In Standup, talk about
 * look at cruise.onemanswalk.com
 * plan UI meeting w/ at least josh, darci, me, and alex - chad & jason yip
   * which fonts are which? psd?
-  * breadcrumbs?
   * more or less content in dashboard? and headers?
   * colored rows for passing / failing?
   * which format for previous builds?
@@ -27,7 +26,6 @@ UI Stuff
 * last build ended ('5 minutes ago', '3 hours ago', etc)
   * more concise date / time - follow gmail
 * project w/ edit link in dashboard
-* admin in top left for settings
 * tests summary should only be there if we found tests
   * 5 / 5 tests passed
   * 4 / 7 tests passed

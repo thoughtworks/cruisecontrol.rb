@@ -5,11 +5,7 @@
       <span class="project_name">
         <%= link_to project.name, :action => 'show', :id => project.url_name %>
       </span>
-      <span class="project_settings">
-        (<%= link_to("edit", :action => "settings", :id => project.url_name) %>)
-      </span>
-      <span class="builder_status"><%= project.builder_state_and_activity %>
-      </span>
+      <span class="builder_status"><%= project.builder_state_and_activity %></span>
     </div>
     <div class="last_build">
       <% if project.last_build %>
@@ -20,21 +16,21 @@
         <span class="build_status">Never built</span>
       <% end %>
     </div>
-    <div>
-        <% form_tag :action => 'force_build' do %>
-           <%= hidden_field_tag 'id', project.url_name %>
-           <%= submit_tag 'Force Build', :id => 'force_build_button' %>
-        <% end %>
-    </div>
   </td>
   <td class="recent_builds">
     <% project.last_five_builds.each do |build| %>
       <div class="build_summary">
-        <%= link_to "build #{build.label} (#{format_time(build.time, :human)})", {:action => 'show', :id => project.url_name, :build => build.label}, 
-                                 :class => build.status %>
+        <%= link_to "build #{build.label} (#{format_time(build.time, :human)})", 
+                    {:action => 'show', :id => project.url_name, :build => build.label}, 
+                    :class => build.status %>
       </div>
     <% end %>
   </td>
-  <td class="filler"></td>
+  <td class="filler">
+      <% form_tag :action => 'force_build' do %>
+         <%= hidden_field_tag 'id', project.url_name %>
+         <%= submit_tag 'Build now' %>
+      <% end %>
+  </td>
 </tr>
 </table>

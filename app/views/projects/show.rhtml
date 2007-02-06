@@ -1,5 +1,3 @@
-<% project_page_breadcrumb %>
-
 <div id="build-list">
   <% @project.builds.reverse.each do |build| %>
     <div class="build-link<%= @build.label == build.label ? ' selected' : ''%>">
