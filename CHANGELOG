@@ -1,17 +1,18 @@
 TRUNK
-  - improved UI look & feel and HTML markup
+------------------------------------------------------------------------------------------------------------------------
+* 0.4.0
+  - pretty user interface
+  - 'Build now' button
   - dashboard displays projects as panels, not table rows
-  - displaying builder's current activity (down/sleeping/checking for modifications/building) on the dashboard
+  - monitoring cruisecontrol.rb builds with CCTray.net
+  - browser autorefresh - seeing latest build status without hitting 'refresh' on browser
+  - builder's current activity (down/sleeping/checking for modifications/building) on the dashboard
   - builder plugin may be packaged as a directory with multiple files. It must have init.rb then.
   - plugin error handler: if a plugin raises an error in response to notification, builder logs the error, 
     notifies all other plugins, then raises an error of its own (thus triggering the build_loop_failed event)
   - improved error handling during builder initialization
-  - builder status - not running, running(building | sleeping | checking for modifications | error)
-  - initial steps to allow monitoring of cruisecontrol.rb using CCTray.net
-    (cruisecontrol.rb statuses are mapped to CCTray.net expected statuses )
-  - browser autorefresh - seeing latest build statuses without hitting 'refresh' on browser
-  - force build a project by clicking the 'force build' button
---------------------------------------------------------------------------------
+  - Bugfix: blocked spaces in project names
+------------------------------------------------------------------------------------------------------------------------
 * 0.3.0
   - builder is building 'cruise', 'test' or 'default' target, depending on what is defined in the project
   - when build is running, OS variable CC_BUILD_ARTIFACTS is pointing to the build artifacts directory
@@ -23,7 +24,7 @@ TRUNK
   - Bugfix: explicitly require 'rubygems' before trying to require 'rake', do not rely on RUBYOPT=-rubygems to be set.
   - Bugfix: Adding a project a second time deletes the original
   - Bugfix: Parsing SVN log output for a revision made by anonymous author
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 * 0.2.0
   - Unified command-line interface to web app, builder and add_project script
   - Default port changed to 3333 (to avoid clashing with other Rails apps)
@@ -31,6 +32,6 @@ TRUNK
   - Bugfix: not all Windows installations have rake.cmd
   - Bugfix: CC.rb trying to build itself when a project has no Rakefile
   
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 * 0.1.0
   - Initial release.
