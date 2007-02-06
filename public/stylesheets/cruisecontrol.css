@@ -45,18 +45,17 @@ a:hover {
   clear: both;
 }
 
+.footer .version {
+  padding-right: 1.5em;
+}
+
 .footer a, .footer a:visited {
   color: #507ec0;
 }
 
-.version {
-  font-size: 0.75em;
-  padding: 0.3em;
-}
-
 .main_menu {
   color: #507ec0;
-  padding: 0.5em 0.5em 0 0.5em;
+  padding: 0.5em 1.5em 0 0.5em;
   float: right;
 }
 
@@ -156,51 +155,9 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   color: #C00;
 }
 
-.RecentBuildsPanel {
-  border-style: solid;
-  border-width: 1px;
-  border-color: #333399;
-  margin-bottom: 5px;
-}
-
-.RecentBuildsPanel th {
-  background-color: #333399;
-  text-align: center;
-  font-weight: bold;
-  padding: 3px;
-  color: ivory;
-}
-
-.RecentBuildsPanel td {
-  padding: 3px;
-  background-color: white;
-}
-
-.ProjectGridHeader {
-  color: ivory;
-  font-weight: bold;
-}
-
-.ProjectGridHeader a {
-  color: ivory;
-}
-
-.ProjectGridHeader a:hover {
-  color: #FC0;
-}
-
 .log {
   overflow: auto;
 }
-
-/* new stuff */
-
-.read .likes-save { display:none; }
-.read .likes-edit { display:none; }
-.edit .likes-read { display:none; }
-.edit .likes-save { display:none; }
-.save .likes-edit { display:none; }
-.save .likes-read { display:none; }
 
 .test-results {
   font-weight: bold;
@@ -259,8 +216,7 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 
 #build-list {
   float: right;
-  margin-right: 2em;
-  padding: 1em;
+  padding: 1em 1.5em 1em 1em;
 }
 
 #build-list .selected {

@@ -1,5 +1,4 @@
 class ProjectsController < ApplicationController
-  layout "default"
   
   def index
     flash[:notice] = nil
@@ -11,14 +10,11 @@ class ProjectsController < ApplicationController
     @project = find_project(load_projects)
 
     if params.has_key? :build
-      @build = @project.builds.find {|build| build.label.to_s == params[:build]}
+      @build = @project.builds.find { |build| build.label.to_s == params[:build] }
     end
-
-    if !@build
-      @build = @project.last_build
-    end
+    @build ||= @project.last_build
     
-    render :action => 'no_builds_yet' if !@build
+    render :action => 'no_builds_yet' unless @build
   end
 
   def refresh_projects
