@@ -20,6 +20,7 @@ class ProjectsController < ApplicationController
   def refresh_projects
     current_projects = load_projects
     changed_projects = []
+    deleted_projects = []
     @build_states = get_build_states(current_projects)
     params[:build_states].split(';').each do |build_state|
       project = current_projects.find {|proj| proj.name == build_state.split(':')[0] }
@@ -28,10 +29,13 @@ class ProjectsController < ApplicationController
           changed_projects << project          
         end
         current_projects.delete(project)
+      else
+        deleted_projects << build_state.split(':')[0]
       end
     end     
     @projects = changed_projects
     @new_projects = current_projects
+    @deleted_projects = deleted_projects
   end
   
   def force_build

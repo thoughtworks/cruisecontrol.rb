@@ -103,6 +103,18 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal 'one:notstarted24pingpong;two:notstarted24pingpong;three:notstarted24pingpong;', assigns(:build_states)
     assert_equal [@two], assigns(:new_projects)
     assert_equal [], assigns(:projects)
+    assert_equal [], assigns(:deleted_projects)
+  end
+  
+   def test_should_remove_deleted_project_when_refresh_projects
+    @controller.load_projects = new_project("one"), new_project("two")
+    @sandbox.new :file => "one/build-24/build_status = pingpong"
+    @sandbox.new :file => "two/build-24/build_status = pingpong"
+    post :refresh_projects, :build_states => 'one:notstarted24pingpong;two:notstarted24pingpong;three:notstarted24pingpong;'
+    assert_equal 'one:notstarted24pingpong;two:notstarted24pingpong;', assigns(:build_states)
+    assert_equal ['three'], assigns(:deleted_projects)
+    assert_equal [], assigns(:projects)
+    assert_equal [], assigns(:new_projects)
   end
 
   def test_should_request_force_build_a_project

@@ -10,6 +10,11 @@ end
   page.visual_effect :highlight, project_id
 end
 
+@deleted_projects.each do |project_name|
+  page.replace_html 'project_' + project_name, ''
+end
+
 page.replace_html 'buid_states_hidden_div', hidden_field_tag('build_states', @build_states)
 
 page.replace_html 'projects_flash', h(flash[:projects_flash] || '')
+  
