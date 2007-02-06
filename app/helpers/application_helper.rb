@@ -4,10 +4,11 @@ module ApplicationHelper
   def format_time(time, format = :iso)
     case format
     when :human
+      now = Time.now
       remove_leading_zeros(
-        Time.now > time + 24.hours ?
-          time.strftime('on %b %d') :
-          time.strftime('at %H:%M'))
+        (now.year == time.year && now.month == time.month && now.day == time.day) ?
+          time.strftime('at %H:%M') :
+          time.strftime('on %b %d'))
     when :iso
       time.strftime('%Y-%m-%d %H:%M:%S')
     when :iso_date

@@ -1,7 +1,7 @@
 <div id="build-list">
   <% @project.builds.reverse.each do |build| %>
     <div class="build-link<%= @build.label == build.label ? ' selected' : ''%>">
-    <%= link_to_build(build) %>
+    <%= link_to_build(@project, build) %>
     </div>
   <% end %>
 </div>

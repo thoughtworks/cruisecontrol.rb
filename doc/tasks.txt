@@ -1,45 +1,13 @@
-In Standup, talk about
-----------------------
-* plan IPM
-* look at cruise.onemanswalk.com
-* plan UI meeting w/ at least josh, darci, me, and alex - chad & jason yip
-  * which fonts are which? psd?
-  * more or less content in dashboard? and headers?
-  * colored rows for passing / failing?
-  * which format for previous builds?
-  * is there a way to make the logo stay at the bottom AND scroll if it needs to?
-  * what about version # and rails?
-* how do we force a build?
-  * restful interface?
-* license story - I added rolf to it
-* my stuff
-  * working on ui
-  * public cc instance
-    * need to work through darwin ports
-* let's put a contributor list up on the wiki
-* when you're done w/ a story, mark it done on the wiki, and put it in the changelog w/ your name(s)  
-
 UI Stuff
 --------
-* sorting for > 5 projects
-* last build time END in label
-* last build ended ('5 minutes ago', '3 hours ago', etc)
-  * more concise date / time - follow gmail
-* project w/ edit link in dashboard
+* hard left
+* force button is lame
+* overflow
+
 * tests summary should only be there if we found tests
   * 5 / 5 tests passed
   * 4 / 7 tests passed
   * no tests run
-* collapsable sections - make sure interesting sections are expanded by default
-* include historical read-only project settings on build page
-* color of builds - needs more indicators (icons)
-* show build progress bar or something - "build 78 in progress, started 5 minutes ago"
-  * on project page & dashboard
-
-
-* icons?
-
-* story : archive builds based on # of builds / date
 
 Bugs
 ----

@@ -20,9 +20,7 @@
   <td class="recent_builds">
     <% project.last_five_builds.each do |build| %>
       <div class="build_summary">
-        <%= link_to "build #{build.label} (#{format_time(build.time, :human)})", 
-                    {:action => 'show', :id => project.url_name, :build => build.label}, 
-                    :class => build.status %>
+        <%= link_to_build(project, build) %>
       </div>
     <% end %>
   </td>
