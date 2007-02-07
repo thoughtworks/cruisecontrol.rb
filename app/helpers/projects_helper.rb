@@ -3,7 +3,7 @@ def format_changeset_log(log)
 end
 
 def link_to_build(project, build)
-  text = "build #{build.label} (#{format_time(build.time, :human)})"
+  text = "#{build.label} (#{format_time(build.time, :human)})"
   text += " <span class='error'>FAILED</span>" if build.failed?
   link_to text, {:action => 'show', :id => project.url_name, :build => build.label}, :class => build.status
 end

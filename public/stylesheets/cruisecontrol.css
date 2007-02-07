@@ -112,8 +112,9 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 .project {
   margin: 0.5em 0;
   padding: 0.5em 1.5em;
-  width: 100%;
 }
+
+.project table { width: 100%; }
 
 .project td { 
   vertical-align: top;
@@ -131,12 +132,11 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   padding-top: 1em;
   font-size: 0.8em;
   width: 20%;
+  color: #666;
 }
 
 .project .filler {
-  padding-bottom: 3em;
-  text-align: right;
-  vertical-align: top;
+  padding-bottom: 5em;
 }
 
 .project .project_name {
@@ -217,16 +217,18 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 
 #build-list {
   float: right;
+  text-align: right;
+  width: 15em;
   padding: 1em 1.5em 1em 1em;
 }
 
-#build-list .selected {
+#build-list .selected a {
   background-color: #507ec0;
-  color: white;
+  color: #FFF;
 }
 
 #build-list .selected a, #build-list .selected a:visited {
-  color: #fff;
+  color: #FFF;
 }
 
 .build-link {
@@ -239,4 +241,9 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
     padding: 10px;
     font-weight: bold;
     font-size: 120%;
+}
+
+.force_build_form {
+  padding-left: 0.5em;
+  display: inline; 
 }

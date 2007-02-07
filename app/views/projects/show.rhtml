@@ -1,13 +1,14 @@
 <div id="build-list">
+  <strong>Build history</strong>
   <% @project.builds.reverse.each do |build| %>
-    <div class="build-link<%= @build.label == build.label ? ' selected' : ''%>">
-    <%= link_to_build(@project, build) %>
+    <div class="build-link<%= ' selected' if @build.label == build.label %>">
+      <%= link_to_build(@project, build) %>
     </div>
   <% end %>
 </div>
 
 <h1>
-  <%= @project.name %> build <%= @build.label %> 
+  <%= h @project.name %> build <%= h @build.label %> 
   <% if @build.failed? %><span class="error">FAILED</span><% end %>
 </h1>
 <div class="build-time">

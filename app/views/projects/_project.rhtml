@@ -1,12 +1,15 @@
-<table  class="project build_<%= project.last_build_status %>">
+<div class="project build_<%= project.last_build_status %>">
+<table>
 <tr>
   <td class="project_summary">
+
     <div>
       <span class="project_name">
         <%= link_to project.name, :action => 'show', :id => project.url_name %>
       </span>
       <span class="builder_status"><%= project.builder_state_and_activity %></span>
     </div>
+
     <div class="last_build">
       <% if project.last_build %>
         build <%= project.last_build.label %> 
@@ -15,23 +18,29 @@
       <% else %>
         <span class="build_status">Never built</span>
       <% end %>
+
+      <% if project.force_build_request_allowed? %>
+        <span>
+          <% form_tag({:action => 'force_build', :id => project.url_name}, :class => 'force_build_form') do %>
+            <%= submit_tag 'Build now' %>
+          <% end %>        
+        </span>
+      <% end %>
     </div>
+
   </td>
+
   <td class="recent_builds">
+    <strong>Latest builds:</strong>
     <% project.last_five_builds.each do |build| %>
       <div class="build_summary">
         <%= link_to_build(project, build) %>
       </div>
     <% end %>
   </td>
-   <td class="filler">
-    <% if project.force_build_request_allowed? %>
-      <div>
-        <% form_tag :action => 'force_build', :id => project.url_name do %>
-          <%= submit_tag 'Build now' %>
-        <% end %>        
-      </div>
-    <% end %>
-  <td>
+
+  <td class="filler"></td>
+
 </tr>
 </table>
+</div>
