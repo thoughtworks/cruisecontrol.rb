@@ -57,9 +57,25 @@ test_should_fail(SubversionLogParserTest)
 
   2) Failure:
 test_should_check_force_build(PollingSchedulerTest) [./test/unit/polling_scheduler_test.rb:44]:
-#<Mocha::Mock:0x-245ec74a>.force_build_if_requested - expected calls: 1, actual calls: 2
+#<Mocha::Mock:0x-245ea224>.force_build_if_requested - expected calls: 1, actual calls: 2
 
-83 tests, 185 assertions, 2 failures, 0 errors
+125 tests, 284 assertions, 1 failures, 0 errors
+/usr/bin/ruby1.8 -Ilib:test "/usr/lib/ruby/1.8/rake/rake_test_loader.rb" "test/functional/projects_controller_test.rb" 
+Loaded suite /usr/lib/ruby/1.8/rake/rake_test_loader
+Started
+..........
+Finished in 0.251448 seconds.
+
+10 tests, 23 assertions, 0 failures, 0 errors
+/usr/bin/ruby1.8 -Ilib:test "/usr/lib/ruby/1.8/rake/rake_test_loader.rb" "test/integration/builder_integration_test.rb" 
+Loaded suite /usr/lib/ruby/1.8/rake/rake_test_loader
+Started
+..............
+Finished in 25.224997 seconds.
+
+14 tests, 28 assertions, 0 failures, 0 errors
+rake aborted!
+Test failures
 EOF
   
   def test_should_not_find_test_errors_with_a_build_with_test_failures

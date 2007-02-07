@@ -1,5 +1,5 @@
 class TestErrorParser
-  FIND_TEST_ERROR_REGEX = /^\s+\d+\).*\n(.*):\n(.*)\n([\s\S]*?)\n\n/
+  FIND_TEST_ERROR_REGEX = /^\s+\d+\) Error:\n(.*):\n(.*)\n([\s\S]*?)\n\n/
   def get_test_errors(log)
     test_errors = Array.new
     
