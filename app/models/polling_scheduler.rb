@@ -54,7 +54,7 @@ class PollingScheduler
   
   def log_error(error)
     begin
-      Log.error(error) 
+      CruiseControl::Log.error(error) 
     rescue 
       STDERR.puts(error.message)
       STDERR.puts(error.backtrace.map { |l| "  #{l}"}.join("\n"))

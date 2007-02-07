@@ -54,8 +54,6 @@ class Project
     builder_state_and_activity.gsub(' ', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
   end
   
-  
-  
   def url_name
     name.downcase.gsub(/[^a-z0-9_]/, '')
   end
@@ -154,10 +152,10 @@ class Project
       else
         result =  "Another build is pending already!"     
       end
-      rescue => lock_error
-        result =  "Another build is pending already!"     
-      ensure 
-        ForceBuildBlocker.release(self) rescue nil
+    rescue => lock_error
+      result =  "Another build is pending already!"     
+    ensure 
+      ForceBuildBlocker.release(self) rescue nil
     end
     return result
   end
@@ -170,7 +168,9 @@ class Project
       build
       remove_force_tag_file
     rescue => error
-    ensure ForceBuildBlocker.release(self) rescue nil
+      # FIXME and do what with it?
+    ensure 
+      ForceBuildBlocker.release(self) rescue nil
     end      
   end
   
@@ -179,14 +179,14 @@ class Project
   end
 
   def build(revisions = [@source_control.latest_revision(self)])   
-      last_revision = revisions.last
-      build = Build.new(self, validate_build_label(last_revision.number))
-      log_changeset(build.artifacts_directory, revisions)
-      @source_control.update(self, last_revision)
-      notify(:build_started, build)
-      build.run
-      notify(:build_finished, build)
-      build    
+    last_revision = revisions.last
+    build = Build.new(self, validate_build_label(last_revision.number))
+    log_changeset(build.artifacts_directory, revisions)
+    @source_control.update(self, last_revision)
+    notify(:build_started, build)
+    build.run
+    notify(:build_finished, build)
+    build    
   end
 
   def notify(event, *event_parameters)
@@ -195,7 +195,7 @@ class Project
       begin
         plugin.send(event, *event_parameters) if plugin.respond_to?(event)
       rescue => plugin_error
-        Log.error(plugin_error)
+        CruiseControl::Log.error(plugin_error)
         errors << "#{plugin.class}: #{plugin_error.message}"
       end
     end
@@ -238,6 +238,33 @@ class Project
     @plugins_by_name.key?(method_name) or super
   end
 
+  private
+  
+    def validate_build_label(label)
+      existing_build = builds.find { |build| build.label == label}
+      if( existing_build.nil?)
+        label
+      else
+        validate_build_label(increment_label(label))
+      end
+    end
+    
+    def increment_label(label)
+      ( label.to_i.to_s + '.' + (label.to_f.to_s.split('.')[1].to_i + 1).to_s ).to_f
+    end
+
+    def remove_force_tag_file
+      FileUtils.rm_f(Dir[force_tag_file_name])
+    end
+    
+    def touch_force_tag_file 
+      FileUtils.touch(force_tag_file_name)   
+    end
+    
+    def force_tag_file_name
+      File.join(path,Project::ForceBuildTagFileName)
+    end
+
 end
 
 # TODO make me pretty, move me to another file, invoke me from environment.rb
@@ -248,7 +275,7 @@ plugin_loader = Object.new
 
 def plugin_loader.load_plugin(plugin_path)
   plugin_name = File.basename(plugin_path).sub(/\.rb$/, '')
-#  Log.debug("Loading plugin #{plugin_name}")
+  CruiseControl::Log.debug("Loading plugin #{plugin_name}")
   if RAILS_ENV == 'development'
     load plugin_path
   else
@@ -286,30 +313,3 @@ def plugin_loader.load_all
 end
 
 plugin_loader.load_all unless RAILS_ENV == 'test'
-
-private
-
-    def validate_build_label(label)
-      existing_build = builds.find { |build| build.label == label}
-      if( existing_build.nil?)
-        label
-      else
-        validate_build_label(increment_label(label))
-      end
-    end
-    
-    def increment_label(label)
-      ( label.to_i.to_s + '.' + (label.to_f.to_s.split('.')[1].to_i + 1).to_s ).to_f
-    end
-
-    def remove_force_tag_file
-      FileUtils.rm_f(Dir[force_tag_file_name])
-    end
-    
-    def touch_force_tag_file 
-      FileUtils.touch(force_tag_file_name)   
-    end
-    
-    def force_tag_file_name
-      File.join(path,Project::ForceBuildTagFileName)
-    end

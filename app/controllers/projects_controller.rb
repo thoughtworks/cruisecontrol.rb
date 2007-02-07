@@ -27,7 +27,7 @@ class ProjectsController < ApplicationController
       project = current_projects.find {|proj| proj.name == build_state.split(':')[0] }
       if(!project.nil?)
         if (project.builder_and_build_states_tag != build_state.split(':')[1])
-          changed_projects << project          
+          changed_projects << project
         end
         current_projects.delete(project)
       else

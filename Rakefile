@@ -12,7 +12,7 @@ require 'rake/packagetask'
 require 'rake/gempackagetask'
 require 'rake/contrib/rubyforgepublisher'
 
-require File.dirname(__FILE__) + '/lib/cruisecontrol/version'
+require File.dirname(__FILE__) + '/lib/cruise_control/version'
 
 PKG_NAME      = 'cruisecontrol'
 PKG_VERSION   = CruiseControl::VERSION::STRING
@@ -25,4 +25,3 @@ RUBY_FORGE_USER    = "stellsmi"
 
 
 require 'tasks/rails'
-

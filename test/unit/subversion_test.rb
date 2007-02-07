@@ -45,7 +45,6 @@ integration test does a checkout
     svn.expects(:execute).with("svn --non-interactive update --revision #{revision_number}").returns("your mom")
 
     svn.update(dummy_project, Revision.new(revision_number))
-    svn.verify
   end
 
   def test_latest_revision
@@ -56,7 +55,6 @@ integration test does a checkout
 
     revision = svn.latest_revision(dummy_project)
 
-    svn.verify
     assert_equal 18, revision.number
   end
 
@@ -67,7 +65,6 @@ integration test does a checkout
 
     revisions = svn.revisions_since(dummy_project, 15)
 
-    svn.verify
     assert_equal [17, 18], numbers(revisions)
   end
 
@@ -77,8 +74,6 @@ integration test does a checkout
     svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose").yields(StringIO.new(LOG_ENTRY))
 
     revisions = svn.revisions_since(dummy_project, 14)
-
-    svn.verify
 
     assert_equal [15, 17, 18], numbers(revisions)
   end
@@ -90,8 +85,6 @@ integration test does a checkout
 
     revisions = svn.revisions_since(dummy_project, 14)
 
-    svn.verify
-
     assert_equal [], numbers(revisions)
   end
 
@@ -100,8 +93,6 @@ integration test does a checkout
     svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project .")
 
     svn.checkout('.')
-
-    svn.verify
   end
 
   def test_checkout_with_user_password
@@ -109,8 +100,6 @@ integration test does a checkout
     svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project . --username jer --password crap")
 
     svn.checkout('.')
-
-    svn.verify
   end
 
   def test_checkout_with_revision
@@ -118,8 +107,6 @@ integration test does a checkout
     svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project . --revision 5")
 
     svn.checkout('.', Revision.new(5))
-
-    svn.verify
   end
 
   def test_checkout_requires_url

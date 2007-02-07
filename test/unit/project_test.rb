@@ -65,9 +65,6 @@ class ProjectTest < Test::Unit::TestCase
       build.expects(:run)
 
       @project.build_if_necessary
-
-      @svn.verify
-      build.verify
     end
   end
 
@@ -98,8 +95,6 @@ class ProjectTest < Test::Unit::TestCase
       @project.add_plugin listener
 
       @project.build_if_necessary
-
-      listener.verify
     end
   end
 
@@ -121,8 +116,6 @@ class ProjectTest < Test::Unit::TestCase
 
       @project.add_plugin listener
       assert_raises(error) { @project.build_if_necessary }
-
-      listener.verify
     end
   end
 
@@ -142,9 +135,6 @@ class ProjectTest < Test::Unit::TestCase
       build.expects(:run)
 
       @project.build_if_necessary
-
-      @svn.verify
-      build.verify
     end
   end
 
@@ -159,8 +149,6 @@ class ProjectTest < Test::Unit::TestCase
       @svn.expects(:revisions_since).with(@project, 2).returns([])
 
       @project.build_if_necessary
-
-      @svn.verify
     end
   end
   

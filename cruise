@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-load "#{File.dirname(__FILE__)}/lib/cruisecontrol/version.rb"
+load "#{File.dirname(__FILE__)}/lib/cruise_control/version.rb"
 
 def start
   load File.dirname(__FILE__) + "/script/server"

@@ -89,9 +89,6 @@ class BuildTest < Test::Unit::TestCase
       Status.any_instance.expects(:'succeed!')
   
       build.run
-  
-      build.verify
-      FileUtils.verify
     end
   end
 
@@ -114,9 +111,6 @@ class BuildTest < Test::Unit::TestCase
       Status.any_instance.expects(:'fail!')
   
       build.run
-  
-      build.verify
-      FileUtils.verify
     end
   end
 

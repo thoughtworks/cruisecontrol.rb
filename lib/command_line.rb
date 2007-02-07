@@ -83,7 +83,7 @@ module CommandLine
 
     options[:env].each{|k,v| ENV[k]=v}
     begin
-      Log.debug "#{Platform.prompt} #{cmd}" if options[:stdout].nil?
+      CruiseControl::Log.debug "#{Platform.prompt} #{cmd}" if options[:stdout].nil?
       result = IO.popen(full_cmd, options[:mode]) do |io|
         if proc
           proc.call(io)

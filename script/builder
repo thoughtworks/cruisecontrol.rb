@@ -28,7 +28,7 @@ ARGV.options do |opts|
 end
 
 require RAILS_ROOT + "/config/environment"
-Log.verbose = OPTIONS[:verbose]
+CruiseControl::Log.verbose = OPTIONS[:verbose]
 
 project_path = File.expand_path(File.join(Configuration.builds_directory, OPTIONS[:project_name]))
 
@@ -39,7 +39,7 @@ end
 
 def cleanup(project)
   puts "Builder for project '#{OPTIONS[:project_name]}' exited" rescue nil
-  Log.event "Builder for project '#{OPTIONS[:project_name]}' exited" rescue nil
+  CruiseControl::Log.event "Builder for project '#{OPTIONS[:project_name]}' exited" rescue nil
   if project
     ProjectBlocker.release(project) rescue nil
   end
@@ -56,13 +56,13 @@ begin
 
   puts "Builder for project '#{project.name}' started"
   puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
-  Log.event "Builder for project '#{project.name}' started"
+  CruiseControl::Log.event "Builder for project '#{project.name}' started"
 
   project.scheduler.run
 rescue => e
   begin 
-    Log.error(e.message)
-    Log.error(e.backtrace)
+    CruiseControl::Log.error(e.message)
+    CruiseControl::Log.error(e.backtrace)
   rescue => logging_error
     STDERR.puts e.message
     STDERR.puts e.backtrace

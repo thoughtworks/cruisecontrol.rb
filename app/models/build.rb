@@ -27,7 +27,7 @@ class Build
     end
     @status.succeed!
   rescue => e
-    Log.verbose? ? Log.debug(e) : Log.info(e.message)
+    CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
     @status.fail!
   end
   
@@ -83,7 +83,7 @@ class Build
   
   def rake
     # --nosearch flag here prevents CC.rb from building itslef when a project has no Rakefile
-    %{ruby -e "require 'rubygems' rescue nil; require 'rake'; load '#{File.expand_path(RAILS_ROOT)}/tasks/cc_build.rake'; ARGV << '--nosearch'#{Log.verbose? ? " << '--trace'" : ""} << 'cc:build'; Rake.application.run"}
+    %{ruby -e "require 'rubygems' rescue nil; require 'rake'; load '#{File.expand_path(RAILS_ROOT)}/tasks/cc_build.rake'; ARGV << '--nosearch'#{CruiseControl::Log.verbose? ? " << '--trace'" : ""} << 'cc:build'; Rake.application.run"}
   end
 
   def last
