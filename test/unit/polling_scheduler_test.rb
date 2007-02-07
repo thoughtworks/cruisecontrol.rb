@@ -41,7 +41,9 @@ class PollingSchedulerTest < Test::Unit::TestCase
   
   def test_should_check_force_build
     @scheduler.expects(:polling_interval).returns(2.seconds)
-    @mock_project.expects(:force_build_if_requested)
+    @scheduler.stubs(:force_build_checking_interval).returns(0)
+    Time.expects(:now).times(4).returns(Time.at(0), Time.at(0), Time.at(1), Time.at(2))
+    @mock_project.expects(:force_build_if_requested).times(2)
     @scheduler.check_force_build_until_next_polling
   end
 

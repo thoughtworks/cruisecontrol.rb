@@ -100,16 +100,16 @@ class BuildTest < Test::Unit::TestCase
     end
   end
 
-  def test_get_last_build
+  def test_last
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => "build-1/build_status.success"
       sandbox.new :file => "build-2/build_status.success"
   
-      one, two = Build.new(project, 1), Build.new(project, 2)
+      one, two = Build.new(project, '1'), Build.new(project, '2')
   
-      assert_equal 1, one.label
+      assert_equal '1', one.label
       assert_equal nil, one.last
-      assert_equal 1, two.last.label
+      assert_equal '1', two.last.label
     end
   end
   

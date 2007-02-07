@@ -23,16 +23,18 @@ class PollingScheduler
     time_to_go = Time.now + polling_interval
     while Time.now < time_to_go
       @project.force_build_if_requested
-      sleep 2
+      sleep force_build_checking_interval
     end
   end
-  
- 
 
   def polling_interval
     @custom_polling_interval or Configuration.default_polling_interval
   end
-  
+
+  def force_build_checking_interval
+    Configuration.force_build_checking_interval
+  end
+
   def polling_interval=(value)
     begin
       value = value.to_i

@@ -32,7 +32,7 @@ class ProjectTest < Test::Unit::TestCase
       assert_equal("1 - success, 3 - failure, 5 - success, 10 - success",
                    @project.builds.collect {|b| "#{b.label} - #{b.status}"}.join(", "))
 
-      assert_equal(10, @project.last_build.label)
+      assert_equal('10', @project.last_build.label)
     end
   end
 
@@ -62,6 +62,7 @@ class ProjectTest < Test::Unit::TestCase
 
       revision = new_revision(5)
       build = new_mock_build(5)
+
       build.stubs(:artifacts_directory).returns(sandbox.root)
       
       @project.stubs(:builds).returns([])
@@ -326,30 +327,32 @@ class ProjectTest < Test::Unit::TestCase
   end
   
   def test_build_should_generate_new_label_if_same_name_label_exists    
-    existing_build = stubs_build(2.0)
-    existing_build2 = stubs_build(2.1)
-    new_build = stubs_build(2.2) 
+    existing_build1 = stub_build('20')
+    existing_build2 = stub_build('20.001')
+    new_build = stub_build('20.002')
+    new_build_with_interesting_number = stub_build('2')
              
-    revision = new_revision(2) 
-    
+ 
     project = Project.new('project1', @svn)
     @svn.stubs(:update)
     project.stubs(:log_changeset) 
-    project.stubs(:builds).returns([existing_build, existing_build2])
+    project.stubs(:builds).returns([existing_build1, existing_build2])
           
-    Build.expects(:new).with(project,2.2).returns(new_build) 
-      
-    assert_equal new_build, project.build([revision])   
+    Build.expects(:new).with(project, '20.002').returns(new_build) 
+    project.build([new_revision(20)])
+
+    Build.expects(:new).with(project, '2').returns(new_build)
+    project.build([new_revision(2)])
   end
       
   private
   
-  def stubs_build(label)
+  def stub_build(label)
     build = Object.new
     build.stubs(:label).returns(label)
     build.stubs(:artifacts_directory).returns("project1/build_#{label}")
     build.stubs(:run)
-    build    
+    build
   end
   
   def new_revision(number)
@@ -358,7 +361,7 @@ class ProjectTest < Test::Unit::TestCase
 
   def new_mock_build(number)
     build = Object.new
-    Build.expects(:new).with(@project, number).returns(build)
+    Build.expects(:new).with(@project, number.to_s).returns(build)
     build
   end
   

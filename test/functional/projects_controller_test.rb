@@ -48,7 +48,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     get :show, :id => 'two'
 
     assert_equal @two, assigns(:project)
-    assert_equal 25, assigns(:build).label
+    assert_equal '25', assigns(:build).label
   end
 
   def test_show_specific_build
@@ -58,7 +58,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     get :show, :id => 'two', :build => 24
 
     assert_equal @two, assigns(:project)
-    assert_equal 24, assigns(:build).label
+    assert_equal '24', assigns(:build).label
   end
 
   def test_show_with_no_build

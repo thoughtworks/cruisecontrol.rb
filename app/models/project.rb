@@ -85,11 +85,11 @@ class Project
     raise "Project #{name.inspect} has no path" unless path
 
     Dir["#{path}/build-*/build_status.*"].collect do |status_file|
-      dir = File.dirname(status_file)
-      number = File.basename(dir)[6..-1].to_f
+      build_directory = File.basename(File.dirname(status_file))
+      build_label = build_directory[6..-1]
 
-      Build.new(self, number)
-    end.sort_by { |build| build.label }
+      Build.new(self, build_label)
+    end.sort_by { |build| build.label.to_f }
   end
 
   def builder_state       
@@ -200,7 +200,7 @@ class Project
 
   def build(revisions = [@source_control.latest_revision(self)])   
     last_revision = revisions.last
-    build = Build.new(self, validate_build_label(last_revision.number))
+    build = Build.new(self, create_build_label(last_revision.number))
     log_changeset(build.artifacts_directory, revisions)
     @source_control.update(self, last_revision)
     notify(:build_started, build)
@@ -260,19 +260,19 @@ class Project
 
   private
   
-  def validate_build_label(label)
-    existing_build = builds.find { |build| build.label == label}
-    if( existing_build.nil?)
-      label
-    else
-      validate_build_label(increment_label(label))
+  def create_build_label(revision_number)
+    revision_number = revision_number.to_s
+    build_labels = builds.map { |b| b.label.to_s }
+    related_builds_pattern = Regexp.new("^#{Regexp.escape(revision_number)}(\\.\\d\\d\\d)?$")
+    related_builds = build_labels.select { |label| label =~ related_builds_pattern }
+
+    case related_builds
+    when [] then revision_number
+    when [revision_number] then "#{revision_number}.001"
+    else related_builds.sort.last.next
     end
   end
   
-  def increment_label(label)
-    ( label.to_i.to_s + '.' + (label.to_f.to_s.split('.')[1].to_i + 1).to_s ).to_f
-  end
-
   def remove_force_tag_file
     FileUtils.rm_f(Dir[force_tag_file_name])
   end

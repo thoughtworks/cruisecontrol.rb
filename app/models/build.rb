@@ -10,14 +10,6 @@ class Build
     @status = Status.new(artifacts_directory)
   end
   
-  def label
-    if (@label * 10).to_i == @label.to_i * 10
-      @label.to_i
-    else
-      @label
-    end
-  end
-
   def run
     build_log = artifact 'build.log'
     # build_command must be set before doing chdir, because there may be some relative paths
