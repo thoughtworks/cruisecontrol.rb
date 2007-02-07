@@ -1,12 +1,17 @@
 @projects.each do |project|
   project_id = 'project_' + project.name
-  page.replace_html project_id, {:partial => 'project', :locals=> {:project => project}} 
+  page.replace_html project_id, :partial => 'project', :locals => { :project => project }
   page.visual_effect :highlight, project_id
 end
 
-@new_projects.each do |new_project|  
-  project_id = 'project_' + new_project.name
-  page.insert_html :bottom, 'projects', '<div id="' + project_id + '">'+ render( :partial => "project", :locals => {:project => new_project }) +'</div>'
+unless @new_projects.empty?
+  page << "if ($('no_projects_help')) Element.hide('no_projects_help');"
+end
+
+@new_projects.each do |project|
+  project_id = "project_#{project.name}"
+  page.insert_html :bottom, 'projects', "<div id=\"#{h project_id}\"/>"
+  page.replace_html project_id, :partial => "project", :locals => { :project => project }
   page.visual_effect :highlight, project_id
 end
 
@@ -17,4 +22,3 @@ end
 page.replace_html 'buid_states_hidden_div', hidden_field_tag('build_states', @build_states)
 
 page.replace_html 'projects_flash', h(flash[:projects_flash] || '')
-  

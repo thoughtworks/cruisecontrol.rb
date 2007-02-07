@@ -37,4 +37,8 @@ module ApplicationHelper
     EOL
   end
 
+  def link_to_documentation(text = 'Documentation')
+    '<a href="http://cruisecontrolrb.rubyforge.org">' + h(text) + '</a>'
+  end
+
 end

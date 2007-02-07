@@ -169,11 +169,12 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 }
 
 .help {
-  color: #888;
+  padding: 2em;
+  color: #666;
 }
 
 .help a {
-  color: #666;
+  color: #333;
 }
 
 .flash_notice {

@@ -28,7 +28,7 @@
     <% if project.force_build_request_allowed? %>
       <div>
         <% form_tag :action => 'force_build', :id => project.url_name do %>
-          <%= image_submit_tag 'build_now.png' %>
+          <%= submit_tag 'Build now' %>
         <% end %>        
       </div>
     <% end %>

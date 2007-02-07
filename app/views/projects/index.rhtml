@@ -1,19 +1,16 @@
 <div id="projects_flash" class="projects_flash"><%= h(flash[:projects_flash] || '') %></div>
 
 <div id="projects">
-   <% @projects.each do |project| -%>
+  <% @projects.each do |project| %>
     <div id="project_<%= project.name %>">
-        <%= render :partial => 'project', :locals => {:project => project }%>
+      <%= render :partial => 'project', :locals => {:project => project }%>
     </div>
-   <% end -%>
+  <% end %>
+   
+  <%= render :partial => 'no_projects' if @projects.empty? %>
 </div>
 
-<% form_remote_tag( :url => { :action => 'refresh_projects' }, :html => { :id => 'build_states_form' }) do-%>
-    
-    <div id="buid_states_hidden_div">
-    <%= hidden_field_tag 'build_states', @build_states %>
-    </div>
-    
-    <%= periodically_call_remote :url => { :action => 'refresh_projects'}, :submit => 'build_states_form', :frequency => 5 %>
-
-<% end -%>
+<% form_remote_tag( :url => { :action => 'refresh_projects' }, :html => { :id => 'build_states_form' }) do %>
+  <div id="buid_states_hidden_div"><%= hidden_field_tag 'build_states', @build_states %></div>
+  <%= periodically_call_remote :url => { :action => 'refresh_projects'}, :submit => 'build_states_form', :frequency => 5 %>
+<% end %>

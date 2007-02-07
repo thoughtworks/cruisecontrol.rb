@@ -23,7 +23,8 @@ class ProjectsController < ApplicationController
     changed_projects = []
     deleted_projects = []
     @build_states = get_build_states(current_projects)
-    params[:build_states].split(';').each do |build_state|
+    original_build_states = (params[:build_states] or '')
+    original_build_states.split(';').each do |build_state|
       project = current_projects.find {|proj| proj.name == build_state.split(':')[0] }
       if(!project.nil?)
         if (project.builder_and_build_states_tag != build_state.split(':')[1])
@@ -33,7 +34,7 @@ class ProjectsController < ApplicationController
       else
         deleted_projects << build_state.split(':')[0]
       end
-    end     
+    end
     @projects = changed_projects
     @new_projects = current_projects
     @deleted_projects = deleted_projects
@@ -56,7 +57,7 @@ class ProjectsController < ApplicationController
   end
 
   def get_build_states(projects)
-    states = ""
+    states = ''
     projects.each do |project|
       states += project.name + ":" + project.builder_and_build_states_tag + ";"
     end
