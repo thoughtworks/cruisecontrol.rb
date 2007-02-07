@@ -26,5 +26,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'
+  
+  # Route for CCTray.NET
   map.connect 'XmlStatusReport.aspx', :controller => 'status', :action => 'projects'
 end

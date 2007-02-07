@@ -154,12 +154,15 @@ to send email, and who to send it to. Do the following:
 === Monitoring build status with CCTray
 
 CCTray is a utility developed as part of CruiseControl.NET project that displays an icon in the bottom right corner of 
-the screen. The icon changes its color to red when a build fails, and back to green when the 
-build is fixed.
+the screen. The icon changes its color to red when a build fails, and back to green when the build is fixed.
 
-CruiseControl.rb can be monitored by CCTray (point it to http://<cruise_host>:<cruise_port>/projects).
+CruiseControl.rb can be monitored by CCTray. To connect CCTray to CC.rb server, start CCTray, right click on CCTray 
+icon, select Settings..., click on Add button, click on Add Server button, select "Via CruiseControl.NET Dashboard" 
+option and type http://<cruise_host>:3333 in the text box. Click OK, select your project, click OK again, close the 
+Settings dialog. Voila, you are monitoring your build with CCTray.
 
-This works only on a Windows desktop. Other build notification options (Atom feeds, Growl and Jabber) are in the works.
+This works only on a Windows desktop. On other platforms, there is only email so far. Alternative ways to monitor the 
+build (feeds, Growl and Jabber) are in the works.
 
 
 === Build scheduling
