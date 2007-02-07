@@ -10,12 +10,6 @@ class ProjectTest < Test::Unit::TestCase
     @project = Project.new("lemmings")
   end
 
-  def test_url_name
-    assert_equal('somename', Project.new('some name').url_name)
-    assert_equal('52somename', Project.new(' 52 some? name!').url_name)
-    assert_equal('52_some_name', Project.new('52_some_name').url_name)
-  end
-  
   def test_properties
     @project = Project.new("lemmings", Subversion.new(:username => 'bob'))
     assert_equal("lemmings", @project.name)

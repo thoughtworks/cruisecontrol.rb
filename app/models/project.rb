@@ -54,10 +54,6 @@ class Project
     builder_state_and_activity.gsub(' ', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
   end
   
-  def url_name
-    name.downcase.gsub(/[^a-z0-9_]/, '')
-  end
-  
   def ==(another)
     another.is_a?(Project) and another.name == self.name
   end

@@ -5,7 +5,7 @@
 
     <div>
       <span class="project_name">
-        <%= link_to project.name, :action => 'show', :id => project.url_name %>
+        <%= link_to project.name, :action => 'show', :id => project.name %>
       </span>
       <span class="builder_status"><%= project.builder_state_and_activity %></span>
     </div>

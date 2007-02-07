@@ -53,7 +53,7 @@ class ProjectsController < ApplicationController
   end
 
   def find_project(projects)
-    projects.find {|p| p.url_name == params[:id] }
+    projects.find {|p| p.name == params[:id] }
   end
 
   def get_build_states(projects)

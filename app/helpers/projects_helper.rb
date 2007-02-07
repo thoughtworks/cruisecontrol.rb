@@ -5,7 +5,7 @@ end
 def link_to_build(project, build)
   text = "#{build.label} (#{format_time(build.time, :human)})"
   text += " <span class='error'>FAILED</span>" if build.failed?
-  link_to text, {:action => 'show', :id => project.url_name, :build => build.label}, :class => build.status
+  link_to text, {:action => 'show', :id => project.name, :build => build.label}, :class => build.status
 end
 
 def format_build_log(log)
