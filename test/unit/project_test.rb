@@ -43,6 +43,18 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
 
+  def test_should_build_when_project_configurations_modified
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      @project.expects(:config_modifications?).returns(true)      
+      @project.expects(:load_config_file)
+
+      @project.expects(:new_revisions).returns(Array.new)
+      @project.expects(:build)
+      @project.build_if_necessary
+    end
+  end
+  
   def test_should_build_with_no_logs
     in_sandbox do |sandbox|
       @project.source_control = @svn
@@ -51,8 +63,9 @@ class ProjectTest < Test::Unit::TestCase
       revision = new_revision(5)
       build = new_mock_build(5)
       build.stubs(:artifacts_directory).returns(sandbox.root)
-
+      
       @project.stubs(:builds).returns([])
+      @project.stubs(:config_modifications?).returns(false)
       @svn.expects(:latest_revision).returns(revision)
       @svn.expects(:update).with(@project, revision)
 
@@ -72,6 +85,7 @@ class ProjectTest < Test::Unit::TestCase
       build.stubs(:artifacts_directory).returns(sandbox.root)
 
       @project.stubs(:builds).returns([])
+      @project.stubs(:config_modifications?).returns(false)
       @svn.expects(:latest_revision).returns(revision)
       @svn.expects(:update).with(@project, revision)
 
@@ -107,7 +121,6 @@ class ProjectTest < Test::Unit::TestCase
       listener.expects(:polling_source_control)
       listener.expects(:build_loop_failed).with(error)
       listener.expects(:sleeping)
-
       @project.add_plugin listener
       assert_raises(error) { @project.build_if_necessary }
     end
@@ -119,10 +132,10 @@ class ProjectTest < Test::Unit::TestCase
       @project.path = sandbox.root
 
       @project.stubs(:builds).returns([Build.new(@project, 1)])
+      @project.stubs(:config_modifications?).returns(false)
       revision = new_revision(2)
       build = new_mock_build(2)
-      build.stubs(:artifacts_directory).returns(sandbox.root)
-
+      build.stubs(:artifacts_directory).returns(sandbox.root)      
       @svn.expects(:revisions_since).with(@project, 1).returns([revision])
       @svn.expects(:update).with(@project, revision)
 
@@ -136,7 +149,7 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.source_control = @svn
       @project.path = sandbox.root
-
+      @project.stubs(:config_modifications?).returns(false)
       @project.expects(:builds).returns([Build.new(@project, 2)])
       revision = new_revision(2)
 
@@ -225,6 +238,36 @@ class ProjectTest < Test::Unit::TestCase
     @project.expects(:builder_activity).at_least(1).returns('mock status')
 
     assert_equal "running (mock status)", @project.builder_state_and_activity
+  end
+  
+  def test_config_modifications_should_return_true_if_config_file_modified_since_last_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root                  
+      new_mock_last_build_time(Time.now - 1)
+      configTime = Time.now      
+      configPath = File.join(@project.path, 'project_config.rb')
+      File.expects(:mtime).with(configPath).returns(configTime)
+      assert @project.config_modifications?         
+    end       
+  end
+  
+  def test_config_modifications_should_return_false_if_config_file_not_modified_since_last_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root      
+      new_mock_last_build_time(Time.now)  
+      configTime = Time.now - 1       
+      configPath = File.join(@project.path, 'project_config.rb')
+      File.expects(:mtime).with(configPath).returns(configTime)
+      assert_false @project.config_modifications?         
+    end       
+  end
+  
+  def test_config_modifications_should_return_false_if_there_is_no_previous_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root                        
+      @project.expects(:last_build).returns(nil) 
+      assert_false @project.config_modifications?         
+    end       
   end
   
   def test_request_force_build_should_generate_force_tag_file
@@ -318,5 +361,11 @@ class ProjectTest < Test::Unit::TestCase
     Build.expects(:new).with(@project, number).returns(build)
     build
   end
+  
+  def new_mock_last_build_time(time)
+      last_build = Object.new
+      @project.expects(:last_build).returns(last_build)      
+      last_build.expects(:time).returns(time)    
+  end  
 end
 

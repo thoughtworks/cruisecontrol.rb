@@ -11,17 +11,30 @@ class Project
   end
 
   def self.load_or_create(dir)
-    config_file = File.expand_path(File.join(dir, 'project_config.rb'))
     project = @project = Project.new(File.basename(dir), Subversion.new, dir + "/work")
     project.path = dir
     begin
-      load config_file if File.exists? config_file
+      project.load_config_file
       return project
     rescue => e
       raise "Could not load #{config_file} : #{e.message} in #{e.backtrace.first}"
     ensure
       @project = nil
     end
+  end
+  
+  def self.reload(project)
+    begin
+      @project = project
+      project.load_config_file
+    ensure
+      @project = nil
+    end
+  end
+    
+  def load_config_file
+    file_name = File.expand_path(File.join(path, 'project_config.rb'))
+    load file_name if File.exists? file_name
   end
 
   def self.configure
@@ -106,16 +119,22 @@ class Project
     builds.reverse[0..4]
   end
 
-  def build_if_necessary
+  def build_if_necessary                
     notify(:polling_source_control)
     begin
       revisions = new_revisions()
-      if revisions.empty?
+      configuration_modified = config_modifications?
+      if revisions.empty? and not configuration_modified
         notify(:no_new_revisions_detected)
         return nil
-      else
+      elsif !revisions.empty?
         notify(:new_revisions_detected, revisions)
         return build(revisions)
+      elsif configuration_modified      
+        notify(:configuration_modified)
+        # TODO: Currently reads in the new settings, but the builder is unaware (ex. svn url change)
+        Project.reload self
+        return build       
       end
     rescue => e
       notify(:build_loop_failed, e) rescue nil
@@ -154,6 +173,11 @@ class Project
       ForceBuildBlocker.release(self) rescue nil
     end
     return result
+  end
+  
+  def config_modifications?
+    build = last_build
+    build != nil and File.mtime(File.join(path, 'project_config.rb')) > build.time 
   end
   
   def force_build_if_requested

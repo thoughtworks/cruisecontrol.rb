@@ -36,9 +36,11 @@ class IntegrationTest < Test::Unit::TestCase
 
   def test_build_if_necessary
     with_project('passing_project', :revision => 2) do |project, sandbox, svn|
+      sandbox.new :file=> 'passing_project/project_config.rb'
       sandbox.new :file=> 'passing_project/build-2/build_status.success'
-      assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
 
+      assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
+      
       result = project.build_if_necessary
 
       assert result.is_a?(Build)
@@ -68,13 +70,25 @@ class IntegrationTest < Test::Unit::TestCase
 
   def test_build_if_necessary_should_return_nil_when_no_changes_were_made
     with_project 'passing_project' do |project, sandbox, svn|
-      sandbox.new :file=>'passing_project/build-7/build_status.success'
-      result = project.build_if_necessary
+      sandbox.new :file=> 'passing_project/project_config.rb'
+      sandbox.new :file=>'passing_project/build-7/build_status.success'     
+      result = project.build_if_necessary      
       assert_nil result
       # test existence and contents of log files
     end
   end
 
+  def test_build_should_still_build_when_configuration_modification_detected
+    with_project('passing_project') do |project, sandbox, svn|
+      sandbox.new :file=>'passing_project/build-7/build_status.success'
+      # configuration file is modified after the latest build
+      sleep 1
+      sandbox.new :file=> 'passing_project/project_config.rb'
+      result = project.build_if_necessary
+      assert result.is_a?(Build)
+    end
+  end
+      
   def test_build_should_still_build_even_when_no_changes_were_made
     with_project('passing_project', :revision => 7) do |project, sandbox, svn|
       status_file_path = 'passing_project/build-7/build_status.success'
@@ -89,7 +103,7 @@ class IntegrationTest < Test::Unit::TestCase
       assert File.exists?(new_status_file_full_path)
      end
   end  
-  
+    
   def test_builder_should_set_RAILS_ENV_to_test_and_invoke_db_migrate_and_test_instead_of_if_these_tasks_are_defined
     with_project('project_with_db_migrate') do |project, sandbox, svn|
       build = project.build
