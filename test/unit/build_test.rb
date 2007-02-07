@@ -39,20 +39,6 @@ class BuildTest < Test::Unit::TestCase
     end
   end
   
-  def test_coverage_reports_reads_correct_coverage_log_file_by_correct_name
-    with_sandbox_project do |sandbox, project|
-      File.expects(:'read').with("#{project.path}/build-1/coverage-foo.log").returns(['line 1', 'line 2'])
-      assert_equal ['line 1', 'line 2'], Build.new(project, 1).coverage_reports[:foo]
-    end
-  end
-  
-  def test_coverage_reports_when_file_does_not_exist
-    with_sandbox_project do |sandbox, project|
-      File.expects(:'read').with("#{project.path}/build-1/coverage-units.log").raises(StandardError)
-      assert_equal "", Build.new(project, 1).coverage_reports[:units]
-    end
-  end
-
   def test_successful?
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => "build-1/build_status = success"

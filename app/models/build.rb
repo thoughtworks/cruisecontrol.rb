@@ -57,10 +57,6 @@ class Build
     File.read(artifact('build.log')) rescue ''
   end
   
-  def coverage_reports
-    CoverageReportsRepository.new(artifacts_directory)
-  end
-  
   def time
     @status.created_at
   end
@@ -113,14 +109,4 @@ class Build
 
   private
   
-  class CoverageReportsRepository
-    def initialize(artifacts_directory)
-      @artifacts_directory = artifacts_directory
-    end
-
-    def [](coverage_type)
-      File.read("#{@artifacts_directory}/coverage-#{coverage_type}.log") rescue ""
-    end
-  end
-
 end
