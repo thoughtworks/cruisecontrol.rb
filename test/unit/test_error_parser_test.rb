@@ -56,12 +56,8 @@ test_should_fail(SubversionLogParserTest)
 <"abc">.
 
   2) Failure:
-test_should_fail_two(SubversionLogParserTest)
-    [./test/unit/subversion_log_parser_test.rb:129:in `test_should_fail_two'
-     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'
-     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run']:
-<1> expected but was
-<"abc">.
+test_should_check_force_build(PollingSchedulerTest) [./test/unit/polling_scheduler_test.rb:44]:
+#<Mocha::Mock:0x-245ec74a>.force_build_if_requested - expected calls: 1, actual calls: 2
 
 83 tests, 185 assertions, 2 failures, 0 errors
 EOF
@@ -79,12 +75,17 @@ EOF
   def test_should_find_test_errors_with_unsuccessful_build
     testErrors = TestErrorParser.new.get_test_errors(LOG_OUTPUT_WITH_TEST_ERRORS)
     assert_equal 1, testErrors.length
+    assert_equal expected_test_error.test_name, testErrors[0].test_name
+        assert_equal expected_test_error.message, testErrors[0].message
+            assert_equal expected_test_error.stacktrace, testErrors[0].stacktrace
   end
+  
   
   def expected_test_error
     TestErrorEntry.create_error("test_should_fail_due_to_comparing_same_objects_with_different_data(TestFailureParserTest)",
                                 "NameError: undefined local variable or method `expectedFirstTestFixture' for #<TestFailureParserTest:0x3f65a60>",
                                 "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/rails/actionpack/lib/action_controller/test_process.rb:456:in `method_missing'\n" +
+                                "    ./test/unit/test_failure_parser_test.rb:75:in `test_should_fail_due_to_comparing_same_objects_with_different_data'\n" +
                                 "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
                                 "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")    
   end

@@ -97,9 +97,7 @@ EOF
   def test_should_correctly_parse_mocha_test_failures
     testFailures = TestFailureParser.new.get_test_failures(LOG_OUTPUT_WITH_MOCK_TEST_FAILURE)
     assert_equal 1, testFailures.length
-    assert_equal expected_mock_test_failure.test_name, testFailures[0].test_name
-    assert_equal expected_mock_test_failure.message, testFailures[0].message
-    assert_equal expected_mock_test_failure.stacktrace, testFailures[0].stacktrace
+    assert_equal expected_mock_test_failure, testFailures[0]
   end
         
   def expected_first_test_failure

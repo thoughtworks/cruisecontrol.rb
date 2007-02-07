@@ -32,7 +32,7 @@ def format_test_error_output(testError)
   message = testError.message.gsub(/\\n/, "\n");
 
   "Name: #{testError.test_name}\n" +
-  "Type: Error\n" +
+  "Type: #{testError.type}\n" +
   "Message: #{message}\n\n" +
   "<span class=\"error\">#{testError.stacktrace}</span>\n\n\n"
 end

@@ -13,11 +13,11 @@ class TestFailureParser
         test_name = content.match(TEST_NAME_REGEX).to_s      
         message = content.match(MESSAGE_REGEX)[1]
         stack_trace = content.match(STACK_TRACE_REGEX)[1]
+        
+        testFailures << TestErrorEntry.create_failure(test_name, message, stack_trace)
       rescue
         # Do Nothing, Pattern does not match
-      end
-      
-      testFailures << TestErrorEntry.create_failure(test_name, message, stack_trace)
+      end      
     end
     
     testFailures
