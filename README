@@ -188,6 +188,12 @@ builder simply invokes project.scheduler.run. Look at app/models/polling_schedul
 a scheduler interacts with a project.
 
 
+== Deleting a project
+
+To remove your_project from CruiseControl.rb, kill its builder process and then delete the <cruise>/builds/your_project/
+directory.
+
+
 == Troubleshooting and support
 
 Beware, at the time of this writing, CC.rb is very young and not very stable. Good news is that it's simple (much, much 
