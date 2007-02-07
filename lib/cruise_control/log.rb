@@ -29,10 +29,11 @@ module CruiseControl
       end
       RAILS_DEFAULT_LOGGER.send(method, message, *args, &block)
       backtrace.each { |line| RAILS_DEFAULT_LOGGER.send(method, line) } if backtrace
-      if @verbose
-        stream = (method == :error or method == :fatal) ? STDERR : STDOUT
+      is_error = (method == :error or method == :fatal)
+      if @verbose or is_error
+        stream = is_error ? STDERR : STDOUT
         stream.puts message
-        backtrace.each { |line| stream.puts line } if backtrace
+        backtrace.each { |line| stream.puts line } if backtrace and @verbose
       end
     end
     

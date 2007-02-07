@@ -6,7 +6,7 @@ class Configuration
   @force_build_checking_interval = 5.seconds
 
   class << self
-    attr_accessor :builds_directory, :default_polling_interval, :sleep_after_build_loop_error
+    attr_accessor :builds_directory, :default_polling_interval, :sleep_after_build_loop_error, :force_build_checking_interval
   end
 
 end
