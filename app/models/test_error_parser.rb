@@ -4,7 +4,7 @@ class TestErrorParser
     test_errors = Array.new
     
     log.gsub(FIND_TEST_ERROR_REGEX) do |match|
-      test_errors << TestErrorEntry.create_error(TYPE, $1, $2, $3)
+      test_errors << TestErrorEntry.create_error($1, $2, $3)
     end    
   
     return test_errors
