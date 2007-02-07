@@ -240,30 +240,30 @@ class Project
 
   private
   
-    def validate_build_label(label)
-      existing_build = builds.find { |build| build.label == label}
-      if( existing_build.nil?)
-        label
-      else
-        validate_build_label(increment_label(label))
-      end
+  def validate_build_label(label)
+    existing_build = builds.find { |build| build.label == label}
+    if( existing_build.nil?)
+      label
+    else
+      validate_build_label(increment_label(label))
     end
-    
-    def increment_label(label)
-      ( label.to_i.to_s + '.' + (label.to_f.to_s.split('.')[1].to_i + 1).to_s ).to_f
-    end
+  end
+  
+  def increment_label(label)
+    ( label.to_i.to_s + '.' + (label.to_f.to_s.split('.')[1].to_i + 1).to_s ).to_f
+  end
 
-    def remove_force_tag_file
-      FileUtils.rm_f(Dir[force_tag_file_name])
-    end
+  def remove_force_tag_file
+    FileUtils.rm_f(Dir[force_tag_file_name])
+  end
     
-    def touch_force_tag_file 
-      FileUtils.touch(force_tag_file_name)   
-    end
+  def touch_force_tag_file 
+    FileUtils.touch(force_tag_file_name)   
+  end
     
-    def force_tag_file_name
-      File.join(path,Project::ForceBuildTagFileName)
-    end
+  def force_tag_file_name
+    File.join(path,Project::ForceBuildTagFileName)
+  end
 
 end
 

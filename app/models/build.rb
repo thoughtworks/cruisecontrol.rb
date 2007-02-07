@@ -50,11 +50,11 @@ class Build
   end
 
   def changeset
-    File.read(artifact('changeset.log')) rescue ""
+    File.read(artifact('changeset.log')) rescue ''
   end
 
   def output
-    File.read(artifact('build.log')) rescue ""
+    File.read(artifact('build.log')) rescue ''
   end
   
   def coverage_reports
@@ -82,7 +82,7 @@ class Build
   end
   
   def rake
-    # --nosearch flag here prevents CC.rb from building itslef when a project has no Rakefile
+    # --nosearch flag here prevents CC.rb from building itself when a project has no Rakefile
     %{ruby -e "require 'rubygems' rescue nil; require 'rake'; load '#{File.expand_path(RAILS_ROOT)}/tasks/cc_build.rake'; ARGV << '--nosearch'#{CruiseControl::Log.verbose? ? " << '--trace'" : ""} << 'cc:build'; Rake.application.run"}
   end
 

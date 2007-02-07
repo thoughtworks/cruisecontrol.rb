@@ -156,12 +156,14 @@ class BuildTest < Test::Unit::TestCase
   def test_label_should_be_convert_to_int_if_no_mantissa
     project = Object.new
     project.expects(:path).returns("a_path")
+    FileUtils.stubs(:mkdir_p)
     assert_equal 3, Build.new(project, 3.0).label
   end
   
   def test_label_should_keep_to_float_if_there_is_mantissa
     project = Object.new
     project.expects(:path).returns("a_path")
+    FileUtils.stubs(:mkdir_p)
     assert_equal 3.2, Build.new(project, 3.2).label
   end
 
