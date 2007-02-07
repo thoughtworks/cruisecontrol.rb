@@ -36,7 +36,7 @@ class IntegrationTest < Test::Unit::TestCase
 
   def test_build_if_necessary
     with_project('passing_project', :revision => 2) do |project, sandbox, svn|
-      sandbox.new :file=> 'passing_project/build-2/build_status = success'
+      sandbox.new :file=> 'passing_project/build-2/build_status.success'
       assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
 
       result = project.build_if_necessary
@@ -45,7 +45,7 @@ class IntegrationTest < Test::Unit::TestCase
 
       assert_equal true, result.successful?
 
-      assert File.exists?("#{sandbox.root}/passing_project/build-7/build_status = success")
+      assert File.exists?("#{sandbox.root}/passing_project/build-7/build_status.success")
       assert File.exists?("#{sandbox.root}/passing_project/build-7/changeset.log")
       assert File.exists?("#{sandbox.root}/passing_project/build-7/build.log")
     end
@@ -58,8 +58,8 @@ class IntegrationTest < Test::Unit::TestCase
       assert result.is_a?(Build)
       assert_equal true, result.failed?
 
-      assert file("failing_project/build-7/build_status = failed").exists?
-      assert_equal false, file("failing_project/build-7/build_status = success").exists?
+      assert file("failing_project/build-7/build_status.failed").exists?
+      assert_equal false, file("failing_project/build-7/build_status.success").exists?
 
       assert file("failing_project/build-7/changeset.log").exists?
       assert file("failing_project/build-7/build.log").exists?
@@ -68,7 +68,7 @@ class IntegrationTest < Test::Unit::TestCase
 
   def test_build_if_necessary_should_return_nil_when_no_changes_were_made
     with_project 'passing_project' do |project, sandbox, svn|
-      sandbox.new :file=>'passing_project/build-7/build_status = success'
+      sandbox.new :file=>'passing_project/build-7/build_status.success'
       result = project.build_if_necessary
       assert_nil result
       # test existence and contents of log files
@@ -77,9 +77,9 @@ class IntegrationTest < Test::Unit::TestCase
 
   def test_build_should_still_build_even_when_no_changes_were_made
     with_project('passing_project', :revision => 7) do |project, sandbox, svn|
-      status_file_path = 'passing_project/build-7/build_status = success'
+      status_file_path = 'passing_project/build-7/build_status.success'
       sandbox.new :file=> status_file_path      
-      new_status_file_path = 'passing_project/build-7.1/build_status = success'    
+      new_status_file_path = 'passing_project/build-7.1/build_status.success'    
       new_status_file_full_path = "#{sandbox.root}/#{new_status_file_path}"
     
       result = project.build

@@ -32,19 +32,19 @@ class ProjectBuilderStatus
   
     def read_status
       file = status_file
-      file ? File.basename(file)[17..-1].downcase.gsub('__', '').to_sym  : :sleeping
+      file ? File.basename(file)[15..-1].downcase.gsub('__', '').to_sym  : :sleeping
     end
   
     def remove_status_file
-      FileUtils.rm_f(Dir["#{@project_dir}/builder_status = *"])
+      FileUtils.rm_f(Dir["#{@project_dir}/builder_status.*"])
     end
     
     def touch_status_file(status)
-      FileUtils.touch("#{@project_dir}/builder_status = #{status}")
+      FileUtils.touch("#{@project_dir}/builder_status.#{status}")
     end
     
     def status_file
-      Dir["#{@project_dir}/builder_status = *"].first
+      Dir["#{@project_dir}/builder_status.*"].first
     end
       
 end

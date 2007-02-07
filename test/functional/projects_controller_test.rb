@@ -42,8 +42,8 @@ class ProjectsControllerTest < Test::Unit::TestCase
   end
 
   def test_show_with_build
-    @sandbox.new :file => "two/build-24/build_status = pingpong"
-    @sandbox.new :file => "two/build-25/build_status = pingpong"
+    @sandbox.new :file => "two/build-24/build_status.pingpong"
+    @sandbox.new :file => "two/build-25/build_status.pingpong"
 
     get :show, :id => 'two'
 
@@ -52,8 +52,8 @@ class ProjectsControllerTest < Test::Unit::TestCase
   end
 
   def test_show_specific_build
-    @sandbox.new :file => "two/build-24/build_status = pingpong"
-    @sandbox.new :file => "two/build-25/build_status = pingpong"
+    @sandbox.new :file => "two/build-24/build_status.pingpong"
+    @sandbox.new :file => "two/build-25/build_status.pingpong"
 
     get :show, :id => 'two', :build => 24
 
@@ -73,32 +73,32 @@ class ProjectsControllerTest < Test::Unit::TestCase
 
   def test_should_refresh_projects_if_builder_and_build_states_tag_changed
     @controller.load_projects = new_project("one"), new_project("two")
-    @sandbox.new :file => "one/build-24/build_status = pingpong"
-    @sandbox.new :file => "two/build-24/build_status = new_status"
+    @sandbox.new :file => "one/build-24/build_status.pingpong"
+    @sandbox.new :file => "two/build-24/build_status.new_status"
     post :refresh_projects, :build_states => 'one:notstarted24pingpong;two:notstarted24old_status;'
     assert_equal [@two], assigns(:projects)   
   end
   
   def test_refresh_projects_should_set_build_states
     @controller.load_projects = new_project("one"), new_project("two")
-    @sandbox.new :file => "one/build-24/build_status = pingpong"
-    @sandbox.new :file => "two/build-24/build_status = new_status"
+    @sandbox.new :file => "one/build-24/build_status.pingpong"
+    @sandbox.new :file => "two/build-24/build_status.new_status"
     post :refresh_projects, :build_states => 'one:NotStarted24pingpong;two:NotStarted24old_status;'
     assert_equal 'one:notstarted24pingpong;two:notstarted24new_status;', assigns(:build_states)
   end
   
   def test_index_should_set_build_states
     @controller.load_projects = new_project("one"), new_project("two")
-    @sandbox.new :file => "one/build-24/build_status = pingpong"
-    @sandbox.new :file => "two/build-24/build_status = some_status"
+    @sandbox.new :file => "one/build-24/build_status.pingpong"
+    @sandbox.new :file => "two/build-24/build_status.some_status"
     get :index
     assert_equal 'one:notstarted24pingpong;two:notstarted24some_status;', assigns(:build_states)
   end
   
   def test_should_show_new_added_project_when_refresh_projects
-    @sandbox.new :file => "one/build-24/build_status = pingpong"
-    @sandbox.new :file => "two/build-24/build_status = pingpong"
-    @sandbox.new :file => "three/build-24/build_status = pingpong"
+    @sandbox.new :file => "one/build-24/build_status.pingpong"
+    @sandbox.new :file => "two/build-24/build_status.pingpong"
+    @sandbox.new :file => "three/build-24/build_status.pingpong"
     post :refresh_projects, :build_states => 'one:notstarted24pingpong;three:notstarted24pingpong;'
     assert_equal 'one:notstarted24pingpong;two:notstarted24pingpong;three:notstarted24pingpong;', assigns(:build_states)
     assert_equal [@two], assigns(:new_projects)
@@ -108,8 +108,8 @@ class ProjectsControllerTest < Test::Unit::TestCase
   
    def test_should_remove_deleted_project_when_refresh_projects
     @controller.load_projects = new_project("one"), new_project("two")
-    @sandbox.new :file => "one/build-24/build_status = pingpong"
-    @sandbox.new :file => "two/build-24/build_status = pingpong"
+    @sandbox.new :file => "one/build-24/build_status.pingpong"
+    @sandbox.new :file => "two/build-24/build_status.pingpong"
     post :refresh_projects, :build_states => 'one:notstarted24pingpong;two:notstarted24pingpong;three:notstarted24pingpong;'
     assert_equal 'one:notstarted24pingpong;two:notstarted24pingpong;', assigns(:build_states)
     assert_equal ['three'], assigns(:deleted_projects)

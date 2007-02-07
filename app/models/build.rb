@@ -44,8 +44,8 @@ class Build
   end
   
   def status=(value)
-    FileUtils.rm_f(Dir["#{artifacts_directory}/build_status = *"])
-    FileUtils.touch(artifact("build_status = #{value}"))
+    FileUtils.rm_f(Dir["#{artifacts_directory}/build_status.*"])
+    FileUtils.touch(artifact("build_status.#{value}"))
     @status = value
   end
 

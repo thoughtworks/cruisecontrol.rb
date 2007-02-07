@@ -71,7 +71,7 @@ class Project
   def builds
     raise "Project #{name.inspect} has no path" unless path
 
-    Dir["#{path}/build-*/build_status = *"].collect do |status_file|
+    Dir["#{path}/build-*/build_status.*"].collect do |status_file|
       dir = File.dirname(status_file)
       number = File.basename(dir)[6..-1].to_f
 

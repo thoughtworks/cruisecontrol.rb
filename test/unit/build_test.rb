@@ -5,7 +5,7 @@ class BuildTest < Test::Unit::TestCase
 
   def test_initialize_should_load_status_file_and_build_log
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-2/build_status = success"
+      sandbox.new :file => "build-2/build_status.success"
       sandbox.new :file => "build-2/build.log", :with_content => "some content"
       build = Build.new(project, 2)
   
@@ -17,7 +17,7 @@ class BuildTest < Test::Unit::TestCase
 
   def test_initialize_should_load_failed_status_file
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-2/build_status = failed"
+      sandbox.new :file => "build-2/build_status.failed"
       build = Build.new(project, 2)
   
       assert_equal 2, build.label
@@ -41,10 +41,10 @@ class BuildTest < Test::Unit::TestCase
   
   def test_successful?
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-1/build_status = success"
-      sandbox.new :file => "build-2/build_status = Success"
-      sandbox.new :file => "build-3/build_status = failure"
-      sandbox.new :file => "build-4/build_status = crap"
+      sandbox.new :file => "build-1/build_status.success"
+      sandbox.new :file => "build-2/build_status.Success"
+      sandbox.new :file => "build-3/build_status.failure"
+      sandbox.new :file => "build-4/build_status.crap"
       sandbox.new :file => "build-5/foo"
   
       assert Build.new(project, 1).successful?
@@ -102,8 +102,8 @@ class BuildTest < Test::Unit::TestCase
 
   def test_get_last_build
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-1/build_status = success"
-      sandbox.new :file => "build-2/build_status = success"
+      sandbox.new :file => "build-1/build_status.success"
+      sandbox.new :file => "build-2/build_status.success"
   
       one, two = Build.new(project, 1), Build.new(project, 2)
   

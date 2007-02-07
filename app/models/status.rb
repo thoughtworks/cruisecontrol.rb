@@ -46,21 +46,21 @@ class Status
     
   private
   
-    def read_latest_status
-      file = status_file
-      file ? File.basename(file)[15..-1].downcase.gsub('__', '').to_sym : :never_built
-    end
+  def read_latest_status
+    file = status_file
+    file ? File.basename(file)[13..-1].downcase.to_sym : :never_built
+  end
+
+  def remove_status_file
+    FileUtils.rm_f(Dir["#{@artifacts_directory}/build_status.*"])
+  end
   
-    def remove_status_file
-      FileUtils.rm_f(Dir["#{@artifacts_directory}/build_status = *"])
-    end
-    
-    def touch_status_file(status)
-      FileUtils.touch("#{@artifacts_directory}/build_status = #{status}")
-    end
-    
-    def status_file
-      Dir["#{@artifacts_directory}/build_status = *"].first
-    end
+  def touch_status_file(status)
+    FileUtils.touch("#{@artifacts_directory}/build_status.#{status}")
+  end
+  
+  def status_file
+    Dir["#{@artifacts_directory}/build_status.*"].first
+  end
   
 end
