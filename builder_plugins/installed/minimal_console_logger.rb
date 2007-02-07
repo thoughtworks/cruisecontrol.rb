@@ -18,6 +18,10 @@ class MinimalConsoleLogger
     puts "Build loop failed"
     puts "#{error.class}: #{error.message}\n" + error.backtrace.map { |line| "  #{line}" }.join("\n")
   end
+  
+  def configuration_modified
+    puts "Configuration modification detected"
+  end
 end
 
 Project.plugin :minimal_console_logger
