@@ -49,7 +49,16 @@ test_should_fail_two(SubversionLogParserTest)
 83 tests, 185 assertions, 2 failures, 0 errors
 EOF
 
+LOG_OUTPUT_WITH_MOCK_TEST_FAILURE = <<EOF
+Finished in 4.377143 seconds.
 
+  1) Failure:
+test_should_check_force_build(PollingSchedulerTest) [./test/unit/polling_scheduler_test.rb:44]:
+#<Mocha::Mock:0x-245ec74a>.force_build_if_requested - expected calls: 1, actual calls: 2
+
+126 tests, 284 assertions, 1 failures, 0 errors
+
+EOF
 
   def test_should_find_no_test_failures_with_successful_build
     testFailures = TestFailureParser.new.get_test_failures(LOG_OUTPUT_WITH_NO_TEST_FAILURE)
@@ -59,11 +68,19 @@ EOF
   def test_should_find_test_failures
     testFailures = TestFailureParser.new.get_test_failures(LOG_OUTPUT_WITH_TEST_FAILURE)
     assert_equal 2, testFailures.length
-    assert_equal expectedFirstTestFailure, testFailures[0]
-    assert_equal expectedSecondTestFailure, testFailures[1]
+    assert_equal expected_first_test_failure, testFailures[0]
+    assert_equal expected_second_test_failure, testFailures[1]
   end
         
-  def expectedFirstTestFailure
+  def test_should_correctly_parse_mocha_test_failures
+    testFailures = TestFailureParser.new.get_test_failures(LOG_OUTPUT_WITH_MOCK_TEST_FAILURE)
+    assert_equal 1, testFailures.length
+    assert_equal expected_mock_test_failure.test_name, testFailures[0].test_name
+    assert_equal expected_mock_test_failure.message, testFailures[0].message
+    assert_equal expected_mock_test_failure.stacktrace, testFailures[0].stacktrace
+  end
+        
+  def expected_first_test_failure
     TestErrorEntry.create_failure("test_should_fail(SubversionLogParserTest)",
                                   "<1> expected but was\n<\"abc\">.",
                                   "./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'\n" +
@@ -71,12 +88,18 @@ EOF
                                   "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
   end
     
-  def expectedSecondTestFailure
+  def expected_second_test_failure
     TestErrorEntry.create_failure("test_should_fail_two(SubversionLogParserTest)",
                                   "<1> expected but was\n<\"abc\">.",
                                   "./test/unit/subversion_log_parser_test.rb:129:in `test_should_fail_two'\n" +
                                   "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
                                   "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
+  end
+  
+  def expected_mock_test_failure
+    TestErrorEntry.create_failure("test_should_check_force_build(PollingSchedulerTest)",
+                                  "#<Mocha::Mock:0x-245ec74a>.force_build_if_requested - expected calls: 1, actual calls: 2",
+                                  "./test/unit/polling_scheduler_test.rb:44")
   end
   
 end
