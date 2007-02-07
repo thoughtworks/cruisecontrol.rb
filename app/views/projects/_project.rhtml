@@ -21,7 +21,7 @@
 
       <% if project.force_build_request_allowed? %>
         <span>
-          <% form_tag({:action => 'force_build', :id => project.url_name}, :class => 'force_build_form') do %>
+          <% form_tag({:action => 'force_build', :id => project.name}, :class => 'force_build_form') do %>
             <%= submit_tag 'Build now' %>
           <% end %>        
         </span>
