@@ -2,7 +2,6 @@ require 'fileutils'
 
 class Project
   @@plugin_names = []
-  ForceBuildTagFileName = "force_build_requested"
 
   def self.plugin(plugin_name)
     unless RAILS_ENV == 'test'
@@ -84,12 +83,22 @@ class Project
   def builds
     raise "Project #{name.inspect} has no path" unless path
 
-    Dir["#{path}/build-*/build_status.*"].collect do |status_file|
+    builds = Dir["#{path}/build-*/build_status.*"].collect do |status_file|
       build_directory = File.basename(File.dirname(status_file))
       build_label = build_directory[6..-1]
 
       Build.new(self, build_label)
-    end.sort_by { |build| build.label.to_f }
+    end
+
+    order_by_label(builds)
+  end
+
+  # sorts a array of builds in order of revision number and rebuild number 
+  def order_by_label(builds)
+    builds.sort_by do |build|
+      number_and_rebuild = build.label.split('.')
+      number_and_rebuild.map { |x| x.to_i }
+    end
   end
 
   def builder_state       
@@ -154,21 +163,21 @@ class Project
   end
   
   def force_build_requested?
-    File.file?(force_tag_file_name)
+    File.file?(build_requested_flag_file)
   end
   
-  def request_force_build()
-    result = ""
+  def request_force_build
+    result = ''
     begin
       ForceBuildBlocker.block(self)
-      if ! force_build_requested?
-        touch_force_tag_file 
-        result = "The force build is pending now!"  
+      unless force_build_requested?
+        create_build_requested_flag_file
+        result = 'The force build is pending now!'
       else
-        result =  "Another build is pending already!"     
+        result =  'Another build is pending already!'
       end
     rescue => lock_error
-      result =  "Another build is pending already!"     
+      result =  'Another build is pending already!'     
     ensure 
       ForceBuildBlocker.release(self) rescue nil
     end
@@ -184,9 +193,9 @@ class Project
     return if !force_build_requested?
     begin
       ForceBuildBlocker.block(self)
-      comment = File.read(force_tag_file_name)
+      comment = File.read(build_requested_flag_file)
       build
-      remove_force_tag_file
+      remove_build_requested_flag_file
     rescue => error
       # FIXME and do what with it?
     ensure 
@@ -258,6 +267,10 @@ class Project
     @plugins_by_name.key?(method_name) or super
   end
 
+  def build_requested_flag_file
+    File.join(path, 'build_requested')
+  end
+  
   private
   
   def create_build_label(revision_number)
@@ -273,16 +286,12 @@ class Project
     end
   end
   
-  def remove_force_tag_file
-    FileUtils.rm_f(Dir[force_tag_file_name])
+  def create_build_requested_flag_file
+    FileUtils.touch(build_requested_flag_file)
   end
-    
-  def touch_force_tag_file 
-    FileUtils.touch(force_tag_file_name)   
-  end
-    
-  def force_tag_file_name
-    File.join(path,Project::ForceBuildTagFileName)
+
+  def remove_build_requested_flag_file
+    FileUtils.rm_f(Dir[build_requested_flag_file])
   end
 
 end

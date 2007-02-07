@@ -279,7 +279,7 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.path = sandbox.root
       assert_equal "The force build is pending now!"   , @project.request_force_build()  
-      assert File.file?("#{@project.path}/#{Project::ForceBuildTagFileName}")     
+      assert File.file?(@project.build_requested_flag_file)
     end
   end
   
@@ -289,7 +289,7 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.path = sandbox.root
       assert_equal "Another build is pending already!" , @project.request_force_build()  
-      assert !File.file?("#{@project.path}/#{Project::ForceBuildTagFileName}")
+      assert !File.file?(@project.build_requested_flag_file)
     end
   end
   
@@ -298,8 +298,8 @@ class ProjectTest < Test::Unit::TestCase
     ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|      
       @project.path = sandbox.root
-      sandbox.new :file => Project::ForceBuildTagFileName
-      @project.expects(:touch_force_tag_file).never
+      sandbox.new :file => 'build_requested'
+      @project.expects(:create_build_requested_flag_file).never
       assert_equal "Another build is pending already!" , @project.request_force_build()  
    end
   end
@@ -309,8 +309,8 @@ class ProjectTest < Test::Unit::TestCase
     ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|      
       @project.path = sandbox.root
-      sandbox.new :file => Project::ForceBuildTagFileName
-      @project.expects(:remove_force_tag_file)
+      sandbox.new :file => 'build_requested'
+      @project.expects(:remove_build_requested_flag_file)
       @project.expects(:build)
       @project.force_build_if_requested
     end
@@ -323,8 +323,8 @@ class ProjectTest < Test::Unit::TestCase
   end
   
   def test_should_check_force_build_requested_by_checking_if_tag_file_existing
-    @project.expects(:path).returns("a_path")
-    File.expects(:file?).with(File.join("a_path",Project::ForceBuildTagFileName)).returns(true)
+    @project.stubs(:path).returns("a_path")
+    File.expects(:file?).with(@project.build_requested_flag_file).returns(true)
     assert @project.force_build_requested?
   end
   
