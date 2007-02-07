@@ -2,7 +2,7 @@ class TestFailureParser
   TEST_NAME_REGEX = /\S+/
   MESSAGE_REGEX = /\]\:\n([\s\S]+)/
   STACK_TRACE_REGEX = /\[([\s\S]*?)\]\:/
-  TEST_FAILURE_BLOCK_REGEX = /^\s+\d+\).*\n([\S\s]*?)\n\n/
+  TEST_FAILURE_BLOCK_REGEX = /^\s+\d+\) Failure:\n([\S\s]*?)\n\n/
   def get_test_failures(log)
     testFailures = Array.new
     

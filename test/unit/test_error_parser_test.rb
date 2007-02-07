@@ -41,6 +41,36 @@ NameError: undefined local variable or method `expectedFirstTestFixture' for #<T
 83 tests, 185 assertions, 2 failures, 0 errors
 EOF
   
+LOG_OUTPUT_WITH_TEST_FAILURE = <<EOF
+Loaded suite c:/ruby/lib/ruby/gems/1.8/gems/rake-0.7.1/lib/rake/rake_test_loader
+Started
+....................................................................FF.............
+Finished in 1.453 seconds.
+
+  1) Failure:
+test_should_fail(SubversionLogParserTest)
+    [./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'
+     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'
+     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run']:
+<1> expected but was
+<"abc">.
+
+  2) Failure:
+test_should_fail_two(SubversionLogParserTest)
+    [./test/unit/subversion_log_parser_test.rb:129:in `test_should_fail_two'
+     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'
+     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run']:
+<1> expected but was
+<"abc">.
+
+83 tests, 185 assertions, 2 failures, 0 errors
+EOF
+  
+  def test_should_not_find_test_errors_with_a_build_with_test_failures
+    testErrors = TestErrorParser.new.get_test_errors(LOG_OUTPUT_WITH_TEST_FAILURE)
+    assert_equal 0, testErrors.length
+  end
+
   def test_should_find_no_test_errors_with_successful_build
     testErrors = TestErrorParser.new.get_test_errors(LOG_OUTPUT_WITH_NO_TEST_ERRORS)
     assert_equal 0, testErrors.length        
