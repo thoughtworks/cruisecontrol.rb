@@ -28,8 +28,10 @@ class ProjectTest < Test::Unit::TestCase
       sandbox.new :file => "build-10/build_status.success"
       sandbox.new :file => "build-3/build_status.failure"
       sandbox.new :file => "build-5/build_status.success"
+      sandbox.new :file => "build-5.2/build_status.success"
+      sandbox.new :file => "build-5.12/build_status.success"
 
-      assert_equal("1 - success, 3 - failure, 5 - success, 10 - success",
+      assert_equal("1 - success, 3 - failure, 5 - success, 5.2 - success, 5.12 - success, 10 - success",
                    @project.builds.collect {|b| "#{b.label} - #{b.status}"}.join(", "))
 
       assert_equal('10', @project.last_build.label)
