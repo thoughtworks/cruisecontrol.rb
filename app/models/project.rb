@@ -213,6 +213,16 @@ class Project
     notify(:build_started, build)
     build.run
     notify(:build_finished, build)
+
+    previous_build = build.last
+    if previous_build
+      if build.failed? and previous_build.successful?
+        notify(:build_broken, build, previous_build)
+      elsif build.successful? and previous_build.failed?
+        notify(:build_fixed, build, previous_build)
+      end
+    end
+
     build    
   end
 
@@ -299,8 +309,7 @@ end
 
 if RAILS_ENV == 'builder'
   # TODO make me pretty, move me to another file, invoke me from environment.rb
-  # TODO consider using Rails autoloading mechanism
-  # TODO what to do when plugin initializer raises an error?
+  # TODO check what happens if loading a plugin raises an error (e.g, SyntaxError in plugin/init.rb)
 
   plugin_loader = Object.new
 

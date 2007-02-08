@@ -63,7 +63,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.path = sandbox.root
 
       revision = new_revision(5)
-      build = new_mock_build(5)
+      build = new_mock_build('5')
 
       build.stubs(:artifacts_directory).returns(sandbox.root)
       
@@ -84,7 +84,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.path = sandbox.root
 
       revision = new_revision(5)
-      build = new_mock_build(5)
+      build = new_mock_build('5')
       build.stubs(:artifacts_directory).returns(sandbox.root)
 
       @project.stubs(:builds).returns([])
@@ -129,6 +129,71 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
 
+  def test_build_should_generate_event_when_build_is_broken
+    in_sandbox do |sandbox|
+      @project.source_control = @svn
+      @project.path = sandbox.root
+
+      successful_build = stub_build(1)
+      successful_build.stubs(:successful?).returns(true)
+      successful_build.stubs(:failed?).returns(false)
+
+      new_build = new_mock_build('2')
+      new_build.stubs(:successful?).returns(false)
+      new_build.stubs(:failed?).returns(true)
+      new_build.expects(:run)
+      new_build.stubs(:last).returns(successful_build)
+
+
+      @project.stubs(:builds).returns([successful_build])
+      @project.stubs(:log_changeset)
+      @svn.stubs(:update)
+
+      # event expectations
+      listener = Object.new
+
+      listener.expects(:build_started)
+      listener.expects(:build_finished)
+      listener.expects(:build_broken)
+      @project.add_plugin listener
+
+      @project.build([new_revision(2)])
+    end
+
+  end
+
+  def test_build_should_generate_event_when_build_is_fixed
+    in_sandbox do |sandbox|
+      @project.source_control = @svn
+      @project.path = sandbox.root
+
+      failing_build = stub_build(1)
+      failing_build.stubs(:successful?).returns(false)
+      failing_build.stubs(:failed?).returns(true)
+
+      new_build = new_mock_build('2')
+      new_build.stubs(:successful?).returns(true)
+      new_build.stubs(:failed?).returns(false)
+      new_build.expects(:run)
+      new_build.stubs(:last).returns(failing_build)
+
+      @project.stubs(:builds).returns([failing_build])
+      @project.stubs(:log_changeset)
+      @svn.stubs(:update)
+
+      # event expectations
+      listener = Object.new
+
+      listener.expects(:build_started)
+      listener.expects(:build_finished)
+      listener.expects(:build_fixed)
+      @project.add_plugin listener
+
+      @project.build([new_revision(2)])
+    end
+
+  end
+
   def test_should_build_when_logs_are_not_current
     in_sandbox do |sandbox|
       @project.source_control = @svn
@@ -137,7 +202,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.stubs(:builds).returns([Build.new(@project, 1)])
       @project.stubs(:config_modifications?).returns(false)
       revision = new_revision(2)
-      build = new_mock_build(2)
+      build = new_mock_build('2')
       build.stubs(:artifacts_directory).returns(sandbox.root)      
       @svn.expects(:revisions_since).with(@project, 1).returns([revision])
       @svn.expects(:update).with(@project, revision)
@@ -353,6 +418,7 @@ class ProjectTest < Test::Unit::TestCase
     build = Object.new
     build.stubs(:label).returns(label)
     build.stubs(:artifacts_directory).returns("project1/build_#{label}")
+    build.stubs(:last).returns(nil)
     build.stubs(:run)
     build
   end
@@ -361,9 +427,12 @@ class ProjectTest < Test::Unit::TestCase
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
   end
 
-  def new_mock_build(number)
+  def new_mock_build(label)
     build = Object.new
-    Build.expects(:new).with(@project, number.to_s).returns(build)
+    Build.expects(:new).with(@project, label).returns(build)
+    build.stubs(:artifacts_directory).returns("project1/build_#{label}")
+    build.stubs(:last).returns(nil)
+    build.stubs(:label).returns(label)
     build
   end
   
