@@ -11,6 +11,9 @@ UI Stuff
 
 Bugs
 ----
+build_broken not triggered
+dashboard should not load project configuration all the time
+what should be the status of a build that passed, but THEN the build loop crashed? 
 
 Necessary
 ---------
@@ -27,9 +30,6 @@ Necessary
 
 Build
 -----
-* Configurable build command(s);
-* Make the website a proper "semantic XHTML + CSS" job
-* Configurable polling interval
 
 Dev
 ---

@@ -1,0 +1,14 @@
+=== Installation
+
+1. Copy jabber_notifier_plugin folder to builder_plugins/available
+2. Modify builds/your_project/project_config.rb by adding the following lines 
+   (change subscriber ids and sender account details to appropriate) :
+   
+
+  project.jabber_notifier.subscribers = [
+    "subscriber1@jabber.org",
+    "subscriber2@jabber.org",
+    "subscriber2@jabber.org"
+  ]
+  project.jabber_notifier.account = 'sender@jabber.org'
+  project.jabber_notifier.password = 'sender_password'

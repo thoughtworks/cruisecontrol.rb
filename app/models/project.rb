@@ -14,7 +14,7 @@ class Project
       project.load_config_file
       return project
     rescue => e
-      raise "Could not load #{config_file} : #{e.message} in #{e.backtrace.first}"
+      raise "Could not load #{project.config_file} : #{e.message} in #{e.backtrace.first}"
     ensure
       @project = nil
     end
@@ -24,14 +24,19 @@ class Project
     begin
       @project = project
       project.load_config_file
+    rescue => e
+      raise "Could not load #{config_file} : #{e.message} in #{e.backtrace.first}"
     ensure
       @project = nil
     end
   end
-    
+
+  def config_file
+    File.expand_path(File.join(path, 'project_config.rb'))
+  end
+
   def load_config_file
-    file_name = File.expand_path(File.join(path, 'project_config.rb'))
-    load file_name if File.exists? file_name
+    load config_file if File.exists?(config_file)
   end
 
   def self.configure
@@ -213,6 +218,7 @@ class Project
     notify(:build_finished, build)
 
     previous_build = build.last
+
     if previous_build
       if build.failed? and previous_build.successful?
         notify(:build_broken, build, previous_build)
@@ -305,50 +311,49 @@ class Project
 
 end
 
-if RAILS_ENV == 'builder'
-  # TODO make me pretty, move me to another file, invoke me from environment.rb
-  # TODO check what happens if loading a plugin raises an error (e.g, SyntaxError in plugin/init.rb)
+# TODO make me pretty, move me to another file, invoke me from environment.rb
+# TODO check what happens if loading a plugin raises an error (e.g, SyntaxError in plugin/init.rb)
 
-  plugin_loader = Object.new
+plugin_loader = Object.new
 
-  def plugin_loader.load_plugin(plugin_path)
-    plugin_name = File.basename(plugin_path).sub(/\.rb$/, '')
-    CruiseControl::Log.debug("Loading plugin #{plugin_name}")
-    if RAILS_ENV == 'development'
-      load plugin_path
-    else
-      #convert path to something like 'my_plugin/init'
-      require_path = plugin_name == 'init' ? File.basename(File.dirname(plugin_path)) + '/' + plugin_name : plugin_name
-      require require_path
-    end
+def plugin_loader.load_plugin(plugin_path)
+  plugin_file = File.basename(plugin_path).sub(/\.rb$/, '')
+  plugin_is_directory = (plugin_file == 'init')  
+  plugin_name = plugin_is_directory ? File.basename(File.dirname(plugin_path)) : plugin_file
+
+  CruiseControl::Log.debug("Loading plugin #{plugin_name}")
+  if RAILS_ENV == 'development'
+    load plugin_path
+  else
+    if plugin_is_directory then require "#{plugin_name}/init" else require plugin_name end
   end
-
-  def plugin_loader.load_all
-    plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*')]
-
-    plugins.each do |plugin|
-      if File.file?(plugin)
-        if plugin[-3..-1] == '.rb'
-          load_plugin(File.basename(plugin))
-        else
-          # a file without .rb extension, ignore
-        end
-      elsif File.directory?(plugin)
-        # ignore Subversion directory (although it should be considered hidden by Dir[], but just in case)
-        next if plugin[-4..-1] == '.svn'
-        init_path = File.join(plugin, 'init.rb')
-        if File.file?(init_path)
-          load_plugin(init_path)
-        else
-          log.error("No init.rb found in plugin directory #{plugin}")
-        end
-      else
-        # a path is neither file nor directory. whatever else it may be, let's ignore it.
-        # TODO: find out what happens with symlinks on a Linux here? how about broken symlinks?
-      end
-    end
-
-  end
-
-  plugin_loader.load_all
 end
+
+def plugin_loader.load_all
+  plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*')]
+
+  plugins.each do |plugin|
+    if File.file?(plugin)
+      if plugin[-3..-1] == '.rb'
+        load_plugin(File.basename(plugin))
+      else
+        # a file without .rb extension, ignore
+      end
+    elsif File.directory?(plugin)
+      # ignore Subversion directory (although it should be considered hidden by Dir[], but just in case)
+      next if plugin[-4..-1] == '.svn'
+      init_path = File.join(plugin, 'init.rb')
+      if File.file?(init_path)
+        load_plugin(init_path)
+      else
+        log.error("No init.rb found in plugin directory #{plugin}")
+      end
+    else
+      # a path is neither file nor directory. whatever else it may be, let's ignore it.
+      # TODO: find out what happens with symlinks on a Linux here? how about broken symlinks?
+    end
+  end
+
+end
+
+plugin_loader.load_all

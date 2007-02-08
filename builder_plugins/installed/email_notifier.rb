@@ -17,10 +17,4 @@ class EmailNotifier
 
 end
 
-Project.module_eval <<-EOL
-  plugin :email_notifier
-
-  def emails
-    self.email_notifier.emails
-  end
-EOL
+Project.plugin :email_notifier
