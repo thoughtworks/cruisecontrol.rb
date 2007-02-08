@@ -1,0 +1,4 @@
+vendor/rails directory, on the date when this file was checked in (7 Feb 2007) contains Rails version 1.2.2, checked into CC.rb Subversion directly (not through svn:externals).
+It was done this way because Rails Subversion has been very slow lately. 
+
+activewebservice and activerecord components are removed, because CC.rb doesn't use either.

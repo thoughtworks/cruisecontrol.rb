@@ -1,10 +1,10 @@
 $: << './lib'
 require 'logger'
 RAILS_DEFAULT_LOGGER = Logger.new(nil)
-require 'log'
+require 'cruise_control/log'
 require 'command_line'
 
-VERBOTTEN_PATHS = ['.svn', /^script/, /^builds/, /^cruise.cmd$/, /^vendor/, /^log/, /.iml$/, /.ipr$/, /.cmd$/, 
+VERBOTTEN_PATHS = ['.svn', /^script/, /^builds/, /^cruise.cmd$/, /^log/, /.iml$/, /.ipr$/, /.cmd$/, 
                    'svn-repo', /^tmp/, /^cruise$/]
 
 Dir['**/*'].each do |path|
