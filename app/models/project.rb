@@ -109,9 +109,7 @@ class Project
   end
   
   def builder_state_and_activity
-    result = builder_state.downcase
-    result += " (#{builder_activity.to_s})" if (builder_state == Status::RUNNING)
-    result
+    result = builder_state == Status::RUNNING ? builder_activity.to_s : builder_state.downcase
   end 
   
   def last_build
@@ -184,21 +182,23 @@ class Project
   
   def config_modifications?
     build = last_build
-    build != nil and File.mtime(File.join(path, 'project_config.rb')) > build.time 
+    config_file = File.join(path, 'project_config.rb')
+    !build.nil? and File.exists?(config_file) and (File.mtime(config_file) > build.time) 
   end
   
   def force_build_if_requested
     return if !force_build_requested?
+    force_build_error = nil
     begin
-      ForceBuildBlocker.block(self)
-      comment = File.read(build_requested_flag_file)
+      ForceBuildBlocker.block(self)     
       build
       remove_build_requested_flag_file
     rescue => error
-      # FIXME and do what with it?
+      force_build_error = error.message
     ensure 
       ForceBuildBlocker.release(self) rescue nil
-    end      
+    end  
+    raise "Force build error: #{force_build_error}" if force_build_error        
   end
   
   def force_build_request_allowed?

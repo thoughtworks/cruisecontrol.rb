@@ -275,9 +275,9 @@ class ProjectTest < Test::Unit::TestCase
     build.expects(:label).at_least(1).returns('2')
     build.expects(:status).at_least(1).returns('pingpong')
     
-    @project.expects(:builder_state_and_activity).at_least(1).returns('running (sleeping)')
+    @project.expects(:builder_state_and_activity).at_least(1).returns('sleeping')
     @project.expects(:builds).at_least(1).returns([build])
-    assert_equal "running(sleeping)2pingpong", @project.builder_and_build_states_tag
+    assert_equal "sleeping2pingpong", @project.builder_and_build_states_tag
   end
   
   def test_return_builder_activity
@@ -305,7 +305,7 @@ class ProjectTest < Test::Unit::TestCase
     @project.expects(:builder_state).at_least(1).returns(Status::RUNNING)
     @project.expects(:builder_activity).at_least(1).returns('mock status')
 
-    assert_equal "running (mock status)", @project.builder_state_and_activity
+    assert_equal "mock status", @project.builder_state_and_activity
   end
   
   def test_config_modifications_should_return_true_if_config_file_modified_since_last_build
@@ -314,6 +314,7 @@ class ProjectTest < Test::Unit::TestCase
       new_mock_last_build_time(Time.now - 1)
       configTime = Time.now      
       configPath = File.join(@project.path, 'project_config.rb')
+      sandbox.new :file => "project_config.rb" 
       File.expects(:mtime).with(configPath).returns(configTime)
       assert @project.config_modifications?         
     end       
@@ -325,6 +326,7 @@ class ProjectTest < Test::Unit::TestCase
       new_mock_last_build_time(Time.now)  
       configTime = Time.now - 1       
       configPath = File.join(@project.path, 'project_config.rb')
+      sandbox.new :file => "project_config.rb"
       File.expects(:mtime).with(configPath).returns(configTime)
       assert_false @project.config_modifications?         
     end       
@@ -334,6 +336,14 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
       @project.expects(:last_build).returns(nil) 
+      assert_false @project.config_modifications?         
+    end       
+  end
+  
+  def test_config_modifications_should_return_false_if_there_is_no_project_config_file
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root                        
+      @project.expects(:last_build).returns(true) 
       assert_false @project.config_modifications?         
     end       
   end
