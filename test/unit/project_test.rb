@@ -330,8 +330,8 @@ class ProjectTest < Test::Unit::TestCase
   
   def test_build_should_generate_new_label_if_same_name_label_exists    
     existing_build1 = stub_build('20')
-    existing_build2 = stub_build('20.001')
-    new_build = stub_build('20.002')
+    existing_build2 = stub_build('20.1')
+    new_build = stub_build('20.2')
     new_build_with_interesting_number = stub_build('2')
              
  
@@ -340,7 +340,7 @@ class ProjectTest < Test::Unit::TestCase
     project.stubs(:log_changeset) 
     project.stubs(:builds).returns([existing_build1, existing_build2])
           
-    Build.expects(:new).with(project, '20.002').returns(new_build) 
+    Build.expects(:new).with(project, '20.2').returns(new_build) 
     project.build([new_revision(20)])
 
     Build.expects(:new).with(project, '2').returns(new_build)

@@ -93,7 +93,7 @@ class IntegrationTest < Test::Unit::TestCase
     with_project('passing_project', :revision => 7) do |project, sandbox, svn|
       status_file_path = 'passing_project/build-7/build_status.success'
       sandbox.new :file=> status_file_path      
-      new_status_file_path = 'passing_project/build-7.001/build_status.success'    
+      new_status_file_path = 'passing_project/build-7.1/build_status.success'    
       new_status_file_full_path = "#{sandbox.root}/#{new_status_file_path}"
     
       result = project.build

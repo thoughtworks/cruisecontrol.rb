@@ -276,13 +276,16 @@ class Project
   def create_build_label(revision_number)
     revision_number = revision_number.to_s
     build_labels = builds.map { |b| b.label.to_s }
-    related_builds_pattern = Regexp.new("^#{Regexp.escape(revision_number)}(\\.\\d\\d\\d)?$")
+    related_builds_pattern = Regexp.new("^#{Regexp.escape(revision_number)}(\\.\\d+)?$")
     related_builds = build_labels.select { |label| label =~ related_builds_pattern }
 
     case related_builds
     when [] then revision_number
-    when [revision_number] then "#{revision_number}.001"
-    else related_builds.sort.last.next
+    when [revision_number] then "#{revision_number}.1"
+    else
+      rebuild_numbers = related_builds.map { |label| label.split('.')[1] }.compact
+      last_rebuild_number = rebuild_numbers.sort_by { |x| x.to_i }.last 
+      "#{revision_number}.#{last_rebuild_number.next}"
     end
   end
   
