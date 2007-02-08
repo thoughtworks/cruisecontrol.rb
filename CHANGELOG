@@ -1,5 +1,6 @@
 TRUNK
   - 'cruise start' starts dashboard in production environment. Use 'cruise start -e development' for development.
+  - builder plugins receive build_broken and build_fixed events when build status goes from green to red and vice versa
   - [bugfix] Debug-level messages are logged in development mode
   - [bugfix] Running builder doesn't block the dashboard on Windows
   - [bugfix] Default layout should not be applied to XML output for CCTray 
