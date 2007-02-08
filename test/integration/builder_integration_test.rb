@@ -77,17 +77,6 @@ class IntegrationTest < Test::Unit::TestCase
       # test existence and contents of log files
     end
   end
-
-  def test_build_should_still_build_when_configuration_modification_detected
-    with_project('passing_project') do |project, sandbox, svn|
-      sandbox.new :file=>'passing_project/build-7/build_status.success'
-      # configuration file is modified after the latest build
-      sleep 1
-      sandbox.new :file=> 'passing_project/project_config.rb'
-      result = project.build_if_necessary
-      assert result.is_a?(Build)
-    end
-  end
       
   def test_build_should_still_build_even_when_no_changes_were_made
     with_project('passing_project', :revision => 7) do |project, sandbox, svn|

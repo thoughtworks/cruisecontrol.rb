@@ -44,18 +44,6 @@ class ProjectTest < Test::Unit::TestCase
       assert_equal [], @project.builds
     end
   end
-
-  def test_should_build_when_project_configurations_modified
-    in_sandbox do |sandbox|
-      @project.path = sandbox.root
-      @project.expects(:config_modifications?).returns(true)      
-      @project.expects(:load_config_file)
-
-      @project.expects(:new_revisions).returns(Array.new)
-      @project.expects(:build)
-      @project.build_if_necessary
-    end
-  end
   
   def test_should_build_with_no_logs
     in_sandbox do |sandbox|

@@ -47,4 +47,10 @@ class PollingSchedulerTest < Test::Unit::TestCase
     @scheduler.check_force_build_until_next_polling
   end
 
+  def test_should_return_flag_to_reload_project_if_configurations_modified
+    @scheduler.expects(:check_force_build_until_next_polling).returns(false)
+    @mock_project.expects(:build_if_necessary).returns(nil)
+    @mock_project.expects(:config_modifications?).returns(true)
+    assert_equal :reload_project, @scheduler.run
+  end
 end

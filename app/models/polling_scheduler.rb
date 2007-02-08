@@ -8,10 +8,11 @@ class PollingScheduler
   end
 
   def run
-    while(true) do
-      begin
+    while (true) do
+     begin
         @project.build_if_necessary or check_force_build_until_next_polling
         clean_last_build_loop_error
+        return :reload_project if @project.config_modifications?
       rescue => e
         log_error(e) unless (same_error_as_before(e) and last_logged_less_than_an_hour_ago)
         sleep(Configuration.sleep_after_build_loop_error)

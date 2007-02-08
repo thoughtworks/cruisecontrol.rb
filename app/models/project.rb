@@ -128,18 +128,12 @@ class Project
     notify(:polling_source_control)
     begin
       revisions = new_revisions()
-      configuration_modified = config_modifications?
-      if revisions.empty? and not configuration_modified
+      if revisions.empty?
         notify(:no_new_revisions_detected)
         return nil
-      elsif !revisions.empty?
+      else
         notify(:new_revisions_detected, revisions)
         return build(revisions)
-      elsif configuration_modified      
-        notify(:configuration_modified)
-        # TODO: Currently reads in the new settings, but the builder is unaware (ex. svn url change)
-        Project.reload self
-        return build       
       end
     rescue => e
       notify(:build_loop_failed, e) rescue nil
@@ -183,7 +177,11 @@ class Project
   def config_modifications?
     build = last_build
     config_file = File.join(path, 'project_config.rb')
-    !build.nil? and File.exists?(config_file) and (File.mtime(config_file) > build.time) 
+    if (!build.nil? and File.exists?(config_file) and (File.mtime(config_file) > build.time))
+      notify(:configuration_modified)
+      return true
+    end
+    return false
   end
   
   def force_build_if_requested

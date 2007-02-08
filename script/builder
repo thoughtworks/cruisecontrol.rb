@@ -48,30 +48,38 @@ end
 project = nil
 
 begin
-  project = Project.load_or_create(project_path)
-
-  # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else blow up saying 
-  # that something else is already locking it
-  ProjectBlocker.block(project)
-
-  puts "Builder for project '#{project.name}' started"
-  puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
-  CruiseControl::Log.event "Builder for project '#{project.name}' started"
-
-  project.scheduler.run
-rescue => e
-  begin 
-    CruiseControl::Log.error(e.message)
-    CruiseControl::Log.error(e.backtrace)
-  rescue => logging_error
-    STDERR.puts e.message
-    STDERR.puts e.backtrace
-    STDERR.puts "Attempt to log the above error failed with this:"
-    STDERR.puts logging_error.message
-    STDERR.puts logging_error.backtrace
+  begin
+    # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else blow up saying 
+    # that something else is already locking it
+   project = Project.load_or_create(project_path)
+   ProjectBlocker.block(project)
+   result = ''
+	while (true) do	
+      begin
+      	project = Project.load_or_create(project_path)      	
+        puts "Builder for project '#{project.name}' started"
+        puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
+        CruiseControl::Log.event "Builder for project '#{project.name}' started"
+				
+		project.build if result == :reload_project
+		result = project.scheduler.run
+	  end
   end
-  STDERR.puts "[error] #{e.message}"
-  OPTIONS[:verbose] ? raise : exit(1)
-ensure 
-  cleanup(project)
+  rescue => e
+    begin 
+      CruiseControl::Log.error(e.message)
+      CruiseControl::Log.error(e.backtrace)
+          
+      rescue => logging_error
+        STDERR.puts e.message
+        STDERR.puts e.backtrace
+        STDERR.puts "Attempt to log the above error failed with this:"
+        STDERR.puts logging_error.message
+        STDERR.puts logging_error.backtrace
+    end
+    STDERR.puts "[error] #{e.message}"
+    OPTIONS[:verbose] ? raise : exit(1)
+  ensure
+	cleanup(project)
+  end
 end
