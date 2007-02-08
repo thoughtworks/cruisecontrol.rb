@@ -4,9 +4,7 @@ class Project
   @@plugin_names = []
 
   def self.plugin(plugin_name)
-    unless RAILS_ENV == 'test'
-      @@plugin_names << plugin_name unless @@plugin_names.include? plugin_name
-    end
+    @@plugin_names << plugin_name unless RAILS_ENV == 'test' or @@plugin_names.include? plugin_name
   end
 
   def self.load_or_create(dir)
@@ -299,49 +297,51 @@ class Project
 
 end
 
-# TODO make me pretty, move me to another file, invoke me from environment.rb
-# TODO consider using Rails autoloading mechanism
-# TODO what to do when plugin initializer raises an error?
+if RAILS_ENV == 'builder'
+  # TODO make me pretty, move me to another file, invoke me from environment.rb
+  # TODO consider using Rails autoloading mechanism
+  # TODO what to do when plugin initializer raises an error?
 
-plugin_loader = Object.new
+  plugin_loader = Object.new
 
-def plugin_loader.load_plugin(plugin_path)
-  plugin_name = File.basename(plugin_path).sub(/\.rb$/, '')
-  CruiseControl::Log.debug("Loading plugin #{plugin_name}")
-  if RAILS_ENV == 'development'
-    load plugin_path
-  else
-    #convert path to something like 'my_plugin/init'
-    require_path = plugin_name == 'init' ? File.basename(File.dirname(plugin_path)) + '/' + plugin_name : plugin_name
-    require require_path
-  end
-end
-
-def plugin_loader.load_all
-  plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*')]
-
-  plugins.each do |plugin|
-    if File.file?(plugin)
-      if plugin[-3..-1] == '.rb' 
-        load_plugin(File.basename(plugin))
-      else
-        # a file without .rb extension, ignore
-      end
-    elsif File.directory?(plugin)
-      # ignore Subversion directory (although it should be considered hidden by Dir[], but just in case)
-      next if plugin[-4..-1] == '.svn'
-      init_path = File.join(plugin, 'init.rb')
-      if File.file?(init_path)
-        load_plugin(init_path)
-      else
-        log.error("No init.rb found in plugin directory #{plugin}")
-      end
-    else 
-      # a path is neither file nor directory. whatever else it may be, let's ignore it.
-      # TODO: find out what happens with symlinks on a Linux here? how about broken symlinks?
+  def plugin_loader.load_plugin(plugin_path)
+    plugin_name = File.basename(plugin_path).sub(/\.rb$/, '')
+    CruiseControl::Log.debug("Loading plugin #{plugin_name}")
+    if RAILS_ENV == 'development'
+      load plugin_path
+    else
+      #convert path to something like 'my_plugin/init'
+      require_path = plugin_name == 'init' ? File.basename(File.dirname(plugin_path)) + '/' + plugin_name : plugin_name
+      require require_path
     end
   end
-  
-end
 
-plugin_loader.load_all unless RAILS_ENV == 'test'
+  def plugin_loader.load_all
+    plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*')]
+
+    plugins.each do |plugin|
+      if File.file?(plugin)
+        if plugin[-3..-1] == '.rb'
+          load_plugin(File.basename(plugin))
+        else
+          # a file without .rb extension, ignore
+        end
+      elsif File.directory?(plugin)
+        # ignore Subversion directory (although it should be considered hidden by Dir[], but just in case)
+        next if plugin[-4..-1] == '.svn'
+        init_path = File.join(plugin, 'init.rb')
+        if File.file?(init_path)
+          load_plugin(init_path)
+        else
+          log.error("No init.rb found in plugin directory #{plugin}")
+        end
+      else
+        # a path is neither file nor directory. whatever else it may be, let's ignore it.
+        # TODO: find out what happens with symlinks on a Linux here? how about broken symlinks?
+      end
+    end
+
+  end
+
+  plugin_loader.load_all
+end
