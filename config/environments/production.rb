@@ -17,7 +17,9 @@ config.action_controller.perform_caching             = true
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-# TODO: Start builders after initialization
-#config.after_initialize do
-#  BuilderStarter.start_builders
-#end
+# Start builders after config initialization only when web server starts
+if $launching_rails_web_server
+  config.after_initialize do
+    BuilderStarter.start_builders
+  end
+end

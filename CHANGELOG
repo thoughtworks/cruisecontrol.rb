@@ -7,6 +7,7 @@ TRUNK
   - [bugfix] Running builder doesn't block the dashboard on Windows
   - [bugfix] Default layout should not be applied to XML output for CCTray 
   - [bugfix] Test Failure Parser correctly parses failure messages from Mocha
+  - launch of web server will launch project builders
 ------------------------------------------------------------------------------------------------------------------------
 * 0.4.0
   - pretty user interface

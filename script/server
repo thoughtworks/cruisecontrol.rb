@@ -1,15 +1,30 @@
 #!/usr/bin/env ruby
 require File.dirname(__FILE__) + '/../config/boot'
 require 'builder_starter'
+require 'optparse'
 
-# do not start builders if "--without-builders" parameters
-# is found in the command line arguments
-without_builder_param = "--without-builders"
-if(!ARGV.index(without_builder_param).nil?)
-  BuilderStarter.run_builders_at_startup = false
-  ARGV.delete(without_builder_param)
+# Options section is copied from mongrel.rb in order for us to add custom help options
+# (Options should be updated from time to time with new mongrel versions)
+ARGV.clone.options do |opts|
+  opts.on("-p", "--port=port", Integer, "Runs Rails on the specified port.", "Default: 3000") {}
+  opts.on("-b", "--binding=ip", String, "Binds Rails to the specified ip.", "Default: 0.0.0.0") {}
+  opts.on("-d", "--daemon", "Make server run as a Daemon.") {}
+  opts.on("-e", "--environment=name", String,
+          "Specifies the environment to run this server under (test/development/production).",
+          "Default: development") {}
+  opts.on("-w", "--without-builders", "Run without starting the project builders.") { BuilderStarter.run_builders_at_startup = false }
+
+  opts.separator ""
+
+  opts.on("-h", "--help", "Show this help message.") { puts opts; exit }
+
+  opts.parse!
 end
-
+   
+# Remove custom options so that are not interpreted by 'commands/server'   
+ARGV.delete("-w")
+ARGV.delete("--without-builders")
+    
 # change default port from Rails' usual 3000 to 3333, so that it doesn't clash with other Rails apps 
 # running on the same box.
 if (ARGV & ['-p', '--port']).empty?
@@ -20,5 +35,8 @@ end
 if (ARGV & ['-e', '--environment']).empty?
   ARGV << '-e' << 'production'
 end
+
+# Global varible to notify launched by rails web server
+$launching_rails_web_server = true;
 
 require 'commands/server'

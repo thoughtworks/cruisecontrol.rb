@@ -20,9 +20,11 @@ config.action_view.debug_rjs                         = true
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-# TODO: Start builders after initialization
-#config.after_initialize do
-#  BuilderStarter.start_builders
-#end
+# Start builders after config initialization only when web server starts
+if $launching_rails_web_server
+  config.after_initialize do
+    BuilderStarter.start_builders
+  end
+end
 
 CruiseControl::Log.verbose = true
