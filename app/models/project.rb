@@ -131,12 +131,8 @@ class Project
   end
 
   def new_revisions
-    b = builds
-    if b.empty?
-      [@source_control.latest_revision(self)]
-    else
-      @source_control.revisions_since(self, b.last.label.to_i)
-    end
+    builds.empty? ? [@source_control.latest_revision(self)] :
+                    @source_control.revisions_since(self, builds.last.label.to_i)
   end
   
   def force_build_requested?

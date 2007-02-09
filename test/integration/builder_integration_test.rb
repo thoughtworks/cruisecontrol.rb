@@ -98,9 +98,9 @@ class IntegrationTest < Test::Unit::TestCase
     with_project('project_with_db_migrate') do |project, sandbox, svn|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
-      
-      assert build_log.include?("RAILS_ENV=test\ndb:migrate invoked\ndefault invoked\n"), 
-          '"RAILS_ENV=test\ndb:migrate invoked\ntest invoked\n" not found in build log:' + "\n" + build_log
+
+      expected_output = "RAILS_ENV=test\ndb:migrate invoked\n[CruiseControl] Invoking Rake task \"default\"\ndefault invoked\n"
+      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
     
   end
@@ -109,9 +109,9 @@ class IntegrationTest < Test::Unit::TestCase
     with_project('project_with_cruise_and_default_tasks') do |project, sandbox, svn|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
-      
-      assert build_log.include?("RAILS_ENV=\"test\"\ncruise invoked\n"), 
-          '"RAILS_ENV="test"\ncruise invoked\n" not found in build log:' + "\n" + build_log
+
+      expected_output = "RAILS_ENV=\"test\"\ncruise invoked\n"
+      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
     
   end
@@ -123,8 +123,8 @@ class IntegrationTest < Test::Unit::TestCase
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
       
-      assert build_log.include?("Vasya_was_here"), 
-          '"Vasya_was_here" not found in build log:' + "\n" + build_log
+      expected_output = "Vasya_was_here"
+      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
     
   end
@@ -136,8 +136,8 @@ class IntegrationTest < Test::Unit::TestCase
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
       
-      assert build_log.include?("my_build invoked\n"), 
-          '"my_build invoked\n" not found in build log:' + "\n" + build_log
+      expected_output = "my_build invoked\n"
+      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
     
   end
@@ -149,8 +149,8 @@ class IntegrationTest < Test::Unit::TestCase
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
       
-      assert build_log.include?("my_build invoked\nmy_deploy invoked\n"), 
-          '"my_build invoked\nmy_deploy invoked\n" not found in build log:' + "\n" + build_log
+      expected_output = "my_build invoked\n[CruiseControl] Invoking Rake task \"my_deploy\"\nmy_deploy invoked\n"
+      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
     
   end
@@ -159,8 +159,8 @@ class IntegrationTest < Test::Unit::TestCase
     with_project 'project_with_db_test_purge_and_migrate' do |project, sandbox, svn|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
-      assert build_log.include?("db-test-purge\nESTABLISH_CONNECTION\ndb-migrate\n") , 
-          '"db-test-purge\nESTABLISH_CONNECTION\ndb-migrate\n" not found in build log:' + "\n" + build_log
+      expected_output = "db-test-purge\nESTABLISH_CONNECTION\n[CruiseControl] Invoking Rake task \"db:migrate\"\ndb-migrate\n"
+      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
     
   end
@@ -174,7 +174,7 @@ class IntegrationTest < Test::Unit::TestCase
       error_message = "No migration scripts found in db/migrate/ but database.yml exists, " + 
                       "CruiseControl won't be able to build the latest test database. Build aborted."
       assert build_log.include?(error_message), 
-          '"'+error_message+'" not found in build log:' + "\n" + build_log
+          "#{error_message.inspect} not found in build log:\n#{build_log}"
     end
   end
   

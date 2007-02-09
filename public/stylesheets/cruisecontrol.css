@@ -27,25 +27,21 @@ a:hover {
 
 .header {
   background-image: url(/images/gray_gradient.gif);
-  background-position: bottom;
+  background-position: top;
   background-repeat: repeat-x;
   font-weight: normal;
   clear: both;
 }
 
 .header .cc_logo { 
-  margin: 10px 0 0 5px;
-}
-
-.header .cc_logo img {
-  margin-bottom: -3px;
+  margin: 0 0 0 5px;
 }
 
 .footer {
   font-size: 0.6em;
   color: #999;
   text-align: right;
-  padding: 2em 1em 0em 0em;
+  padding: 2em 1em 0 0;
   clear: both;
 }
 
@@ -230,8 +226,8 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   font-family: courier, serif;
 }
 
-.section-closed .section-header { background-image: url(/images/closed_twisty.png); }
-.section-open .section-header   { background-image: url(/images/open_twisty.png); }
+.section-closed .section-header { background-image: url(../images/closed_twisty.png); }
+.section-open .section-header   { background-image: url(../images/open_twisty.png); }
 
 .section-closed .section-content { display: none; }
 

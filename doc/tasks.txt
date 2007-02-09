@@ -18,6 +18,9 @@ Some of the "force build" stuff is begging to be refactored.
 Yellow fade fades a wrong div.
 Yellow fade should only happen when build (and not the builder) status changes.
 Build now button behaves in very strange ways (appearance/disappearance logic).
+Replace projects.rhtml with projects.rxml
+Generalize things like build.changeset, build.output; makes them write out error messages when the file doesn't exist, 
+or exists but is not readable
 
 Visuals
 -------

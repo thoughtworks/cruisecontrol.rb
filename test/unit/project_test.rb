@@ -205,10 +205,10 @@ class ProjectTest < Test::Unit::TestCase
       @project.source_control = @svn
       @project.path = sandbox.root
       @project.stubs(:config_modifications?).returns(false)
-      @project.expects(:builds).returns([Build.new(@project, 2)])
-      revision = new_revision(2)
+      @project.stubs(:builds).returns([Build.new(@project, 2)])
+      @svn.stubs(:revisions_since).with(@project, 2).returns([])
 
-      @svn.expects(:revisions_since).with(@project, 2).returns([])
+      @project.expects(:build).never
 
       @project.build_if_necessary
     end

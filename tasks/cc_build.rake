@@ -10,6 +10,11 @@ class ActiveRecordHelper
   end
 end
 
+def cc_invoke(task_name)
+  puts "[CruiseControl] Invoking Rake task #{task_name.inspect}"
+  Rake::Task[task_name].invoke
+end
+
 
 
 namespace :cc do
@@ -25,11 +30,11 @@ namespace :cc do
       undefined_tasks = tasks.collect { |task| Rake.application.lookup(task) ? nil : task }.compact
       raise "Custom rake task(s) '#{undefined_tasks.join(", ")}' not defined" unless undefined_tasks.empty?
 
-      tasks.each { |task| Rake::Task[task].invoke }
+      tasks.each { |task| cc_invoke task }
 
     # if the project defines 'cruise' Rake task, that's all we need to do
     elsif Rake.application.lookup('cruise')
-      Rake::Task['cruise'].invoke
+      cc_invoke 'cruise'
     else
       if File.exists?(Dir.pwd + "/config/database.yml") 
         if Dir[Dir.pwd + "/db/migrate/*.rb"].empty?
@@ -40,19 +45,19 @@ namespace :cc do
         # perform standard Rails database cleanup/preparation tasks if they are defined in project
         # this is necessary because there is no up-to-date development database on a continuous integration box
         if Rake.application.lookup('db:test:purge')
-          Rake::Task['db:test:purge'].invoke
+          cc_invoke 'db:test:purge'
         end
         if Rake.application.lookup('db:migrate')
           ActiveRecordHelper.connect
-          Rake::Task['db:migrate'].invoke
+          cc_invoke 'db:migrate'
         end
       end
       
       # invoke 'test' or 'default' task
       if Rake.application.lookup('test')
-        Rake::Task['test'].invoke
+        cc_invoke 'test'
       elsif Rake.application.lookup('default')
-        Rake::Task['default'].invoke
+        cc_invoke 'default'
       else
         raise "'cruise', test' or 'default' tasks not found. CruiseControl doesn't know what to build."
       end

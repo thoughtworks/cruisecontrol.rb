@@ -23,14 +23,6 @@ class Build
     @status.fail!
   end
   
-  def successful?
-    @status.succeeded?
-  end
-
-  def failed?
-    @status.failed?
-  end
-  
   def status
     @status.to_s
   end
@@ -39,6 +31,14 @@ class Build
     FileUtils.rm_f(Dir["#{artifacts_directory}/build_status.*"])
     FileUtils.touch(artifact("build_status.#{value}"))
     @status = value
+  end
+
+  def successful?
+    @status.succeeded?
+  end
+
+  def failed?
+    @status.failed?
   end
 
   def changeset
