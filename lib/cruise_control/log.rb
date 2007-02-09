@@ -23,7 +23,7 @@ module CruiseControl
       case first_arg
       when Exception
         message = "#{print_severity(method)} #{first_arg.message}"
-        backtrace = first_arg.backtrace.map { |line| "[#{method}]   #{line}" }
+        backtrace = first_arg.backtrace.map { |line| "#{print_severity(method)}   #{line}" }
       else
         message = "#{print_severity(method)} #{first_arg}"
       end

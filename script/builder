@@ -37,11 +37,24 @@ unless File.exist? project_path
   exit(-1)
 end
 
+def write_to_log_and_console(message, severity = :info)
+  CruiseControl::Log.event(message, severity) rescue nil
+  (puts message unless OPTIONS[:verbose]) rescue nil 
+end
+
 def cleanup(project)
-  puts "Builder for project '#{OPTIONS[:project_name]}' exited" rescue nil
-  CruiseControl::Log.event "Builder for project '#{OPTIONS[:project_name]}' exited" rescue nil
+  write_to_log_and_console "Builder for project '#{OPTIONS[:project_name]}' exited"
   if project
     ProjectBlocker.release(project) rescue nil
+  end
+end
+
+def load_project(path)
+  begin
+    Project.load_or_create(path)
+  rescue Exception => e
+    write_to_log_and_console("Failed to load the new project configuration. The builder will stop.", :fatal)
+    raise
   end
 end
 
@@ -49,29 +62,28 @@ project = nil
 
 begin
   begin
+    project = load_project(project_path)
+
     # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else
     # blow up saying that something else is already locking it
-    project = Project.load_or_create(project_path)
     ProjectBlocker.block(project)
 
-    project = Project.load_or_create(project_path)
+    project = load_project(project_path)
 
-    puts "Builder for project '#{project.name}' started"
+    write_to_log_and_console "Builder for project '#{project.name}' started"
     puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
-    CruiseControl::Log.event "Builder for project '#{project.name}' started"
 
 	  while (true) do
       result = project.scheduler.run
       if result == :reload_project
-        project = Project.load_or_create(project_path)
+        project = load_project(project_path)
         # this will cause the next call to scheduler to run the build immediately
-        project.request_force_build
+        project.request_force_build rescue nil
       end
     end
-  rescue => e
+  rescue Exception => e
     begin 
-      CruiseControl::Log.error(e.message)
-      CruiseControl::Log.error(e.backtrace)
+      CruiseControl::Log.fatal(e)
           
       rescue => logging_error
         STDERR.puts e.message
@@ -80,7 +92,6 @@ begin
         STDERR.puts logging_error.message
         STDERR.puts logging_error.backtrace
     end
-    STDERR.puts "[error] #{e.message}"
     OPTIONS[:verbose] ? raise : exit(1)
   ensure
     cleanup(project)
