@@ -109,17 +109,4 @@ class ProjectsTest < Test::Unit::TestCase
       assert_equal("onetwo", out)
     end
   end
-
-  class FakeSourceControl
-    attr_reader :username
-    
-    def initialize(username)
-      @username = username
-    end
-
-    def checkout(dir)
-      File.open("#{dir}/README", "w") {|f| f << "some text"}
-    end
-
-  end
 end

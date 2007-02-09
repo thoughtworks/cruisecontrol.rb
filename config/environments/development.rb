@@ -20,4 +20,9 @@ config.action_view.debug_rjs                         = true
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
+# TODO: Start builders after initialization
+#config.after_initialize do
+#  BuilderStarter.start_builders
+#end
+
 CruiseControl::Log.verbose = true

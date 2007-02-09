@@ -61,4 +61,17 @@ class Test::Unit::TestCase
   def assert_false(expression)
     assert_equal false, expression
   end
+  
+  class FakeSourceControl
+    attr_reader :username
+    
+    def initialize(username)
+      @username = username
+    end
+
+    def checkout(dir)
+      File.open("#{dir}/README", "w") {|f| f << "some text"}
+    end
+
+  end  
 end
