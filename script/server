@@ -21,6 +21,4 @@ if (ARGV & ['-e', '--environment']).empty?
   ARGV << '-e' << 'production'
 end
 
-p ARGV
-
 require 'commands/server'
