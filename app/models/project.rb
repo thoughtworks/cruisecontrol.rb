@@ -20,17 +20,6 @@ class Project
     end
   end
   
-  def self.reload(project)
-    begin
-      @project = project
-      project.load_config_file
-    rescue => e
-      raise "Could not load #{config_file} : #{e.message} in #{e.backtrace.first}"
-    ensure
-      @project = nil
-    end
-  end
-
   def config_file
     File.expand_path(File.join(path, 'project_config.rb'))
   end
