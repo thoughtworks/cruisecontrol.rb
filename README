@@ -45,12 +45,12 @@ multiple installations of CC.rb per computer.
 
 1. Download and unpack CruiseControl.rb (below, we will refer to the place where you unpack it as <cruise>)
 
-2. From <cruise>, run "cruise start".
+2. From <cruise>, run "./cruise start".
 
 3. Browse to http://localhost:3333. If the dashboard is running fine and dandy, you will see a page with
    CruiseControl.rb logo.
 
-4. Run "cruise add your_project --url <URL of your_project Subversion trunk>". Optionally, you can specify username 
+4. Run "./cruise add your_project --url <URL of your_project Subversion trunk>". Optionally, you can specify username
    and password by adding " --username <your_user> --password <your_password>" to the command. This creates a directory 
    for your_project's builds at <cruise>/builds/your_project/, and checks out your_project from subversion URL specified 
    to <cruise>/builds/your_project/work/. 
@@ -65,15 +65,15 @@ multiple installations of CC.rb per computer.
    a test database, editing database.yml to connect to that database, performing "rake RAILS_ENV=test db:migrate"
    and making sure that "rake test" passes.
 
-7. Go back to <cruise> and run "cruise build your_project". This should build your_project, place build outputs into
+7. Go back to <cruise> and run "./cruise build your_project". This should build your_project, place build outputs into
    <cruise>/builds/your_project/build-<revision-number>/
  
    Hint: Monitor log/your_project_builder.log for any signs of trouble. Try to check in a change to your_project
    and see if builder can detect and build it.  Check your_project status in the dashboard.
 
-   Hint: If you want to run your server on a different port, just use "cruise start -p <port>". 
+   Hint: If you want to run your server on a different port, just use "./cruise start -p <port>".
 
-   Hint: "cruise help" displays a list of commands, "cruise help <command>" displays options available for each command.
+   Hint: "./cruise help" displays a list of commands, "./cruise help <command>" displays options available for each command.
 
 
 === Files and folders
@@ -96,11 +96,39 @@ If CC.rb is unpacked into <cruise> directory, then:
   and all builders.
 
 
+=== Project builder configuration
+
+When you add a project to CruiseControl.rb, it will do something reasonable without any configuration.
+
+However, there are things that builder cannot know in advance. For example, who needs to receive an email notice
+when the build is broken. Default answer is "nobody", and it may be good enough if you use CCTray or have a big projector
+screen displaying the dashboard. What if it's not good enough? To make the builder aware of all these other things
+you want it to do, you will have to write them down in a project configuration file.
+
+Rolling your eyes already? Hold on, this is not J2EE deployment descriptors we are talking about. No two pages of
+hand-written angled brackets just to get started here. A typical project configuration is about 3 to 5 lines of very
+simple Ruby. Yes, the configuration language of CC.rb is Ruby.
+
+In <cruise>/builds/your_project/ directory, create file project_config.rb. Write the following in it:
+
+  Project.configure do |project|
+  end
+
+Every project_config.rb must include these two lines. All your other configuration goes between them.
+
+Hint: configuration examples below are surrounded with lines that look like '...'. This represents other configuration
+      statements that may be in project_config.rb. You are not meant to copy/paste those dots into your configuration
+      file. If you do, './cruise start' will fail to start, saying something about syntax error (SyntaxError).
+      Understandably, ... is not a valid Ruby statement.
+
+
 === What will it build by default?
 
-By default, it will try to execute 'cruise' task if it is defined in your_project/Rakefile, otherwise it will try to 
-perform standard Rails tasks that prepare a test database and run all tests. For a more detailed description, 
-read http://cruisecontrolrb.rubyforge.org/rake_tasks.html
+By default, CC.rb will search for a Rake [http://rake.rubyforge.org/] build file in your project. Then
+CC.rb will try to execute 'cruise' task if it is defined. If it is not, it will try to perform standard Rails
+tasks that prepare a test database and run all tests.
+
+For a more detailed description, read http://cruisecontrolrb.rubyforge.org/rake_tasks.html
 
 
 === How to change what the build does?
@@ -139,7 +167,7 @@ artifacts are collected. Make sure that your special task writes its output to t
 Displaying custom task outputs on the dashboard is not implemented yet.
 
 
-=== Email notification
+=== Build notices via email
 
 CruiseControl.rb can send email notices whenever build fails or is fixed. To make it happen, you need to tell it how 
 to send email, and who to send it to. Do the following:
@@ -151,7 +179,14 @@ to send email, and who to send it to. Do the following:
    ~cruise/builds/your_project/project_config.rb and edit the list of email addresses there.
 
 
-=== Monitoring build status with CCTray
+=== Build notices via instant messaging with Jabber
+
+Jabber [http://www.jabber.org/] is an open protocol for instant messaging. Jabber messages can be sent to all sorts of
+IM systems, including AIM, Google Talk, ICQ, IRC, MSN and Yahoo. CC.rb comes with a Jabber plugin. Look at
+<cruise>/builder_plugins/available/jabber_notifier/README for the installation guide and further details.
+
+
+=== Build monitoring with CCTray
 
 CCTray is a utility developed as part of CruiseControl.NET project that displays an icon in the bottom right corner of 
 the screen. The icon changes its color to red when a build fails, and back to green when the build is fixed.
@@ -161,8 +196,7 @@ icon, select Settings..., click on Add button, click on Add Server button, selec
 option and type http://<cruise_host>:3333 in the text box. Click OK, select your project, click OK again, close the 
 Settings dialog. Voila, you are monitoring your build with CCTray.
 
-This works only on a Windows desktop. On other platforms, there is only email so far. Alternative ways to monitor the 
-build (feeds, Growl and Jabber) are in the works.
+This works only on a Windows desktop.
 
 
 === Build scheduling

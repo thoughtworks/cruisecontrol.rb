@@ -35,7 +35,7 @@ ARGV.options do |opts|
 
   # Project Name can only contain alphanumeric characters
   if project_name.match /[^-_\.a-zA-Z0-9]/
-    STDERR.puts "'#{project_name}' is an invalid project name.  Project name can only contain characters and numbers."
+    STDERR.puts "'#{project_name}' is not a valid project name. Project name should only contain alphanumeric characters, dots, dashes and underscores."
     exit(-1)
   end
 end

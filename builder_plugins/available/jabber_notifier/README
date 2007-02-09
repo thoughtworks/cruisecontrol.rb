@@ -1,10 +1,26 @@
+== Jabber notifier for CruiseControl.rb
+
+=== What's this?
+
+This is a builder plugin for CruiseControl.rb [http://cruisecontrolrb.thoughtworks.com] that sends build notices
+to instant messaging clients.
+
+Jabber [http://www.jabber.org] is an open protocol for instant messaging. Jabber messages can be sent to all sorts of
+IM systems, including AIM, Google Talk, ICQ, IRC, MSN and Yahoo.
+
+
 === Installation
 
-1. Copy jabber_notifier_plugin folder to builder_plugins/available
-2. Modify builds/your_project/project_config.rb by adding the following lines 
+1. Create a Jabber account that you will use for sending notifications.
+2. Make sure that all who want to subscribe to build notices via Jabber can receive messages from this
+   account.
+2. Copy jabber_notifier_plugin folder to builder_plugins/installed
+3. Modify builds/your_project/project_config.rb by adding the following lines
    (change subscriber ids and sender account details to appropriate) :
    
 
+Project.configure do |project|
+  ...
   project.jabber_notifier.subscribers = [
     "subscriber1@jabber.org",
     "subscriber2@jabber.org",
@@ -12,3 +28,7 @@
   ]
   project.jabber_notifier.account = 'sender@jabber.org'
   project.jabber_notifier.password = 'sender_password'
+  ...
+end
+
+4. Start the builder (./cruise build your_project)

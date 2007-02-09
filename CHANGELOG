@@ -1,4 +1,6 @@
 TRUNK
+  - plugin for sending build notifices as instant messages via Jabber protocol (should work with IRC, ICQ, Yahoo, MSN,
+    Google Talk or anything else that has a Jabber transport).
   - 'cruise start' starts dashboard in production environment. Use 'cruise start -e development' for development.
   - builder plugins receive build_broken and build_fixed events when build status goes from green to red and vice versa
   - [bugfix] Debug-level messages are logged in development mode
