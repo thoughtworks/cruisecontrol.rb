@@ -49,22 +49,25 @@ project = nil
 
 begin
   begin
-    # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else blow up saying 
-    # that something else is already locking it
-   project = Project.load_or_create(project_path)
-   ProjectBlocker.block(project)
-   result = ''
-	while (true) do	
-      begin
-      	project = Project.load_or_create(project_path)      	
-        puts "Builder for project '#{project.name}' started"
-        puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
-        CruiseControl::Log.event "Builder for project '#{project.name}' started"
-				
-		project.build if result == :reload_project
-		result = project.scheduler.run
-	  end
-  end
+    # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else
+    # blow up saying that something else is already locking it
+    project = Project.load_or_create(project_path)
+    ProjectBlocker.block(project)
+
+    project = Project.load_or_create(project_path)
+
+    puts "Builder for project '#{project.name}' started"
+    puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
+    CruiseControl::Log.event "Builder for project '#{project.name}' started"
+
+	  while (true) do
+      result = project.scheduler.run
+      if result == :reload_project
+        project = Project.load_or_create(project_path)
+        # this will cause the next call to scheduler to run the build immediately
+        project.request_force_build
+      end
+    end
   rescue => e
     begin 
       CruiseControl::Log.error(e.message)
@@ -80,6 +83,6 @@ begin
     STDERR.puts "[error] #{e.message}"
     OPTIONS[:verbose] ? raise : exit(1)
   ensure
-	cleanup(project)
+    cleanup(project)
   end
 end

@@ -11,9 +11,14 @@ UI Stuff
 
 Bugs
 ----
-build_broken not triggered
+removing project_config.rb does not trigger the build
 dashboard should not load project configuration all the time
-what should be the status of a build that passed, but THEN the build loop crashed? 
+what should be the status of a build that passed, but THEN the build loop crashed?
+Some of the "force build" stuff is begging to be refactored.
+Yellow fade fades a wrong div.
+Yellow fade should only happen when build (and not the builder) status changes.
+Finish changing the project pane layout.
+Build now button behaves in very strange ways.
 
 Necessary
 ---------

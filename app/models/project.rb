@@ -64,8 +64,8 @@ class Project
     end
   end
 
-  #used by rjs to refresh project if build state tag changed.
-  def builder_and_build_states_tag    
+  # used by rjs to refresh project if build state tag changed.
+  def builder_and_build_states_tag
     builder_state_and_activity.gsub(' ', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
   end
   
@@ -129,7 +129,7 @@ class Project
     builds.reverse[0..4]
   end
 
-  def build_if_necessary                
+  def build_if_necessary
     notify(:polling_source_control)
     begin
       revisions = new_revisions()
@@ -137,6 +137,7 @@ class Project
         notify(:no_new_revisions_detected)
         return nil
       else
+        remove_build_requested_flag_file if force_build_requested?
         notify(:new_revisions_detected, revisions)
         return build(revisions)
       end
@@ -190,18 +191,14 @@ class Project
   end
   
   def force_build_if_requested
-    return if !force_build_requested?
-    force_build_error = nil
+    return unless force_build_requested?
+    remove_build_requested_flag_file
     begin
       ForceBuildBlocker.block(self)     
       build
-      remove_build_requested_flag_file
-    rescue => error
-      force_build_error = error.message
-    ensure 
+    ensure
       ForceBuildBlocker.release(self) rescue nil
     end  
-    raise "Force build error: #{force_build_error}" if force_build_error        
   end
   
   def force_build_request_allowed?
