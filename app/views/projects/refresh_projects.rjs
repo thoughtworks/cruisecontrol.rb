@@ -1,7 +1,6 @@
 @projects.each do |project|
-  project_id = 'project_' + project.name
-  page.replace_html project_id, :partial => 'project', :locals => { :project => project }
-  page.visual_effect :highlight, project_id
+  project_id = "project_#{project.name}"
+  page.replace project_id, :partial => 'project', :locals => { :project => project }
 end
 
 unless @new_projects.empty?
@@ -10,15 +9,12 @@ end
 
 @new_projects.each do |project|
   project_id = "project_#{project.name}"
-  page.insert_html :bottom, 'projects', "<div id=\"#{h project_id}\"/>"
-  page.replace_html project_id, :partial => "project", :locals => { :project => project }
-  page.visual_effect :highlight, project_id
+  page.insert_html :bottom, 'projects', :partial => "project", :locals => { :project => project }
 end
 
 @deleted_projects.each do |project_name|
-  page.replace_html 'project_' + project_name, ''
+  page.replace "project_#{project_name}", ''
 end
 
 page.replace_html 'buid_states_hidden_div', hidden_field_tag('build_states', @build_states)
-
 page.replace_html 'projects_flash', h(flash[:projects_flash] || '')

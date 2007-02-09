@@ -11,7 +11,7 @@ h3 {
   margin-top: .4em;
 }
 
-img { border: 0; }
+img { border-style: none; }
 
 a, a:link, a:visited { 
   color: #507ec0;
@@ -26,15 +26,19 @@ a:hover {
 /* default layout classes */
 
 .header {
-  background-image: url(/images/header_background.gif);
+  background-image: url(/images/gray_gradient.gif);
+  background-position: bottom;
+  background-repeat: repeat-x;
   font-weight: normal;
   clear: both;
 }
 
-.header .tw_logo { 
-  float: right; 
-  padding-top: 5px;
-  padding-right: 5px;
+.header .cc_logo { 
+  margin: 10px 0 0 5px;
+}
+
+.header .cc_logo img {
+  margin-bottom: -3px;
 }
 
 .footer {
@@ -76,18 +80,6 @@ a:hover {
 
 /* build status stuff */
 
-.build_success { 
-  background-color: #FFF; 
-}
-
-.build_failed { 
-  background-color: #FFE6FC; 
-}
-
-.build_never_built {
-  background-color: #F6F6F6; 
-}
-
 .build_status { font-weight: bold; }
 .build_failed .build_status, .build_never_built .build_status { text-transform: uppercase; }
 .build_success .build_status { color: #0A0; }
@@ -114,27 +106,61 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   padding: 0.5em 1.5em;
 }
 
+.build_success, .build_never_built {
+  background-image: url(/images/gray_gradient.gif);
+  background-position: bottom;
+  background-repeat: repeat-x;
+}
+
+.build_failed {
+  background-image: url(/images/red_gradient.png);
+  background-position: bottom;
+  background-repeat: repeat-x;
+}
+
 .project table { width: 100%; }
 
-.project td { 
+.project td {
   vertical-align: top;
   text-align: left;
 }
 
-.project .project_summary {
+.project td.project_summary {
   width: 40%;
 }
 
-.project .build_summary {
+.project td.build_details {
+  width: 59%;
+}
+
+.project td.filler {
+  width: 1%;
+  padding-bottom: 8em;
+}
+
+.project .project_summary .buttons {
+  padding: 1.5em;
+}
+
+.project .project_summary .buttons form {
+  display: inline;
 }
 
 .project .recent_builds {
   color: #666;
+  font-size: 0.9em;
 }
 
-.project td.filler {
-  width: 60%;
-  padding-bottom: 5em;
+.project .recent_builds .lead {
+  float: left;
+  padding-right: 0.5em;
+}
+
+.project .recent_builds .builds_list {
+  float: left;
+}
+
+.project .build_summary {
 }
 
 .project .project_name {
@@ -239,9 +265,4 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
     padding: 10px;
     font-weight: bold;
     font-size: 120%;
-}
-
-.force_build_form {
-  padding-left: 0.5em;
-  display: inline; 
 }

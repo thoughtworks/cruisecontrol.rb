@@ -1,6 +1,7 @@
-<div class="project build_<%= project.last_build_status %>">
+<div id="project_<%= project.name %>" class="project build_<%= project.last_build_status %>">
 <table>
 <tr>
+
   <td class="project_summary">
 
     <div>
@@ -8,41 +9,35 @@
         <%= link_to project.name, :action => 'show', :id => project.name %>
       </span>
       <span class="builder_status"><%= project.builder_state_and_activity %></span>
+      <span class="buttons">
+        <% form_tag :action => 'force_build', :id => project.name do %>
+          <%= submit_tag 'Build now', :disabled => (not project.force_build_request_allowed?) %>
+        <% end %>
+      </span>
     </div>
 
-    <% recent_builds = project.last_five_builds %>
+    <div class="recent_builds">
 
-    <table>
-    <tr>
-      <td><%= recent_builds.first ? 'build' : '<span class="build_status">Never built</span>' %> </td>
-      <td>
-        <% unless recent_builds.empty? %>
-          <div class="recent_builds">
-            <% recent_builds.each do |build| %>
-              <div class="build_summary">
-                <%= link_to_build(project, build) %>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-      </td>
-      <td>
-        <% if project.force_build_request_allowed? %>
-          <span>
-            <% form_tag({:action => 'force_build', :id => project.name}, :class => 'force_build_form') do %>
-              <%= submit_tag 'Build now' %>
-            <% end %>
-          </span>
-        <% end %>
-      </td>
-    </tr>
-    </table>
+      <% recent_builds = project.last_five_builds %>
 
+      <span class="lead"><%= recent_builds.first ? 'build ' : '<span class="build_status">Never built</span>' %></span>
+
+      <% unless recent_builds.empty? %>
+      <span>
+        <div class="builds_list">
+          <% recent_builds.each do |build| %>
+            <div class="build_summary"><%= link_to_build(project, build) %></div>
+          <% end %>
+        </div>
+      </span>
+      <% end %>
     </div>
-
   </td>
 
-
+  <td class="build_details">
+    TODO: In the near future this place will contain some details about the latest build,<br/>
+    such as who checked it in
+  </td>
   <td class="filler"></td>
 
 </tr>

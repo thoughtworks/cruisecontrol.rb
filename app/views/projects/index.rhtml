@@ -2,9 +2,7 @@
 
 <div id="projects">
   <% @projects.each do |project| %>
-    <div id="project_<%= project.name %>">
-      <%= render :partial => 'project', :locals => {:project => project }%>
-    </div>
+    <%= render :partial => 'project', :locals => {:project => project }%>
   <% end %>
    
   <%= render :partial => 'no_projects' if @projects.empty? %>
