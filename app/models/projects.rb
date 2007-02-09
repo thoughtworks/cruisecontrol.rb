@@ -8,7 +8,7 @@ class Projects
     end
 
     def load_project(dir)
-      project = Project.load_or_create(dir)
+      project = Project.read(dir)
       project.path = dir
       project
     end

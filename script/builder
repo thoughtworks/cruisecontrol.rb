@@ -32,8 +32,8 @@ CruiseControl::Log.verbose = OPTIONS[:verbose]
 
 project_path = File.expand_path(File.join(Configuration.builds_directory, OPTIONS[:project_name]))
 
-unless File.exist? project_path
-  STDERR.puts "Project '#{OPTIONS[:project_name]}' not found in '#{project_path}'"
+unless File.directory? project_path
+  STDERR.puts "Project '#{OPTIONS[:project_name]}' not found in '#{Configuration.builds_directory}'"
   exit(-1)
 end
 
@@ -51,7 +51,7 @@ end
 
 def load_project(path)
   begin
-    Project.load_or_create(path)
+    Project.read(path)
   rescue Exception => e
     write_to_log_and_console("Failed to load the new project configuration. The builder will stop.", :fatal)
     raise

@@ -7,7 +7,7 @@ class Project
     @@plugin_names << plugin_name unless RAILS_ENV == 'test' or @@plugin_names.include? plugin_name
   end
 
-  def self.load_or_create(dir)
+  def self.read(dir)
     project = @project = Project.new(File.basename(dir), Subversion.new, dir + "/work")
     project.path = dir
     begin
@@ -20,16 +20,8 @@ class Project
     end
   end
   
-  def config_file
-    File.expand_path(File.join(path, 'project_config.rb'))
-  end
-
-  def load_config_file
-    load config_file if File.exists?(config_file)
-  end
-
   def self.configure
-    raise "No project is currently being created" unless @project
+    raise 'No project is currently being created' unless @project
     yield @project
   end
 
@@ -51,6 +43,14 @@ class Project
     unless RAILS_ENV == 'test'
       add_plugin @builder_status
     end
+  end
+
+  def config_file
+    File.expand_path(File.join(path, 'project_config.rb'))
+  end
+
+  def load_config_file
+    load config_file if File.exists?(config_file)
   end
 
   # used by rjs to refresh project if build state tag changed.
