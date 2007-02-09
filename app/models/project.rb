@@ -96,14 +96,6 @@ class Project
     order_by_label(builds)
   end
 
-  # sorts a array of builds in order of revision number and rebuild number 
-  def order_by_label(builds)
-    builds.sort_by do |build|
-      number_and_rebuild = build.label.split('.')
-      number_and_rebuild.map { |x| x.to_i }
-    end
-  end
-
   def builder_state       
     ProjectBlocker.blocked?(self) ? Status::RUNNING : Status::NOT_RUNNING
   end
@@ -120,7 +112,7 @@ class Project
   def last_build
     builds.last
   end
-  
+    
   def last_build_status
     builds.empty? ? :never_built : last_build.status
   end
@@ -206,15 +198,15 @@ class Project
   end
 
   def build(revisions = [@source_control.latest_revision(self)])   
+    previous_build = last_build    
     last_revision = revisions.last
+    
     build = Build.new(self, create_build_label(last_revision.number))
     log_changeset(build.artifacts_directory, revisions)
     @source_control.update(self, last_revision)
     notify(:build_started, build)
     build.run
     notify(:build_finished, build)
-
-    previous_build = build.last
 
     if previous_build
       if build.failed? and previous_build.successful?
@@ -281,7 +273,14 @@ class Project
   end
   
   private
-  
+  # sorts a array of builds in order of revision number and rebuild number 
+  def order_by_label(builds)
+    builds.sort_by do |build|
+      number_and_rebuild = build.label.split('.')
+      number_and_rebuild.map { |x| x.to_i }
+    end
+  end
+    
   def create_build_label(revision_number)
     revision_number = revision_number.to_s
     build_labels = builds.map { |b| b.label.to_s }

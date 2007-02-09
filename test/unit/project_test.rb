@@ -130,9 +130,8 @@ class ProjectTest < Test::Unit::TestCase
       new_build.stubs(:successful?).returns(false)
       new_build.stubs(:failed?).returns(true)
       new_build.expects(:run)
-      new_build.stubs(:last).returns(successful_build)
-
-
+      
+      @project.expects(:last_build).returns(successful_build)
       @project.stubs(:builds).returns([successful_build])
       @project.stubs(:log_changeset)
       @svn.stubs(:update)
@@ -163,8 +162,7 @@ class ProjectTest < Test::Unit::TestCase
       new_build.stubs(:successful?).returns(true)
       new_build.stubs(:failed?).returns(false)
       new_build.expects(:run)
-      new_build.stubs(:last).returns(failing_build)
-
+      @project.expects(:last_build).returns(failing_build)
       @project.stubs(:builds).returns([failing_build])
       @project.stubs(:log_changeset)
       @svn.stubs(:update)
@@ -191,6 +189,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.stubs(:config_modifications?).returns(false)
       revision = new_revision(2)
       build = new_mock_build('2')
+      @project.stubs(:last_build).returns(nil)
       build.stubs(:artifacts_directory).returns(sandbox.root)      
       @svn.expects(:revisions_since).with(@project, 1).returns([revision])
       @svn.expects(:update).with(@project, revision)
@@ -396,13 +395,12 @@ class ProjectTest < Test::Unit::TestCase
     existing_build2 = stub_build('20.1')
     new_build = stub_build('20.2')
     new_build_with_interesting_number = stub_build('2')
-             
- 
+                 
     project = Project.new('project1', @svn)
     @svn.stubs(:update)
     project.stubs(:log_changeset) 
     project.stubs(:builds).returns([existing_build1, existing_build2])
-          
+    project.stubs(:last_build).returns(nil)      
     Build.expects(:new).with(project, '20.2').returns(new_build) 
     project.build([new_revision(20)])
 
@@ -416,7 +414,6 @@ class ProjectTest < Test::Unit::TestCase
     build = Object.new
     build.stubs(:label).returns(label)
     build.stubs(:artifacts_directory).returns("project1/build_#{label}")
-    build.stubs(:last).returns(nil)
     build.stubs(:run)
     build
   end

@@ -74,16 +74,6 @@ class Build
     %{ruby -e "require 'rubygems' rescue nil; require 'rake'; load '#{File.expand_path(RAILS_ROOT)}/tasks/cc_build.rake'; ARGV << '--nosearch'#{CruiseControl::Log.verbose? ? " << '--trace'" : ""} << 'cc:build'; Rake.application.run"}
   end
 
-  def last
-    builds = @project.builds
-    builds.each_index do |i|
-      if builds[i].label == label
-        return i > 0 ? builds[i - 1] : nil
-      end
-    end
-    nil
-  end
-
   def in_clean_environment_on_local_copy(&block)
     old_rails_env = ENV['RAILS_ENV']
     # If we don't clean RAILS_ENV OS variable, tests of the project we are building would be 
