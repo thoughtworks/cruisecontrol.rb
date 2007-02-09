@@ -1,5 +1,14 @@
 #!/usr/bin/env ruby
 require File.dirname(__FILE__) + '/../config/boot'
+require 'builder_starter'
+
+# do not start builders if "--without-builders" parameters
+# is found in the command line arguments
+without_builder_param = "--without-builders"
+if(!ARGV.index(without_builder_param).nil?)
+  BuilderStarter.run_builders_at_startup = false
+  ARGV.delete(without_builder_param)
+end
 
 # change default port from Rails' usual 3000 to 3333, so that it doesn't clash with other Rails apps 
 # running on the same box.
@@ -11,5 +20,7 @@ end
 if (ARGV & ['-e', '--environment']).empty?
   ARGV << '-e' << 'production'
 end
+
+p ARGV
 
 require 'commands/server'

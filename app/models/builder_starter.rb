@@ -16,13 +16,11 @@ class BuilderStarter
   end
   
   def self.begin_builder(project_name)
-    builder_command = "cruise.cmd build #{project_name}"
-        
     unless ruby_platform =~ /mswin32/
-      system(builder_command) if fork.nil?
+      exec("#{RAILS_ROOT}/cruise build #{project_name}") if fork.nil?
     else
       Thread.new(project_name) do |my_project_name|
-        system(builder_command)
+        system("cruise.cmd build #{project_name}")
       end
     end
   end
