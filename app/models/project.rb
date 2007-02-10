@@ -32,7 +32,6 @@ class Project
 
     @path = File.join(Configuration.builds_directory, @name)
     @scheduler = PollingScheduler.new(self)
-    @builder_status = ProjectBuilderStatus.new(@path)
     @plugins = []
     @plugins_by_name = {}
 
@@ -54,10 +53,6 @@ class Project
     @@plugin_names.each do |plugin_name|
       plugin_instance = plugin_name.to_s.camelize.constantize.new(self)
       self.add_plugin(plugin_instance)
-    end
-    # TODO: Not sure if we should exclude this like so or mock it out for testing? (Joe/Arty)
-    unless RAILS_ENV == 'test'
-      add_plugin @builder_status
     end
   end
 

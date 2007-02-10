@@ -1,7 +1,7 @@
-class ProjectBuilderStatus
+class BuilderStatus
   
-  def initialize(project_dir)
-    @project_dir = project_dir
+  def initialize(project)
+    @project_dir = project.path
   end
 
   def status
