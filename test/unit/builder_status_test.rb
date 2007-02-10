@@ -1,10 +1,11 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
-require 'project_builder_status'
 
-class ProjectBuilderStatusTest < Test::Unit::TestCase
+class BuilderStatusTest < Test::Unit::TestCase
   
   def setup
-    @builder_status = ProjectBuilderStatus.new('project_root')
+    project = Project.new('project')
+    project.path = 'project_root'
+    @builder_status = BuilderStatus.new(project)
     @mock_build = Object.new
   end
   
