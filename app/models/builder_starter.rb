@@ -7,7 +7,6 @@ class BuilderStarter
     @@startup = value
   end
 
-  # TODO: Should there be a sleep interval between launching project builders
   def self.start_builders
     if @@startup
       Projects.load_all.each do |project|
