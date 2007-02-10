@@ -15,12 +15,23 @@ class BuildsController < ApplicationController
   def artifact
     @project = find_project(load_projects)
     @build = @project.find_build(params[:build])
-    
-    # if (params[:artifacts_path] =)
-    
-    name = File.join *[@build.artifacts_directory, params[:artifact_path]].flatten
 
-    send_file(name, :type => get_mime_type(name), :disposition => 'inline', :stream => false)
+    path = File.join(@build.artifacts_directory, params[:artifact_path])
+    
+    if params[:artifact_path].index '..'
+      render :nothing => true, :status => 401 
+    elsif File.directory? path
+      if File.exists? path + "/index.html"
+        redirect_to :artifact_path => File.join(params[:artifact_path], 'index.html')
+      else
+        # eventually spit up an index
+        render :text => "this should be an index of #{params[:artifacts_path]}"
+      end
+    elsif File.exists? path
+      send_file(path, :type => get_mime_type(path), :disposition => 'inline', :stream => false)
+    else
+      render :nothing => true, :status => 404
+    end
   end
   
   private

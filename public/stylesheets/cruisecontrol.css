@@ -262,3 +262,9 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
     font-weight: bold;
     font-size: 120%;
 }
+
+.additional-artifacts {
+  float:right;
+  border: 1px solid #507ec0;
+  padding: 0.3em;
+}

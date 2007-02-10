@@ -97,5 +97,29 @@ class BuildsControllerTest < Test::Unit::TestCase
     assert_equal type, @response.headers['Content-Type']
   end
   
-  # secure
+  def test_can_not_go_up_a_directory
+    @sandbox.new :file => 'two/build-1/build_status.pingpong'
+    @sandbox.new :file => 'two/hidden'
+    
+    get :artifact, :project => 'two', :build => '1', :artifact_path => '../hidden'
+    
+    assert_response 401
+  end
+  
+  def test_artifact_does_not_exist
+    @sandbox.new :file => 'two/build-1/build_status.pingpong'
+    
+    get :artifact, :project => 'two', :build => '1', :artifact_path => 'foo'
+    
+    assert_response 404
+  end
+  
+  def test_artifact_is_directory
+    @sandbox.new :file => 'two/build-1/build_status.pingpong'
+    @sandbox.new :file => 'two/build-1/foo/index.html'
+    
+    get :artifact, :project => 'two', :build => '1', :artifact_path => 'foo'
+    
+    assert_redirected_to :artifact_path => ['foo/index.html']
+  end
 end
