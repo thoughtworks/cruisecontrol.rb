@@ -128,11 +128,15 @@ a.never_built, a.never_built:visited {
 }
 
 .project table.project_pane td.project_summary {
-  width: 40%;
+  width: 24%;
+}
+
+.project table.project_pane td.builder_control {
+  width: 12%;
 }
 
 .project table.project_pane td.build_details {
-  width: 59%;
+  width: 64%;
 }
 
 .project .project_summary .buttons {

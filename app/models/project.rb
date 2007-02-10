@@ -108,7 +108,7 @@ class Project
     order_by_label(builds)
   end
 
-  def builder_state       
+  def builder_state
     ProjectBlocker.blocked?(self) ? Status::RUNNING : Status::NOT_RUNNING
   end
   

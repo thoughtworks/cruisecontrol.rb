@@ -36,7 +36,6 @@ if (ARGV & ['-e', '--environment']).empty?
   ARGV << '-e' << 'production'
 end
 
-# Global varible to notify launched by rails web server
-$launching_rails_web_server = true;
+$CRUISE_CONTROL_CONTEXT = :webapp
 
 require 'commands/server'

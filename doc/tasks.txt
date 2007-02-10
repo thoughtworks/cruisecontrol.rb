@@ -12,21 +12,26 @@ UI Stuff
 Bugs
 ----
 Removing project_config.rb does not trigger the build.
+
 Dashboard should not load project configuration all the time.
+
 What should be the status of a build that passed, but THEN the build loop crashed?
+
 Some of the "force build" stuff is begging to be refactored.
-Yellow fade fades a wrong div.
-Yellow fade should only happen when build (and not the builder) status changes.
-Build now button behaves in very strange ways (appearance/disappearance logic).
+
+Build Now button should be always enabled. When a builder is down, it should launch the builder.
+  When builder is building, it should set a "build requested" flag.
+
 Replace projects.rhtml with projects.rxml
+
 Generalize things like build.changeset, build.output; makes them write out error messages when the file doesn't exist, 
 or exists but is not readable
 
-Visuals
--------
-Align CC logo with header gradient, so that we don't need CSS gimmicks like margin-bottom: -3px;
-Make header gradient a .png.
-Should we or should we not have gradient fills for passing projects? It looks more consistent that way.
+Refresh pages response should not care as much as it does about the browser state before request. Ideally,
+just send to the browser an entire data set, and let JavaScript runtime figure out what needs to be changed in DOM.   
+
+Contents of a project panel "build details" section on the dashboard can be prerendered by the builder (as Ruby,
+or even directly as XHTML) and cached in the build artifacts directory (? but complexity cost may be too high ?)
 
 Necessary
 ---------

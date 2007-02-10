@@ -8,12 +8,6 @@
       <span class="project_name">
         <%= link_to project.name, :controller => 'builds', :action => 'show', :project => project.name %>
       </span>
-      <span class="builder_status"><%= project.builder_state_and_activity %></span>
-      <span class="buttons">
-        <% form_tag :action => 'force_build', :id => project.name do %>
-          <%= submit_tag 'Build now', :disabled => (not project.force_build_request_allowed?) %>
-        <% end %>
-      </span>
     </div>
 
     <div class="recent_builds">
@@ -32,6 +26,15 @@
       </span>
       <% end %>
     </div>
+  </td>
+
+  <td class="builder_control">
+    <div class="buttons">
+      <% form_tag :action => 'force_build', :id => project.name do %>
+        <%= submit_tag 'Build now' %>
+      <% end %>
+    </div>
+    <div class="builder_status"><%= project.builder_state_and_activity %></div>
   </td>
 
   <td class="build_details">
