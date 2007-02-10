@@ -14,14 +14,13 @@ class ProjectsController < ApplicationController
     @build_states = get_build_states(current_projects)
     original_build_states = (params[:build_states] or '')
     original_build_states.split(';').each do |build_state|
-      project = current_projects.find {|proj| proj.name == build_state.split(':')[0] }
-      if(!project.nil?)
-        if (project.builder_and_build_states_tag != build_state.split(':')[1])
-          changed_projects << project
-        end
+      project_name, original_state = build_state.split(':')
+      project = current_projects.find { |proj| proj.name == project_name }
+      if project
+        changed_projects << project if project.builder_and_build_states_tag != original_state
         current_projects.delete(project)
       else
-        deleted_projects << build_state.split(':')[0]
+        deleted_projects << project_name
       end
     end
     @projects = changed_projects
