@@ -25,7 +25,7 @@ class Project
 
   attr_reader :name, :plugins, :build_command, :rake_task
   attr_writer :local_checkout 
-  attr_accessor :source_control, :path, :scheduler, :builder_status
+  attr_accessor :source_control, :path, :scheduler
 
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
@@ -114,8 +114,7 @@ class Project
   
   def builder_activity
     state = builder_state
-    # the who knows is to fix a broken build, this should be removed - jss
-    state == Status::RUNNING ? (@builder_status ? @builder_status.status : 'who knows?') : state
+    state == Status::RUNNING ? self.builder_status.status : state
   end
   
   def builder_state_and_activity

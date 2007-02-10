@@ -48,3 +48,5 @@ class BuilderStatus
     end
       
 end
+
+Project.plugin :builder_status
