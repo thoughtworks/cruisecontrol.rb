@@ -1,14 +1,14 @@
 require 'singleton'
 
 class BuilderStarter
-  @@startup = true;
+  @@run_builders_at_startup = true;
   
   def self.run_builders_at_startup=(value)
-    @@startup = value
+    @@run_builders_at_startup = value
   end
 
   def self.start_builders
-    if @@startup
+    if @@run_builders_at_startup
       Projects.load_all.each do |project|
         begin_builder(project.name)
       end
