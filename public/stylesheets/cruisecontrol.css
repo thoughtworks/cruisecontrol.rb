@@ -26,7 +26,7 @@ a:hover {
 /* default layout classes */
 
 .header {
-  background-image: url(/images/gray_gradient.gif);
+  background-image: url(/images/top_gradient.png);
   background-position: top;
   background-repeat: repeat-x;
   font-weight: normal;
@@ -34,7 +34,7 @@ a:hover {
 }
 
 .header .cc_logo { 
-  margin: 0 0 0 5px;
+  margin: 10px 0 0 5px;
 }
 
 .footer {
@@ -64,7 +64,7 @@ a:hover {
   display: block;
   font-size: 0.8em;
   text-align: right;
-  padding-bottom: 0.2em;
+  padding: 0 0.35em 0.2em 0;
 }
 
 .main_menu .menu_item a, .main_menu .menu_item a:visited {
@@ -72,6 +72,7 @@ a:hover {
 }
 
 #content {
+  padding-left: 2.5em;
 }
 
 /* build status stuff */
@@ -90,7 +91,7 @@ a.failed, a.failed:visited {
   color: #C00;
 }
 
-a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_column a.never_built:visited  {
+a.never_built, a.never_built:visited {
   font-weight: bold;
   color: #888;
 }
@@ -99,13 +100,15 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 
 .project {
   margin: 0.5em 0;
-  padding: 0.5em 1.5em;
-}
+  padding: 0 1.5em;
+  min-height: 8em;
+}  
 
 .build_success, .build_never_built {
-  background-image: url(/images/gray_gradient.gif);
+  background-image: url(/images/gray_gradient.png);
   background-position: bottom;
   background-repeat: repeat-x;
+  margin-left: -2.5em;
 }
 
 .build_failed {
@@ -114,24 +117,22 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   background-repeat: repeat-x;
 }
 
-.project table { width: 100%; }
+.project table.project_pane {
+  padding-left: .75em;
+  width: 100%;
+}
 
-.project td {
+.project table.project_pane td {
   vertical-align: top;
   text-align: left;
 }
 
-.project td.project_summary {
+.project table.project_pane td.project_summary {
   width: 40%;
 }
 
-.project td.build_details {
+.project table.project_pane td.build_details {
   width: 59%;
-}
-
-.project td.filler {
-  width: 1%;
-  padding-bottom: 8em;
 }
 
 .project .project_summary .buttons {
@@ -162,7 +163,7 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 .project .project_name {
   padding: 0;
   margin: 0;
-  font-size: 2.5em;
+  font-size: 2em;
   font-weight: normal;
 }
 
@@ -226,8 +227,8 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
   font-family: courier, serif;
 }
 
-.section-closed .section-header { background-image: url(../images/closed_twisty.png); }
-.section-open .section-header   { background-image: url(../images/open_twisty.png); }
+.section-closed .section-header { background-image: url(../images/arrow_closed.png); }
+.section-open .section-header   { background-image: url(../images/arrow_open.png); }
 
 .section-closed .section-content { display: none; }
 
@@ -260,7 +261,7 @@ a.never_built, a.never_built:visited, td.left_column a.never_built, td.left_colu
 {
     padding: 10px;
     font-weight: bold;
-    font-size: 120%;
+    font-size: 1.2em;
 }
 
 .additional-artifacts {

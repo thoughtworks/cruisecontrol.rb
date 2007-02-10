@@ -10,7 +10,7 @@
 <body>
 
   <div class="header">
-    <div class="main_menu"/>
+    <div class="main_menu">
       <span class="menu_item">
         <%= link_to_unless_current 'Dashboard', :controller => 'projects', :action => 'index' %>
       </span>
@@ -20,7 +20,7 @@
     </div>
 
     <div class="cc_logo">
-      <%= link_to image_tag("cc_logo.png"), :controller => 'projects', :action => 'index' %>
+      <%= link_to image_tag("cruise_logo.png"), :controller => 'projects', :action => 'index' %>
     </div>    
 
     <% if flash[:notice] and !flash[:notice].blank? -%>

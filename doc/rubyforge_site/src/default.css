@@ -10,7 +10,7 @@ body {
 a img { border: none; }
 
 .header {
-  background-image: url(images/header_background.gif);
+  background-image: url(images/top_gradient.png);
   font-weight: bold;
 }
 
