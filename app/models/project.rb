@@ -114,7 +114,8 @@ class Project
   
   def builder_activity
     state = builder_state
-    state == Status::RUNNING ? @builder_status.status : state
+    # the who knows is to fix a broken build, this should be removed - jss
+    state == Status::RUNNING ? (@builder_status ? @builder_status.status : 'who knows?') : state
   end
   
   def builder_state_and_activity
