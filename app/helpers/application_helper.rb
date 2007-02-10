@@ -40,5 +40,11 @@ module ApplicationHelper
   def link_to_documentation(text = 'Documentation')
     '<a href="http://cruisecontrolrb.rubyforge.org">' + h(text) + '</a>'
   end
+  
+  def link_to_build(project, build)
+    text = "#{build.label} (#{format_time(build.time, :human)})"
+    text += " <span class='error'>FAILED</span>" if build.failed?
+    link_to text, {:controller => 'builds', :action => 'show', :project => project.name, :build => build.label}, :class => build.status
+  end
 
 end

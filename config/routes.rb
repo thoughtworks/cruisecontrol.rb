@@ -17,6 +17,12 @@ ActionController::Routing::Routes.draw do |map|
   
   # map.connect 'build', :controller => 'build', :action => "index"
   map.connect '', :controller => 'projects', :action => 'index'   
+
+  map.connect 'builds/:project', :controller => 'builds', :action => 'show'
+  map.connect 'builds/:project/:build', :controller => 'builds', :action => 'show', :build => /[^\/]+/
+  map.connect 'builds/:project/:build/*artifact_path', :controller => 'builds', :action => 'artifact', :build => /[^\/]+/
+  
+  map.connect 'projects/:action/:project', :controller => 'projects'
   
   # You can have the root of your site routed with map.root
   # map.root '', :controller => "builds", :action => "index"

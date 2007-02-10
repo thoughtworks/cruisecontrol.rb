@@ -41,41 +41,13 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal @projects, assigns(:projects)
   end
 
-  def test_show_with_build
-    @sandbox.new :file => "two/build-24/build_status.pingpong"
-    @sandbox.new :file => "two/build-25/build_status.pingpong"
-
-    get :show, :id => 'two'
-
-    assert_equal @two, assigns(:project)
-    assert_equal '25', assigns(:build).label
-  end
-
-  def test_show_specific_build
-    @sandbox.new :file => "two/build-24/build_status.pingpong"
-    @sandbox.new :file => "two/build-25/build_status.pingpong"
-
-    get :show, :id => 'two', :build => 24
-
-    assert_equal @two, assigns(:project)
-    assert_equal '24', assigns(:build).label
-  end
-
-  def test_show_with_no_build
-    get :show, :id => "two"
-
-    assert_response :success
-
-    assert_equal @two, assigns(:project)
-    assert_nil assigns(:build)
-    assert_template 'no_builds_yet'
-  end
-
   def test_should_refresh_projects_if_builder_and_build_states_tag_changed
     @controller.load_projects = new_project("one"), new_project("two")
     @sandbox.new :file => "one/build-24/build_status.pingpong"
     @sandbox.new :file => "two/build-24/build_status.new_status"
+
     post :refresh_projects, :build_states => 'one:notstarted24pingpong;two:notstarted24old_status;'
+
     assert_equal [@two], assigns(:projects)   
   end
   
@@ -83,7 +55,9 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @controller.load_projects = new_project("one"), new_project("two")
     @sandbox.new :file => "one/build-24/build_status.pingpong"
     @sandbox.new :file => "two/build-24/build_status.new_status"
+  
     post :refresh_projects, :build_states => 'one:NotStarted24pingpong;two:NotStarted24old_status;'
+  
     assert_equal 'one:notstarted24pingpong;two:notstarted24new_status;', assigns(:build_states)
   end
   
@@ -91,7 +65,9 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @controller.load_projects = new_project("one"), new_project("two")
     @sandbox.new :file => "one/build-24/build_status.pingpong"
     @sandbox.new :file => "two/build-24/build_status.some_status"
+  
     get :index
+  
     assert_equal 'one:notstarted24pingpong;two:notstarted24some_status;', assigns(:build_states)
   end
   
@@ -99,7 +75,9 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @sandbox.new :file => "one/build-24/build_status.pingpong"
     @sandbox.new :file => "two/build-24/build_status.pingpong"
     @sandbox.new :file => "three/build-24/build_status.pingpong"
+  
     post :refresh_projects, :build_states => 'one:notstarted24pingpong;three:notstarted24pingpong;'
+  
     assert_equal 'one:notstarted24pingpong;two:notstarted24pingpong;three:notstarted24pingpong;', assigns(:build_states)
     assert_equal [@two], assigns(:new_projects)
     assert_equal [], assigns(:projects)
@@ -110,7 +88,9 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @controller.load_projects = new_project("one"), new_project("two")
     @sandbox.new :file => "one/build-24/build_status.pingpong"
     @sandbox.new :file => "two/build-24/build_status.pingpong"
+  
     post :refresh_projects, :build_states => 'one:notstarted24pingpong;two:notstarted24pingpong;three:notstarted24pingpong;'
+  
     assert_equal 'one:notstarted24pingpong;two:notstarted24pingpong;', assigns(:build_states)
     assert_equal ['three'], assigns(:deleted_projects)
     assert_equal [], assigns(:projects)
@@ -122,11 +102,11 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @controller.project= @two
     @controller.expects(:redirect_to).times(1).with({:action => :index})
     @two.expects(:request_force_build).times(1).returns("result")
-    post :force_build, :id => "two" 
+  
+    post :force_build, :project => "two" 
+
     assert_equal "result", flash[:projects_flash]
   end
-
-  private
 
   def new_project(name)
     project = Project.new(name)

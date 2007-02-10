@@ -7,17 +7,6 @@ class ProjectsController < ApplicationController
     @build_states = get_build_states(@projects)
   end
 
-  def show
-    @project = find_project(load_projects)
-
-    if params.has_key? :build
-      @build = @project.builds.find { |build| build.label.to_s == params[:build] }
-    end
-    @build ||= @project.last_build
-    
-    render :action => 'no_builds_yet' unless @build
-  end
-
   def refresh_projects
     current_projects = load_projects
     changed_projects = []
@@ -48,14 +37,6 @@ class ProjectsController < ApplicationController
   
   private
 
-  def load_projects
-    Projects.load_all
-  end
-
-  def find_project(projects)
-    projects.find {|p| p.name == params[:id] }
-  end
-
   def get_build_states(projects)
     states = ''
     projects.each do |project|
@@ -63,5 +44,4 @@ class ProjectsController < ApplicationController
     end
     states
   end
-
 end

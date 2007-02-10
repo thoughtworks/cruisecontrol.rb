@@ -141,4 +141,26 @@ class BuildTest < Test::Unit::TestCase
     assert_equal 3.2, Build.new(project, 3.2).label
   end
 
+  def test_build_should_know_about_additional_artifacts
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :file => "build-1/coverage/index.html"
+      sandbox.new :file => "build-1/coverage/units/index.html"
+      sandbox.new :file => "build-1/coverage/functionals/index.html"
+      sandbox.new :file => "build-1/foo"
+      sandbox.new :file => "build-1/foo.txt"
+      sandbox.new :file => "build.log"
+      sandbox.new :file => "build_status.failure"
+      sandbox.new :file => "changeset.log"
+      
+      build = Build.new(project, 1)
+      assert_equal(%w(coverage foo foo.txt), build.additional_artifacts.sort)
+    end
+  end
+
+  def test_build_should_know_its_publish_name
+    with_sandbox_project do |sandbox, project|
+      build = Build.new(project, 1)
+      assert_equal "/builds/my_project/1", build.publish_name 
+    end
+  end
 end

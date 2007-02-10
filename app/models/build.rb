@@ -2,6 +2,7 @@ class Build
   include CommandLine
 
   attr_reader :project, :label
+  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|changeset.log)$/
 
   def initialize(project, label)
     @project, @label = project, label
@@ -10,6 +11,10 @@ class Build
     @status = Status.new(artifacts_directory)
   end
   
+  def publish_name
+    "/builds/#{@project.name}/#{label}"
+  end
+
   def run
     build_log = artifact 'build.log'
     # build_command must be set before doing chdir, because there may be some relative paths
@@ -21,6 +26,10 @@ class Build
   rescue => e
     CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)    
     @status.fail!
+  end
+
+  def additional_artifacts
+    Dir.entries(artifacts_directory).find_all {|artifact| !(artifact =~ IGNORE_ARTIFACTS) }
   end
   
   def status
@@ -88,7 +97,4 @@ class Build
       ENV['RAILS_ENV'] = old_rails_env
     end
   end
-
-  private
-  
 end

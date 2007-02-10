@@ -129,6 +129,11 @@ class Project
   def last_build
     builds.last
   end
+
+  def find_build(label)
+    # this could be optimized a lot
+    builds.find { |build| build.label.to_s == label }
+  end
     
   def last_build_status
     builds.empty? ? :never_built : last_build.status

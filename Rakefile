@@ -25,3 +25,4 @@ RUBY_FORGE_USER    = "stellsmi"
 
 
 require 'tasks/rails'
+
