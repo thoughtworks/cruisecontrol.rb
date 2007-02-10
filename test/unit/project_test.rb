@@ -262,11 +262,10 @@ class ProjectTest < Test::Unit::TestCase
   end
   
   def test_return_builder_activity
-    @builder_status = Object.new
-    @project.builder_status = @builder_status
+    @project.stubs(:builder_status).returns(Object.new)
     
     ProjectBlocker.expects(:blocked?).with(@project).returns(true) 
-    @builder_status.expects(:status).returns(:working)
+    @project.builder_status.expects(:status).returns(:working)
     assert_equal :working, @project.builder_activity
   end
     
