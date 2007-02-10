@@ -8,51 +8,75 @@ class Project
   end
 
   def self.read(dir)
-    project = @project = Project.new(File.basename(dir), Subversion.new, dir + "/work")
-    project.path = dir
+    @project_in_the_works = Project.new(File.basename(dir))
     begin
-      project.load_config_file
-      return project
+      return @project_in_the_works.load_config
     rescue => e
-      raise "Could not load #{project.config_file} : #{e.message} in #{e.backtrace.first}"
+      raise "Could not load #{@project_in_the_works.config_file} : #{e.message} in #{e.backtrace.first}"
     ensure
-      @project = nil
+      @project_in_the_works = nil
     end
   end
   
   def self.configure
-    raise 'No project is currently being created' unless @project
-    yield @project
+    raise 'No project is currently being created' unless @project_in_the_works
+    yield @project_in_the_works
   end
 
   attr_reader :name, :plugins, :build_command, :rake_task
-  attr_accessor :source_control, :path, :local_checkout, :scheduler, :builder_status
+  attr_writer :local_checkout 
+  attr_accessor :source_control, :path, :scheduler, :builder_status
 
-  def initialize(name, source_control = Subversion.new, local_checkout = nil)
-    @name, @source_control, @local_checkout = name, source_control, local_checkout
+  def initialize(name, source_control = Subversion.new)
+    @name, @source_control = name, source_control
+
     @path = File.join(Configuration.builds_directory, @name)
+    @scheduler = PollingScheduler.new(self)
+    @builder_status = ProjectBuilderStatus.new(@path)
     @plugins = []
     @plugins_by_name = {}
-    @@plugin_names.each do |plugin_name|
-      plugin_instance = plugin_name.to_s.camelize.constantize.new(self)
-      self.add_plugin(plugin_instance)
-    end
-    @scheduler = PollingScheduler.new(self)    
-    @builder_status = ProjectBuilderStatus.new(path)
-    # TODO: Not sure if we should exclude this like so or mock it out for testing? (Joe/Arty)
-    unless RAILS_ENV == 'test'
-      add_plugin @builder_status
-    end
+
+    instantiate_plugins
   end
 
   def config_file
     File.expand_path(File.join(path, 'project_config.rb'))
   end
 
-  def load_config_file
-    load config_file if File.exists?(config_file)
+  def load_config
+    if File.exists?(config_file)
+      load config_file
+    end
+    self
   end
 
+  def instantiate_plugins
+    @@plugin_names.each do |plugin_name|
+      plugin_instance = plugin_name.to_s.camelize.constantize.new(self)
+      self.add_plugin(plugin_instance)
+    end
+    # TODO: Not sure if we should exclude this like so or mock it out for testing? (Joe/Arty)
+    unless RAILS_ENV == 'test'
+      add_plugin @builder_status
+    end
+  end
+
+  def add_plugin(plugin, plugin_name = plugin.class)
+    @plugins << plugin
+    plugin_name = plugin_name.to_s.underscore.to_sym
+    if self.respond_to?(plugin_name)
+      raise "Cannot register an plugin with name #{plugin_name.inspect} " +
+            "because another plugin, or a method with the same name already exists"
+    end
+    @plugins_by_name[plugin_name] = plugin
+    plugin
+  end
+
+  # access plugins by their names
+  def method_missing(method_name, *args, &block)
+    @plugins_by_name.key?(method_name) ? @plugins_by_name[method_name] : super
+  end
+  
   # used by rjs to refresh project if build state tag changed.
   def builder_and_build_states_tag
     builder_state_and_activity.gsub(' ', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
@@ -70,6 +94,10 @@ class Project
   def rake_task=(value)
     raise 'Cannot set rake_task when build_command is already defined' if value and @build_command
     @rake_task = value
+  end
+
+  def local_checkout
+    @local_checkout or File.join(@path, 'work')
   end
 
   def builds
@@ -233,22 +261,6 @@ class Project
     end
   end
 
-  def add_plugin(plugin, plugin_name = plugin.class)
-    @plugins << plugin
-    plugin_name = plugin_name.to_s.underscore.to_sym
-    if self.respond_to?(plugin_name)
-      raise "Cannot register an plugin with name #{plugin_name.inspect} " +
-            "because another plugin, or a method with the same name already exists"
-    end
-    @plugins_by_name[plugin_name] = plugin
-    plugin
-  end
-
-  # access plugins by their names
-  def method_missing(method_name, *args, &block)
-    @plugins_by_name.key?(method_name) ? @plugins_by_name[method_name] : super
-  end
-  
   def respond_to?(method_name)
     @plugins_by_name.key?(method_name) or super
   end

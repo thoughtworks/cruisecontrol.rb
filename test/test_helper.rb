@@ -52,8 +52,11 @@ class Test::Unit::TestCase
 
   def with_sandbox_project(&block)
     in_total_sandbox do |sandbox|
-      project = Project.new('my_project', nil, '.')
+      FileUtils.mkdir_p("#{sandbox.root}/work")
+
+      project = Project.new('my_project')
       project.path = sandbox.root
+
       yield(sandbox, project)
     end
   end

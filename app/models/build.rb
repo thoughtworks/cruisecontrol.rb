@@ -19,7 +19,7 @@ class Build
     end
     @status.succeed!
   rescue => e
-    CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
+    CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)    
     @status.fail!
   end
   

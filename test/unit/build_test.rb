@@ -73,6 +73,7 @@ class BuildTest < Test::Unit::TestCase
       
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
       Status.any_instance.expects(:'succeed!')
+      Status.any_instance.expects(:'fail!').never
   
       build.run
     end

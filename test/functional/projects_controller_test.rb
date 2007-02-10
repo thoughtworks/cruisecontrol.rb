@@ -129,8 +129,8 @@ class ProjectsControllerTest < Test::Unit::TestCase
   private
 
   def new_project(name)
-    project = Project.new(name, Subversion.new)
-    project.path = file(name).name
+    project = Project.new(name)
+    project.path = "#{@sandbox.root}/#{name}"
     project.add_plugin(EmailNotifier.new)
     project
   end

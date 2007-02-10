@@ -46,7 +46,6 @@ Build
 
 Dev
 ---
-* project.path setter after every call to Project.new is ugly. Move to the c'tor (? or not ?)
 * Check what happens with parsing "svn log" output if a project has svn:externals, and there is a new revision in there
 * RESTful URLs everywhere
 

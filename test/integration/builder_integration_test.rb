@@ -5,13 +5,13 @@ class IntegrationTest < Test::Unit::TestCase
 
   def test_checkout
     # with_project calls svn.checkout
-    with_project 'passing_project' do |project, sandbox, svn|
+    with_project 'passing_project' do |project, sandbox|
       assert File.exists?("passing_project/work/passing_test.rb")
     end
   end
 
   def test_new_revisions
-    with_project('passing_project', :revision => 2) do |project, sandbox, svn|
+    with_project('passing_project', :revision => 2) do |project, sandbox|
       expected_revisions = [
           Revision.new(3, 'averkhov', DateTime.new(2007, 01, 11, 14, 01, 43, Rational(-7, 24)),
                        'another revision',
@@ -24,18 +24,18 @@ class IntegrationTest < Test::Unit::TestCase
                        [ChangesetEntry.new('M', '/failing_project/revision_label.txt'),
                         ChangesetEntry.new('M', '/passing_project/revision_label.txt')])
           ]
-      assert_equal expected_revisions, svn.revisions_since(project, 2)
+      assert_equal expected_revisions, Subversion.new.revisions_since(project, 2)
     end
   end
 
   def test_new_revisions_should_return_an_empty_array_for_uptodate_local_copy
-    with_project 'passing_project' do |project, sandbox, svn|
-      assert_equal [],  svn.revisions_since(project, 7)
+    with_project 'passing_project' do |project, sandbox|
+      assert_equal [],  Subversion.new.revisions_since(project, 7)
     end
   end
 
   def test_build_if_necessary
-    with_project('passing_project', :revision => 2) do |project, sandbox, svn|
+    with_project('passing_project', :revision => 2) do |project, sandbox|
       sandbox.new :file=> 'passing_project/project_config.rb'
       sandbox.new :file=> 'passing_project/build-2/build_status.success'
 
@@ -54,7 +54,7 @@ class IntegrationTest < Test::Unit::TestCase
   end
 
   def test_build_if_necessary_for_a_failing_build
-    with_project('failing_project', :revision => 6) do |project, sandbox, svn|
+    with_project('failing_project', :revision => 6) do |project, sandbox|
       result = project.build_if_necessary
 
       assert result.is_a?(Build)
@@ -69,7 +69,7 @@ class IntegrationTest < Test::Unit::TestCase
   end
 
   def test_build_if_necessary_should_return_nil_when_no_changes_were_made
-    with_project 'passing_project' do |project, sandbox, svn|
+    with_project 'passing_project' do |project, sandbox|
       sandbox.new :file=> 'passing_project/project_config.rb'
       sandbox.new :file=>'passing_project/build-7/build_status.success'     
       result = project.build_if_necessary      
@@ -79,7 +79,7 @@ class IntegrationTest < Test::Unit::TestCase
   end
       
   def test_build_should_still_build_even_when_no_changes_were_made
-    with_project('passing_project', :revision => 7) do |project, sandbox, svn|
+    with_project('passing_project', :revision => 7) do |project, sandbox|
       status_file_path = 'passing_project/build-7/build_status.success'
       sandbox.new :file=> status_file_path      
       new_status_file_path = 'passing_project/build-7.1/build_status.success'    
@@ -95,7 +95,7 @@ class IntegrationTest < Test::Unit::TestCase
   end  
     
   def test_builder_should_set_RAILS_ENV_to_test_and_invoke_db_migrate_and_test_instead_of_if_these_tasks_are_defined
-    with_project('project_with_db_migrate') do |project, sandbox, svn|
+    with_project('project_with_db_migrate') do |project, sandbox|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
 
@@ -106,7 +106,7 @@ class IntegrationTest < Test::Unit::TestCase
   end
 
   def test_builder_should_clear_RAILS_ENV_and_invoke_cruise_if_this_task_is_defined
-    with_project('project_with_cruise_and_default_tasks') do |project, sandbox, svn|
+    with_project('project_with_cruise_and_default_tasks') do |project, sandbox|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
 
@@ -117,7 +117,7 @@ class IntegrationTest < Test::Unit::TestCase
   end
 
   def test_custom_build_command
-    with_project('project_with_cruise_and_default_tasks') do |project, sandbox, svn|
+    with_project('project_with_cruise_and_default_tasks') do |project, sandbox|
       project.build_command = 'echo Vasya_was_here'
 
       build = project.build
@@ -130,7 +130,7 @@ class IntegrationTest < Test::Unit::TestCase
   end
 
   def test_custom_rake_task
-    with_project('project_with_custom_rake_task') do |project, sandbox, svn|
+    with_project('project_with_custom_rake_task') do |project, sandbox|
       project.rake_task = 'my_build'
 
       build = project.build
@@ -143,7 +143,7 @@ class IntegrationTest < Test::Unit::TestCase
   end
 
   def test_multiple_custom_rake_tasks
-    with_project('project_with_custom_rake_task') do |project, sandbox, svn|
+    with_project('project_with_custom_rake_task') do |project, sandbox|
       project.rake_task = 'my_build my_deploy'
 
       build = project.build
@@ -156,7 +156,7 @@ class IntegrationTest < Test::Unit::TestCase
   end
 
   def test_should_reconnect_to_database_after_db_test_purge_in_cc_build
-    with_project 'project_with_db_test_purge_and_migrate' do |project, sandbox, svn|
+    with_project 'project_with_db_test_purge_and_migrate' do |project, sandbox|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
       expected_output = "db-test-purge\nESTABLISH_CONNECTION\n[CruiseControl] Invoking Rake task \"db:migrate\"\ndb-migrate\n"
@@ -166,7 +166,7 @@ class IntegrationTest < Test::Unit::TestCase
   end
   
   def test_should_break_build_if_no_migration_scripts_but_database_yml_exists
-    with_project 'project_with_no_migration_scripts_but_database_yml_exists' do |project, sandbox, svn|
+    with_project 'project_with_no_migration_scripts_but_database_yml_exists' do |project, sandbox|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
       assert !build_log.include?("db-test-purge") 
@@ -189,10 +189,10 @@ class IntegrationTest < Test::Unit::TestCase
       svn = Subversion.new :url => "#{fixture_repository_url}/#{project_name}"
       svn.checkout "#{sandbox.root}/#{project_name}/work", options[:revision]
       
-      project = Project.new(project_name, svn, "#{sandbox.root}/#{project_name}/work")
+      project = Project.new(project_name)
       project.path = "#{sandbox.root}/#{project_name}"
 
-      block.call(project, sandbox, svn)
+      block.call(project, sandbox)
     end
   end
 

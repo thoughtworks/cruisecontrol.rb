@@ -10,12 +10,6 @@ class ProjectTest < Test::Unit::TestCase
     @project = Project.new("lemmings")
   end
 
-  def test_properties
-    @project = Project.new("lemmings", Subversion.new(:username => 'bob'))
-    assert_equal("lemmings", @project.name)
-    assert_equal("bob", @project.source_control.username)
-  end
-  
   def test_default_scheduler
     assert_equal PollingScheduler, @project.scheduler.class
   end
