@@ -7,8 +7,7 @@ class Build
   def initialize(project, label)
     @project, @label = project, label
     FileUtils.mkdir_p(artifacts_directory)
-
-    @status = Status.new(artifacts_directory)
+    @status = BuildStatus.new(artifacts_directory)
   end
   
   def publish_name

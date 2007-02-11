@@ -74,7 +74,7 @@ class Project
   
   # used by rjs to refresh project if build state tag changed.
   def builder_and_build_states_tag
-    builder_state_and_activity.gsub(' ', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
+    builder_state_and_activity.to_s.gsub('_', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
   end
   
   def ==(another)
@@ -98,27 +98,20 @@ class Project
   def builds
     raise "Project #{name.inspect} has no path" unless path
 
-    builds = Dir["#{path}/build-*/build_status.*"].collect do |status_file|
+    the_builds = Dir["#{path}/build-*/build_status.*"].collect do |status_file|
       build_directory = File.basename(File.dirname(status_file))
       build_label = build_directory[6..-1]
-
       Build.new(self, build_label)
     end
-
-    order_by_label(builds)
+    order_by_label(the_builds)
   end
 
-  def builder_state
-    ProjectBlocker.blocked?(self) ? Status::RUNNING : Status::NOT_RUNNING
+  def builder_status
+    BuilderStatus.new(self)
   end
-  
-  def builder_activity
-    state = builder_state
-    state == Status::RUNNING ? self.builder_status.status : state
-  end
-  
+
   def builder_state_and_activity
-    result = builder_state == Status::RUNNING ? builder_activity.to_s : builder_state.downcase
+    builder_status.status
   end 
   
   def last_build
@@ -205,9 +198,10 @@ class Project
       ForceBuildBlocker.release(self) rescue nil
     end  
   end
-  
+
+  # TODO: remove this method altogether
   def force_build_request_allowed?
-    builder_activity.to_s == "sleeping" and !force_build_requested?
+    true
   end
 
   def build(revisions = [@source_control.latest_revision(self)])   

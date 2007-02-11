@@ -72,8 +72,8 @@ class BuildTest < Test::Unit::TestCase
         }
       
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
-      Status.any_instance.expects(:'succeed!')
-      Status.any_instance.expects(:'fail!').never
+      BuildStatus.any_instance.expects(:'succeed!')
+      BuildStatus.any_instance.expects(:'fail!').never
   
       build.run
     end
@@ -95,7 +95,7 @@ class BuildTest < Test::Unit::TestCase
       }
   
       build.expects(:execute).with(build.rake, expected_redirect_options).raises(CommandLine::ExecutionError)
-      Status.any_instance.expects(:'fail!')
+      BuildStatus.any_instance.expects(:'fail!')
   
       build.run
     end
@@ -103,7 +103,7 @@ class BuildTest < Test::Unit::TestCase
   
   def test_status
     with_sandbox_project do |sandbox, project|
-      Status.any_instance.expects(:to_s)
+      BuildStatus.any_instance.expects(:to_s)
       Build.new(project, 123).status
     end
   end

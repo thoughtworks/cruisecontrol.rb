@@ -46,7 +46,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @sandbox.new :file => "one/build-24/build_status.pingpong"
     @sandbox.new :file => "two/build-24/build_status.new_status"
 
-    post :refresh_projects, :build_states => 'one:notstarted24pingpong;two:notstarted24old_status;'
+    post :refresh_projects, :build_states => 'one:builderdown24pingpong;two:builderdown24old_status;'
 
     assert_equal [@two], assigns(:projects)   
   end
@@ -58,7 +58,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
   
     post :refresh_projects, :build_states => 'one:NotStarted24pingpong;two:NotStarted24old_status;'
   
-    assert_equal 'one:notstarted24pingpong;two:notstarted24new_status;', assigns(:build_states)
+    assert_equal 'one:builderdown24pingpong;two:builderdown24new_status;', assigns(:build_states)
   end
   
   def test_index_should_set_build_states
@@ -68,7 +68,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
   
     get :index
   
-    assert_equal 'one:notstarted24pingpong;two:notstarted24some_status;', assigns(:build_states)
+    assert_equal 'one:builderdown24pingpong;two:builderdown24some_status;', assigns(:build_states)
   end
   
   def test_should_show_new_added_project_when_refresh_projects
@@ -76,9 +76,9 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @sandbox.new :file => "two/build-24/build_status.pingpong"
     @sandbox.new :file => "three/build-24/build_status.pingpong"
   
-    post :refresh_projects, :build_states => 'one:notstarted24pingpong;three:notstarted24pingpong;'
+    post :refresh_projects, :build_states => 'one:builderdown24pingpong;three:builderdown24pingpong;'
   
-    assert_equal 'one:notstarted24pingpong;two:notstarted24pingpong;three:notstarted24pingpong;', assigns(:build_states)
+    assert_equal 'one:builderdown24pingpong;two:builderdown24pingpong;three:builderdown24pingpong;', assigns(:build_states)
     assert_equal [@two], assigns(:new_projects)
     assert_equal [], assigns(:projects)
     assert_equal [], assigns(:deleted_projects)
@@ -89,9 +89,9 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @sandbox.new :file => "one/build-24/build_status.pingpong"
     @sandbox.new :file => "two/build-24/build_status.pingpong"
   
-    post :refresh_projects, :build_states => 'one:notstarted24pingpong;two:notstarted24pingpong;three:notstarted24pingpong;'
+    post :refresh_projects, :build_states => 'one:builderdown24pingpong;two:builderdown24pingpong;three:builderdown24pingpong;'
   
-    assert_equal 'one:notstarted24pingpong;two:notstarted24pingpong;', assigns(:build_states)
+    assert_equal 'one:builderdown24pingpong;two:builderdown24pingpong;', assigns(:build_states)
     assert_equal ['three'], assigns(:deleted_projects)
     assert_equal [], assigns(:projects)
     assert_equal [], assigns(:new_projects)

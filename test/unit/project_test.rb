@@ -243,49 +243,14 @@ class ProjectTest < Test::Unit::TestCase
     assert_raises("Plugin error:\n  Object: Plugin 1 talking\n  Object: Plugin 2 talking") { @project.notify(:hey_you) }
   end
 
-  def test_determine_builder_state
-    ProjectBlocker.expects(:blocked?).with(@project).returns(false)
-    assert_equal Status::NOT_RUNNING, @project.builder_state
-    
-    ProjectBlocker.expects(:blocked?).with(@project).returns(true)
-    assert_equal Status::RUNNING, @project.builder_state
-  end
-
   def test_builder_and_build_states_tag
     build = Object.new    
-    build.expects(:label).at_least(1).returns('2')
-    build.expects(:status).at_least(1).returns('pingpong')
+    build.stubs(:label).returns('2')
+    build.stubs(:status).returns('pingpong')
     
-    @project.expects(:builder_state_and_activity).at_least(1).returns('sleeping')
-    @project.expects(:builds).at_least(1).returns([build])
+    @project.stubs(:builder_state_and_activity).returns('sleeping')
+    @project.stubs(:builds).returns([build])
     assert_equal "sleeping2pingpong", @project.builder_and_build_states_tag
-  end
-  
-  def test_return_builder_activity
-    @project.stubs(:builder_status).returns(Object.new)
-    
-    ProjectBlocker.expects(:blocked?).with(@project).returns(true) 
-    @project.builder_status.expects(:status).returns(:working)
-    assert_equal :working, @project.builder_activity
-  end
-    
-  def test_return_not_running_as_builder_activity_when_builder_is_not_running
-    ProjectBlocker.expects(:blocked?).with(@project).returns(false)  
-    assert_equal Status::NOT_RUNNING, @project.builder_activity
-  end
-  
-  def test_should_not_return_builder_activity_when_status_is_not_running
-    @project.expects(:builder_state).at_least(1).returns(Status::NOT_RUNNING)
-    @project.expects(:builder_activity).times(0)
-
-    assert_equal "not started", @project.builder_state_and_activity
-  end
-
-  def test_should_return_builder_activity_when_status_is_running
-    @project.expects(:builder_state).at_least(1).returns(Status::RUNNING)
-    @project.expects(:builder_activity).at_least(1).returns('mock status')
-
-    assert_equal "mock status", @project.builder_state_and_activity
   end
   
   def test_config_modifications_should_return_true_if_config_file_modified_since_last_build
@@ -294,7 +259,7 @@ class ProjectTest < Test::Unit::TestCase
       new_mock_last_build_time(Time.now - 1)
       configTime = Time.now      
       configPath = File.join(@project.path, 'project_config.rb')
-      sandbox.new :file => "project_config.rb" 
+      sandbox.new :file => 'project_config.rb' 
       File.expects(:mtime).with(configPath).returns(configTime)
       assert @project.config_modifications?         
     end       
@@ -371,12 +336,6 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
     
-  def test_force_build_request_should_be_allowed_if_builder_sleeping_and_no_other_force_builder_exists
-    @project.expects(:builder_activity).returns("sleeping")
-    @project.expects(:force_build_requested?).returns(false)    
-    assert @project.force_build_request_allowed?
-  end
-  
   def test_should_check_force_build_requested_by_checking_if_tag_file_existing
     @project.stubs(:path).returns("a_path")
     File.expects(:file?).with(@project.build_requested_flag_file).returns(true)

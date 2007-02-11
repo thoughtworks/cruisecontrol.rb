@@ -1,11 +1,7 @@
-class Status
-  
-  RUNNING = "Running"
-  NOT_RUNNING = "Not Started"
-  
-  
+class BuildStatus
+
   def initialize(artifacts_directory)
-    @artifacts_directory = artifacts_directory
+    @artifacts_directory = artifacts_directory 
   end
   
   def never_built?
