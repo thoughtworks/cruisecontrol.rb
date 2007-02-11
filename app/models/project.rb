@@ -106,12 +106,8 @@ class Project
     order_by_label(the_builds)
   end
 
-  def builder_status
-    BuilderStatus.new(self)
-  end
-
   def builder_state_and_activity
-    builder_status.status
+    BuilderStatus.new(self).status
   end 
   
   def last_build
