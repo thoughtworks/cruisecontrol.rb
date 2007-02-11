@@ -45,14 +45,7 @@ class BuildStatusTest < Test::Unit::TestCase
     FileUtils.expects(:touch).with("artifacts_directory/build_status.failed")
     BuildStatus.new("artifacts_directory").fail!    
   end
-  
-  def test_build_creates_file___building__
-    Dir.stubs(:'[]').returns(['artifacts_directory/build_status.foo'])
-    FileUtils.expects(:rm_f).with(["artifacts_directory/build_status.foo"])
-    FileUtils.expects(:touch).with("artifacts_directory/build_status.building")
-    BuildStatus.new("artifacts_directory").building!
-  end
-  
+    
   def test_created_at_returns_creation_time_for_status_file
     now = Time.now
     Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns([:some_file])

@@ -25,12 +25,7 @@ class BuildStatus
     remove_status_file
     touch_status_file(:failed)    
   end
-  
-  def building!
-    remove_status_file
-    touch_status_file(:building)
-  end
-  
+    
   def created_at
     if file = status_file
       File.mtime(file)
