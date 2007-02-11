@@ -6,7 +6,8 @@ class ApplicationController < ActionController::Base
   session :session_key => '_ci_session_id'
 
   private
-  
+
+  # FIXME none of this data access stuff belongs in the controller
   def load_projects
     Projects.load_all
   end
@@ -14,4 +15,5 @@ class ApplicationController < ActionController::Base
   def find_project(projects)
     projects.find {|p| p.name == params[:project] }
   end
+
 end

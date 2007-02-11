@@ -261,13 +261,6 @@ a.never_built, a.never_built:visited {
   padding-left: .2em;
 }
 
-.projects_flash
-{
-    padding: 10px;
-    font-weight: bold;
-    font-size: 1.2em;
-}
-
 .additional-artifacts {
   float:right;
   border: 1px solid #507ec0;
