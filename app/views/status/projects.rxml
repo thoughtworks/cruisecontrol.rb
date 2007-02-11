@@ -1,0 +1,14 @@
+# List of projects and their state in XML - to be consumed by CruiseControl.NET tray.
+xml.Projects do
+  @projects.each do |project|
+    xml.Project(
+    :name => project.name,
+    :category => "",
+    :activity => map_build_activity_to_ccnet_activity(project.builder_state_and_activity),
+    :lastBuildStatus => map_project_status_to_ccnet_project_status(project.last_build.status),
+    :lastBuildLabel => project.last_build.label,
+    :lastBuildTime => format_time(project.last_build.time, :round_trip_local),
+    :nextBuildTime => format_time(project.last_build.time, :round_trip_local),
+    :webUrl => @url)    
+  end
+end

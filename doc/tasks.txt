@@ -22,7 +22,7 @@ Some of the "force build" stuff is begging to be refactored.
 Build Now button should be always enabled. When a builder is down, it should launch the builder.
   When builder is building, it should set a "build requested" flag.
 
-Replace projects.rhtml with projects.rxml
+CruiseControl.NET tray (projects.rxml) - what should we set for next build time?
 
 Generalize things like build.changeset, build.output; makes them write out error messages when the file doesn't exist, 
 or exists but is not readable
