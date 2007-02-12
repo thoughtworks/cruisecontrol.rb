@@ -156,16 +156,9 @@ class Project
     File.file?(build_requested_flag_file)
   end
   
-  def request_force_build   
-    begin
-      ForceBuildBlocker.block(self)
-      unless force_build_requested?
-        create_build_requested_flag_file
-      end 
-    rescue       
-    ensure 
-      ForceBuildBlocker.release(self) rescue nil
-    end    
+  def request_force_build
+    BuilderStarter.begin_builder(name)  if builder_state_and_activity == 'builder_down'    
+    generate_build_tag_file_if_need
   end
   
   def config_modifications?
@@ -263,6 +256,20 @@ class Project
   end
   
   private
+  
+  def generate_build_tag_file_if_need
+    begin
+      ForceBuildBlocker.block(self)
+      unless force_build_requested?
+        create_build_requested_flag_file
+      end 
+    rescue       
+    ensure 
+      ForceBuildBlocker.release(self) rescue nil
+    end    
+  end
+  
+  
   # sorts a array of builds in order of revision number and rebuild number 
   def order_by_label(builds)
     builds.sort_by do |build|

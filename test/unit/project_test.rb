@@ -294,7 +294,7 @@ class ProjectTest < Test::Unit::TestCase
     end       
   end
   
-  def test_config_modifications_should_return_true_if_project_config_was_deleted_since_last_build
+def test_config_modifications_should_return_true_if_project_config_was_deleted_since_last_build
     in_sandbox do |sandbox|
       @project.path = sandbox.root                  
 
@@ -310,13 +310,26 @@ class ProjectTest < Test::Unit::TestCase
       assert @project.config_modifications?            
     end
   end
+  
+  def test_request_force_build_should_start_builder_if_builder_was_down
+     in_sandbox do |sandbox|
+      @project.path = sandbox.root                        
+      @project.expects(:builder_state_and_activity).returns('builder_down') 
+      BuilderStarter.expects(:begin_builder).with(@project.name)
+      @project.request_force_build           
+    end       
+  end
+  
+
+  
     
+
   def test_request_force_build_should_generate_force_tag_file
     ForceBuildBlocker.expects(:block).with(@project)
     ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      @project.request_force_build()  
+      @project.request_force_build  
       assert File.file?(@project.build_requested_flag_file)
     end
   end
@@ -326,7 +339,7 @@ class ProjectTest < Test::Unit::TestCase
     ForceBuildBlocker.expects(:release).with(@project)  
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      @project.request_force_build()  
+      @project.request_force_build  
       assert !File.file?(@project.build_requested_flag_file)
     end
   end
@@ -338,7 +351,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.path = sandbox.root
       sandbox.new :file => 'build_requested'
       @project.expects(:create_build_requested_flag_file).never
-      @project.request_force_build()  
+      @project.request_force_build  
    end
   end
   
