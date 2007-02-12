@@ -34,7 +34,8 @@ a:hover {
 }
 
 .header .cc_logo { 
-  margin: 10px 0 0 5px;
+  margin: 10px 0 0 1.5em;
+ 
 }
 
 .footer {
@@ -72,7 +73,7 @@ a:hover {
 }
 
 #content {
-  padding-left: 2.5em;
+  padding-left: 1.5em;
 }
 
 /* build status stuff */
@@ -115,6 +116,7 @@ a.never_built, a.never_built:visited {
   background-image: url(/images/red_gradient.png);
   background-position: bottom;
   background-repeat: repeat-x;
+  margin-left: -2.5em;
 }
 
 .project table.project_pane {
@@ -216,7 +218,7 @@ a.never_built, a.never_built:visited {
 }
 
 .help {
-  padding: 2em;
+  padding-left: .7em;
   color: #666;
 }
 
@@ -242,6 +244,7 @@ a.never_built, a.never_built:visited {
   font-size: 1.3em;
   padding-left: 1.3em;
   background: no-repeat center left;
+  margin-bottom: .4em;
 }
 
 .section-content {
