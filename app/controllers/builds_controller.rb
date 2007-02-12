@@ -2,18 +2,20 @@ class BuildsController < ApplicationController
   layout 'default'
   
   def show
-    @project = find_project(load_projects)
+    # TODO project / build not specified / not found responses
+
+    @project = Projects.find(params[:project])
 
     if params.has_key? :build
       @build = @project.find_build(params[:build])
     end
     @build ||= @project.last_build
-    
+
     render :action => 'no_builds_yet' unless @build
   end
   
   def artifact
-    @project = find_project(load_projects)
+    @project = Projects.find(params[:project])
     @build = @project.find_build(params[:build])
 
     path = File.join(@build.artifacts_directory, params[:artifact_path])
@@ -54,4 +56,5 @@ class BuildsController < ApplicationController
       'text/plain'
     end
   end
+
 end

@@ -40,6 +40,10 @@ class Test::Unit::TestCase
     end
   end
 
+  def assert_false(expression)
+    assert_equal false, expression
+  end
+
   def in_total_sandbox(&block)
     in_sandbox do |sandbox|
       @dir = File.expand_path(sandbox.root)
@@ -61,10 +65,25 @@ class Test::Unit::TestCase
     end
   end
   
-  def assert_false(expression)
-    assert_equal false, expression
+  def create_project_stub(name, last_build_status = 'failed', last_five_builds = [])
+    project = Object.new
+    project.stubs(:name).returns(name)
+    project.stubs(:last_build_status).returns(last_build_status)
+    project.stubs(:last_five_builds).returns(last_five_builds)
+    project.stubs(:builder_state_and_activity).returns('building')
+    project
   end
-  
+
+  def create_build_stub(label, status, time = Time.at(0))
+    build = Object.new
+    build.stubs(:label).returns(label)
+    build.stubs(:status).returns(status)
+    build.stubs(:time).returns(time)
+    build.stubs(:failed?).returns(status == 'failed')
+    build.stubs(:successful?).returns(status == 'success')
+    build
+  end
+
   class FakeSourceControl
     attr_reader :username
     
