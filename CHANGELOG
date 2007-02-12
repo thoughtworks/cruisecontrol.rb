@@ -8,6 +8,7 @@ TRUNK
   - [bugfix] Debug-level messages are logged in development mode
   - [bugfix] Running builder doesn't block the dashboard on Windows
   - [bugfix] Test Failure Parser correctly parses failure messages from Mocha
+  - [bugfix] Removal project_config.rb is now detected, resulting in reloading of the project and a forced build.  
 ------------------------------------------------------------------------------------------------------------------------
 * 0.4.0
   - pretty user interface
