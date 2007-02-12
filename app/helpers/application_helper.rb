@@ -51,7 +51,7 @@ module ApplicationHelper
     case state
     when 'building', 'builder_down'
       "<div class=\"builder_status_#{state}\">#{state.gsub('_', ' ')}</div>"
-    when 'sleeping', 'checking_modifications'
+    when 'sleeping', 'checking_for_modifications'
       ''
     else
       "<div class=\"builder_status_unknown\">#{h state}<br/>unknown state</div>"
