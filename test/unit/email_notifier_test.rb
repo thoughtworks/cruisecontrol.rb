@@ -28,7 +28,7 @@ class EmailNotifierTest < Test::Unit::TestCase
   end
 
   def test_do_nothing_with_passing_build
-    @notifier.build_finished(@build, @previous_build)
+    @notifier.build_finished(@build)
     assert_equal [], ActionMailer::Base.deliveries
   end
 
@@ -36,7 +36,7 @@ class EmailNotifierTest < Test::Unit::TestCase
     @build.expects(:failed?).returns(true)
     @build.expects(:output).returns(BUILD_LOG)
 
-    @notifier.build_finished(@build, @previous_build)
+    @notifier.build_finished(@build)
 
     mail = ActionMailer::Base.deliveries[0]
 
