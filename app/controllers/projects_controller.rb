@@ -17,8 +17,25 @@ class ProjectsController < ApplicationController
     redirect_to :action => :index
   end
   
+  def code
+    @project = Projects.find(params[:project])
+    
+    path = File.join(@project.path, 'work', params[:path])
+    @line = params[:line].to_i if params[:line]
+    
+    if params[:path].index '..'
+      render :nothing => true, :status => 401
+    elsif File.directory?(path)
+      render :text => 'directories are not yet supported'
+    elsif File.exists?(path)
+      @content = File.read(path)
+    else
+      render :text => "#{path} not found", :status => 404
+    end
+  end
+  
   private
-
+  
   def serialize_states(projects)
     projects.collect { |project| "#{project.name}:#{project.builder_and_build_states_tag}" }.join(';')
   end

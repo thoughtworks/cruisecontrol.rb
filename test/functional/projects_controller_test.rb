@@ -7,6 +7,7 @@ class ProjectsController
 end
 
 class ProjectsControllerTest < Test::Unit::TestCase
+  include FileSandbox
 
   def setup
     @controller = ProjectsController.new
@@ -23,6 +24,21 @@ class ProjectsControllerTest < Test::Unit::TestCase
 
     assert_response :success
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
+  end
+  
+  def test_code
+    in_sandbox do |sandbox|
+      project = Project.new('three')
+      project.path = sandbox.root
+      sandbox.new :file => 'work/app/controller/FooController.rb', :with_contents => "class FooController\nend\n"
+      
+      Projects.expects(:find).returns(project)
+    
+      get :code, :project => 'two', :path => ['app', 'controller', 'FooController.rb'], :line => 2
+      
+      assert_response :success, @response.body
+      assert @response.body =~ /class FooController/
+    end
   end
 
   # FIXME merge refresh_projects with index and remake this into test_index_rjs

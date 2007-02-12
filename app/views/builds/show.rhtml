@@ -30,16 +30,19 @@
 <div class="section-open">
   <div class="section-header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
   <div class="section-content">
-    <pre class="changeset"><%= format_changeset_log(@build.changeset) %></pre>
+    <%= format_changeset_log(@build.changeset) %>
   </div>
 </div>
 
-<div class="section-closed">
+<% test_failures = get_test_failures_and_errors_if_any(@build.output) %>
+<% if test_failures %>
+<div class="section-open">
   <div class="section-header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
   <div class="section-content">
-    <pre><%= display_test_failures_and_errors_if_any(@build.output) %></pre>
+    <%= test_failures %>
   </div>
 </div>
+<% end %>
 
 <div class="section-closed">
   <div class="section-header" onclick="toggle_section(this.parentNode)">Build Log</div>

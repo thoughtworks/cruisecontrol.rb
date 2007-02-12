@@ -194,8 +194,12 @@ a.never_built, a.never_built:visited {
   color: #F28218;
 }
 
-.error {
+.error, .error a {
   color: #C00;
+}
+
+.error a {
+  text-decoration: underline;
 }
 
 .log {
@@ -245,9 +249,6 @@ a.never_built, a.never_built:visited {
   font-family: courier, serif;
 }
 
-.section-content pre {
-  font-family: courier, serif;
-}
 
 .section-closed .section-header { background-image: url(../images/arrow_closed.png); }
 .section-open .section-header   { background-image: url(../images/arrow_open.png); }
@@ -260,8 +261,8 @@ a.never_built, a.never_built:visited {
 
 #build-list {
   float: right;
-  text-align: right;
-  width: 15em;
+  text-align: left;
+  width: 12em;
   padding: 1em 1.5em 1em 1em;
 }
 
@@ -283,4 +284,27 @@ a.never_built, a.never_built:visited {
   float:right;
   border: 1px solid #507ec0;
   padding: 0.3em;
+}
+
+.code {
+  padding-left: 1em;
+  font-family: courier, serif;
+}
+
+.code a {
+  color: black;
+}
+
+.code .line_number {
+  color: #bbb;
+  margin-right: 2em;
+  width: 4em;
+}
+
+.code .line:hover {
+  background-color: #feb;
+}
+
+.code .selected_line {
+  background-color: #ccf;
 }
