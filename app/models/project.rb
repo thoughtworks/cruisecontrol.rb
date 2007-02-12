@@ -2,7 +2,7 @@ require 'fileutils'
 
 class Project
   @@plugin_names = []
-
+  @@config_existed = false
   def self.plugin(plugin_name)
     @@plugin_names << plugin_name unless RAILS_ENV == 'test' or @@plugin_names.include? plugin_name
   end
@@ -169,13 +169,25 @@ class Project
   end
   
   def config_modifications?
-    build = last_build
-    config_file = File.join(path, 'project_config.rb')
-    if (!build.nil? and File.exists?(config_file) and (File.mtime(config_file) > build.time))
+    config_path = File.join(path, 'project_config.rb')
+    config_exists = File.exists? config_path
+        
+    if (config_removed(config_exists) or config_modified(config_path, config_exists))  
+      @@config_existed = config_exists
       notify(:configuration_modified)
       return true
-    end
-    return false
+    end        
+    @@config_existed = config_exists
+    false
+  end
+  
+  def config_removed(config_exists)
+    @@config_existed and !config_exists
+  end
+  
+  def config_modified(config_path, config_exists)
+    build = last_build
+    build and config_exists and (File.mtime(config_path) > build.time)
   end
   
   def force_build_if_requested

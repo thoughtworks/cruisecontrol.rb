@@ -66,6 +66,11 @@ module FileSandbox
       end
     end
 
+    def remove(options)
+      name = File.join(@root, options[:file])
+      FileUtils.remove_file name
+    end
+    
     # usage assert :file=>'my file.rb', :has_contents=>'some stuff'
     def assert(options)
       name = File.join(@root, options[:file])

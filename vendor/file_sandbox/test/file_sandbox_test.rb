@@ -28,8 +28,17 @@ class FileSandboxTest < Test::Unit::TestCase
       assert !file('a.txt').exists?
 
       sandbox.new :file => 'a.txt'
-
       assert file('a.txt').exist?
+    end
+  end
+  
+  def test_delete_file
+    in_sandbox do |sandbox|
+      sandbox.new :file => 'a.txt'
+      assert file('a.txt').exist?
+      
+      sandbox.remove :file => 'a.txt'
+      assert !file('a.txt').exist?
     end
   end
 end

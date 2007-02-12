@@ -279,7 +279,8 @@ class ProjectTest < Test::Unit::TestCase
   
   def test_config_modifications_should_return_false_if_there_is_no_previous_build
     in_sandbox do |sandbox|
-      @project.path = sandbox.root                        
+      @project.path = sandbox.root
+      @project.stubs(:config_removed).returns(false)
       @project.expects(:last_build).returns(nil) 
       assert_false @project.config_modifications?         
     end       
@@ -288,11 +289,28 @@ class ProjectTest < Test::Unit::TestCase
   def test_config_modifications_should_return_false_if_there_is_no_project_config_file
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
-      @project.expects(:last_build).returns(true) 
+      @project.expects(:last_build).returns(Object.new) 
       assert_false @project.config_modifications?         
     end       
   end
   
+  def test_config_modifications_should_return_true_if_project_config_was_deleted_since_last_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root                  
+
+      time = Time.now
+      new_mock_last_build_time(time)      
+      sandbox.new :file => 'project_config.rb' 
+      configPath = File.join(@project.path, 'project_config.rb')
+      File.expects(:mtime).with(configPath).returns(time)      
+      assert_false @project.config_modifications?
+      
+      sandbox.remove :file => 'project_config.rb'
+      @project.stubs(:last_build).returns(Object.new)
+      assert @project.config_modifications?            
+    end
+  end
+    
   def test_request_force_build_should_generate_force_tag_file
     ForceBuildBlocker.expects(:block).with(@project)
     ForceBuildBlocker.expects(:release).with(@project)
