@@ -5,12 +5,12 @@ class EmailNotifier
     @emails = []
   end
 
-  def build_finished(build)
+  def build_finished(build, previous_build)
     return if @emails.empty?
     BuildMailer.deliver_build_failed(build, @emails) if build.failed?
   end
 
-  def build_fixed(build)
+  def build_fixed(build, previous_build)
     return if @emails.empty?
     BuildMailer.deliver_build_fixed(build, @emails)
   end
