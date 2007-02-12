@@ -50,14 +50,20 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
   end
 
-  def test_force_build
+  def test_force_build_should_request_force_build
     project = create_project_stub('two')
     Projects.expects(:find).with('two').returns(project)
     project.expects(:request_force_build)
-
     post :force_build, :project => "two"
-
-    assert_redirected_to :controller => 'projects', :action => 'index'
+    assert_response :success
+    assert_equal 'two', assigns(:project).name
+  end
+  
+  def test_force_build_should_assign_nil_if_project_not_found
+    Projects.expects(:find).with('non_existing_project').raises("project not found error")
+    post :force_build, :project => "non_existing_project"
+    assert_response :success
+    assert_equal nil, assigns(:project)
   end
 
 end

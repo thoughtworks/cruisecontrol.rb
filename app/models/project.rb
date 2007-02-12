@@ -156,22 +156,16 @@ class Project
     File.file?(build_requested_flag_file)
   end
   
-  def request_force_build
-    result = ''
+  def request_force_build   
     begin
       ForceBuildBlocker.block(self)
       unless force_build_requested?
         create_build_requested_flag_file
-        result = 'The force build is pending now!'
-      else
-        result =  'Another build is pending already!'
-      end
-    rescue => lock_error
-      result =  'Another build is pending already!'     
+      end 
+    rescue       
     ensure 
       ForceBuildBlocker.release(self) rescue nil
-    end
-    return result
+    end    
   end
   
   def config_modifications?
@@ -195,10 +189,7 @@ class Project
     end  
   end
 
-  # TODO: remove this method altogether
-  def force_build_request_allowed?
-    true
-  end
+  
 
   def build(revisions = [@source_control.latest_revision(self)])   
     previous_build = last_build    

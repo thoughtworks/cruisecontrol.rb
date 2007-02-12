@@ -28,8 +28,9 @@
 
   <td class="builder_control">
     <div class="buttons">
-      <% form_tag :action => 'force_build', :id => project.name do %>
-        <%= submit_tag 'Build now' %>
+      <% form_remote_tag( :url => { :action => 'force_build' }) do %>
+           <%= hidden_field_tag("project",project.name) %>
+           <%= submit_tag 'Build now' %>
       <% end %>
     </div>
     <%= display_builder_state(project.builder_state_and_activity) %>

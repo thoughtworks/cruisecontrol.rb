@@ -9,13 +9,16 @@ class ProjectsController < ApplicationController
     @projects = Projects.load_all
   end
   
-  def force_build
-    # TODO do something smart about project not specified, or not found
-    project = Projects.find(params[:project])
-    project.request_force_build
-    # TODO no need to reload the whole page at this point, an RJS response of some sort would work better
-    redirect_to :action => :index
-  end
+  def force_build   
+    @project = nil
+    begin       
+      @project = Projects.find(params[:project])
+      @project.request_force_build
+    rescue 
+      @project = nil
+    end
+    @project
+ end
   
   def code
     @project = Projects.find(params[:project])

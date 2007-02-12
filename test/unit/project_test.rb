@@ -298,7 +298,7 @@ class ProjectTest < Test::Unit::TestCase
     ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      assert_equal "The force build is pending now!"   , @project.request_force_build()  
+      @project.request_force_build()  
       assert File.file?(@project.build_requested_flag_file)
     end
   end
@@ -308,7 +308,7 @@ class ProjectTest < Test::Unit::TestCase
     ForceBuildBlocker.expects(:release).with(@project)  
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      assert_equal "Another build is pending already!" , @project.request_force_build()  
+      @project.request_force_build()  
       assert !File.file?(@project.build_requested_flag_file)
     end
   end
@@ -320,7 +320,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.path = sandbox.root
       sandbox.new :file => 'build_requested'
       @project.expects(:create_build_requested_flag_file).never
-      assert_equal "Another build is pending already!" , @project.request_force_build()  
+      @project.request_force_build()  
    end
   end
   
@@ -359,6 +359,8 @@ class ProjectTest < Test::Unit::TestCase
     Build.expects(:new).with(project, '2').returns(new_build)
     project.build([new_revision(2)])
   end
+  
+  
       
   private
   
