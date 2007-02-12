@@ -32,8 +32,6 @@ or even directly as XHTML) and cached in the build artifacts directory (? but co
 
 Tech
 ----
-Refactor data access stuff away from application.rb, into Projects
-
 Update all Rails-generated files to Rails 1.2.2 versions thereof
 
 Necessary
