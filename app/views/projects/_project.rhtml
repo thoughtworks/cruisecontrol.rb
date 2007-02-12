@@ -17,13 +17,11 @@
       <span class="lead"><%= recent_builds.first ? 'build ' : '<span class="build_status">Never built</span>' %></span>
 
       <% unless recent_builds.empty? %>
-      <span>
         <div class="builds_list">
           <% recent_builds.each do |build| %>
             <div class="build_summary"><%= link_to_build(project, build) %></div>
           <% end %>
         </div>
-      </span>
       <% end %>
     </div>
   </td>
@@ -34,7 +32,7 @@
         <%= submit_tag 'Build now' %>
       <% end %>
     </div>
-    <div class="builder_status"><%= project.builder_state_and_activity %></div>
+    <%= display_builder_state(project.builder_state_and_activity) %>
   </td>
 
   <td class="build_details">

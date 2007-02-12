@@ -47,4 +47,15 @@ module ApplicationHelper
     link_to text, {:controller => 'builds', :action => 'show', :project => project.name, :build => build.label}, :class => build.status
   end
 
+  def display_builder_state(state)
+    case state
+    when 'building', 'builder_down'
+      "<div class=\"builder_status_#{state}\">#{state.gsub('_', ' ')}</div>"
+    when 'sleeping', 'checking_modifications'
+      ''
+    else
+      "<div class=\"builder_status_unknown\">#{h state}<br/>unknown state</div>"
+    end
+  end
+
 end

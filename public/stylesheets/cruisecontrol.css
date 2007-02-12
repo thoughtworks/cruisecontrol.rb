@@ -161,6 +161,24 @@ a.never_built, a.never_built:visited {
   float: left;
 }
 
+.project .builder_control .builder_status_builder_down, .project .builder_control .builder_status_unknown {
+  font-weight: bold;
+  padding-top: 5px;
+  padding-left: 25px;
+  background-image: url(/images/spinner_error.gif);
+  background-position: left;
+  background-repeat: no-repeat;
+}
+
+.project .builder_control .builder_status_building {
+  font-weight: bold;
+  padding-top: 5px;
+  padding-left: 25px;
+  background-image: url(/images/spinner.gif);
+  background-position: left;
+  background-repeat: no-repeat;
+}
+
 .project .build_summary {
 }
 

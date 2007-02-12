@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + '/../config/boot'
 require 'builder_starter'
 require 'optparse'
 
-# Options section is copied from mongrel.rb in order for us to add custom help options
-# (Options should be updated from time to time with new mongrel versions)
+# HACK: Options copy/pasted from mongrel.rb in order to add custom options.
+# (this section, therefore, may need to be manually updated when upgrading to a new Rails version)
 ARGV.clone.options do |opts|
   opts.on("-p", "--port=port", Integer, "Runs Rails on the specified port.", "Default: 3000") {}
   opts.on("-b", "--binding=ip", String, "Binds Rails to the specified ip.", "Default: 0.0.0.0") {}
