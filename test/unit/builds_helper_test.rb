@@ -9,7 +9,7 @@ class BuildsHelperTest < Test::Unit::TestCase
   include ActionView::Helpers::UrlHelper
   
   def setup
-    @work_path = '/Users/jeremy/src/cruisecontrolrb/builds/CruiseControl/work'
+    @work_path = File.expand_path('/Users/jeremy/src/cruisecontrolrb/builds/CruiseControl/work')
     @project = Project.new('mine')
   end
   
