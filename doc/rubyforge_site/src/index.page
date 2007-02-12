@@ -1,11 +1,18 @@
 ---
-title: ''
-inMenu: false
-directoryName: Home
+title: CruiseControl.rb
+inMenu: true
 ---
-Welcome to CruiseControl.rb
+
+h1. Welcome to CruiseControl.rb
+
+CruiseControl.rb is a continuous integration tool. Its basic purpose in life is to alert members of a software project
+when one of them checks into a source control system something that breaks the build.
+
+CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ruby.
+
+
+See Martin Fowler's article about Continuous Integration: http://martinfowler.com/articles/continuousIntegration.html
 
 * "RubyForge Project":http://rubyforge.org/projects/cruisecontrolrb"
 * "Wiki":/wiki/wiki.pl
 * Documentation
-** "Rake Tasks":rake_tasks.html

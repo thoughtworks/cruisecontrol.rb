@@ -1,7 +1,6 @@
 ---
 title: Rake Tasks
 inMenu: false
-directoryName: Rake Tasks
 ---
 CC.rb assumes that your project is built by Rake, and Rakefile is in the root directory of the project. Just running 'default' Rake task is not good enough, because in a standard Rails application this task needs an up-to-date development database to work. On a continuous build server there is usually no such thing. Therefore, CC.rb uses the following logic to determine what to build:
 
