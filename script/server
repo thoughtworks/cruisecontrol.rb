@@ -6,12 +6,12 @@ require 'optparse'
 # HACK: Options copy/pasted from mongrel.rb in order to add custom options.
 # (this section, therefore, may need to be manually updated when upgrading to a new Rails version)
 ARGV.clone.options do |opts|
-  opts.on("-p", "--port=port", Integer, "Runs Rails on the specified port.", "Default: 3000") {}
+  opts.on("-p", "--port=port", Integer, "Runs Rails on the specified port.", "Default: 3333") {}
   opts.on("-b", "--binding=ip", String, "Binds Rails to the specified ip.", "Default: 0.0.0.0") {}
   opts.on("-d", "--daemon", "Make server run as a Daemon.") {}
   opts.on("-e", "--environment=name", String,
           "Specifies the environment to run this server under (test/development/production).",
-          "Default: development") {}
+          "Default: production") {}
   opts.on("-w", "--without-builders", "Run without starting the project builders.") { BuilderStarter.run_builders_at_startup = false }
 
   opts.separator ""
