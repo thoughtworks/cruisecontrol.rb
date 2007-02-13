@@ -88,7 +88,11 @@ table#column_layout td {
   width: 80%;
 }
 
-#content code {
+#content pre {
+  padding: 0.5em;
+}
+
+#content pre, #content code {
   font-family: courier, serif;
   font-style: normal;
   font-size: 1em;
