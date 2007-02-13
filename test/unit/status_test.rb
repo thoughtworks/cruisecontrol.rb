@@ -22,15 +22,15 @@ class BuildStatusTest < Test::Unit::TestCase
     assert_equal false, BuildStatus.new("artifacts_directory").succeeded?
   end
   
-  def test_succeed_creates_file___success__
+  def test_succeed_creates_file___success
     Dir.stubs(:'[]').returns(['artifacts_directory/build_status.foo'])
     FileUtils.expects(:rm_f).with(["artifacts_directory/build_status.foo"])
-    FileUtils.expects(:touch).with("artifacts_directory/build_status.success")
-    BuildStatus.new("artifacts_directory").succeed!
+    FileUtils.expects(:touch).with("artifacts_directory/build_status.success.in3.5s")
+    BuildStatus.new("artifacts_directory").succeed!(3.5)
   end
   
   def test_failed_is_true_when_file_is___failed__
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.failed'])
+    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.failed.in3.5s'])
     assert_equal true, BuildStatus.new("artifacts_directory").failed?
   end
 
@@ -42,8 +42,8 @@ class BuildStatusTest < Test::Unit::TestCase
   def test_fail_creates_file___failed__
     Dir.stubs(:'[]').returns(['artifacts_directory/build_status.foo'])
     FileUtils.expects(:rm_f).with(["artifacts_directory/build_status.foo"])
-    FileUtils.expects(:touch).with("artifacts_directory/build_status.failed")
-    BuildStatus.new("artifacts_directory").fail!    
+    FileUtils.expects(:touch).with("artifacts_directory/build_status.failed.in3.5s")
+    BuildStatus.new("artifacts_directory").fail!(3.5)   
   end
     
   def test_created_at_returns_creation_time_for_status_file
@@ -60,6 +60,16 @@ class BuildStatusTest < Test::Unit::TestCase
   
   def test_to_s_returns_status_file_name_without_underscores
     assert_equal 'never_built', BuildStatus.new("artifacts_directory").to_s
+  end
+  
+  def test_elapsed_time_should_return_elapsed_seconds_if_build_sccessed
+    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.success.in3.52s'])
+    assert_equal '3.52', BuildStatus.new("artifacts_directory").elapsed_time
+  end
+  
+  def test_elapsed_time_should_return_blank_if_elapsed_time_not_availabe
+    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.hoo'])
+    assert_equal '', BuildStatus.new("artifacts_directory").elapsed_time    
   end
   
 end

@@ -40,14 +40,13 @@ class IntegrationTest < Test::Unit::TestCase
       sandbox.new :file=> 'passing_project/build-2/build_status.success'
 
       assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
-      
-      result = project.build_if_necessary
+       result = project.build_if_necessary
 
       assert result.is_a?(Build)
 
       assert_equal true, result.successful?
-
-      assert File.exists?("#{sandbox.root}/passing_project/build-7/build_status.success")
+      
+      assert Dir["#{sandbox.root}/passing_project/build-7/build_status.success.*"][0]
       assert File.exists?("#{sandbox.root}/passing_project/build-7/changeset.log")
       assert File.exists?("#{sandbox.root}/passing_project/build-7/build.log")
     end
@@ -60,7 +59,7 @@ class IntegrationTest < Test::Unit::TestCase
       assert result.is_a?(Build)
       assert_equal true, result.failed?
 
-      assert file("failing_project/build-7/build_status.failed").exists?
+      assert Dir["failing_project/build-7/build_status.failed.*"][0]
       assert_equal false, file("failing_project/build-7/build_status.success").exists?
 
       assert file("failing_project/build-7/changeset.log").exists?
@@ -81,8 +80,9 @@ class IntegrationTest < Test::Unit::TestCase
   def test_build_should_still_build_even_when_no_changes_were_made
     with_project('passing_project', :revision => 7) do |project, sandbox|
       status_file_path = 'passing_project/build-7/build_status.success'
-      sandbox.new :file=> status_file_path      
-      new_status_file_path = 'passing_project/build-7.1/build_status.success'    
+      sandbox.new :file=> status_file_path  
+      
+      new_status_file_path = 'passing_project/build-7.1/build_status.success.*'    
       new_status_file_full_path = "#{sandbox.root}/#{new_status_file_path}"
     
       result = project.build
@@ -90,7 +90,7 @@ class IntegrationTest < Test::Unit::TestCase
 
       assert_equal true, result.successful?
 
-      assert File.exists?(new_status_file_full_path)
+      assert Dir[new_status_file_full_path][0]
      end
   end  
     

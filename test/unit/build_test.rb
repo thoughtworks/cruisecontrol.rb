@@ -70,9 +70,9 @@ class BuildTest < Test::Unit::TestCase
           :stderr => expected_build_log,
           :escape_quotes => false
         }
-      
+      Time.expects(:now).at_least(2).returns(Time.at(0), Time.at(3.2))
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
-      BuildStatus.any_instance.expects(:'succeed!')
+      BuildStatus.any_instance.expects(:'succeed!').with(3.2)
       BuildStatus.any_instance.expects(:'fail!').never
   
       build.run
@@ -127,19 +127,7 @@ class BuildTest < Test::Unit::TestCase
     end
   end
   
-  def test_label_should_be_convert_to_int_if_no_mantissa
-    project = Object.new
-    project.expects(:path).returns("a_path")
-    FileUtils.stubs(:mkdir_p)
-    assert_equal 3, Build.new(project, 3.0).label
-  end
-  
-  def test_label_should_keep_to_float_if_there_is_mantissa
-    project = Object.new
-    project.expects(:path).returns("a_path")
-    FileUtils.stubs(:mkdir_p)
-    assert_equal 3.2, Build.new(project, 3.2).label
-  end
+ 
 
   def test_build_should_know_about_additional_artifacts
     with_sandbox_project do |sandbox, project|
@@ -161,6 +149,13 @@ class BuildTest < Test::Unit::TestCase
     with_sandbox_project do |sandbox, project|
       build = Build.new(project, 1)
       assert_equal "/builds/my_project/1", build.publish_name 
+    end
+  end
+  
+  def test_elapsed_time
+    with_sandbox_project do |sandbox, project|
+      BuildStatus.any_instance.expects(:elapsed_time).returns('3.2')
+      assert_equal '3.2', Build.new(project, 123).elapsed_time
     end
   end
 end

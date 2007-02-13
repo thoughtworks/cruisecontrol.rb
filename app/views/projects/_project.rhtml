@@ -37,8 +37,9 @@
   </td>
 
   <td class="build_details">
-    TODO: In the near future this place will contain some details about the latest build,<br/>
-    such as who checked it in
+    <% if project.last_build_status == "success" %>
+        Build finished in  <%= project.last_build.elapsed_time %> seconds
+    <% end %>
   </td>
 
 </tr>

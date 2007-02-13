@@ -16,14 +16,14 @@ class BuildStatus
     read_latest_status == :failed
   end
 
-  def succeed!
+  def succeed!(elapsed_time)
     remove_status_file
-    touch_status_file(:success)
+    touch_status_file("success.in#{elapsed_time}s")
   end
   
-  def fail!
+  def fail!(elapsed_time)
     remove_status_file
-    touch_status_file(:failed)    
+    touch_status_file("failed.in#{elapsed_time}s")
   end
     
   def created_at
@@ -35,12 +35,17 @@ class BuildStatus
   def to_s
     read_latest_status.to_s
   end
+  
+  def elapsed_time
+    file = status_file
+    match_elapsed_time(File.basename(file))
+  end
     
   private
   
   def read_latest_status
     file = status_file
-    file ? File.basename(file)[13..-1].downcase.to_sym : :never_built
+    file ? match_status(File.basename(file)).downcase.to_sym : :never_built
   end
 
   def remove_status_file
@@ -53,6 +58,19 @@ class BuildStatus
   
   def status_file
     Dir["#{@artifacts_directory}/build_status.*"].first
+  end
+  
+  def match_status(file_name)
+     /^build_status\.([^\.]+)(\..+)?/.match(file_name)[1]
+  end
+  
+  def match_elapsed_time(file_name)
+    match =  /^build_status\.([^\.]+)(\.in(\d+)\.(\d+)s)?/.match(file_name)
+    if( match.nil? || match[2].nil? || match[3].nil? || match[4].nil?) 
+     ""
+    else
+      "#{match[3]}.#{match[4]}"
+    end
   end
   
 end

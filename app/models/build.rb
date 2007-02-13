@@ -18,13 +18,15 @@ class Build
     build_log = artifact 'build.log'
     # build_command must be set before doing chdir, because there may be some relative paths
     build_command = self.command
+    time = Time.now
     in_clean_environment_on_local_copy do
       execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
-    @status.succeed!
+    @status.succeed!(Time.now - time)
+    
   rescue => e
     CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)    
-    @status.fail!
+    @status.fail!(Time.now - time)
   end
 
   def additional_artifacts
@@ -95,5 +97,9 @@ class Build
     ensure
       ENV['RAILS_ENV'] = old_rails_env
     end
+  end
+  
+  def elapsed_time
+    @status.elapsed_time
   end
 end

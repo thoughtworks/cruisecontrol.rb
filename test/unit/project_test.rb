@@ -243,16 +243,7 @@ class ProjectTest < Test::Unit::TestCase
     assert_raises("Plugin error:\n  Object: Plugin 1 talking\n  Object: Plugin 2 talking") { @project.notify(:hey_you) }
   end
 
-  def test_builder_and_build_states_tag
-    build = Object.new    
-    build.stubs(:label).returns('2')
-    build.stubs(:status).returns('pingpong')
     
-    @project.stubs(:builder_state_and_activity).returns('sleeping')
-    @project.stubs(:builds).returns([build])
-    assert_equal "sleeping2pingpong", @project.builder_and_build_states_tag
-  end
-  
   def test_config_modifications_should_return_true_if_config_file_modified_since_last_build
     in_sandbox do |sandbox|
          

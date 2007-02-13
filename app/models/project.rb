@@ -72,10 +72,7 @@ class Project
     @plugins_by_name.key?(method_name) ? @plugins_by_name[method_name] : super
   end
   
-  # used by rjs to refresh project if build state tag changed.
-  def builder_and_build_states_tag
-    builder_state_and_activity.to_s.gsub('_', '') + (builds.empty? ? '' : last_build.label.to_s) + last_build_status.to_s
-  end
+  
   
   def ==(another)
     another.is_a?(Project) and another.name == self.name
