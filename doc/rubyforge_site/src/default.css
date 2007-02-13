@@ -47,7 +47,6 @@ table#column_layout td {
   text-align: left;
   padding: 1em;
   border-style: none;
-  
 }
 
 #menu {
@@ -87,4 +86,43 @@ table#column_layout td {
 
 #content {
   width: 80%;
+}
+
+#content code {
+  font-family: courier, serif;
+  font-style: normal;
+  font-size: 1em;
+  background-color: #F9F9FF;
+}
+
+.hint {
+  font-family: georgia, times, serif; 
+  background-color: #EEE;
+  padding: 0.5em;
+  margin: 0.5em 2em;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.hint code {
+  font-family: courier, serif;
+  font-style: normal;
+  font-size: 1em;
+  background-color: #F5F5FF;
+}
+
+div.next_step {
+  color: #000;
+  background-color: #FFF0F5;
+  font-weight: bold;
+  margin: 3em 2em 1em 2em;
+  padding: 0.2em 1em;
+}
+
+.letter {
+  font-family: georgia, times, serif;
+  color: #62A;
+  background-color: #FAFAFA;
+  font-style: italic;
+  padding: 0.5em 2em; 
 }

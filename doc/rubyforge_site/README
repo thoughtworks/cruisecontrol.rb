@@ -1,0 +1,4 @@
+CC.rb documentation is generated from src/ by webgen [http://webgen.rubyforge.org/].
+
+gem install webgen
+webgen run

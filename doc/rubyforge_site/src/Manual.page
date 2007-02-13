@@ -1,8 +1,221 @@
 ---
-title: Documentation
+title: Manual
 inMenu: true
 ---
 
-Our documentation here is still pretty sparse, more's coming.  For now check out
+h1. The Manual
 
-* "Rake Tasks":rake_tasks.html
+h2. Files and folders
+
+If CC.rb is unpacked into [cruise] directory, then:
+
+* [cruise]/builds/ is the projects directory.
+
+* [cruise]/builds/your_project/ is a directory for the project called "your_project".
+
+* [cruise]/builds/your_project/work/ is a local copy of your_project's source code. Builder keeps it up to date
+  with the source control repository and runs builds against it.
+
+* [cruise]/builds/your_project/build-123/ contains build status file, list of changed files,
+  and other "build artifacts" created while building revision 123.
+
+* [cruise]/builds/your_project/project_config.rb is builder configuration for your_project.
+
+* [cruise]/config/site_config.rb is the file where you can make centralized changes to the configuration of dashboard
+  and all builders.
+
+
+h2. Project builder configuration
+
+When you add a project to CruiseControl.rb, it will do something reasonable without any configuration.
+
+However, there are things that builder cannot know in advance. For example, who needs to receive an email notice
+when the build is broken. Default answer is <em>"nobody"</em>, and it may be good enough if you use CCTray or have a
+big projector screen displaying the dashboard to monitor the build status. What if it's not good enough?
+To make the builder aware of all these other things you want it to do, you will have to write them down in a
+project configuration file.
+
+Rolling your eyes already? Hold on, this is not J2EE deployment descriptors we are talking about. No two pages of
+hand-written angled brackets just to get started here. A typical project configuration is about 3 to 5 lines of very
+simple Ruby. Yes, the configuration language of CC.rb is Ruby.
+
+In [cruise]/builds/your_project/ directory, create file project_config.rb. Write the following in it:
+
+<pre><code>
+Project.configure do |project|
+end
+</code></pre>
+
+Every project_config.rb must include these two lines. All your other configuration goes between them.
+
+p(hint). Hint: configuration examples below are surrounded with lines that look like '...' This represents other
+         configuration statements that may be in project_config.rb. You are not meant to copy-paste those dots into
+         your configuration file. If you do, <code>./cruise start</code> will fail to start, saying something about syntax error
+         (SyntaxError). Understandably, ... is not a valid Ruby statement.
+
+
+h2. What will it build by default?
+
+By default, CC.rb will search for "Rake":http://rake.rubyforge.org/ build file in your project. Then
+CC.rb will try to execute <code>cruise</code> task if it is defined. If it is not, it will try to perform standard Rails
+tasks that prepare a test database and run all tests.
+
+p(hint). We have a "more detailed description":rake_tasks.html of default build behavior, but if you see
+CruiseControl.rb doing something weird with those defaults, just define a <code>cruise</code> task in your own build
+and fo the right thing in it.
+
+
+h2. How to change what the build does?
+
+<code>cruise</code> may be the task for a quick build, but you may also want to run a long build with all acceptance
+tests included. This can be done by assigning <code>project.rake_task</code> attribute in project_config.rb:
+
+<pre><code>
+Project.configure do |project|
+  ...
+  project.rake_task = 'Big_Bertha_build'
+  ...
+end
+</code></pre>
+
+Or you may not want to deal with Rake at all, but build your project by "make":http://www.gnu.org/software/make/,
+"Ant":http://ant.apache.org/ or "MSBuild":http://msdn2.microsoft.com/en-us/library/wea2sca5.aspx (yes, CC.rb should be
+able to cope with non-Ruby projects!). 
+
+p(hint). So far, this statement is mostly theoretical. None of the authors actually used CruiseControl.rb with anything
+         but Rake. Please let us know if for some reason this feature doesn't work for you.
+
+A custom build command can be set in <code>project.build_command</code> attribute. Modify project_config.rb file like
+this:
+
+<pre><code>
+Project.configure do |project|
+  ...
+  project.build_command = 'my_build_script.sh'
+  ...
+end
+</code></pre>
+
+If <code>project.build_command</code> is set, CC.rb will change current working directory to
+[cruise]/builds/your_project/work/, invoke specified command and look at the exit code to determine whether the
+build passed or failed.
+
+p(hint) You cannot specify both <code>rake_task</code> and <code>build_command</code> attributes in project_config.rb.
+It doesn't make sense, anyway.
+
+
+h2. What should I do with custom build artifacts?
+
+your_project may have a special build task, producing some output that you want to keep and be able to see through
+the dashboard.
+
+p(hint). Hint: Code coverage analysis is a good example of custom build output. CruiseControl.rb's own build uses
+"rcov":http://eigenclass.org/hiki.rb. If you drill down into a recent CC.rb build on
+"http://cruisecontrolrb.thoughtworks.com":http://cruisecontrolrb.thoughtworks.com, you can see find a link to test
+coverage reports.
+
+Before running the build, CC.rb sets OS variable <strong>CC_BUILD_ARTIFACTS</strong> to the directory
+where the build artifacts are collected. Make sure that your special task writes its output to that directory, or a
+subdirectory under that directory.
+
+Build page will have links to anything found in the build artifacts directory. 
+
+
+h2. Build monitoring via email
+
+CruiseControl.rb can send email notices whenever build is broken or fixed. To make it happen, you need to tell it how
+to send email, and who to send it to. Do the following:
+
+1. Configure SMTP server connection. Copy [cruise]/config/site_config.rb_example to ~cruise/config/site_config.rb,
+   read it and edit according to your situation.
+
+2. Tell the builder, whom do you want to receive build notices, by placing the following line in project_config.rb:
+
+<pre><code>
+Project.configure do |project|
+  ...
+  project.email_notifier.emails = ['john@doe.com', 'jane@doe.com']
+  ...
+end
+</code></pre>
+
+
+h2. Build notices via instant messaging with Jabber
+
+"Jabber":http://www.jabber.org/ is an open protocol for instant messaging. Jabber messages can be sent to all sorts of
+IM systems, including AIM, Google Talk, ICQ, IRC, MSN and Yahoo. CC.rb comes with a Jabber plugin. Look at
+[cruise]/builder_plugins/available/jabber_notifier/README for the installation guide and further details.
+
+
+h2. Build monitoring with CCTray
+
+CCTray is a utility developed as part of CruiseControl.NET project that displays an icon in the bottom right corner of
+the screen. The icon changes its color to red when a build fails, and back to green when the build is fixed.
+
+CruiseControl.rb can be monitored by CCTray. To connect CCTray to CC.rb server, start CCTray, right click on CCTray
+icon, select Settings..., click on Add button, click on Add Server button, select "Via CruiseControl.NET Dashboard"
+option and type http://<cruise_host>:3333 in the text box. Click OK, select your project, click OK again, close the
+Settings dialog. Voila, you are monitoring your build with CCTray.
+
+At the time of this writing, CC.rb was tested to work with CCTray 1.2.1, which can be downloaded from
+"here":http://downloads.sourceforge.net/ccnet/CruiseControl.NET-CCTray-1.2.1-Setup.exe?modtime=1170786355&big_mirror=0
+
+p(hint). Hint: CCTRay only works on a Windows desktop.
+
+
+h2. Build scheduling
+
+By default, the builder polls Subversion every 10 seconds for new revisions. This can be changed by adding the
+following line to project_config.rb:
+
+
+<pre><code>
+Project.configure do |project|
+  ...
+  project.scheduler.polling_interval = 5.minutes
+  ...
+end
+</code></pre>
+
+What if you want a scheduler with some interesting logic? Well, a default scheduler can be substituted by placing
+your own scheduler implementation intpo the plugins directory and writing in project_config.rb something like this:
+
+<pre><code>
+Project.configure do |project|
+  ...
+  project.scheduler = MyCustomScheduler.new(project)
+  ...
+end
+</code></pre>
+
+After initializing everything, and loading the project (step that includes evaluation of project_config.rb), the
+builder invokes project.scheduler.run. Project may detect that its configuraton has changed, so a scheduler needs to
+know how to recognize that situation.
+
+Look at [cruise]/app/models/polling_scheduler.rb to understand how a scheduler interacts with a project.
+
+
+h2. Deleting a project
+
+To remove your_project from CruiseControl.rb, kill its builder process and then delete the [cruise]/builds/your_project/
+directory.
+
+
+h2. Troubleshooting and support
+
+Beware, at the time of this writing, CC.rb is very young and not very stable. Good news is that it's simple (much, much
+simpler than other CruiseControl incarnations). The dashboard is just a small Rails app, and the builder is little
+more than a dumb, single-threaded Ruby script. Therefore, it's easy to debug. So, you are your own support hotline.
+Don't forget to send us patches, please!
+
+OK, that was the pep talk. If you have an issue that you cannot fix on your own, subscribe to mail list
+cruisecontrolrb-users@rubyforge.org and ask for help.
+
+h2. Documentation that we haven't written yet
+
+We should write about ways to run CC.rb as a service on various platforms, write about various troubleshooting
+techniques, document builder plugins etc.
+
+p(hint). Hint to would-be contributors: documentation patches will be appreciated as highly as, if not higher than,
+source patches.
+
