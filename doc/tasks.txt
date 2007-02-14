@@ -11,11 +11,10 @@ UI Stuff
 
 Bugs
 ----
-Removing project_config.rb does not trigger the build.
-
 Dashboard should not load project configuration all the time.
 
-What should be the status of a build that passed, but THEN the build loop crashed?
+What should be the status of a build that passed, but THEN the build loop crashed? Answer: it's not a build status, but
+a BUILDER status. Rolf suggested "Misbehaving". Add a story to the wiki. 
 
 Some of the "force build" stuff is begging to be refactored.
 
@@ -23,9 +22,6 @@ CruiseControl.NET tray (projects.rxml) - what should we set for next build time?
 
 Generalize things like build.changeset, build.output; makes them write out error messages when the file doesn't exist, 
 or exists but is not readable
-
-Refresh pages response should not care as much as it does about the browser state before request. Ideally,
-just send to the browser an entire data set, and let JavaScript runtime figure out what needs to be changed in DOM.   
 
 Contents of a project panel "build details" section on the dashboard can be prerendered by the builder (as Ruby,
 or even directly as XHTML) and cached in the build artifacts directory (? but complexity cost may be too high ?)
@@ -35,7 +31,6 @@ Style links to code (no underline except on hover, maybe make them consistent co
 Link to /builds/Project.four (project with a dot without builds) breaks, because of the way routes.rb parses the dot
 
 To finish the RSS story:
-   * autodiscovery link
    * RSS icon
 
 Tech
