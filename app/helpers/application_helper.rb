@@ -53,11 +53,17 @@ module ApplicationHelper
   end
   
   def hyperlink_to_build(project, build)
-    text = "#{build.label} (#{format_time(build.time, :human)})"
+    text = build_label(build)
     text += " <span class='error'>FAILED</span>" if build.failed?
-    link_to text, build_url(:project => project.name, :build => build.label), :class => build.status
+    link_to_build(text, project, build)
   end
 
+  def hyperlink_to_build_with_elapsed_time(project, build)
+    text = build_label(build)
+    build.failed? ? text += " <span class='error'>FAILED</span>" : text += " took <span>#{build.elapsed_time}s</span>"          
+    link_to_build(text, project, build)
+  end
+  
   def display_builder_state(state)
     case state
     when 'building', 'builder_down'
@@ -69,4 +75,13 @@ module ApplicationHelper
     end
   end
 
+  private
+  
+  def build_label(build)
+    "#{build.label} (#{format_time(build.time, :human)})"
+  end
+  
+  def link_to_build(text, project, build)
+    link_to text, build_url(:project => project.name, :build => build.label), :class => build.status
+  end
 end

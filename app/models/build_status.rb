@@ -40,7 +40,12 @@ class BuildStatus
     file = status_file
     match_elapsed_time(File.basename(file))
   end
-    
+
+  def match_elapsed_time(file_name)
+    match =  /^build_status\.[^\.]+\.in(\d+\.\d+)s?/.match(file_name)
+    !match || !$1 ? '' : $1
+  end
+        
   private
   
   def read_latest_status
@@ -63,14 +68,4 @@ class BuildStatus
   def match_status(file_name)
      /^build_status\.([^\.]+)(\..+)?/.match(file_name)[1]
   end
-  
-  def match_elapsed_time(file_name)
-    match =  /^build_status\.([^\.]+)(\.in(\d+)\.(\d+)s)?/.match(file_name)
-    if( match.nil? || match[2].nil? || match[3].nil? || match[4].nil?) 
-     ""
-    else
-      "#{match[3]}.#{match[4]}"
-    end
-  end
-  
 end

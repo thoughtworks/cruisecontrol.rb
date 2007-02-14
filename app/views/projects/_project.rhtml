@@ -19,7 +19,7 @@
       <% unless recent_builds.empty? %>
         <div class="builds_list">
           <% recent_builds.each do |build| %>
-            <div class="build_summary"><%= hyperlink_to_build(project, build) %></div>
+            <div class="build_summary"><%= hyperlink_to_build_with_elapsed_time(project, build) %></div>
           <% end %>
         </div>
       <% end %>
@@ -37,10 +37,6 @@
   </td>
 
   <td class="build_details">
-    <% if project.last_build_status == "success" && project.last_build%>
-        Build finished in  <%= project.last_build.elapsed_time %> seconds
-    <% end %>
-    
     <% latest_build = recent_builds.first %>
     <% if latest_build %>
         <% revisions_in_latest_build = revision_details(latest_build) %>
