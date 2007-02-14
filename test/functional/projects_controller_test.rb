@@ -38,12 +38,12 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
   end
 
-  def test_index_rxml
+  def test_index_rss
     Projects.expects(:load_all).returns([
         create_project_stub('one', 'success', [create_build_stub('10', 'success')]),
         create_project_stub('two')])
 
-    post :index, :format => 'xml'
+    post :index, :format => 'rss'
 
     assert_response :success
     assert_template 'rss'
@@ -52,8 +52,8 @@ class ProjectsControllerTest < Test::Unit::TestCase
     xml = REXML::Document.new(@response.body)
     assert_equal "one build 10 success", REXML::XPath.first(xml, '/rss/channel/item[1]/title').text
     assert_equal "two has never been built", REXML::XPath.first(xml, '/rss/channel/item[2]/title').text
-    assert_equal "bobby checked something in", REXML::XPath.first(xml, '/rss/channel/item[1]/description/pre').text
-    assert_nil REXML::XPath.first(xml, '/rss/channel/item[2]/description/pre').text
+    assert_equal "<pre>bobby checked something in</pre>", REXML::XPath.first(xml, '/rss/channel/item[1]/description').text
+    assert_equal "<pre></pre>", REXML::XPath.first(xml, '/rss/channel/item[2]/description').text
   end
 
   def test_code

@@ -6,4 +6,4 @@
   <%= render :partial => 'no_projects' if @projects.empty? %>
 </div>
 
-<%= periodically_call_remote :url => { :action => 'index', :format => 'js' }, :frequency => 5 %>
+<%= periodically_call_remote :url => { :action => 'index', :format => 'js'}, :method => 'get', :frequency => 5 %>

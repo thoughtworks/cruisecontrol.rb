@@ -10,9 +10,7 @@ xml.rss('version' => '2.0') do
       last_build = project.last_build
       xml.item do
         xml.title(rss_title(project, last_build))
-        xml.description do
-          xml.pre(rss_description(project, last_build))
-        end
+        xml.description("<pre>#{rss_description(project, last_build)}</pre>")
         xml.pubDate(rss_pub_date(last_build))
         xml.guid(rss_link(project, last_build))
         xml.link(rss_link(project, last_build))

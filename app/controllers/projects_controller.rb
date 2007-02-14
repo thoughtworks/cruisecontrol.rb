@@ -7,7 +7,7 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html
       format.js
-      format.xml { render :action => 'rss', :layout => false }
+      format.rss { render :action => 'rss', :layout => false }
     end
   end
 
