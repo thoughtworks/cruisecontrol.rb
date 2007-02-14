@@ -37,6 +37,9 @@
   </td>
 
   <td class="build_details">
+    <% if project.last_build_status == "success" && project.last_build%>
+        Build finished in  <%= project.last_build.elapsed_time %> seconds
+    <% end %>
   </td>
 
 </tr>

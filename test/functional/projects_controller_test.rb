@@ -21,9 +21,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     p1 = create_project_stub('one', 'success')
     p2 = create_project_stub('two', 'failed', [create_build_stub('1', 'failed')])
     Projects.expects(:load_all).returns([p1, p2])
-
     get :index
-
     assert_response :success
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
   end
