@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'projects_controller'
 require 'rexml/document'
 require 'rexml/xpath'
-
+require 'changeset_log_parser'
 # Re-raise errors caught by the controller.
 class ProjectsController
   def rescue_action(e) raise end
@@ -17,10 +17,12 @@ class ProjectsControllerTest < Test::Unit::TestCase
     @response   = ActionController::TestResponse.new
   end
 
-  def test_index_rhtml
+  def test_index_rhtml  
     p1 = create_project_stub('one', 'success')
     p2 = create_project_stub('two', 'failed', [create_build_stub('1', 'failed')])
     Projects.expects(:load_all).returns([p1, p2])
+    stub_change_set_parser
+    
     get :index
     assert_response :success
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
@@ -28,7 +30,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
   
   def test_index_rjs
     Projects.expects(:load_all).returns([create_project_stub('one'), create_project_stub('two')])
-
+    
     post :index, :format => 'js'
 
     assert_response :success
@@ -85,4 +87,9 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal nil, assigns(:project)
   end
 
+  def stub_change_set_parser
+    mock = Object.new  
+    ChangesetLogParser.stubs(:new).returns(mock)
+    mock.expects(:parse_log).returns([])
+  end
 end

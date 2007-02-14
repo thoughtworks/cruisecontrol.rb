@@ -40,6 +40,18 @@
     <% if project.last_build_status == "success" && project.last_build%>
         Build finished in  <%= project.last_build.elapsed_time %> seconds
     <% end %>
+    
+    <% latest_build = recent_builds.first %>
+    <% if latest_build %>
+        <% revisions_in_latest_build = revision_details(latest_build) %>
+        <% unless revisions_in_latest_build.empty? %>
+            <% revisions_in_latest_build.each do |revision| %>            
+             <div class="revision_details">
+                    <%= revision.committed_by %>: <%= revision.message %>
+                </div>
+            <% end %>
+        <% end %>    
+    <% end %>
   </td>
 
 </tr>

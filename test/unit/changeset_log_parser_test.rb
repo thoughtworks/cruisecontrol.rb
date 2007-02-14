@@ -24,6 +24,14 @@ Radical refactoring.
   M /trunk/app/views/projects/index.rhtml
 EOF
 
+LOG_WITH_MULTIPLE_LINED_COMMENT = <<EOF
+Revision 42 committed by ninja on 2007-02-12 02:32:55
+Line one
+Line two
+  M /trunk/app/foo.rb
+  M /trunk/tests/foo_test.rb
+EOF
+
   def test_can_parse_LOG_WITH_SINGLE_REVISION
     expected_result = [Revision.new(204.1, 'leonard0', DateTime.parse('2007-02-12 15:32:55'), 
                                     'Detect when X occurs and trigger Y to happen.',
@@ -44,5 +52,13 @@ EOF
                                      ChangesetEntry.new('M', '/trunk/app/views/projects/index.rhtml')])]
                                                                           
     assert_equal expected_result, ChangesetLogParser.new.parse_log(LOG_WITH_MULTIPLE_REVISIONS.split("\n"))
+  end
+  
+  def test_can_parse_LOG_WITH_MULTIPLE_LINED_COMMENT
+    expected_result = [Revision.new(42, 'ninja', DateTime.parse('2007-02-12 02:32:55'), 
+                                    "Line one\nLine two",
+                                    [ChangesetEntry.new('M', '/trunk/app/foo.rb'),
+                                     ChangesetEntry.new('M', '/trunk/tests/foo_test.rb')])]
+    assert_equal expected_result, ChangesetLogParser.new.parse_log(LOG_WITH_MULTIPLE_LINED_COMMENT.split("\n"))  
   end  
 end

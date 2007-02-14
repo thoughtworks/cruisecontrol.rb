@@ -18,4 +18,9 @@ module ProjectsHelper
             project_without_builds_url(:only_path => false, :project => project)            
   end
 
+
+  def revision_details(build)    
+    changeset = build.changeset
+    ChangesetLogParser.new.parse_log changeset.split("\n")
+  end
 end
