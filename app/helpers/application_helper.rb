@@ -17,6 +17,8 @@ module ApplicationHelper
       remove_leading_zeros(time.strftime('%I:%M %p on %d %B %Y'))
     when :round_trip_local
       time.strftime('%Y-%m-%dT%H:%M:%S.0000000-00:00') # yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK)
+    when :rss
+      time.getgm.strftime('%a, %d %b %Y %H:%M:%S Z')
     else
       raise "Unknown time format #{format.inspect}"
     end
@@ -41,10 +43,10 @@ module ApplicationHelper
     '<a href="http://cruisecontrolrb.rubyforge.org">' + h(text) + '</a>'
   end
   
-  def link_to_build(project, build)
+  def hyperlink_to_build(project, build)
     text = "#{build.label} (#{format_time(build.time, :human)})"
     text += " <span class='error'>FAILED</span>" if build.failed?
-    link_to text, {:controller => 'builds', :action => 'show', :project => project.name, :build => build.label}, :class => build.status
+    link_to text, build_url(:project => project.name, :build => build.label), :class => build.status
   end
 
   def display_builder_state(state)

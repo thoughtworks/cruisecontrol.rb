@@ -19,7 +19,7 @@
       <% unless recent_builds.empty? %>
         <div class="builds_list">
           <% recent_builds.each do |build| %>
-            <div class="build_summary"><%= link_to_build(project, build) %></div>
+            <div class="build_summary"><%= hyperlink_to_build(project, build) %></div>
           <% end %>
         </div>
       <% end %>

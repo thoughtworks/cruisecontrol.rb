@@ -98,8 +98,13 @@ class Build
       ENV['RAILS_ENV'] = old_rails_env
     end
   end
+
+  def to_param
+    self.label
+  end
   
   def elapsed_time
     @status.elapsed_time
   end
+
 end

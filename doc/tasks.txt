@@ -30,6 +30,14 @@ just send to the browser an entire data set, and let JavaScript runtime figure o
 Contents of a project panel "build details" section on the dashboard can be prerendered by the builder (as Ruby,
 or even directly as XHTML) and cached in the build artifacts directory (? but complexity cost may be too high ?)
 
+Style links to code (no underline except on hover, maybe make them consistent color in test failures and log)
+
+Link to /builds/Project.four (project with a dot without builds) breaks, because of the way routes.rb parses the dot
+
+To finish the RSS story:
+   * autodiscovery link
+   * RSS icon
+
 Tech
 ----
 Update all Rails-generated files to Rails 1.2.2 versions thereof

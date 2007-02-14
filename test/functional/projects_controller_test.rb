@@ -1,5 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'projects_controller'
+require 'rexml/document'
+require 'rexml/xpath'
 
 # Re-raise errors caught by the controller.
 class ProjectsController
@@ -26,6 +28,34 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
   end
   
+  def test_index_rjs
+    Projects.expects(:load_all).returns([create_project_stub('one'), create_project_stub('two')])
+
+    post :index, :format => 'js'
+
+    assert_response :success
+    assert_template 'index.rjs'
+    assert_equal %w(one two), assigns(:projects).map { |p| p.name }
+  end
+
+  def test_index_rxml
+    Projects.expects(:load_all).returns([
+        create_project_stub('one', 'success', [create_build_stub('10', 'success')]),
+        create_project_stub('two')])
+
+    post :index, :format => 'xml'
+
+    assert_response :success
+    assert_template 'rss'
+    assert_equal %w(one two), assigns(:projects).map { |p| p.name }
+
+    xml = REXML::Document.new(@response.body)
+    assert_equal "one build 10 success", REXML::XPath.first(xml, '/rss/channel/item[1]/title').text
+    assert_equal "two has never been built", REXML::XPath.first(xml, '/rss/channel/item[2]/title').text
+    assert_equal "bobby checked something in", REXML::XPath.first(xml, '/rss/channel/item[1]/description/pre').text
+    assert_nil REXML::XPath.first(xml, '/rss/channel/item[2]/description/pre').text
+  end
+
   def test_code
     in_sandbox do |sandbox|
       project = Project.new('three')
@@ -39,15 +69,6 @@ class ProjectsControllerTest < Test::Unit::TestCase
       assert_response :success, @response.body
       assert @response.body =~ /class FooController/
     end
-  end
-
-  # FIXME merge refresh_projects with index and remake this into test_index_rjs
-  def _test_refresh_projects
-    Projects.expects(:load_all).returns([create_project_stub('one'), create_project_stub('two')])
-    post :refresh_projects
-
-    assert_response :success
-    assert_equal %w(one two), assigns(:projects).map { |p| p.name }
   end
 
   def test_force_build_should_request_force_build

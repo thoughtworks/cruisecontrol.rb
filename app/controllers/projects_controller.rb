@@ -3,12 +3,14 @@ class ProjectsController < ApplicationController
   
   def index
     @projects = Projects.load_all
+
+    respond_to do |format|
+      format.html
+      format.js
+      format.xml { render :action => 'rss', :layout => false }
+    end
   end
 
-  def refresh_projects
-    @projects = Projects.load_all
-  end
-  
   def force_build   
     @project = nil
     begin       

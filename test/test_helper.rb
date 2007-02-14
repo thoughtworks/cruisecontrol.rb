@@ -71,6 +71,7 @@ class Test::Unit::TestCase
     project.stubs(:last_build_status).returns(last_build_status)
     project.stubs(:last_five_builds).returns(last_five_builds)
     project.stubs(:builder_state_and_activity).returns('building')
+    project.stubs(:last_build).returns(last_five_builds.last)
     project
   end
 
@@ -81,6 +82,7 @@ class Test::Unit::TestCase
     build.stubs(:time).returns(time)
     build.stubs(:failed?).returns(status == 'failed')
     build.stubs(:successful?).returns(status == 'success')
+    build.stubs(:changeset).returns("bobby checked something in")
     build
   end
 

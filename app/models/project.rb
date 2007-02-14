@@ -251,6 +251,10 @@ class Project
   def build_requested_flag_file
     File.join(path, 'build_requested')
   end
+
+  def to_param
+    self.name
+  end
   
   private
   

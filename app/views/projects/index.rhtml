@@ -6,6 +6,4 @@
   <%= render :partial => 'no_projects' if @projects.empty? %>
 </div>
 
-<% form_remote_tag( :url => { :action => 'refresh_projects' }, :html => { :id => 'build_states_form' }) do %>
-  <%= periodically_call_remote :url => { :action => 'refresh_projects'}, :submit => 'build_states_form', :frequency => 5 %>
-<% end %>
+<%= periodically_call_remote :url => { :action => 'index', :format => 'js' }, :frequency => 5 %>
