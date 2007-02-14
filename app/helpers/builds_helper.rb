@@ -1,6 +1,6 @@
 module BuildsHelper
   def format_changeset_log(log)
-    preify(h log.strip)
+    preify(h(log.strip))
   end
 
   def format_build_log(log)

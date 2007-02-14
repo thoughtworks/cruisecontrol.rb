@@ -5,16 +5,25 @@ module ApplicationHelper
     case format
     when :human
       now = Time.now
-      remove_leading_zeros(
-        (now.year == time.year && now.month == time.month && now.day == time.day) ?
-          time.strftime('%H:%M') :
-          time.strftime('%d %b'))
+      this_year = now.beginning_of_year
+      today = now.beginning_of_day
+      tomorrow = 1.day.since(today)
+
+      format =
+        case(time)
+        when Time.at(0)...this_year then '%d %b %y'
+        when this_year...today then '%d %b'
+        when today...tomorrow then '%H:%M'
+        else '%Y-%m-%d %H:%M:%S ?future?'
+        end
+      remove_leading_zero(time.strftime(format))
+
     when :iso
       time.strftime('%Y-%m-%d %H:%M:%S')
     when :iso_date
       time.strftime('%Y-%m-%d')
     when :verbose
-      remove_leading_zeros(time.strftime('%I:%M %p on %d %B %Y'))
+      remove_leading_zero(time.strftime('%I:%M %p on %d %B %Y'))
     when :round_trip_local
       time.strftime('%Y-%m-%dT%H:%M:%S.0000000-00:00') # yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK)
     when :rss
@@ -25,8 +34,8 @@ module ApplicationHelper
   end
   
   # surely there's a way to do this with strftime, but I couldn't find it... - jss
-  def remove_leading_zeros(string)
-    string.gsub(/(^| |,)0+/, '\1')
+  def remove_leading_zero(string)
+    string.gsub(/^0(\d:\d\d|\d )/, '\1')
   end
   
   def setting_row(label, value, help = '&nbsp;')
