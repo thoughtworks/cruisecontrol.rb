@@ -1,0 +1,18 @@
+<div class="header">
+  <div class="main_menu">
+    <span class="menu_item">
+      <%= link_to_unless_current 'Dashboard', :controller => 'projects', :action => 'index' %>
+    </span>
+    <span class="menu_item">
+      <%= link_to_documentation %>
+    </span>
+  </div>
+
+  <div class="cc_logo">
+    <%= link_to image_tag("cruise_logo.png"), :controller => 'projects', :action => 'index' %>
+  </div>    
+
+  <% if flash[:notice] and !flash[:notice].blank? -%>
+    <div class="flash_notice"><%= h flash[:notice] %></div>
+  <% end -%>
+</div>

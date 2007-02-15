@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>CruiseControl.rb<%= @title ? " - " + @title : '' %></title>
+  <%= stylesheet_link_tag 'cruisecontrol', :media => 'all' %>
+  <%= stylesheet_link_tag 'documentation', :media => 'all' %>
+  <%= auto_discovery_link_tag :rss, {:action => 'index', :format => 'rss'}, {:title => "RSS feed"} %>
+  <%= javascript_include_tag :defaults %>
+</head>
+
+<body>
+  <%= render :partial => '/layouts/header' %>
+  
+  <div id="menu_pane">
+    <%= render :partial => '/documentation/menu'%>
+  </div>
+  <div id="content">
+    <h1 id='title'><%= @title %></h1>
+    <%= yield %>
+  </div>
+
+  <%= render :partial => '/layouts/footer' %>
+
+</body>
+</html>
