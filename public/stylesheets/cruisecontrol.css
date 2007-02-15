@@ -83,6 +83,7 @@ a:hover {
 .build_success .build_status { color: #0A0; }
 .build_failed .build_status { color: #C00; }
 .build_never_built .build_status { color: #888; }
+.build_committed_by { font-weight: bold; }
 
 a.success, a.success:visited {
 }

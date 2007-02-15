@@ -60,8 +60,15 @@ module ApplicationHelper
 
   def hyperlink_to_build_with_elapsed_time(project, build)
     text = build_label(build)
-    build.failed? ? text += " <span class='error'>FAILED</span>" : text += " took <span>#{build.elapsed_time}s</span>"          
+    build.failed? ? text += " <span class='error'>FAILED</span>" : text += elapsed_time(build)          
     link_to_build(text, project, build)
+  end
+  
+  def show_revision_details(revision)
+    text = "<div><span class='build_committed_by'>#{revision.committed_by}</span>" + ' committed the checkin</div>'
+    # TODO: Let's format this better than using a <br/>
+    text += '<br/>'
+    text +="<div>Comments:<br/>#{format_changeset_log(revision.message)}</div>"
   end
   
   def display_builder_state(state)
@@ -75,6 +82,14 @@ module ApplicationHelper
     end
   end
 
+  def format_changeset_log(log)
+    preify(h(log.strip))
+  end
+  
+  def preify(value)
+    value.gsub(/\n/, "<br/>\n").gsub(/  /, " &nbsp;")
+  end
+    
   private
   
   def build_label(build)
@@ -84,4 +99,9 @@ module ApplicationHelper
   def link_to_build(text, project, build)
     link_to text, build_url(:project => project.name, :build => build.label), :class => build.status
   end
+
+  def elapsed_time(build)
+    build.elapsed_time and !build.elapsed_time.empty? ? " took <span>#{build.elapsed_time}s</span>" : ''
+  end
+    
 end

@@ -1,7 +1,5 @@
 module BuildsHelper
-  def format_changeset_log(log)
-    preify(h(log.strip))
-  end
+
 
   def format_build_log(log)
     preify(
@@ -39,7 +37,5 @@ module BuildsHelper
     "<span class=\"error\">#{h testError.stacktrace}</span>\n\n\n"
   end
   
-  def preify(value)
-    value.gsub(/\n/, "<br/>\n").gsub(/  /, " &nbsp;")
-  end
+
 end

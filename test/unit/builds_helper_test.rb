@@ -6,6 +6,7 @@ end
 
 class BuildsHelperTest < Test::Unit::TestCase
   include BuildsHelper
+  include ApplicationHelper
   include ActionView::Helpers::UrlHelper
   
   def setup
