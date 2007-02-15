@@ -21,7 +21,7 @@
 <div class="additional-artifacts">
   <% @build.additional_artifacts.each do |artifact| %>
     <div class="artifact">
-      <%= link_to artifact, :action => 'artifact', :project => @project.name, :build => @build.label, :artifact_path => artifact %>
+      <%= link_to artifact, :action => 'artifact', :project => @project.name, :build => @build.label, :path => artifact %>
     </div>
   <% end %>
 </div>
