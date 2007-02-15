@@ -30,10 +30,10 @@ end
 require RAILS_ROOT + "/config/environment"
 CruiseControl::Log.verbose = OPTIONS[:verbose]
 
-project_path = File.expand_path(File.join(Configuration.builds_directory, OPTIONS[:project_name]))
+project_path = File.expand_path(File.join(Configuration.projects_directory, OPTIONS[:project_name]))
 
 unless File.directory? project_path
-  STDERR.puts "Project '#{OPTIONS[:project_name]}' not found in '#{Configuration.builds_directory}'"
+  STDERR.puts "Project '#{OPTIONS[:project_name]}' not found in '#{Configuration.projects_directory}'"
   exit(-1)
 end
 

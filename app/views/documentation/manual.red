@@ -2,19 +2,19 @@
 
 h2. Files and folders
 
-If CC.rb is unpacked into [cruise] directory, then:
+If CC.rb is unpacked into [cruise] directory , then:
 
-* [cruise]/builds/ is the projects directory.
+* [cruise]/projects/ is the projects directory.
 
-* [cruise]/builds/your_project/ is a directory for the project called "your_project".
+* [cruise]/projects/your_project/ is a directory for the project called "your_project".
 
-* [cruise]/builds/your_project/work/ is a local copy of your_project's source code. Builder keeps it up to date
+* [cruise]/projects/your_project/work/ is a local copy of your_project's source code. Builder keeps it up to date
   with the source control repository and runs builds against it.
 
-* [cruise]/builds/your_project/build-123/ contains build status file, list of changed files,
+* [cruise]/projects/your_project/build-123/ contains build status file, list of changed files,
   and other "build artifacts" created while building revision 123.
 
-* [cruise]/builds/your_project/project_config.rb is builder configuration for your_project.
+* [cruise]/projects/your_project/project_config.rb is builder configuration for your_project.
 
 * [cruise]/config/site_config.rb is the file where you can make centralized changes to the configuration of dashboard
   and all builders.
@@ -34,7 +34,7 @@ Rolling your eyes already? Hold on, this is not J2EE deployment descriptors we a
 hand-crafted angled brackets just to get started here. A typical project configuration is about 3 to 5 lines of very
 simple Ruby. Yes, the configuration language of CC.rb is Ruby.
 
-In [cruise]/builds/your_project/ directory, create file project_config.rb. Write the following in it:
+In [cruise]/projects/your_project/ directory, create file project_config.rb. Write the following in it:
 
 <pre><code>Project.configure do |project|
 end
@@ -101,7 +101,7 @@ end
 </code></pre>
 
 If <code>project.build_command</code> is set, CC.rb will change current working directory to
-[cruise]/builds/your_project/work/, invoke specified command and look at the exit code to determine whether the
+[cruise]/projects/your_project/work/, invoke specified command and look at the exit code to determine whether the
 build passed or failed.
 
 p(hint) You cannot specify both <code>rake_task</code> and <code>build_command</code> attributes in project_config.rb.
@@ -199,7 +199,7 @@ Look at [cruise]/app/models/polling_scheduler.rb to understand how a scheduler i
 
 h2. Deleting a project
 
-To remove your_project from CruiseControl.rb, kill its builder process and then delete the [cruise]/builds/your_project/
+To remove your_project from CruiseControl.rb, kill its builder process and then delete the [cruise]/projects/your_project/
 directory.
 
 

@@ -30,7 +30,7 @@ class Project
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
 
-    @path = File.join(Configuration.builds_directory, @name)
+    @path = File.join(Configuration.projects_directory, @name)
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @plugins_by_name = {}

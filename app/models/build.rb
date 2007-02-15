@@ -10,9 +10,6 @@ class Build
     @status = BuildStatus.new(artifacts_directory)
   end
   
-  def publish_name
-    "/builds/#{@project.name}/#{label}"
-  end
 
   def run
     build_log = artifact 'build.log'

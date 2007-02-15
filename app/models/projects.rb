@@ -4,12 +4,12 @@ class Projects
 
   class << self
     def load_all
-      Projects.new(Configuration.builds_directory).load_all
+      Projects.new(Configuration.projects_directory).load_all
     end
 
     def find(project_name)
       # TODO: sanitize project_name to prevent a query injection attack here
-      load_project(File.join(Configuration.builds_directory, project_name))      
+      load_project(File.join(Configuration.projects_directory, project_name))      
     end
 
     def load_project(dir)
@@ -20,7 +20,7 @@ class Projects
 
   end
   
-  def initialize(dir = Configuration.builds_directory)
+  def initialize(dir = Configuration.projects_directory)
     @dir = dir
     @list = []
   end

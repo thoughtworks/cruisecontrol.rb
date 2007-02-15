@@ -1,1 +1,2 @@
-page.replace_html 'projects', :partial => 'project', :collection => @projects
+page.replace_html('projects', :partial => 'project', :collection => @projects) unless @projects.empty?
+page.replace_html('projects', :partial => 'no_projects') if @projects.empty?

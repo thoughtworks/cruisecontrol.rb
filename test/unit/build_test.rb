@@ -145,12 +145,7 @@ class BuildTest < Test::Unit::TestCase
     end
   end
 
-  def test_build_should_know_its_publish_name
-    with_sandbox_project do |sandbox, project|
-      build = Build.new(project, 1)
-      assert_equal "/builds/my_project/1", build.publish_name 
-    end
-  end
+
   
   def test_elapsed_time
     with_sandbox_project do |sandbox, project|

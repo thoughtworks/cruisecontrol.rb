@@ -37,5 +37,9 @@ module BuildsHelper
     "<span class=\"error\">#{h testError.stacktrace}</span>\n\n\n"
   end
   
+  def show_elapsed_time(build)
+    build.elapsed_time.empty? ? "" : "Total #{build.elapsed_time} seconds."
+  end
+  
 
 end
