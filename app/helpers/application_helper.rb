@@ -49,7 +49,7 @@ module ApplicationHelper
   end
 
   def link_to_documentation(text = 'Documentation')
-    '<a href="http://cruisecontrolrb.rubyforge.org">' + h(text) + '</a>'
+    link_to text, '/documentation'
   end
   
   def hyperlink_to_build(project, build)

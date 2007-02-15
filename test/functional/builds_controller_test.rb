@@ -67,7 +67,7 @@ class BuildsControllerTest < Test::Unit::TestCase
 
       Projects.expects(:find).with(project.name).returns(project)
 
-      get :artifact, :project => project.name, :build => '1', :artifact_path => ['rcov', 'index.html']
+      get :artifact, :project => project.name, :build => '1', :path => ['rcov', 'index.html']
 
       assert_response :success
       assert_equal 'apple pie', @response.body
@@ -93,26 +93,13 @@ class BuildsControllerTest < Test::Unit::TestCase
      end
   end
   
-  def test_can_not_go_up_a_directory
-    with_sandbox_project do |sandbox, project|
-      project.path = File.join(sandbox.root, 'project')
-      sandbox.new :file => 'project/build-1/build_status.pingpong'
-      sandbox.new :file => 'hidden'
-
-      Projects.expects(:find).with(project.name).returns(project)
-
-      get :artifact, :project => project.name, :build => '1', :artifact_path => '../hidden'
-      assert_response 401
-    end
-  end
-  
   def test_artifact_does_not_exist
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => 'build-1/build_status.pingpong'
 
       Projects.expects(:find).with(project.name).returns(project)
 
-      get :artifact, :project => project.name, :build => '1', :artifact_path => 'foo'
+      get :artifact, :project => project.name, :build => '1', :path => 'foo'
       assert_response 404
     end
   end
@@ -124,9 +111,9 @@ class BuildsControllerTest < Test::Unit::TestCase
 
       Projects.expects(:find).with(project.name).returns(project)
 
-      get :artifact, :project => project.name, :build => '1', :artifact_path => 'foo'
+      get :artifact, :project => project.name, :build => '1', :path => 'foo'
 
-      assert_redirected_to :artifact_path => ['foo/index.html']
+      assert_redirected_to :path => ['foo/index.html']
     end
   end
 
@@ -135,7 +122,7 @@ class BuildsControllerTest < Test::Unit::TestCase
 
     Projects.expects(:find).with(@project.name).returns(@project)
 
-    get :artifact, :project => @project.name, :build => '1', :artifact_path => file
+    get :artifact, :project => @project.name, :build => '1', :path => file
 
     assert_response :success
     assert_equal 'lemon', @response.body

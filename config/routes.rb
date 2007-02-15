@@ -21,15 +21,16 @@ ActionController::Routing::Routes.draw do |map|
 
   map.project_without_builds 'builds/:project', :controller => 'builds', :action => 'show'
   map.build 'builds/:project/:build', :controller => 'builds', :action => 'show', :build => /[^\/]+/
-  map.connect 'builds/:project/:build/*artifact_path', :controller => 'builds', :action => 'artifact', :build => /[^\/]+/
+  map.connect 'builds/:project/:build/*path', :controller => 'builds', :action => 'artifact', :build => /[^\/]+/
   
   map.connect 'projects/code/:project/*path', :controller => 'projects', :action => 'code'
   
   map.connect '', :controller => 'projects', :action => 'index'
 
+  map.connect 'documentation/*path', :controller => 'documentation', :action => 'get'
+  
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'
-
 
   # Route for CCTray.NET
   map.connect 'XmlStatusReport.aspx', :controller => 'status', :action => 'projects'

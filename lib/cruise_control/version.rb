@@ -2,7 +2,7 @@ module CruiseControl
   module VERSION #:nodoc:
     unless defined? MAJOR
       MAJOR = 0 
-      MINOR = 4
+      MINOR = 5
       MAINTENANCE = 0
 
       STRING = [MAJOR, MINOR, MAINTENANCE].join('.')

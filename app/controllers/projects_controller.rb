@@ -28,14 +28,12 @@ class ProjectsController < ApplicationController
     path = File.join(@project.path, 'work', params[:path])
     @line = params[:line].to_i if params[:line]
     
-    if params[:path].index '..'
-      render :nothing => true, :status => 401
-    elsif File.directory?(path)
+    if File.directory?(path)
       render :text => 'directories are not yet supported'
     elsif File.exists?(path)
       @content = File.read(path)
     else
-      render :text => "#{path} not found", :status => 404
+      render_not_found
     end
   end
   
