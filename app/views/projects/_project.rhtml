@@ -41,12 +41,8 @@
   </td>
 
   <td class="build_details">
-    <% latest_build = recent_builds.first %>
-    <% if latest_build %>
-        <% revisions_in_latest_build = revision_details(latest_build) %>
-        <% unless revisions_in_latest_build.empty? %>        
-                <%= show_revision_details(revisions_in_latest_build.first) %>
-        <% end %>    
+    <% if (latest_build = recent_builds.first) %>
+        <%= show_revisions_in_build(revisions_in_build(latest_build)) %>
     <% end %>
   </td>
 

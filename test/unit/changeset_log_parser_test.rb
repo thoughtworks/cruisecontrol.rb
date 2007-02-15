@@ -24,10 +24,20 @@ Radical refactoring.
   M /trunk/app/views/projects/index.rhtml
 EOF
 
+LOG_WITH_NO_COMMENT = <<EOF
+Revision 204.1 committed by leonard0 on 2007-02-12 15:32:55
+
+  M /trunk/app/models/project.rb
+  M /trunk/test/unit/project_test.rb
+EOF
+
 LOG_WITH_MULTIPLE_LINED_COMMENT = <<EOF
 Revision 42 committed by ninja on 2007-02-12 02:32:55
+
 Line one
+
 Line two
+
   M /trunk/app/foo.rb
   M /trunk/tests/foo_test.rb
 EOF
@@ -54,9 +64,17 @@ EOF
     assert_equal expected_result, ChangesetLogParser.new.parse_log(LOG_WITH_MULTIPLE_REVISIONS.split("\n"))
   end
   
+  def test_can_parse_LOG_WITH_NO_COMMENT
+    expected_result = [Revision.new(204.1, 'leonard0', DateTime.parse('2007-02-12 15:32:55'), 
+                                    '',
+                                    [ChangesetEntry.new('M', '/trunk/app/models/project.rb'),
+                                     ChangesetEntry.new('M', '/trunk/test/unit/project_test.rb')])]
+    assert_equal expected_result, ChangesetLogParser.new.parse_log(LOG_WITH_NO_COMMENT.split("\n"))  
+  end
+  
   def test_can_parse_LOG_WITH_MULTIPLE_LINED_COMMENT
     expected_result = [Revision.new(42, 'ninja', DateTime.parse('2007-02-12 02:32:55'), 
-                                    "Line one\nLine two",
+                                    "\nLine one\n\nLine two\n",
                                     [ChangesetEntry.new('M', '/trunk/app/foo.rb'),
                                      ChangesetEntry.new('M', '/trunk/tests/foo_test.rb')])]
     assert_equal expected_result, ChangesetLogParser.new.parse_log(LOG_WITH_MULTIPLE_LINED_COMMENT.split("\n"))  

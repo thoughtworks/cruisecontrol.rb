@@ -1,6 +1,6 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-
+  
   def format_time(time, format = :iso)
     case format
     when :human
@@ -63,14 +63,7 @@ module ApplicationHelper
     build.failed? ? text += " <span class='error'>FAILED</span>" : text += elapsed_time(build)          
     link_to_build(text, project, build)
   end
-  
-  def show_revision_details(revision)
-    text = "<div><span class='build_committed_by'>#{revision.committed_by}</span>" + ' committed the checkin</div>'
-    # TODO: Let's format this better than using a <br/>
-    text += '<br/>'
-    text +="<div>Comments:<br/>#{format_changeset_log(revision.message)}</div>"
-  end
-  
+    
   def display_builder_state(state)
     case state
     when 'building', 'builder_down'
