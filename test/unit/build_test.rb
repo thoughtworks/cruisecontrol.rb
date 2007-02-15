@@ -72,7 +72,7 @@ class BuildTest < Test::Unit::TestCase
         }
       Time.expects(:now).at_least(2).returns(Time.at(0), Time.at(3.2))
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
-      BuildStatus.any_instance.expects(:'succeed!').with(3.2)
+      BuildStatus.any_instance.expects(:'succeed!').with(4)
       BuildStatus.any_instance.expects(:'fail!').never
   
       build.run

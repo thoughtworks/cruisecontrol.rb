@@ -63,8 +63,8 @@ class BuildStatusTest < Test::Unit::TestCase
   end
   
   def test_elapsed_time_should_return_elapsed_seconds_if_build_sccessed
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.success.in3.52s'])
-    assert_equal '3.52', BuildStatus.new("artifacts_directory").elapsed_time
+    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.success.in3s'])
+    assert_equal '3', BuildStatus.new("artifacts_directory").elapsed_time
   end
   
   def test_elapsed_time_should_return_blank_if_elapsed_time_not_availabe

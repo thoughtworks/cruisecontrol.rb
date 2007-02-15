@@ -42,7 +42,7 @@ class BuildStatus
   end
 
   def match_elapsed_time(file_name)
-    match =  /^build_status\.[^\.]+\.in(\d+\.\d+)s?/.match(file_name)
+    match =  /^build_status\.[^\.]+\.in(\d+)s$/.match(file_name)
     !match || !$1 ? '' : $1
   end
         
