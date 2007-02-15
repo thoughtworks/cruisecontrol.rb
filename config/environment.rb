@@ -43,6 +43,7 @@ Rails::Initializer.run do |config|
 
   # Add additional load paths for your own custom dirs
   config.load_paths << "#{RAILS_ROOT}/builder_plugins/installed"
+  config.load_paths << "vendor/RedCloth-3.0.4/lib"
 
   # Use the database for sessions instead of the file system
   # (create the session table with 'rake db:sessions:create')
