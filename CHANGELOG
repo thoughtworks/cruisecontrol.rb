@@ -1,4 +1,5 @@
 TRUNK
+  - IMPORTANT: working directory renamed from 'builds' to 'projects'
   - 'cruise start' starts dashboard and all project builders (unless -e development or --without-builders option is
     specified)
   - plugin for sending build notices as instant messages via Jabber protocol (should work with IRC, ICQ, Yahoo, MSN,

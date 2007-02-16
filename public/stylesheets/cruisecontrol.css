@@ -150,6 +150,19 @@ a.never_built, a.never_built:visited {
   display: inline;
 }
 
+.project .build_button {
+  color: #000000;
+  font-weight:bold;
+  background-image:url(/images/button.png);
+  background-repeat: no-repeat;
+  font-size: 11px;
+  text-align: center;
+  width: 80px;
+  height: 23px;
+  border: none;
+  background-color:#FFFFFF;
+}
+
 .project .recent_builds {
   color: #666;
   font-size: 0.9em;
