@@ -16,6 +16,7 @@ TRUNK
     password caching and/or key-based authentication and/or read-only anonymous access.  
   - builder plugins receive build_broken and build_fixed events when build status goes from green to red and vice versa
   - RSS feed
+  - default SVN polling interval changed to 30 seconds  
   - dashboard displays who committed and their comments
   - dashboard displays how much time did it take to perform a build
   - [bugfix] Debug-level messages are logged in development mode
