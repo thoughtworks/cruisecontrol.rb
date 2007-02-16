@@ -37,7 +37,8 @@
         <button type="submit" class="build_button" value="txt" alt="Build Now">Build Now</button>
       <% end %>
     </div>
-    <%= display_builder_state(project.builder_state_and_activity) %>
+    <%= display_builder_state(project.builder_state_and_activity) %> 
+    <%= project.currently_building_build_info.nil? ? "" : project.currently_building_build_info %>
   </td>
 
   <td class="build_details">

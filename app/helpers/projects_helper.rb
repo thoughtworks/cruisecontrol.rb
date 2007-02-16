@@ -37,4 +37,15 @@ module ProjectsHelper
     changeset = build.changeset
     ChangesetLogParser.new.parse_log changeset.split("\n")
   end
+  
+  def delete_in_progress_build_status_file_if_any(project)
+    deletion_marker = project.in_progress_build_status_file + InProgressBuildStatus::DELETION_MARKER_FILE_SUFFIX
+    if File.exists?(deletion_marker)
+      deletion_marker =~ /(.*)(_for_deletion_upon_next_refresh)/
+      file_to_be_deleted = $1
+      FileUtils.rm_f(Dir[file_to_be_deleted])
+      FileUtils.rm_f(Dir[deletion_marker])
+    end
+  end
+  
 end

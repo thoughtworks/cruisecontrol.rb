@@ -385,6 +385,18 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
     project.build([new_revision(2)])
   end
   
+  def test_load_in_progress_build_status_if_any 
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      File.open(@project.in_progress_build_status_file,'w') do |f|
+        f.print("123")
+      end
+      
+      @project.load_in_progress_build_status_if_any
+
+      assert_equal "123", @project.currently_building_build_info
+    end  
+  end
       
   private
   

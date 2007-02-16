@@ -3,6 +3,7 @@ require 'fileutils'
 class Project
   @@plugin_names = []
   @@config_existed = false
+
   def self.plugin(plugin_name)
     @@plugin_names << plugin_name unless RAILS_ENV == 'test' or @@plugin_names.include? plugin_name
   end
@@ -10,7 +11,8 @@ class Project
   def self.read(dir)
     @project_in_the_works = Project.new(File.basename(dir))
     begin
-      return @project_in_the_works.load_config
+      @project_in_the_works.load_config
+      return @project_in_the_works.load_in_progress_build_status_if_any
     rescue => e
       raise "Could not load #{@project_in_the_works.config_file} : #{e.message} in #{e.backtrace.first}"
     ensure
@@ -25,7 +27,7 @@ class Project
 
   attr_reader :name, :plugins, :build_command, :rake_task
   attr_writer :local_checkout 
-  attr_accessor :source_control, :path, :scheduler
+  attr_accessor :source_control, :path, :scheduler, :currently_building_build_info
 
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
@@ -45,6 +47,17 @@ class Project
   def load_config
     if File.exists?(config_file)
       load config_file
+    end
+    self
+  end
+
+  def in_progress_build_status_file
+    File.expand_path(File.join(path, 'builder.in_progress_build_status'))
+  end
+
+  def load_in_progress_build_status_if_any
+    if File.exists?(in_progress_build_status_file)
+      @currently_building_build_info = File.read(in_progress_build_status_file) 
     end
     self
   end
