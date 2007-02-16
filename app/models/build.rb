@@ -19,11 +19,10 @@ class Build
     in_clean_environment_on_local_copy do
       execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
-    elapsed_seconds = (Time.now - time).ceil
-    @status.succeed!(elapsed_seconds)    
+    @status.succeed!((Time.now - time).ceil)    
   rescue => e
-    CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)    
-    @status.fail!(elapsed_seconds)
+    CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
+    @status.fail!((Time.now - time).ceil)
   end
 
   def additional_artifacts

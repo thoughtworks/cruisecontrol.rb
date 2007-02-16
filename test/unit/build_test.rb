@@ -74,7 +74,6 @@ class BuildTest < Test::Unit::TestCase
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
       BuildStatus.any_instance.expects(:'succeed!').with(4)
       BuildStatus.any_instance.expects(:'fail!').never
-  
       build.run
     end
   end
@@ -95,8 +94,8 @@ class BuildTest < Test::Unit::TestCase
       }
   
       build.expects(:execute).with(build.rake, expected_redirect_options).raises(CommandLine::ExecutionError)
-      BuildStatus.any_instance.expects(:'fail!')
-  
+      Time.stubs(:now).returns(Time.at(1))
+      BuildStatus.any_instance.expects(:'fail!').with(0)  
       build.run
     end
   end
