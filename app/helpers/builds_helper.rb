@@ -38,7 +38,11 @@ module BuildsHelper
   end
   
   def show_elapsed_time(build)
-    build.elapsed_time.empty? ? "" : "Total #{build.elapsed_time} seconds."
+    begin
+      "Total #{format_seconds(build.elapsed_time, :precise)}."
+    rescue
+      '' # The build time is not present.
+    end
   end
   
 

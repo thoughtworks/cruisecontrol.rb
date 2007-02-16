@@ -33,6 +33,31 @@ module ApplicationHelper
     end
   end
   
+  def format_seconds(total_seconds, format = :general)
+    minutes, seconds = total_seconds.divmod(60)
+    hours, minutes = minutes.divmod(60)
+    
+    hours == 1 ? hours_label = "hour" : hours_label = "hours"
+    seconds == 1 ? seconds_label = "second" : seconds_label = "seconds"
+    minutes == 1 ? minutes_label = "minute" : minutes_label = "minutes"
+    
+    case format    
+    when :general
+      return "#{hours} #{hours_label}" if hours >= 1 and minutes == 0
+      return "#{hours} #{hours_label} #{minutes} #{minutes_label}" if hours >= 1      
+      return "#{minutes} #{minutes_label}" if minutes >= 1
+      return "#{seconds} #{seconds_label}"
+    when :precise
+      result = []
+      result << "#{hours} #{hours_label}" unless hours == 0
+      result << "#{minutes} #{minutes_label}" unless minutes == 0
+      result << "#{seconds} #{seconds_label}" unless seconds == 0 and total_seconds != 0
+      result.join(" and ")
+    else
+      raise "Unknown seconds format #{format.inspect}"
+    end
+  end
+  
   # surely there's a way to do this with strftime, but I couldn't find it... - jss
   def remove_leading_zero(string)
     string.gsub(/^0(\d:\d\d|\d )/, '\1')
@@ -84,7 +109,15 @@ module ApplicationHelper
           gsub(/  /, " &nbsp;").
           gsub(/\.{20}/, '....................&#8203;')
   end
-    
+
+  def elapsed_time(build, format = :general)
+    begin
+      " took <span>#{format_seconds(build.elapsed_time, format)}</span>"
+    rescue
+      '' # The build time is not present.
+    end
+  end
+      
   private
   
   def build_label(build)
@@ -93,10 +126,6 @@ module ApplicationHelper
   
   def link_to_build(text, project, build)
     link_to text, build_url(:project => project.name, :build => build.label), :class => build.status
-  end
-
-  def elapsed_time(build)
-    build.elapsed_time and !build.elapsed_time.empty? ? " took <span>#{build.elapsed_time}s</span>" : ''
   end
     
 end

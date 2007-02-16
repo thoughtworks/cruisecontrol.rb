@@ -33,6 +33,9 @@ Link to /builds/Project.four (project with a dot without builds) breaks, because
 To finish the RSS story:
    * RSS icon
 
+If the build takes say 7501 seconds, it displays 2 hours and 5 minutes and 1 second.
+It might be better to display 2 hours, 5 minutes and 1 second.  Or perhaps drop the seconds?
+
 Tech
 ----
 Update all Rails-generated files to Rails 1.2.2 versions thereof

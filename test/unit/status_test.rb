@@ -62,14 +62,16 @@ class BuildStatusTest < Test::Unit::TestCase
     assert_equal 'never_built', BuildStatus.new("artifacts_directory").to_s
   end
   
-  def test_elapsed_time_should_return_elapsed_seconds_if_build_sccessed
+  def test_elapsed_time_should_return_elapsed_seconds_if_build_succeeded
     Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.success.in3s'])
-    assert_equal '3', BuildStatus.new("artifacts_directory").elapsed_time
+    assert_equal 3, BuildStatus.new("artifacts_directory").elapsed_time
   end
   
   def test_elapsed_time_should_return_blank_if_elapsed_time_not_availabe
     Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.hoo'])
-    assert_equal '', BuildStatus.new("artifacts_directory").elapsed_time    
+    assert_raises("Could not parse elapsed time.") do
+      BuildStatus.new("artifacts_directory").elapsed_time
+    end
   end
   
 end

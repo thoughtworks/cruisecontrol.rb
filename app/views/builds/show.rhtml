@@ -12,7 +12,7 @@
   <% if @build.failed? %><span class="error">FAILED</span><% end %>
 </h1>
 <div class="build-time">
-  finished at <%= format_time @build.time, :verbose %>. <%= show_elapsed_time(@build) %>
+   <%= elapsed_time(@build, :precise) %> finished at <%= format_time @build.time, :verbose %>.
 </div>
 
 <br/>
