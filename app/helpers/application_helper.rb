@@ -80,7 +80,9 @@ module ApplicationHelper
   end
   
   def preify(value)
-    value.gsub(/\n/, "<br/>\n").gsub(/  /, " &nbsp;")
+    value.gsub(/\n/, "<br/>\n").
+          gsub(/  /, " &nbsp;").
+          gsub(/\.{20}/, '....................&#8203;')
   end
     
   private
