@@ -53,5 +53,5 @@ class ApplicationHelperTest < Test::Unit::TestCase
     assert_equal '1 hour and 1 minute and 1 second', format_seconds(3661, :precise)    
     assert_equal '2 hours and 5 minutes', format_seconds(7500, :precise)
     assert_equal '2 hours and 5 minutes and 1 second', format_seconds(7501, :precise)    
-  end  
+  end
 end

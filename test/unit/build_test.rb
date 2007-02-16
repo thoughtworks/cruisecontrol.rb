@@ -144,13 +144,5 @@ class BuildTest < Test::Unit::TestCase
       assert_equal(%w(coverage foo foo.txt), build.additional_artifacts.sort)
     end
   end
-
-
-  
-  def test_elapsed_time
-    with_sandbox_project do |sandbox, project|
-      BuildStatus.any_instance.expects(:elapsed_time).returns('3.2')
-      assert_equal '3.2', Build.new(project, 123).elapsed_time
-    end
-  end
+    
 end

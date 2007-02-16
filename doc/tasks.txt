@@ -33,6 +33,11 @@ Link to /builds/Project.four (project with a dot without builds) breaks, because
 To finish the RSS story:
    * RSS icon
 
+Committed_by and comments on the dashboard need to be limited to a certain number of characters.
+Currently, we preservce newlines (looks nicer), but may cause complications if there are too many newlines.
+
+Comments on the dashboard need tooltips or floating-divs to display the full message.
+
 If the build takes say 7501 seconds, it displays 2 hours and 5 minutes and 1 second.
 It might be better to display 2 hours, 5 minutes and 1 second.  Or perhaps drop the seconds?
 

@@ -85,7 +85,12 @@ module ApplicationHelper
 
   def hyperlink_to_build_with_elapsed_time(project, build)
     text = build_label(build)
-    build.failed? ? text += " <span class='error'>FAILED</span>" : text += elapsed_time(build)          
+    if build.failed?
+      text += " <span class='error'>FAILED</span>"
+    else
+      elapsed_time_text = elapsed_time(build)
+      text += " took #{elapsed_time_text}" unless elapsed_time_text.empty?
+    end
     link_to_build(text, project, build)
   end
     
@@ -112,7 +117,7 @@ module ApplicationHelper
 
   def elapsed_time(build, format = :general)
     begin
-      " took <span>#{format_seconds(build.elapsed_time, format)}</span>"
+      "<span>#{format_seconds(build.elapsed_time, format)}</span>"
     rescue
       '' # The build time is not present.
     end

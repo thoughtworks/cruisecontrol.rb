@@ -37,13 +37,9 @@ module BuildsHelper
     "<span class=\"error\">#{h testError.stacktrace}</span>\n\n\n"
   end
   
-  def show_elapsed_time(build)
-    begin
-      "Total #{format_seconds(build.elapsed_time, :precise)}."
-    rescue
-      '' # The build time is not present.
-    end
+  def display_build_time
+    elapsed_time_text = elapsed_time(@build, :precise)
+    build_time_text = format_time(@build.time, :verbose)
+    elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}"
   end
-  
-
 end

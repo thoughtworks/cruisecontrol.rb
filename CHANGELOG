@@ -5,6 +5,8 @@ TRUNK
     Google Talk or anything else that has a Jabber transport).
   - 'cruise start' starts dashboard in production environment. Use 'cruise start -e development' for development.
   - builder plugins receive build_broken and build_fixed events when build status goes from green to red and vice versa
+  - elapsed time for build
+  - dashboard displays who committed and their comments
   - [bugfix] Debug-level messages are logged in development mode
   - [bugfix] Running builder doesn't block the dashboard on Windows
   - [bugfix] Test Failure Parser correctly parses failure messages from Mocha
