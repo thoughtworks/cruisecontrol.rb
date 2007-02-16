@@ -1,17 +1,28 @@
 TRUNK
+
+------------------------------------------------------------------------------------------------------------------------
+* 0.5.0
   - IMPORTANT: working directory renamed from 'builds' to 'projects'
+  - drill down from error message to to source code  
+  - when builder detects a change to project_config.rb, it automatically reloads the project (no need to restart
+    the builder)
   - 'cruise start' starts dashboard and all project builders (unless -e development or --without-builders option is
     specified)
+  - 'cruise start' starts dashboard in production environment. Use 'cruise start -e development' for development.
+  - more, and better, documentation
   - plugin for sending build notices as instant messages via Jabber protocol (should work with IRC, ICQ, Yahoo, MSN,
     Google Talk or anything else that has a Jabber transport).
-  - 'cruise start' starts dashboard in production environment. Use 'cruise start -e development' for development.
+  - 'build add' does not create project_config.rb, and therefore does not write down SVN user/password (relying on
+    password caching and/or key-based authentication and/or read-only anonymous access.  
   - builder plugins receive build_broken and build_fixed events when build status goes from green to red and vice versa
-  - elapsed time for build
+  - RSS feed
   - dashboard displays who committed and their comments
+  - dashboard displays how much time did it take to perform a build
   - [bugfix] Debug-level messages are logged in development mode
   - [bugfix] Running builder doesn't block the dashboard on Windows
   - [bugfix] Test Failure Parser correctly parses failure messages from Mocha
-  - [bugfix] Removal project_config.rb is now detected, resulting in reloading of the project and a forced build.  
+  - [bugfix] dashboard autorefresh handles adding/deleting a project
+
 ------------------------------------------------------------------------------------------------------------------------
 * 0.4.0
   - pretty user interface
