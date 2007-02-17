@@ -14,7 +14,7 @@ class InProgressBuildStatusTest < Test::Unit::TestCase
   def test_build_finished_creates_deletion_marker_file
     begin
       in_total_sandbox do
-        full_path_file_name=Dir.pwd + "./some other filename"
+        full_path_file_name = File.join(Dir.pwd, "some_other_filename")
         setup_using_filename(full_path_file_name)
         status = InProgressBuildStatus.new(nil)
         deletion_marker = full_path_file_name + InProgressBuildStatus::DELETION_MARKER_FILE_SUFFIX
