@@ -1,6 +1,18 @@
 class InProgressBuildStatus
-  DELETION_MARKER_FILE_SUFFIX = "_for_deletion_upon_next_refresh"
+  def self.deletion_marker_file_suffix
+    "_for_deletion_upon_next_refresh"
+  end
   
+  def self.delete_in_progress_build_status_file_if_any(project)
+    deletion_marker = project.in_progress_build_status_file + InProgressBuildStatus.deletion_marker_file_suffix
+    if File.exists?(deletion_marker)
+      deletion_marker =~ /(.*)(#{InProgressBuildStatus.deletion_marker_file_suffix})/
+      file_to_be_deleted = $1
+      FileUtils.rm_f(Dir[file_to_be_deleted])
+      FileUtils.rm_f(Dir[deletion_marker])
+    end
+  end
+    
   def initialize(project)
   end
 
@@ -18,10 +30,9 @@ class InProgressBuildStatus
   private
   
   def mark_file_for_deletion_upon_next_refresh(filename)
-    f = File.open(filename + DELETION_MARKER_FILE_SUFFIX, 'w')
+    f = File.open(filename + InProgressBuildStatus.deletion_marker_file_suffix, 'w')
     f.close
   end
-
 end
 
 Project.plugin :in_progress_build_status 

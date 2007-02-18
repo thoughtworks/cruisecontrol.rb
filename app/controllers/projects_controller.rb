@@ -1,12 +1,11 @@
 class ProjectsController < ApplicationController
   layout 'default'
-  include ProjectsHelper
   
   def index
     @projects = Projects.load_all
     
     @projects.each do |project|
-      delete_in_progress_build_status_file_if_any(project)
+      InProgressBuildStatus.delete_in_progress_build_status_file_if_any(project)
     end
     
     respond_to do |format|
