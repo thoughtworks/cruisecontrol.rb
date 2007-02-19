@@ -319,8 +319,6 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
     
 
   def test_request_build_should_generate_build_requested_file
-    ForceBuildBlocker.expects(:block).with(@project)
-    ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|
       @project.path = sandbox.root
       @project.request_build
@@ -328,30 +326,16 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
     end
   end
   
-  def test_request_build_should_take_no_effect_when_acquire_build_blocker_failed
-    ForceBuildBlocker.expects(:block).with(@project).raises("failed to lock exception")
-    ForceBuildBlocker.expects(:release).with(@project)  
-    in_sandbox do |sandbox|
-      @project.path = sandbox.root
-      @project.request_build
-      assert !File.file?(@project.build_requested_flag_file)
-    end
-  end
-  
-   def test_request_build_should_take_no_effect_if_build_requested_file_exists
-    ForceBuildBlocker.expects(:block).with(@project)
-    ForceBuildBlocker.expects(:release).with(@project)
+   def test_request_build_should_not_not_mind_if_build_requested_file_already_exists
     in_sandbox do |sandbox|      
       @project.path = sandbox.root
       sandbox.new :file => 'build_requested'
-      @project.expects(:create_build_requested_flag_file).never
+      @project.expects(:create_build_requested_flag_file)
       @project.request_build
    end
   end
   
   def test_build_if_requested_should_build_if_build_requested_file_exists
-    ForceBuildBlocker.expects(:block).with(@project)
-    ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|      
       @project.path = sandbox.root
       sandbox.new :file => 'build_requested'

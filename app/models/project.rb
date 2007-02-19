@@ -138,7 +138,7 @@ class Project
   def build_if_necessary
     notify(:polling_source_control)
     begin
-      revisions = new_revisions()
+      revisions = new_revisions
       if revisions.empty?
         notify(:no_new_revisions_detected)
         return nil
@@ -166,7 +166,7 @@ class Project
   
   def request_build
     BuilderStarter.begin_builder(name)  if builder_state_and_activity == 'builder_down'    
-    generate_build_tag_file_if_need
+    create_build_requested_flag_file
   end
   
   def config_modifications?
@@ -192,14 +192,10 @@ class Project
   end
   
   def build_if_requested
-    return unless build_requested?
-    remove_build_requested_flag_file
-    begin
-      ForceBuildBlocker.block(self)     
+    if build_requested?
+      remove_build_requested_flag_file
       build
-    ensure
-      ForceBuildBlocker.release(self) rescue nil
-    end  
+    end
   end
 
   
@@ -268,19 +264,6 @@ class Project
   end
   
   private
-  
-  def generate_build_tag_file_if_need
-    begin
-      ForceBuildBlocker.block(self)
-      unless build_requested?
-        create_build_requested_flag_file
-      end 
-    rescue       
-    ensure 
-      ForceBuildBlocker.release(self) rescue nil
-    end    
-  end
-  
   
   # sorts a array of builds in order of revision number and rebuild number 
   def order_by_label(builds)

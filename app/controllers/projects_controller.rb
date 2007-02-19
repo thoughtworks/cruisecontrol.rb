@@ -17,6 +17,7 @@ class ProjectsController < ApplicationController
 
   def build
     render :text => 'Project not specified', :status => 404 and return unless params[:project]
+
     @project = Projects.find(params[:project])
     render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
 
