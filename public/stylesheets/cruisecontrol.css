@@ -1,5 +1,5 @@
 body {
-  font-family: "Lucida Grande", Verdana, Helvetica, Arial, sans-serif;
+  font-family: "Lucida Grande", "Lucida Sans", Verdana, Helvetica, Arial, sans-serif;
   font-size: .8em;
   margin: 0;
   border: 0;
@@ -102,8 +102,8 @@ a.never_built, a.never_built:visited {
 
 .project {
   margin: 0.5em 0;
-  padding: 0 1.5em;
-  min-height: 8em;
+  padding: 0.5em 1.5em;
+  min-height: 9.2em;
 }  
 
 .build_success, .build_never_built {
@@ -165,7 +165,6 @@ a.never_built, a.never_built:visited {
 
 .project .recent_builds {
   color: #666;
-  font-size: 0.9em;
 }
 
 .project .recent_builds .lead {
@@ -286,6 +285,11 @@ a.never_built, a.never_built:visited {
 #build-list .selected a {
   background-color: #507ec0;
   color: #FFF;
+}
+
+#build-list .selected a .error {
+  background-color: #507ec0;
+  color: #F66;
 }
 
 #build-list .selected a, #build-list .selected a:visited {
