@@ -10,7 +10,7 @@ class PollingScheduler
   def run
     while (true) do
      begin
-        @project.build_if_necessary or check_force_build_until_next_polling
+        @project.build_if_necessary or check_build_request_until_next_polling
         clean_last_build_loop_error
         return :reload_project if @project.config_modifications?
       rescue => e
@@ -20,11 +20,11 @@ class PollingScheduler
     end
   end
   
-  def check_force_build_until_next_polling
+  def check_build_request_until_next_polling
     time_to_go = Time.now + polling_interval
     while Time.now < time_to_go
-      @project.force_build_if_requested
-      sleep force_build_checking_interval
+      @project.build_if_requested
+      sleep build_request_checking_interval
     end
   end
 
@@ -32,8 +32,8 @@ class PollingScheduler
     @custom_polling_interval or Configuration.default_polling_interval
   end
 
-  def force_build_checking_interval
-    Configuration.force_build_checking_interval
+  def build_request_checking_interval
+    Configuration.build_request_checking_interval
   end
 
   def polling_interval=(value)

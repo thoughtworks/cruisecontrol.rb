@@ -1,3 +1,0 @@
-if @project
-  page.replace "project_#{@project.name}", :partial => 'project', :locals => {:project => @project }
-end

@@ -39,18 +39,20 @@ class PollingSchedulerTest < Test::Unit::TestCase
     assert !@scheduler.last_logged_less_than_an_hour_ago
   end
   
-  def test_should_check_force_build
+  def test_check_build_request_until_next_polling
     @scheduler.expects(:polling_interval).returns(2.seconds)
-    @scheduler.stubs(:force_build_checking_interval).returns(0)
+    @scheduler.stubs(:build_request_checking_interval).returns(0)
     Time.expects(:now).times(4).returns(Time.at(0), Time.at(0), Time.at(1), Time.at(2))
-    @mock_project.expects(:force_build_if_requested).times(2)
-    @scheduler.check_force_build_until_next_polling
+    @mock_project.expects(:build_if_requested).times(2)
+
+    @scheduler.check_build_request_until_next_polling
   end
 
   def test_should_return_flag_to_reload_project_if_configurations_modified
-    @scheduler.expects(:check_force_build_until_next_polling).returns(false)
+    @scheduler.expects(:check_build_request_until_next_polling).returns(false)
     @mock_project.expects(:build_if_necessary).returns(nil)
     @mock_project.expects(:config_modifications?).returns(true)
+
     assert_equal :reload_project, @scheduler.run
   end
 end

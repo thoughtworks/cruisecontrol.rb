@@ -15,26 +15,29 @@ class ProjectsController < ApplicationController
     end
   end
 
-  def force_build   
-    @project = nil
-    begin       
-      @project = Projects.find(params[:project])
-      @project.request_force_build
-    rescue 
-      @project = nil
-    end
-    @project
+  def build
+    render :text => 'Project not specified', :status => 404 and return unless params[:project]
+    @project = Projects.find(params[:project])
+    render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
+
+    @project.request_build rescue nil
+
+    render :nothing => true
  end
   
   def code
+    render :text => 'Project not specified', :status => 404 and return unless params[:project]
+    render :text => 'Path not specified', :status => 404 and return unless params[:path]
+
     @project = Projects.find(params[:project])
-    
+    render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project 
+
     path = File.join(@project.path, 'work', params[:path])
     @line = params[:line].to_i if params[:line]
     
     if File.directory?(path)
-      render :text => 'directories are not yet supported'
-    elsif File.exists?(path)
+      render :text => 'Viewing of source directories is not supported yet', :status => 500 
+    elsif File.file?(path)
       @content = File.read(path)
     else
       render_not_found

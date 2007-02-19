@@ -66,25 +66,53 @@ class ProjectsControllerTest < Test::Unit::TestCase
     
       get :code, :project => 'two', :path => ['app', 'controller', 'FooController.rb'], :line => 2
       
-      assert_response :success, @response.body
-      assert @response.body =~ /class FooController/
+      assert_response :success
+      assert_match /class FooController/, @response.body
     end
   end
 
-  def test_force_build_should_request_force_build
+  def test_code_url_not_fully_specified
+    Projects.expects(:find).never
+
+    get :code, :path => ['foo'], :line => 1
+    assert_response 404
+    assert_equal 'Project not specified', @response.body
+
+    get :code, :project => 'foo', :line => 1
+    assert_response 404
+    assert_equal 'Path not specified', @response.body
+  end
+
+  def test_code_non_existant_project
+    Projects.expects(:find).with('foo').returns(nil)
+    get :code, :project => 'foo', :path => ['foo.rb'], :line => 1
+    assert_response 404
+  end
+
+  def test_code_non_existant_path
+    in_sandbox do |sandbox|
+      project = Project.new('project')
+      project.path = sandbox.root
+      Projects.expects(:find).with('project').returns(project)
+
+      get :code, :project => 'project', :path => ['foo.rb'], :line => 1
+      assert_response 404
+    end
+  end
+
+  def test_build_should_request_build
     project = create_project_stub('two')
     Projects.expects(:find).with('two').returns(project)
-    project.expects(:request_force_build)
-    post :force_build, :project => "two"
+    project.expects(:request_build)
+    post :build, :project => "two"
     assert_response :success
     assert_equal 'two', assigns(:project).name
   end
   
-  def test_force_build_should_assign_nil_if_project_not_found
-    Projects.expects(:find).with('non_existing_project').raises("project not found error")
-    post :force_build, :project => "non_existing_project"
-    assert_response :success
-    assert_equal nil, assigns(:project)
+  def test_build_for_non_existant_project
+    Projects.expects(:find).with('non_existing_project').returns(nil)
+    post :build, :project => "non_existing_project"
+    assert_response 404
   end
   
   def test_index_delete_in_progress_build_status_file_if_any

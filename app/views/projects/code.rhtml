@@ -3,7 +3,9 @@
 <% line_number = 0 %>
 <% @content.gsub("  ", " &nbsp;").split("\n").each do |line| %>
   <a name="<%= line_number += 1%>">
-    <div class="line<%= @line == line_number ? " selected_line" : ""%>">
-      <span class="line_number"><%= line_number %>:</span><%= line %></div></a>
+    <div class="line<%= @line == line_number ? ' selected_line' : ''%>">
+      <span class="line_number"><%= line_number %>:</span><%= line %>
+    </div>
+  </a>
 <% end %>
 </div>

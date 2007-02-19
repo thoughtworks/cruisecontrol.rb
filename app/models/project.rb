@@ -45,9 +45,7 @@ class Project
   end
 
   def load_config
-    if File.exists?(config_file)
-      load config_file
-    end
+    load config_file if File.file?(config_file)
     self
   end
 
@@ -145,7 +143,7 @@ class Project
         notify(:no_new_revisions_detected)
         return nil
       else
-        remove_build_requested_flag_file if force_build_requested?
+        remove_build_requested_flag_file if build_requested?
         notify(:new_revisions_detected, revisions)
         return build(revisions)
       end
@@ -162,11 +160,11 @@ class Project
                     @source_control.revisions_since(self, builds.last.label.to_i)
   end
   
-  def force_build_requested?
+  def build_requested?
     File.file?(build_requested_flag_file)
   end
   
-  def request_force_build
+  def request_build
     BuilderStarter.begin_builder(name)  if builder_state_and_activity == 'builder_down'    
     generate_build_tag_file_if_need
   end
@@ -193,8 +191,8 @@ class Project
     build and config_exists and (File.mtime(config_path) > build.time)
   end
   
-  def force_build_if_requested
-    return unless force_build_requested?
+  def build_if_requested
+    return unless build_requested?
     remove_build_requested_flag_file
     begin
       ForceBuildBlocker.block(self)     
@@ -274,7 +272,7 @@ class Project
   def generate_build_tag_file_if_need
     begin
       ForceBuildBlocker.block(self)
-      unless force_build_requested?
+      unless build_requested?
         create_build_requested_flag_file
       end 
     rescue       

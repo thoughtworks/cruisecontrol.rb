@@ -1,7 +1,6 @@
 UI Stuff
 --------
 * hard left
-* force button is lame
 * overflow
 
 * tests summary should only be there if we found tests
@@ -15,8 +14,6 @@ Dashboard should not load project configuration all the time.
 
 What should be the status of a build that passed, but THEN the build loop crashed? Answer: it's not a build status, but
 a BUILDER status. Rolf suggested "Misbehaving". Add a story to the wiki. 
-
-Some of the "force build" stuff is begging to be refactored.
 
 CruiseControl.NET tray (projects.rxml) - what should we set for next build time?
 
@@ -32,13 +29,16 @@ Link to /builds/Project.four (project with a dot without builds) breaks, because
 
 To finish the RSS story:
    * RSS icon
-   * Fiogure out why Firefox 1.5 goes nuts on Rolf's PC when you try to open a feed in it.
+   * Figure out why Firefox 1.5 goes nuts on Rolf's PC when you try to open a feed in it.
+
 Committed_by and comments on the dashboard need to be limited to a certain number of characters.
-Currently, we preservce newlines (looks nicer), but may cause complications if there are too many newlines.
+
+Currently, we preserve newlines (looks nicer), but may cause complications if there are too many newlines.
 
 Comments on the dashboard need tooltips or floating-divs to display the full message.
 
 If the build takes say 7501 seconds, it displays 2 hours and 5 minutes and 1 second.
+
 It might be better to display 2 hours, 5 minutes and 1 second.  Or perhaps drop the seconds?
 
 Tech

@@ -305,12 +305,12 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
       assert @project.config_modifications?  
   end
   
-  def test_request_force_build_should_start_builder_if_builder_was_down
+  def test_request_build_should_start_builder_if_builder_was_down
      in_sandbox do |sandbox|
       @project.path = sandbox.root                        
       @project.expects(:builder_state_and_activity).returns('builder_down') 
       BuilderStarter.expects(:begin_builder).with(@project.name)
-      @project.request_force_build           
+      @project.request_build
     end       
   end
   
@@ -318,38 +318,38 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
   
     
 
-  def test_request_force_build_should_generate_force_tag_file
+  def test_request_build_should_generate_build_requested_file
     ForceBuildBlocker.expects(:block).with(@project)
     ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      @project.request_force_build  
+      @project.request_build
       assert File.file?(@project.build_requested_flag_file)
     end
   end
   
-  def test_request_force_build_should_take_no_effect_when_acquire_build_blocker_failed
+  def test_request_build_should_take_no_effect_when_acquire_build_blocker_failed
     ForceBuildBlocker.expects(:block).with(@project).raises("failed to lock exception")
     ForceBuildBlocker.expects(:release).with(@project)  
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      @project.request_force_build  
+      @project.request_build
       assert !File.file?(@project.build_requested_flag_file)
     end
   end
   
-   def test_request_force_build_should_take_no_effect_if_force_build_tag_file_exists
+   def test_request_build_should_take_no_effect_if_build_requested_file_exists
     ForceBuildBlocker.expects(:block).with(@project)
     ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|      
       @project.path = sandbox.root
       sandbox.new :file => 'build_requested'
       @project.expects(:create_build_requested_flag_file).never
-      @project.request_force_build  
+      @project.request_build
    end
   end
   
-  def test_should_force_build_if_force_build_tag_file_exists
+  def test_build_if_requested_should_build_if_build_requested_file_exists
     ForceBuildBlocker.expects(:block).with(@project)
     ForceBuildBlocker.expects(:release).with(@project)
     in_sandbox do |sandbox|      
@@ -357,14 +357,14 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
       sandbox.new :file => 'build_requested'
       @project.expects(:remove_build_requested_flag_file)
       @project.expects(:build)
-      @project.force_build_if_requested
+      @project.build_if_requested
     end
   end
     
-  def test_should_check_force_build_requested_by_checking_if_tag_file_existing
+  def test_build_requested
     @project.stubs(:path).returns("a_path")
     File.expects(:file?).with(@project.build_requested_flag_file).returns(true)
-    assert @project.force_build_requested?
+    assert @project.build_requested?
   end
   
   def test_build_should_generate_new_label_if_same_name_label_exists    

@@ -9,7 +9,9 @@ class Projects
 
     def find(project_name)
       # TODO: sanitize project_name to prevent a query injection attack here
-      load_project(File.join(Configuration.projects_directory, project_name))      
+      path = File.join(Configuration.projects_directory, project_name)
+      return nil unless File.directory?(path)
+      load_project(path)
     end
 
     def load_project(dir)
