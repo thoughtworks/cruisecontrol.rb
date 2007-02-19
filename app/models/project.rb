@@ -27,7 +27,7 @@ class Project
 
   attr_reader :name, :plugins, :build_command, :rake_task
   attr_writer :local_checkout 
-  attr_accessor :source_control, :path, :scheduler, :currently_building_build_info
+  attr_accessor :source_control, :path, :scheduler, :currently_building_build
 
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
@@ -57,7 +57,7 @@ class Project
 
   def load_in_progress_build_status_if_any
     if File.exists?(in_progress_build_status_file)
-      @currently_building_build_info = File.read(in_progress_build_status_file) 
+      @currently_building_build = Build.new(self, File.read(in_progress_build_status_file).strip)
     end
     self
   end

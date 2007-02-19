@@ -37,8 +37,11 @@
         <button type="submit" class="build_button" value="txt" alt="Build Now">Build Now</button>
       <% end %>
     </div>
-    <%= display_builder_state(project.builder_state_and_activity) %> 
-    <%= project.currently_building_build_info.nil? ? "" : project.currently_building_build_info %>
+    <%= display_builder_state(project.builder_state_and_activity) %>
+    <div class="in_progress_build_details">
+        <% cb = project.currently_building_build %>
+        <%= render :partial => 'in_progress_build_details', :locals => {:build => cb } if cb %>
+    </div>
   </td>
 
   <td class="build_details">

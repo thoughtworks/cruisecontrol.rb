@@ -1,4 +1,7 @@
 class InProgressBuildStatus
+  include ApplicationHelper
+  include ProjectsHelper
+
   def self.deletion_marker_file_suffix
     "_for_deletion_upon_next_refresh"
   end
@@ -18,7 +21,7 @@ class InProgressBuildStatus
 
   def build_started(build)
     File.open(build.project.in_progress_build_status_file, 'w') do |aFile|
-      aFile.print("in progress build label:#{build.label} (or some other build info)")
+      aFile.print("#{build.label}")
     end
   end
 

@@ -389,12 +389,12 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
     in_sandbox do |sandbox|
       @project.path = sandbox.root
       File.open(@project.in_progress_build_status_file,'w') do |f|
-        f.print("123")
+        f.print("123.456")
       end
       
       @project.load_in_progress_build_status_if_any
 
-      assert_equal "123", @project.currently_building_build_info
+      assert_equal "123.456", @project.currently_building_build.label
     end  
   end
       

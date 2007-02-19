@@ -73,7 +73,7 @@ class Test::Unit::TestCase
     project.stubs(:builder_state_and_activity).returns('building')
     project.stubs(:last_build).returns(last_five_builds.last)
     project.stubs(:in_progress_build_status_file).returns('in_progress_build_status_file')
-    project.stubs(:currently_building_build_info).returns('currently_building_build_info')
+    project.stubs(:currently_building_build).returns(nil)
     project
   end
 
