@@ -194,6 +194,10 @@ a.never_built, a.never_built:visited {
   background-repeat: no-repeat;
 }
 
+.project .builder_control .in_progress_build_details .currently_building{
+  font-weight: bold;
+}
+
 .project .build_summary {
 }
 
