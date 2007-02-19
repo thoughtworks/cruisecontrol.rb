@@ -41,14 +41,4 @@ class ProjectsController < ApplicationController
     end
   end
   
-  private
-  
-  def serialize_states(projects)
-    projects.collect { |project| "#{project.name}:#{project.builder_and_build_states_tag}" }.join(';')
-  end
-
-  def deserialize_states(states_string)
-    states_string.split(';').collect { |build_state| build_state.split(':') }
-  end
-
 end
