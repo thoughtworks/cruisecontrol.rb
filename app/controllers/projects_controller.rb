@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
   layout 'default'
-  
+
   def index
     @projects = Projects.load_all
     
@@ -12,6 +12,7 @@ class ProjectsController < ApplicationController
       format.html
       format.js
       format.rss { render :action => 'rss', :layout => false }
+      format.cctray { render :action => 'cctray', :layout => false }
     end
   end
 

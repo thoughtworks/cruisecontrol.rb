@@ -32,8 +32,24 @@ class ProjectsHelperTest < Test::Unit::TestCase
      output = show_revisions_in_build revisions
      assert !output.include?('Comments:')
   end
+
+  def test_map_to_cctray_project_status
+    assert_equal 'Success', map_to_cctray_project_status('success')
+    assert_equal 'Unknown', map_to_cctray_project_status('never_built')
+    assert_equal 'Failure', map_to_cctray_project_status('failed')
+    assert_equal 'Unknown', map_to_cctray_project_status('whatever')
+  end
+
+  def test_map_to_cctray_activity
+    assert_equal 'CheckingModifications', map_to_cctray_activity('checking_for_modifications')
+    assert_equal 'Building', map_to_cctray_activity('building')
+    assert_equal 'Sleeping', map_to_cctray_activity('sleeping')
+    assert_equal 'Sleeping', map_to_cctray_activity('builder_down')
+    assert_equal 'Unknown', map_to_cctray_project_status('whatever')
+  end
   
-private
+  private
+
   def create_revision(number, committed_by, comment)
     Revision.new(number, committed_by, DateTime.new(2007, 01, 12, 18, 05, 26, Rational(-7, 24)),
                  comment, [ChangesetEntry.new('M', '/app/foo.txt')])  

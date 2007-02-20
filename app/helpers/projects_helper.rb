@@ -37,5 +37,27 @@ module ProjectsHelper
     changeset = build.changeset
     ChangesetLogParser.new.parse_log changeset.split("\n")
   end
-  
+
+  # Re-map our project statuses to match the project statuses recognized
+  # by CCTray.Net
+  def map_to_cctray_project_status(project_status)
+    case project_status.to_s
+    when 'success', 'building' then 'Success'
+    when 'never_built' then 'Unknown'
+    when 'failed' then 'Failure'
+    else 'Unknown'
+    end
+  end
+
+  # Re-map our build activities to match the build activities recognized
+  # by CCTray.Net
+  def map_to_cctray_activity(builder_state)
+    case builder_state.to_s
+    when 'checking_for_modifications' then 'CheckingModifications'  
+    when 'building' then 'Building'
+    when 'sleeping', 'builder_down' then 'Sleeping'
+    else 'Unknown'
+    end
+  end
+
 end

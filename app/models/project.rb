@@ -128,7 +128,7 @@ class Project
   end
     
   def last_build_status
-    builds.empty? ? :never_built : last_build.status
+    builds.empty? ? 'never_built' : last_build.status
   end
 
   def last_five_builds

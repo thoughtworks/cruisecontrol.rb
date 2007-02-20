@@ -5,15 +5,15 @@ class BuildStatus
   end
   
   def never_built?
-    read_latest_status == :never_built
+    read_latest_status == 'never_built'
   end
   
   def succeeded?
-    read_latest_status == :success
+    read_latest_status == 'success'
   end
   
   def failed?
-    read_latest_status == :failed
+    read_latest_status == 'failed'
   end
 
   def succeed!(elapsed_time)
@@ -51,7 +51,7 @@ class BuildStatus
   
   def read_latest_status
     file = status_file
-    file ? match_status(File.basename(file)).downcase.to_sym : :never_built
+    file ? match_status(File.basename(file)).downcase : 'never_built'
   end
 
   def remove_status_file

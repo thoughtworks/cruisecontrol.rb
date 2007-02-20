@@ -56,6 +56,9 @@ end
 
 require 'cruise_control/version'
 
+# custom MIME type for CCTray application
+Mime::Type.register "application/cctray", :cctray
+
 # Local configuration, for example, details of the SMTP server for email notification, should be 
 # written in ./config/site_config.rb. See ./config/site_config.rb_example for an example of what this file may 
 # look like.
