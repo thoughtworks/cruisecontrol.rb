@@ -1,10 +1,10 @@
 TRUNK
-
+  - IMPORTANT: 'project_config.rb' renamed to 'cruise_config.rb'
 ------------------------------------------------------------------------------------------------------------------------
 * 0.5.0
   - IMPORTANT: working directory renamed from 'builds' to 'projects'
   - drill down from error message to to source code  
-  - when builder detects a change to project_config.rb, it automatically reloads the project (no need to restart
+  - when builder detects a change to cruise_config.rb, it automatically reloads the project (no need to restart
     the builder)
   - 'cruise start' starts dashboard and all project builders (unless -e development or --without-builders option is
     specified)
@@ -12,7 +12,7 @@ TRUNK
   - more, and better, documentation
   - plugin for sending build notices as instant messages via Jabber protocol (should work with IRC, ICQ, Yahoo, MSN,
     Google Talk or anything else that has a Jabber transport).
-  - 'build add' does not create project_config.rb, and therefore does not write down SVN user/password (relying on
+  - 'build add' does not create cruise_config.rb, and therefore does not write down SVN user/password (relying on
     password caching and/or key-based authentication and/or read-only anonymous access.  
   - builder plugins receive build_broken and build_fixed events when build status goes from green to red and vice versa
   - RSS feed

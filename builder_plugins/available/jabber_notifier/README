@@ -15,7 +15,7 @@ IM systems, including AIM, Google Talk, ICQ, IRC, MSN and Yahoo.
 2. Make sure that all who want to subscribe to build notices via Jabber can receive messages from this
    account.
 2. Copy jabber_notifier_plugin folder to builder_plugins/installed
-3. Modify builds/your_project/project_config.rb by adding the following lines
+3. Modify builds/your_project/cruise_config.rb by adding the following lines
    (change subscriber ids and sender account details to appropriate) :
    
 

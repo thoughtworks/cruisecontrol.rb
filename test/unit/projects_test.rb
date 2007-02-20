@@ -11,8 +11,8 @@ class ProjectsTest < Test::Unit::TestCase
 
   def test_load_all
     in_sandbox do |sandbox|
-      sandbox.new :file => "one/project_config.rb", :with_content => ""
-      sandbox.new :file => "two/project_config.rb", :with_content => ""
+      sandbox.new :file => "one/cruise_config.rb", :with_content => ""
+      sandbox.new :file => "two/cruise_config.rb", :with_content => ""
 
       projects = Projects.new(sandbox.root)
       projects.load_all
@@ -75,7 +75,7 @@ class ProjectsTest < Test::Unit::TestCase
 
   def test_load_project
     in_sandbox do |sandbox|
-      sandbox.new :file => 'one/project_config.rb', :with_content => ''
+      sandbox.new :file => 'one/cruise_config.rb', :with_content => ''
 
       new_project = Projects.load_project(File.join(sandbox.root, 'one'))
 

@@ -2,8 +2,7 @@ require 'fileutils'
 
 class Project
   @@plugin_names = []
-  @@config_existed = false
-
+  
   def self.plugin(plugin_name)
     @@plugin_names << plugin_name unless RAILS_ENV == 'test' or @@plugin_names.include? plugin_name
   end
@@ -36,12 +35,13 @@ class Project
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @plugins_by_name = {}
-
+    @config_existed = File.exists? config_file
+    
     instantiate_plugins
   end
 
   def config_file
-    File.expand_path(File.join(path, 'project_config.rb'))
+    File.expand_path(File.join(path, 'cruise_config.rb'))
   end
 
   def load_config
@@ -170,25 +170,23 @@ class Project
   end
   
   def config_modifications?
-    config_path = File.join(path, 'project_config.rb')
-    config_exists = File.exists? config_path
-        
-    if (config_removed(config_exists) or config_modified(config_path, config_exists))  
-      @@config_existed = config_exists
+    config_exists = File.exists? config_file
+    if (config_removed(config_exists) or config_modified(config_exists))
+      @config_existed = config_exists
       notify(:configuration_modified)
       return true
     end        
-    @@config_existed = config_exists
+    @config_existed = config_exists
     false
   end
   
   def config_removed(config_exists)
-    @@config_existed and !config_exists
+    @config_existed and !config_exists
   end
   
-  def config_modified(config_path, config_exists)
+  def config_modified(config_exists)
     build = last_build
-    build and config_exists and (File.mtime(config_path) > build.time)
+    build and config_exists and (File.mtime(config_file) > build.time)
   end
   
   def build_if_requested

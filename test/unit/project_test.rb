@@ -264,32 +264,32 @@ class ProjectTest < Test::Unit::TestCase
     end       
   end
   
-  def test_config_modifications_should_return_false_if_there_is_no_project_config_file
+  def test_config_modifications_should_return_false_if_there_is_no_cruise_config_file
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
-      @project.expects(:last_build).returns(Object.new) 
+      @project.expects(:last_build).returns(Object.new)     
       assert_false @project.config_modifications?         
     end       
   end
   
-  def test_config_modifications_should_return_true_if_project_config_was_deleted_since_last_build
+  def test_config_modifications_should_return_true_if_cruise_config_was_deleted_since_last_build
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
       verify_config_not_modified sandbox
       
-      sandbox.remove :file => 'project_config.rb'
+      sandbox.remove :file => 'cruise_config.rb'
       assert @project.config_modifications?
       
       verify_config_modified sandbox                  
     end
   end
 
-  def verify_config_not_modified(sandbox)
+  def verify_config_not_modified(sandbox)    
     @project.path = sandbox.root      
     new_mock_last_build_time(Time.now)  
     configTime = Time.now - 1       
-    configPath = File.join(@project.path, 'project_config.rb')
-    sandbox.new :file => "project_config.rb"
+    configPath = File.join(@project.path, 'cruise_config.rb')
+    sandbox.new :file => "cruise_config.rb"
     File.expects(:mtime).with(configPath).returns(configTime)
     assert_false @project.config_modifications?
   end
@@ -298,8 +298,8 @@ class ProjectTest < Test::Unit::TestCase
     @project.path = sandbox.root                  
     new_mock_last_build_time(Time.now - 1)
     configTime = Time.now      
-    configPath = File.join(@project.path, 'project_config.rb')
-    sandbox.new :file => 'project_config.rb' 
+    configPath = File.join(@project.path, 'cruise_config.rb')
+    sandbox.new :file => 'cruise_config.rb' 
     File.expects(:mtime).with(configPath).returns(configTime)
     assert @project.config_modifications?  
   end

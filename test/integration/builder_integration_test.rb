@@ -36,7 +36,7 @@ class IntegrationTest < Test::Unit::TestCase
 
   def test_build_if_necessary
     with_project('passing_project', :revision => 2) do |project, sandbox|
-      sandbox.new :file=> 'passing_project/project_config.rb'
+      sandbox.new :file=> 'passing_project/cruise_config.rb'
       sandbox.new :file=> 'passing_project/build-2/build_status.success'
 
       assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
@@ -69,7 +69,7 @@ class IntegrationTest < Test::Unit::TestCase
 
   def test_build_if_necessary_should_return_nil_when_no_changes_were_made
     with_project 'passing_project' do |project, sandbox|
-      sandbox.new :file=> 'passing_project/project_config.rb'
+      sandbox.new :file=> 'passing_project/cruise_config.rb'
       sandbox.new :file=>'passing_project/build-7/build_status.success'     
       result = project.build_if_necessary      
       assert_nil result
