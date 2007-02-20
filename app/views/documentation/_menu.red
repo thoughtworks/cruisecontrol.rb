@@ -1,7 +1,9 @@
-"Documentation":index.html
+"About":/documentation/index.html
 
-"Download":download.html
+"Download":/documentation/download.html
 
-"Getting Started":getting_started.html
+"Getting Started":/documentation/getting_started.html
 
-"Manual":manual.html
+"Manual":/documentation/manual.html
+
+"Screen Casts":/documentation/screencasts

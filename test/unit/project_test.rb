@@ -243,7 +243,6 @@ class ProjectTest < Test::Unit::TestCase
     assert_raises("Plugin error:\n  Object: Plugin 1 talking\n  Object: Plugin 2 talking") { @project.notify(:hey_you) }
   end
 
-    
   def test_config_modifications_should_return_true_if_config_file_modified_since_last_build
     in_sandbox do |sandbox|
          
@@ -273,7 +272,7 @@ class ProjectTest < Test::Unit::TestCase
     end       
   end
   
-def test_config_modifications_should_return_true_if_project_config_was_deleted_since_last_build
+  def test_config_modifications_should_return_true_if_project_config_was_deleted_since_last_build
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
       verify_config_not_modified sandbox
@@ -286,39 +285,36 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
   end
 
   def verify_config_not_modified(sandbox)
-      @project.path = sandbox.root      
-      new_mock_last_build_time(Time.now)  
-      configTime = Time.now - 1       
-      configPath = File.join(@project.path, 'project_config.rb')
-      sandbox.new :file => "project_config.rb"
-      File.expects(:mtime).with(configPath).returns(configTime)
-      assert_false @project.config_modifications?
+    @project.path = sandbox.root      
+    new_mock_last_build_time(Time.now)  
+    configTime = Time.now - 1       
+    configPath = File.join(@project.path, 'project_config.rb')
+    sandbox.new :file => "project_config.rb"
+    File.expects(:mtime).with(configPath).returns(configTime)
+    assert_false @project.config_modifications?
   end
 
   def verify_config_modified(sandbox)
-      @project.path = sandbox.root                  
-      new_mock_last_build_time(Time.now - 1)
-      configTime = Time.now      
-      configPath = File.join(@project.path, 'project_config.rb')
-      sandbox.new :file => 'project_config.rb' 
-      File.expects(:mtime).with(configPath).returns(configTime)
-      assert @project.config_modifications?  
+    @project.path = sandbox.root                  
+    new_mock_last_build_time(Time.now - 1)
+    configTime = Time.now      
+    configPath = File.join(@project.path, 'project_config.rb')
+    sandbox.new :file => 'project_config.rb' 
+    File.expects(:mtime).with(configPath).returns(configTime)
+    assert @project.config_modifications?  
   end
   
   def test_request_build_should_start_builder_if_builder_was_down
-     in_sandbox do |sandbox|
+    in_sandbox do |sandbox|
       @project.path = sandbox.root                        
       @project.expects(:builder_state_and_activity).returns('builder_down') 
       BuilderStarter.expects(:begin_builder).with(@project.name)
       @project.request_build
     end       
   end
-  
-
-  
-    
 
   def test_request_build_should_generate_build_requested_file
+    @project.stubs(:builder_state_and_activity).returns('sleeping')
     in_sandbox do |sandbox|
       @project.path = sandbox.root
       @project.request_build
@@ -327,12 +323,13 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
   end
   
    def test_request_build_should_not_not_mind_if_build_requested_file_already_exists
+     @project.stubs(:builder_state_and_activity).returns('sleeping')
     in_sandbox do |sandbox|      
       @project.path = sandbox.root
       sandbox.new :file => 'build_requested'
       @project.expects(:create_build_requested_flag_file)
       @project.request_build
-   end
+    end
   end
   
   def test_build_if_requested_should_build_if_build_requested_file_exists
@@ -406,9 +403,9 @@ def test_config_modifications_should_return_true_if_project_config_was_deleted_s
   end
   
   def new_mock_last_build_time(time)
-      last_build = Object.new
-      @project.expects(:last_build).returns(last_build)      
-      last_build.expects(:time).returns(time)    
+    last_build = Object.new
+    @project.expects(:last_build).returns(last_build)      
+    last_build.expects(:time).returns(time)    
   end  
 end
 

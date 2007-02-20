@@ -1,12 +1,6 @@
 UI Stuff
 --------
 * hard left
-* overflow
-
-* tests summary should only be there if we found tests
-  * 5 / 5 tests passed
-  * 4 / 7 tests passed
-  * no tests run
 
 Bugs
 ----
@@ -24,6 +18,7 @@ Contents of a project panel "build details" section on the dashboard can be prer
 or even directly as XHTML) and cached in the build artifacts directory (? but complexity cost may be too high ?)
 
 Style links to code (no underline except on hover, maybe make them consistent color in test failures and log)
+  - I think they should have underlines, because you might not know they are links otherwise, as they will be surrounded by text - jss
 
 Link to /builds/Project.four (project with a dot without builds) breaks, because of the way routes.rb parses the dot
 
@@ -48,15 +43,9 @@ Update all Rails-generated files to Rails 1.2.2 versions thereof
 Necessary
 ---------
 * test application_helper
-* how do the builders get started?  the webapp will need to be able to start / restart / stop them eventually,
-  can we do this now?  how?  can we do it in a way that works on windows / mac / *nix?
 * builder
-  * should reload project everytime it wakes up (so as to pick up changes from the webapp)
   * should reload server settings every time it wakes up, too
   * should sleep for at least 30 secs by default
-* should we just go from a rails gem?  why not?  if we're a gem ourselves...?
-* create "Add Project" story - add a project from the web app, should be easy
-* better reaction to exceptions in builder (see concerns)
 
 Build
 -----
@@ -111,7 +100,5 @@ Concerns
 
 ? we need to present times very readable manner in the timezone of one's browser
   * 10:30 AM today, 1:30 PM yesterday, 3:00 AM 5 days ago, 5:30 PM May 3, 2006, etc
-
-? builds have NUMBERS not LABELS - I think - jss
 
 ? Is 10 seconds a good default for polling interval? Methinks, it's not polite when dealing with rubyforge.org. Alex
