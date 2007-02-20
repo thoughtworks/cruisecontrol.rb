@@ -13,7 +13,7 @@ class Project
       @project_in_the_works.load_config
       return @project_in_the_works.load_in_progress_build_status_if_any
     rescue => e
-      raise "Could not load #{@project_in_the_works.config_file} : #{e.message} in #{e.backtrace.first}"
+      raise "Could not load #{@project_in_the_works.local_config_file} : #{e.message} in #{e.backtrace.first}"
     ensure
       @project_in_the_works = nil
     end
@@ -35,17 +35,22 @@ class Project
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @plugins_by_name = {}
-    @config_existed = File.exists? config_file
+    @config_existed = File.exists? local_config_file
     
     instantiate_plugins
   end
 
-  def config_file
+  def local_config_file
     File.expand_path(File.join(path, 'cruise_config.rb'))
   end
 
+  def central_config_file
+    File.expand_path(File.join(path, 'work', 'cruise_config.rb'))
+  end
+
   def load_config
-    load config_file if File.file?(config_file)
+    load central_config_file if File.file?(central_config_file)
+    load local_config_file if File.file?(local_config_file)
     self
   end
 
@@ -170,7 +175,7 @@ class Project
   end
   
   def config_modifications?
-    config_exists = File.exists? config_file
+    config_exists = File.exists? local_config_file
     if (config_removed(config_exists) or config_modified(config_exists))
       @config_existed = config_exists
       notify(:configuration_modified)
@@ -186,7 +191,7 @@ class Project
   
   def config_modified(config_exists)
     build = last_build
-    build and config_exists and (File.mtime(config_file) > build.time)
+    build and config_exists and (File.mtime(local_config_file) > build.time)
   end
   
   def build_if_requested

@@ -284,6 +284,17 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
 
+  def test_should_load_configuration_from_work_directory_and_then_root_directory
+    in_sandbox do |sandbox|
+      sandbox.new :file => 'work/cruise_config.rb', :with_contents => '$foobar=42; $barfoo = 12345'
+      sandbox.new :file => 'cruise_config.rb', :with_contents => '$barfoo = 54321'
+      @project.path = sandbox.root
+      @project.load_config      
+      assert_equal 42, $foobar
+      assert_equal 54321, $barfoo
+    end
+  end
+
   def verify_config_not_modified(sandbox)    
     @project.path = sandbox.root      
     new_mock_last_build_time(Time.now)  
