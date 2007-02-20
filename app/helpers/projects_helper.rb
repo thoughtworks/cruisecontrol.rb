@@ -28,8 +28,8 @@ module ProjectsHelper
       text +="<div>Comments:<br/>#{format_changeset_log(revision.message)}</div>" unless revision.message.empty?
       text
     else
-      commiters = revisions.collect { |rev| rev.committed_by }.uniq!.join(", ")
-      text = "<div><span class='build_committed_by'>#{commiters}</span>" + ' committed the checkin</div>'    
+      committers = revisions.collect { |rev| rev.committed_by }.uniq! || []
+      text = "<div><span class='build_committed_by'>#{committers.join(', ')}</span>" + ' committed the checkin</div>'    
     end
   end
 
