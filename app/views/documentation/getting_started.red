@@ -54,7 +54,7 @@ h2. Assumptions and limitations
 
 h2. Installation
 
-Follow these directions or watch our "5 minute install":screencasts/5_minute_install.html screencast.
+Follow these directions or watch our "5 minute install":screencasts.html screencast.
 
 
 1. "Download":download.html and unpack CruiseControl.rb

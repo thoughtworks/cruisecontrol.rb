@@ -6,4 +6,4 @@
 
 "Manual":/documentation/manual.html
 
-"Screen Casts":/documentation/screencasts
+"Screencasts":/documentation/screencasts.html
