@@ -251,7 +251,8 @@ class ProjectTest < Test::Unit::TestCase
   
   def test_config_modifications_should_return_false_if_config_file_not_modified_since_last_build
     in_sandbox do |sandbox|
-      verify_config_not_modified sandbox
+      setup_file_unmodified_since_last_build(sandbox, 'cruise_config.rb')
+      assert_false @project.config_modifications?
     end       
   end
     
@@ -275,12 +276,14 @@ class ProjectTest < Test::Unit::TestCase
   def test_config_modifications_should_return_true_if_cruise_config_was_deleted_since_last_build
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
-      verify_config_not_modified sandbox
+      setup_file_unmodified_since_last_build(sandbox, 'cruise_config.rb')
+      assert_false @project.config_modifications?
       
       sandbox.remove :file => 'cruise_config.rb'
       assert @project.config_modifications?
-      
-      verify_config_modified sandbox                  
+
+      setup_file_modified_after_last_build sandbox, 'cruise_config.rb'
+      assert @project.config_modifications?
     end
   end
 
@@ -295,26 +298,6 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
 
-  def verify_config_not_modified(sandbox)    
-    @project.path = sandbox.root      
-    new_mock_last_build_time(Time.now)  
-    configTime = Time.now - 1       
-    configPath = File.join(@project.path, 'cruise_config.rb')
-    sandbox.new :file => "cruise_config.rb"
-    File.expects(:mtime).with(configPath).returns(configTime)
-    assert_false @project.config_modifications?
-  end
-
-  def verify_config_modified(sandbox)
-    @project.path = sandbox.root                  
-    new_mock_last_build_time(Time.now - 1)
-    configTime = Time.now      
-    configPath = File.join(@project.path, 'cruise_config.rb')
-    sandbox.new :file => 'cruise_config.rb' 
-    File.expects(:mtime).with(configPath).returns(configTime)
-    assert @project.config_modifications?  
-  end
-  
   def test_request_build_should_start_builder_if_builder_was_down
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
@@ -399,7 +382,19 @@ class ProjectTest < Test::Unit::TestCase
     build.stubs(:run)
     build
   end
-  
+
+  def setup_file_unmodified_since_last_build(sandbox, path)
+    @project.path = sandbox.root
+    sandbox.new :file => path
+    stub_last_build_time(@project, Time.now + 1)
+  end
+
+  def setup_file_modified_after_last_build(sandbox, path)
+    @project.path = sandbox.root
+    stub_last_build_time(@project, Time.now - 1)
+    sandbox.new :file => path
+  end
+
   def new_revision(number)
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
   end
@@ -413,10 +408,11 @@ class ProjectTest < Test::Unit::TestCase
     build
   end
   
-  def new_mock_last_build_time(time)
-    last_build = Object.new
-    @project.expects(:last_build).returns(last_build)      
-    last_build.expects(:time).returns(time)    
+  def stub_last_build_time(project, time)
+    mock_build = Object.new
+    project.expects(:last_build).returns(mock_build)
+    mock_build.expects(:time).returns(time)    
   end  
+
 end
 

@@ -36,6 +36,8 @@ If the build takes say 7501 seconds, it displays 2 hours and 5 minutes and 1 sec
 
 It might be better to display 2 hours, 5 minutes and 1 second.  Or perhaps drop the seconds?
 
+Looks like we won't detect cruise_config modification if it happens during the build
+
 Tech
 ----
 Update all Rails-generated files to Rails 1.2.2 versions thereof
