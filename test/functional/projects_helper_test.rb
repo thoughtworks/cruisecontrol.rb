@@ -9,16 +9,25 @@ class ProjectsHelperTest < Test::Unit::TestCase
   def test_show_revisions_in_build_for_single_revision
      revisions = [create_revision(42, 'arthur', 'Checking in code')]
      output = show_revisions_in_build revisions
-     assert output.include?('arthur')
-     assert output.include?('Checking in code')
+     assert_match /arthur/, output
+     assert_match /Checking in code/, output
   end
-  
+
   def test_show_revision_revisions_in_build_for_multiple_revisions
+    revisions = [create_revision(42, 'arthur', 'Checking in code'),
+                 create_revision(43, 'joe', 'Checking in more code')]
+    output = show_revisions_in_build revisions
+    assert_match /arthur, joe/, output
+    assert !output.include?('Comments')
+    assert !output.include?('Checking in')
+  end
+
+  def test_show_revision_revisions_in_build_for_multiple_revisions_with_non_unique_author
     revisions = [create_revision(42, 'arthur', 'Checking in code'), 
                  create_revision(43, 'joe', 'Checking in more code'),
                  create_revision(44, 'arthur', 'Checking in more and more code')]     
     output = show_revisions_in_build revisions
-    assert output.include?('arthur, joe')
+    assert_match /arthur, joe/, output
     assert !output.include?('Comments')    
     assert !output.include?('Checking in')     
   end
