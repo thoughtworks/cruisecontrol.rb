@@ -60,6 +60,33 @@ class BuildsControllerTest < Test::Unit::TestCase
     end
   end
 
+  def test_show_no_build
+    with_sandbox_project do |sandbox, project|
+      Projects.expects(:find).with(project.name).returns(project)
+
+      get :show, :project => project.name
+
+      assert_response :success
+      assert_template 'no_builds_yet'
+      assert_equal project, assigns(:project)
+    end
+  end
+
+  def test_show_unspecified_project
+    get :show
+
+    assert_response 404
+    assert_equal 'Project not specified', @response.body
+  end
+
+  def test_show_unknown_project
+    Projects.expects(:find).with('foo').returns(nil)
+    get :show, :project => 'foo'
+
+    assert_response 404
+    assert_equal 'Project "foo" not found', @response.body
+  end
+
   def test_artifacts_as_html
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => 'build-1/build_status.pingpong'

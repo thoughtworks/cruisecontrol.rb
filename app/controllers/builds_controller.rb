@@ -2,16 +2,12 @@ class BuildsController < ApplicationController
   layout 'default'
   
   def show
-    # TODO project / build not specified / not found responses
-
+    render :text => 'Project not specified', :status => 404 and return unless params[:project]
     @project = Projects.find(params[:project])
+    render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
 
-    if params.has_key? :build
-      @build = @project.find_build(params[:build])
-    end
-    @build ||= @project.last_build
-
-    render :action => 'no_builds_yet' unless @build
+    @build = (params[:build] ? @project.find_build(params[:build]) : @project.last_build)
+    render :action => (@build ? 'show' : 'no_builds_yet') 
   end
   
   def artifact
