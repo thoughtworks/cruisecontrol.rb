@@ -53,6 +53,6 @@ class PollingSchedulerTest < Test::Unit::TestCase
     @mock_project.expects(:build_if_necessary).returns(nil)
     @mock_project.expects(:config_modified?).returns(true)
 
-    assert_equal :reload_project, @scheduler.run
+    assert_throws(:reload_project) { @scheduler.run }
   end
 end

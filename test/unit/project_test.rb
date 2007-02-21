@@ -6,7 +6,7 @@ class ProjectTest < Test::Unit::TestCase
   include FileSandbox
 
   def setup
-    @svn = Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')
+    @svn = Object.new
     @project = Project.new("lemmings")
   end
 
@@ -141,6 +141,32 @@ class ProjectTest < Test::Unit::TestCase
       @project.build([new_revision(2)])
     end
 
+  end
+
+  def test_build_should_detect_config_modifications
+    in_sandbox do |sandbox|
+      @project.source_control = @svn
+      @project.path = sandbox.root
+
+      revision = new_revision(1)
+
+      @svn.expects(:update).with(@project, revision) do |*args|
+        sandbox.new :file => 'work/cruise_config.rb'
+        true
+      end
+
+      FileUtils.mkdir_p 'build-1' 
+      mock_build = Object.new
+      Build.expects(:new).returns(mock_build)
+      mock_build.expects(:artifacts_directory).returns('build-1')
+      mock_build.expects(:abort)
+
+      listener = Object.new
+      listener.expects(:configuration_modified)
+      @project.add_plugin listener
+
+      assert_throws(:reload_project) { @project.build([revision]) }
+    end
   end
 
   def test_build_should_generate_event_when_build_is_fixed

@@ -25,6 +25,10 @@ class Build
     @status.fail!((Time.now - time).ceil)
   end
 
+  def abort
+    FileUtils.rm_rf artifacts_directory
+  end
+
   def additional_artifacts
     Dir.entries(artifacts_directory).find_all {|artifact| !(artifact =~ IGNORE_ARTIFACTS) }
   end

@@ -38,6 +38,8 @@ class IntegrationTest < Test::Unit::TestCase
     with_project('passing_project', :revision => 2) do |project, sandbox|
       sandbox.new :file=> 'passing_project/cruise_config.rb'
       sandbox.new :file=> 'passing_project/build-2/build_status.success'
+      
+      project.config_tracker.update_timestamps
 
       assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
        result = project.build_if_necessary
@@ -49,6 +51,23 @@ class IntegrationTest < Test::Unit::TestCase
       assert Dir["#{sandbox.root}/passing_project/build-7/build_status.success.*"][0]
       assert File.exists?("#{sandbox.root}/passing_project/build-7/changeset.log")
       assert File.exists?("#{sandbox.root}/passing_project/build-7/build.log")
+    end
+  end
+
+  def test_build_if_necessary_should_abort_build_when_local_config_modified
+    with_project('passing_project', :revision => 2) do |project, sandbox|
+      sandbox.new :file=> 'passing_project/cruise_config.rb'
+
+      assert_throws(:reload_project) { project.build_if_necessary }
+      assert_false File.exists?("#{sandbox.root}/passing_project/build-7/")
+    end
+  end
+
+  def test_build_if_necessary_should_abort_build_when_central_config_modified
+    with_project('project_with_central_config', :revision => 16) do |project, sandbox|
+      assert_throws(:reload_project) { project.build_if_necessary }
+      assert Dir["#{sandbox.root}/project_with_central_config/build*"].empty?
+      assert_equal "true\n\n", File.read("#{sandbox.root}/project_with_central_config/work/cruise_config.rb")
     end
   end
 

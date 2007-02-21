@@ -180,13 +180,24 @@ class Project
 
   
 
-  def build(revisions = [@source_control.latest_revision(self)])   
+  def build(revisions = nil)
+    if revisions.nil?
+      revisions = new_revisions
+      revisions = [@source_control.latest_revision(self)] if revisions.empty? 
+    end
     previous_build = last_build    
     last_revision = revisions.last
     
     build = Build.new(self, create_build_label(last_revision.number))
     log_changeset(build.artifacts_directory, revisions)
     @source_control.update(self, last_revision)
+
+    if config_tracker.config_modified?
+      build.abort
+      notify(:configuration_modified)
+      throw :reload_project
+    end
+    
     notify(:build_started, build)
     build.run
     notify(:build_finished, build)

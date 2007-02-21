@@ -72,12 +72,12 @@ begin
     puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
 
 	  while (true) do
-      result = project.scheduler.run
-      if result == :reload_project
-        project = load_project(project_path)
-        # this will cause the next call to scheduler to run the build immediately
-        project.request_force_build rescue nil
+      catch(:reload_project) do
+        project.scheduler.run
       end
+      project = load_project(project_path)
+      # this will cause the next call to scheduler to run the build immediately
+      project.request_build rescue nil
     end
   rescue Exception => e
     begin 
