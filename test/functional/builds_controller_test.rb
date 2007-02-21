@@ -87,7 +87,7 @@ class BuildsControllerTest < Test::Unit::TestCase
     assert_equal 'Project "foo" not found', @response.body
   end
 
-  def test_artifacts_as_html
+  def test_artifact_as_html
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => 'build-1/build_status.pingpong'
       sandbox.new :file => 'build-1/rcov/index.html', :with_contents => 'apple pie'
@@ -102,7 +102,7 @@ class BuildsControllerTest < Test::Unit::TestCase
     end
   end
   
-  def test_artifacts_get_right_mime_types
+  def test_artifact_gets_right_mime_types
     with_sandbox_project do |sandbox, project|
       @sandbox, @project = sandbox, project
       sandbox.new :file => 'build-1/build_status.pingpong'
@@ -142,6 +142,20 @@ class BuildsControllerTest < Test::Unit::TestCase
 
       assert_redirected_to :path => ['foo/index.html']
     end
+  end
+
+  def test_artifact_bad_request_parameters
+    get :artifact, :build => '1', :path => 'foo'
+    assert_response 404
+    assert_equal 'Project not specified', response.body
+
+    get :artifact, :project => 'foo', :path => 'foo'
+    assert_response 404
+    assert_equal 'Build not specified', response.body
+
+    get :artifact, :project => 'foo', :build => '1'
+    assert_response 404
+    assert_equal 'Path not specified', response.body
   end
 
   def assert_type(file, type)

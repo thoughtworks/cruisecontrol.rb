@@ -11,6 +11,10 @@ class BuildsController < ApplicationController
   end
   
   def artifact
+    render :text => 'Project not specified' and return unless params[:project]
+    render :text => 'Build not specified' and return unless params[:build]
+    render :text => 'Path not specified' and return unless params[:path]
+
     @project = Projects.find(params[:project])
     @build = @project.find_build(params[:build])
 
