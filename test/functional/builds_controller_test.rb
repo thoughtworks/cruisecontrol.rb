@@ -158,6 +158,24 @@ class BuildsControllerTest < Test::Unit::TestCase
     assert_equal 'Path not specified', @response.body
   end
 
+  def test_artifact_unknown_project
+    Projects.expects(:find).with('foo').returns(nil)
+
+    get :artifact, :project => 'foo', :build => '1', :path => 'foo'
+    assert_response 404
+    assert_equal 'Project "foo" not found', @response.body
+  end
+
+  def test_artifact_unknown_build
+    mock_project = Object.new
+    Projects.expects(:find).with('foo').returns(mock_project)
+    mock_project.expects(:find_build).with('1').returns(nil)
+
+    get :artifact, :project => 'foo', :build => '1', :path => 'foo'
+    assert_response 404
+    assert_equal 'Build "1" not found', @response.body
+  end
+
   def assert_type(file, type)
     @sandbox.new :file => "build-1/#{file}", :with_content => 'lemon'
 

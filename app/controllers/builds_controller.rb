@@ -16,7 +16,9 @@ class BuildsController < ApplicationController
     render :text => 'Path not specified', :status => 404 and return unless params[:path]
 
     @project = Projects.find(params[:project])
+    render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
     @build = @project.find_build(params[:build])
+    render :text => "Build #{params[:build].inspect} not found", :status => 404 and return unless @build
 
     path = File.join(@build.artifacts_directory, params[:path])
 
