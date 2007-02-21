@@ -1,3 +1,8 @@
+#
+# this plugin allows the dashboard to know each builder's status and report it
+#
+# (this plugin is built in and needs no customization)
+#
 class BuilderStatus
   
   def initialize(project)

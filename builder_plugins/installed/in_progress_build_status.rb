@@ -1,3 +1,8 @@
+#
+# this plugin tells the dashboard the status of an in progress build
+#
+# (this plugin is built in and needs no customization)
+#
 class InProgressBuildStatus
   include ApplicationHelper
   include ProjectsHelper

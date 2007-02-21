@@ -1,3 +1,7 @@
+# this plugin sends e-mail on build events
+#
+# to read more, go to the "manual":/documentation/manual.html
+#
 class EmailNotifier
   attr_accessor :emails
   

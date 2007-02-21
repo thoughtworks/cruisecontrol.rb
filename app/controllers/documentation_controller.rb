@@ -10,4 +10,11 @@ class DocumentationController < ApplicationController
       render_not_found
     end
   end
+  
+  def plugins
+    if params.has_key? :name
+      @plugin_title = Inflector.titleize(params[:name].sub(/\.rb$/, ''))
+      @file = File.join(RAILS_ROOT, 'builder_plugins', params[:type], params[:name])
+    end
+  end
 end

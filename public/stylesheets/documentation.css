@@ -51,3 +51,15 @@ div.next_step {
   margin-right: 3em;
   color: #555;
 }
+
+#plugin_list {
+  float: left;
+  width: 16em;
+}
+
+#plugin_documentation {
+  margin-left: 16em;
+  padding-left: 1em;
+  border-left: solid black 1px;
+  height: 100%;
+}

@@ -11,8 +11,11 @@ class DocumentationControllerTest < Test::Unit::TestCase
     @response   = ActionController::TestResponse.new
   end
 
-  # Replace this with your real tests.
-  def test_truth
-    assert true
+  def test_documentation
+    get :get, :path => []
+  end
+  
+  def test_plugins
+    get :plugins, :type => 'installed', :name => 'builder_status.rb'
   end
 end

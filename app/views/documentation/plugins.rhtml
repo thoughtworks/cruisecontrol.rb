@@ -1,0 +1,18 @@
+<div id="plugin_list">
+  <% [:installed, :available].each do |type| %>
+    <h3><%= Inflector.humanize(type) %> Plugins</h3>
+    
+    <ul>
+    <% Dir["#{RAILS_ROOT}/builder_plugins/#{type}/*"].each do |plugin| %>
+      <% name = File.basename(plugin) %>
+      <li><%= link_to Inflector.titleize(name.sub(/\.rb$/, '')), :action => 'plugins', :type => type, :name => name %></li>
+    <% end %>
+    </ul>
+  <% end %>
+</div>
+
+<div id="plugin_documentation">
+  <h2><%= @plugin_title || '' %></h2>
+  
+  <%= render_plugin_doc @file || '' %>
+</div>

@@ -1,3 +1,9 @@
+# this plugin prints major events like builds starting / passing / failing to console
+#
+# it is useful in debugging
+#
+# (this plugin is built in and needs no customization)
+#
 class MinimalConsoleLogger
   def initialize(project)
   end

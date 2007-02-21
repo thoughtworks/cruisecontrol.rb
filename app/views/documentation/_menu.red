@@ -6,4 +6,6 @@
 
 "Manual":/documentation/manual.html
 
+"Plugins":/documentation/plugins
+
 "Screencasts":/documentation/screencasts.html

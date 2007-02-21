@@ -27,6 +27,9 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'builds/:project/:build/*path', :controller => 'builds', :action => 'artifact', :build => /[^\/]+/
   map.connect 'projects/code/:project/*path', :controller => 'projects', :action => 'code'
+
+  map.connect 'documentation/plugins', :controller => 'documentation', :action => 'plugins'
+  map.connect 'documentation/plugins/:type/:name', :controller => 'documentation', :action => 'plugins', :name => /[^\/]+/
   map.connect 'documentation/*path', :controller => 'documentation', :action => 'get'
   
   # Install the default route as the lowest priority.
