@@ -1,8 +1,53 @@
 require 'fileutils'
 
+class ProjectConfigTracker
+
+  attr_reader :central_config_file, :central_mtime, :local_config_file, :local_mtime 
+
+  def initialize(project)
+    @project = project
+    @central_config_file = File.expand_path(File.join(@project.path, 'work', 'cruise_config.rb'))
+    @local_config_file = File.expand_path(File.join(@project.path, 'cruise_config.rb'))
+    update_timestamps
+  end
+
+  def load_config
+    begin
+      load central_config_file if File.file?(central_config_file)
+      load local_config_file if File.file?(local_config_file)
+    rescue => e
+      raise "Could not load project configuration: #{e.message} in #{e.backtrace.first}"
+    end
+    self
+  end
+
+  def config_modified?
+    config_exists = File.exists?(local_config_file)
+    answer = (config_removed?(config_exists) or config_modified_since_last_build?(config_exists))
+    update_timestamps
+    answer
+  end
+
+  def config_removed?(config_exists)
+    @local_mtime and not config_exists
+  end
+
+  def config_modified_since_last_build?(config_exists)
+    build = @project.last_build
+    build && config_exists && (File.mtime(@local_config_file) > build.time)
+  end
+
+  def update_timestamps
+    @central_mtime = File.exist?(@central_config_file) ? File.mtime(@central_config_file) : nil
+    @local_mtime = File.exist?(@local_config_file) ? File.mtime(@local_config_file) : nil
+  end
+
+end
+
 class Project
   @@plugin_names = []
-  
+
+
   def self.plugin(plugin_name)
     @@plugin_names << plugin_name unless RAILS_ENV == 'test' or @@plugin_names.include? plugin_name
   end
@@ -10,10 +55,8 @@ class Project
   def self.read(dir)
     @project_in_the_works = Project.new(File.basename(dir))
     begin
-      @project_in_the_works.load_config
+      @project_in_the_works.config_tracker.load_config
       return @project_in_the_works.load_in_progress_build_status_if_any
-    rescue => e
-      raise "Could not load #{@project_in_the_works.local_config_file} : #{e.message} in #{e.backtrace.first}"
     ensure
       @project_in_the_works = nil
     end
@@ -24,9 +67,11 @@ class Project
     yield @project_in_the_works
   end
 
-  attr_reader :name, :plugins, :build_command, :rake_task
+  attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path
   attr_writer :local_checkout 
-  attr_accessor :source_control, :path, :scheduler, :currently_building_build
+  attr_accessor :source_control, :scheduler, :currently_building_build
+  # TODO get rid of me  
+  attr_accessor :config_existed
 
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
@@ -35,23 +80,14 @@ class Project
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @plugins_by_name = {}
-    @config_existed = File.exists? local_config_file
+    @config_tracker = ProjectConfigTracker.new(self)
     
     instantiate_plugins
   end
 
-  def local_config_file
-    File.expand_path(File.join(path, 'cruise_config.rb'))
-  end
-
-  def central_config_file
-    File.expand_path(File.join(path, 'work', 'cruise_config.rb'))
-  end
-
-  def load_config
-    load central_config_file if File.file?(central_config_file)
-    load local_config_file if File.file?(local_config_file)
-    self
+  def path=(value)
+    @path = value
+    @config_tracker = ProjectConfigTracker.new(self)
   end
 
   def in_progress_build_status_file
@@ -88,7 +124,9 @@ class Project
     @plugins_by_name.key?(method_name) ? @plugins_by_name[method_name] : super
   end
   
-  
+  def load_config
+    @config_tracker.load_config
+  end
   
   def ==(another)
     another.is_a?(Project) and another.name == self.name
@@ -174,24 +212,14 @@ class Project
     create_build_requested_flag_file
   end
   
-  def config_modifications?
-    config_exists = File.exists? local_config_file
-    if (config_removed(config_exists) or config_modified(config_exists))
-      @config_existed = config_exists
+  def config_modified?
+    # TODO: notification doesn't really belong here
+    if config_tracker.config_modified?
       notify(:configuration_modified)
-      return true
-    end        
-    @config_existed = config_exists
-    false
-  end
-  
-  def config_removed(config_exists)
-    @config_existed and !config_exists
-  end
-  
-  def config_modified(config_exists)
-    build = last_build
-    build and config_exists and (File.mtime(local_config_file) > build.time)
+      true
+    else
+      false
+    end
   end
   
   def build_if_requested

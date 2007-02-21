@@ -1,4 +1,5 @@
 require 'date'
+require 'date'
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 require 'email_notifier'
 
@@ -50,7 +51,7 @@ class ProjectTest < Test::Unit::TestCase
       build.stubs(:artifacts_directory).returns(sandbox.root)
       
       @project.stubs(:builds).returns([])
-      @project.stubs(:config_modifications?).returns(false)
+      @project.stubs(:config_modified?).returns(false)
       @svn.expects(:latest_revision).returns(revision)
       @svn.expects(:update).with(@project, revision)
 
@@ -70,7 +71,7 @@ class ProjectTest < Test::Unit::TestCase
       build.stubs(:artifacts_directory).returns(sandbox.root)
 
       @project.stubs(:builds).returns([])
-      @project.stubs(:config_modifications?).returns(false)
+      @project.stubs(:config_modified?).returns(false)
       @svn.expects(:latest_revision).returns(revision)
       @svn.expects(:update).with(@project, revision)
 
@@ -180,7 +181,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.path = sandbox.root
 
       @project.stubs(:builds).returns([Build.new(@project, 1)])
-      @project.stubs(:config_modifications?).returns(false)
+      @project.stubs(:config_modified?).returns(false)
       revision = new_revision(2)
       build = new_mock_build('2')
       @project.stubs(:last_build).returns(nil)
@@ -198,7 +199,7 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.source_control = @svn
       @project.path = sandbox.root
-      @project.stubs(:config_modifications?).returns(false)
+      @project.stubs(:config_modified?).returns(false)
       @project.stubs(:builds).returns([Build.new(@project, 2)])
       @svn.stubs(:revisions_since).with(@project, 2).returns([])
 
@@ -230,7 +231,24 @@ class ProjectTest < Test::Unit::TestCase
     
     assert_raises("Plugin error: Object: Plugin talking") { @project.notify(:hey_you) }
   end
-  
+
+  def test_config_timestamps
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+
+      config_tracker = ProjectConfigTracker.new(@project)
+      assert_nil config_tracker.central_mtime
+      assert_nil config_tracker.local_mtime
+
+      sandbox.new :file => 'cruise_config.rb'
+      sandbox.new :file => 'work/cruise_config.rb'
+
+      config_tracker = ProjectConfigTracker.new(@project)
+      assert_equal File.mtime('work/cruise_config.rb'), config_tracker.central_mtime
+      assert_equal File.mtime('cruise_config.rb'), config_tracker.local_mtime      
+    end
+  end
+
   def test_notify_should_handle_multiple_plugin_errors
     plugin1 = Object.new
     plugin2 = Object.new
@@ -245,23 +263,31 @@ class ProjectTest < Test::Unit::TestCase
 
   def test_config_modifications_should_return_true_if_config_file_modified_since_last_build
     in_sandbox do |sandbox|
-         
+      setup_file_modified_after_last_build(sandbox, 'cruise_config.rb')      
+      assert @project.config_modified?
     end       
   end
-  
+
+#  def test_config_modifications_should_return_true_if_work_config_file_modified_since_last_build
+#    in_sandbox do |sandbox|
+#      setup_file_modified_after_last_build(sandbox, 'work/cruise_config.rb')
+#      assert @project.config_modified?
+#    end
+#  end
+
   def test_config_modifications_should_return_false_if_config_file_not_modified_since_last_build
     in_sandbox do |sandbox|
       setup_file_unmodified_since_last_build(sandbox, 'cruise_config.rb')
-      assert_false @project.config_modifications?
+      assert_false @project.config_modified?
     end       
   end
-    
+
   def test_config_modifications_should_return_false_if_there_is_no_previous_build
     in_sandbox do |sandbox|
       @project.path = sandbox.root
       @project.stubs(:config_removed).returns(false)
       @project.expects(:last_build).returns(nil) 
-      assert_false @project.config_modifications?         
+      assert_false @project.config_modified?
     end       
   end
   
@@ -269,7 +295,7 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
       @project.expects(:last_build).returns(Object.new)     
-      assert_false @project.config_modifications?         
+      assert_false @project.config_modified?
     end       
   end
   
@@ -277,13 +303,13 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
       setup_file_unmodified_since_last_build(sandbox, 'cruise_config.rb')
-      assert_false @project.config_modifications?
+      assert_false @project.config_modified?
       
       sandbox.remove :file => 'cruise_config.rb'
-      assert @project.config_modifications?
+      assert @project.config_modified?
 
       setup_file_modified_after_last_build sandbox, 'cruise_config.rb'
-      assert @project.config_modifications?
+      assert @project.config_modified?
     end
   end
 
