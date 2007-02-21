@@ -1,49 +1,5 @@
 require 'fileutils'
 
-class ProjectConfigTracker
-
-  attr_reader :central_config_file, :central_mtime, :local_config_file, :local_mtime 
-
-  def initialize(project)
-    @project = project
-    @central_config_file = File.expand_path(File.join(@project.path, 'work', 'cruise_config.rb'))
-    @local_config_file = File.expand_path(File.join(@project.path, 'cruise_config.rb'))
-    update_timestamps
-  end
-
-  def load_config
-    begin
-      load central_config_file if File.file?(central_config_file)
-      load local_config_file if File.file?(local_config_file)
-    rescue => e
-      raise "Could not load project configuration: #{e.message} in #{e.backtrace.first}"
-    end
-    self
-  end
-
-  def config_modified?
-    config_exists = File.exists?(local_config_file)
-    answer = (config_removed?(config_exists) or config_modified_since_last_build?(config_exists))
-    update_timestamps
-    answer
-  end
-
-  def config_removed?(config_exists)
-    @local_mtime and not config_exists
-  end
-
-  def config_modified_since_last_build?(config_exists)
-    build = @project.last_build
-    build && config_exists && (File.mtime(@local_config_file) > build.time)
-  end
-
-  def update_timestamps
-    @central_mtime = File.exist?(@central_config_file) ? File.mtime(@central_config_file) : nil
-    @local_mtime = File.exist?(@local_config_file) ? File.mtime(@local_config_file) : nil
-  end
-
-end
-
 class Project
   @@plugin_names = []
 
@@ -70,8 +26,6 @@ class Project
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path
   attr_writer :local_checkout 
   attr_accessor :source_control, :scheduler, :currently_building_build
-  # TODO get rid of me  
-  attr_accessor :config_existed
 
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
@@ -80,18 +34,18 @@ class Project
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @plugins_by_name = {}
-    @config_tracker = ProjectConfigTracker.new(self)
+    @config_tracker = ProjectConfigTracker.new(self.path)
     
     instantiate_plugins
   end
 
   def path=(value)
+    @config_tracker = ProjectConfigTracker.new(value)
     @path = value
-    @config_tracker = ProjectConfigTracker.new(self)
   end
 
   def in_progress_build_status_file
-    File.expand_path(File.join(path, 'builder.in_progress_build_status'))
+    File.expand_path(File.join(@path, 'builder.in_progress_build_status'))
   end
 
   def load_in_progress_build_status_if_any
@@ -122,10 +76,6 @@ class Project
   # access plugins by their names
   def method_missing(method_name, *args, &block)
     @plugins_by_name.key?(method_name) ? @plugins_by_name[method_name] : super
-  end
-  
-  def load_config
-    @config_tracker.load_config
   end
   
   def ==(another)
@@ -213,7 +163,6 @@ class Project
   end
   
   def config_modified?
-    # TODO: notification doesn't really belong here
     if config_tracker.config_modified?
       notify(:configuration_modified)
       true

@@ -1,11 +1,10 @@
 require 'date'
-require 'date'
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 require 'email_notifier'
 
 class ProjectTest < Test::Unit::TestCase
   include FileSandbox
-  
+
   def setup
     @svn = Subversion.new(:url => 'file://foo', :username => 'bob', :password => 'cha')
     @project = Project.new("lemmings")
@@ -232,23 +231,6 @@ class ProjectTest < Test::Unit::TestCase
     assert_raises("Plugin error: Object: Plugin talking") { @project.notify(:hey_you) }
   end
 
-  def test_config_timestamps
-    in_sandbox do |sandbox|
-      @project.path = sandbox.root
-
-      config_tracker = ProjectConfigTracker.new(@project)
-      assert_nil config_tracker.central_mtime
-      assert_nil config_tracker.local_mtime
-
-      sandbox.new :file => 'cruise_config.rb'
-      sandbox.new :file => 'work/cruise_config.rb'
-
-      config_tracker = ProjectConfigTracker.new(@project)
-      assert_equal File.mtime('work/cruise_config.rb'), config_tracker.central_mtime
-      assert_equal File.mtime('cruise_config.rb'), config_tracker.local_mtime      
-    end
-  end
-
   def test_notify_should_handle_multiple_plugin_errors
     plugin1 = Object.new
     plugin2 = Object.new
@@ -259,69 +241,6 @@ class ProjectTest < Test::Unit::TestCase
     plugin2.expects(:hey_you).raises("Plugin 2 talking")
 
     assert_raises("Plugin error:\n  Object: Plugin 1 talking\n  Object: Plugin 2 talking") { @project.notify(:hey_you) }
-  end
-
-  def test_config_modifications_should_return_true_if_config_file_modified_since_last_build
-    in_sandbox do |sandbox|
-      setup_file_modified_after_last_build(sandbox, 'cruise_config.rb')      
-      assert @project.config_modified?
-    end       
-  end
-
-#  def test_config_modifications_should_return_true_if_work_config_file_modified_since_last_build
-#    in_sandbox do |sandbox|
-#      setup_file_modified_after_last_build(sandbox, 'work/cruise_config.rb')
-#      assert @project.config_modified?
-#    end
-#  end
-
-  def test_config_modifications_should_return_false_if_config_file_not_modified_since_last_build
-    in_sandbox do |sandbox|
-      setup_file_unmodified_since_last_build(sandbox, 'cruise_config.rb')
-      assert_false @project.config_modified?
-    end       
-  end
-
-  def test_config_modifications_should_return_false_if_there_is_no_previous_build
-    in_sandbox do |sandbox|
-      @project.path = sandbox.root
-      @project.stubs(:config_removed).returns(false)
-      @project.expects(:last_build).returns(nil) 
-      assert_false @project.config_modified?
-    end       
-  end
-  
-  def test_config_modifications_should_return_false_if_there_is_no_cruise_config_file
-    in_sandbox do |sandbox|
-      @project.path = sandbox.root                        
-      @project.expects(:last_build).returns(Object.new)     
-      assert_false @project.config_modified?
-    end       
-  end
-  
-  def test_config_modifications_should_return_true_if_cruise_config_was_deleted_since_last_build
-    in_sandbox do |sandbox|
-      @project.path = sandbox.root                        
-      setup_file_unmodified_since_last_build(sandbox, 'cruise_config.rb')
-      assert_false @project.config_modified?
-      
-      sandbox.remove :file => 'cruise_config.rb'
-      assert @project.config_modified?
-
-      setup_file_modified_after_last_build sandbox, 'cruise_config.rb'
-      assert @project.config_modified?
-    end
-  end
-
-  def test_should_load_configuration_from_work_directory_and_then_root_directory
-    in_sandbox do |sandbox|
-      sandbox.new :file => 'work/cruise_config.rb', :with_contents => '$foobar=42; $barfoo = 12345'
-      sandbox.new :file => 'cruise_config.rb', :with_contents => '$barfoo = 54321'
-      @project.path = sandbox.root
-      @project.load_config      
-      assert_equal 42, $foobar
-      assert_equal 54321, $barfoo
-    end
   end
 
   def test_request_build_should_start_builder_if_builder_was_down
@@ -409,18 +328,6 @@ class ProjectTest < Test::Unit::TestCase
     build
   end
 
-  def setup_file_unmodified_since_last_build(sandbox, path)
-    @project.path = sandbox.root
-    sandbox.new :file => path
-    stub_last_build_time(@project, Time.now + 1)
-  end
-
-  def setup_file_modified_after_last_build(sandbox, path)
-    @project.path = sandbox.root
-    stub_last_build_time(@project, Time.now - 1)
-    sandbox.new :file => path
-  end
-
   def new_revision(number)
     Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
   end
@@ -434,11 +341,5 @@ class ProjectTest < Test::Unit::TestCase
     build
   end
   
-  def stub_last_build_time(project, time)
-    mock_build = Object.new
-    project.expects(:last_build).returns(mock_build)
-    mock_build.expects(:time).returns(time)    
-  end  
-
 end
 
