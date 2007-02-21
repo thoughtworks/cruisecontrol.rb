@@ -147,15 +147,15 @@ class BuildsControllerTest < Test::Unit::TestCase
   def test_artifact_bad_request_parameters
     get :artifact, :build => '1', :path => 'foo'
     assert_response 404
-    assert_equal 'Project not specified', response.body
+    assert_equal 'Project not specified', @response.body
 
     get :artifact, :project => 'foo', :path => 'foo'
     assert_response 404
-    assert_equal 'Build not specified', response.body
+    assert_equal 'Build not specified', @response.body
 
     get :artifact, :project => 'foo', :build => '1'
     assert_response 404
-    assert_equal 'Path not specified', response.body
+    assert_equal 'Path not specified', @response.body
   end
 
   def assert_type(file, type)
