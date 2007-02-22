@@ -67,7 +67,22 @@ class IntegrationTest < Test::Unit::TestCase
     with_project('project_with_central_config', :revision => 16) do |project, sandbox|
       assert_throws(:reload_project) { project.build_if_necessary }
       assert Dir["#{sandbox.root}/project_with_central_config/build*"].empty?
-      assert_equal "true\n\n", File.read("#{sandbox.root}/project_with_central_config/work/cruise_config.rb")
+      assert_equal "$config_loaded = true\n\n",
+                   File.read("#{sandbox.root}/project_with_central_config/work/cruise_config.rb")
+    end
+  end
+
+  def test_build_if_necessary_should_update_and_reload_broken_central_config
+    with_project('project_with_central_config', :revision => 18) do |project, sandbox|
+      assert_equal "raise 'Error in config file'\n\n", 
+                   File.read("#{sandbox.root}/project_with_central_config/work/cruise_config.rb")
+      begin
+        $config_loaded = false
+        project.load_config
+        assert $config_loaded
+      ensure
+        $config_loaded = nil
+      end
     end
   end
 

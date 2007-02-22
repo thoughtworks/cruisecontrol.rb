@@ -15,7 +15,7 @@ class Projects
     end
 
     def load_project(dir)
-      project = Project.read(dir)
+      project = Project.read(dir, load_config = false)
       project.path = dir
       project
     end

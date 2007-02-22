@@ -8,10 +8,10 @@ class Project
     @@plugin_names << plugin_name unless RAILS_ENV == 'test' or @@plugin_names.include? plugin_name
   end
 
-  def self.read(dir)
+  def self.read(dir, load_config = true)
     @project_in_the_works = Project.new(File.basename(dir))
     begin
-      @project_in_the_works.config_tracker.load_config
+      @project_in_the_works.load_config if load_config
       return @project_in_the_works.load_in_progress_build_status_if_any
     ensure
       @project_in_the_works = nil
@@ -39,6 +39,27 @@ class Project
     instantiate_plugins
   end
 
+  def load_config
+    begin
+      retried_after_update = false
+      begin
+        load config_tracker.central_config_file if File.file?(config_tracker.central_config_file)
+      rescue
+        if retried_after_update
+          raise
+        else
+          @source_control.update(self)
+          retried_after_update = true
+          retry
+        end
+      end
+      load config_tracker.local_config_file if File.file?(config_tracker.local_config_file)
+    rescue => e
+      raise "Could not load project configuration: #{e.message} in #{e.backtrace.first}"
+    end
+    self
+  end
+1
   def path=(value)
     @config_tracker = ProjectConfigTracker.new(value)
     @path = value

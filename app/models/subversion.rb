@@ -61,8 +61,9 @@ class Subversion
     new_revisions
   end
 
-  def update(project, revision)
-    svn_output = execute_in_local_copy(project, "svn --non-interactive update --revision #{revision_number(revision)}")
+  def update(project, revision = nil)
+    revision_number = revision ? revision_number(revision) : 'HEAD'
+    svn_output = execute_in_local_copy(project, "svn --non-interactive update --revision #{revision_number}")
     SubversionLogParser.new.parse_update(svn_output)
   end
 

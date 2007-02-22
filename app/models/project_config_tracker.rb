@@ -10,16 +10,6 @@ class ProjectConfigTracker
     update_timestamps
   end
 
-  def load_config
-    begin
-      load central_config_file if File.file?(central_config_file)
-      load local_config_file if File.file?(local_config_file)
-    rescue => e
-      raise "Could not load project configuration: #{e.message} in #{e.backtrace.first}"
-    end
-    self
-  end
-
   def config_modified?
     old_timestamps = [@central_mtime, @local_mtime]
     update_timestamps
@@ -32,4 +22,3 @@ class ProjectConfigTracker
   end
 
 end
-

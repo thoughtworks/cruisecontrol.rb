@@ -61,16 +61,4 @@ class ProjectConfigTrackerTest < Test::Unit::TestCase
     assert @tracker.config_modified?
   end
 
-  def test_should_load_configuration_from_work_directory_and_then_root_directory
-    begin
-      @sandbox.new :file => 'work/cruise_config.rb', :with_contents => '$foobar=42; $barfoo = 12345'
-      @sandbox.new :file => 'cruise_config.rb', :with_contents => '$barfoo = 54321'
-      @tracker.load_config
-      assert_equal 42, $foobar
-      assert_equal 54321, $barfoo
-    ensure
-      $foobar = $barfoo = nil 
-    end
-  end
-
 end
