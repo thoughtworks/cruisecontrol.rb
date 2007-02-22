@@ -34,7 +34,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     post :index, :format => 'js'
 
     assert_response :success
-    assert_template 'index.rjs'
+    assert_template 'refresh_projects'
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
   end
 

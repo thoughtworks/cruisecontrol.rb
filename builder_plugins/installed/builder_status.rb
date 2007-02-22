@@ -10,7 +10,16 @@ class BuilderStatus
   end
 
   def status
-    builder_down? ? read_status : 'builder_down'
+    if builder_down?
+      'builder_down'
+    else
+      case _status = read_status
+      when 'checking_for_modifications', 'sleeping'
+        @project.build_requested? ? 'build_requested' : _status
+      else
+        _status
+      end
+    end
   end
 
   def build_started(build)
@@ -46,7 +55,7 @@ class BuilderStatus
   end
 
   def builder_down?
-    ProjectBlocker.blocked?(@project)
+    !ProjectBlocker.blocked?(@project)
   end
 
 end

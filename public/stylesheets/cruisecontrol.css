@@ -185,7 +185,7 @@ a.never_built, a.never_built:visited {
   background-repeat: no-repeat;
 }
 
-.project .builder_control .builder_status_building {
+.project .builder_control .builder_status_building, .project .builder_control .builder_status_build_requested {
   font-weight: bold;
   padding-top: 5px;
   padding-left: 25px;

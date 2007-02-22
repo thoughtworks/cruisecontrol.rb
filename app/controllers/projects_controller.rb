@@ -10,7 +10,7 @@ class ProjectsController < ApplicationController
     
     respond_to do |format|
       format.html
-      format.js
+      format.js { render :action => 'refresh_projects' }
       format.rss { render :action => 'rss', :layout => false }
       format.cctray { render :action => 'cctray', :layout => false }
     end
@@ -23,8 +23,9 @@ class ProjectsController < ApplicationController
     render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
 
     @project.request_build rescue nil
+    @projects = Projects.load_all
 
-    render :nothing => true
+    render :action => 'refresh_projects'
  end
   
   def code
