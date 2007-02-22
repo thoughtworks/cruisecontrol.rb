@@ -28,7 +28,7 @@ class BuilderStatus
   def build_loop_failed
     set_status 'error'
   end
-  
+
   private
   
   def read_status

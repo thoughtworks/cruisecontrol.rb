@@ -150,11 +150,11 @@ class Project
   end
 
   def build_if_necessary
-    notify(:polling_source_control)
+    notify :polling_source_control
     begin
       revisions = new_revisions
       if revisions.empty?
-        notify(:no_new_revisions_detected)
+        notify :no_new_revisions_detected
         return nil
       else
         remove_build_requested_flag_file if build_requested?
@@ -179,13 +179,16 @@ class Project
   end
   
   def request_build
-    BuilderStarter.begin_builder(name)  if builder_state_and_activity == 'builder_down'    
-    create_build_requested_flag_file
+    BuilderStarter.begin_builder(name) if builder_state_and_activity == 'builder_down'
+    unless build_requested?
+      notify :build_requested
+      create_build_requested_flag_file
+    end
   end
   
   def config_modified?
     if config_tracker.config_modified?
-      notify(:configuration_modified)
+      notify :configuration_modified
       true
     else
       false
@@ -198,8 +201,6 @@ class Project
       build
     end
   end
-
-  
 
   def build(revisions = nil)
     if revisions.nil?

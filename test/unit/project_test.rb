@@ -278,21 +278,32 @@ class ProjectTest < Test::Unit::TestCase
     end       
   end
 
-  def test_request_build_should_generate_build_requested_file
+  def test_request_build_should_generate_build_requested_file_and_notify_listeners
     @project.stubs(:builder_state_and_activity).returns('sleeping')
     in_sandbox do |sandbox|
       @project.path = sandbox.root
+
+      listener = Object.new
+      listener.expects(:build_requested)
+      @project.add_plugin listener
+
       @project.request_build
       assert File.file?(@project.build_requested_flag_file)
     end
   end
   
-   def test_request_build_should_not_not_mind_if_build_requested_file_already_exists
-     @project.stubs(:builder_state_and_activity).returns('sleeping')
-    in_sandbox do |sandbox|      
+  def test_request_build_should_not_notify_listeners_when_a_build_requested_flag_is_already_set
+    @project.stubs(:builder_state_and_activity).returns('building')
+    in_sandbox do |sandbox|
       @project.path = sandbox.root
       sandbox.new :file => 'build_requested'
-      @project.expects(:create_build_requested_flag_file)
+
+      listener = Object.new
+      listener.expects(:build_requested).never
+      
+      @project.expects(:build_requested?).returns(true)
+      @project.expects(:create_build_requested_flag_file).never
+
       @project.request_build
     end
   end
