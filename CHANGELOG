@@ -1,9 +1,10 @@
 TRUNK
   - IMPORTANT: 'project_config.rb' renamed to 'cruise_config.rb'
-  - IMPORTANT: RAILS_ENV is not set to "test" before calling "cruise" or custom Rake task 
+  - IMPORTANT: RAILS_ENV is not set to "test" before calling "cruise" or a custom Rake task 
   - cruise_config.rb can be in either [cruise]/projects/my_project/ or [cruise]/projects/my_project/work/. In ohter
     words, cruise_config.rb can be placed directly into the version control and obtained from there.
-  - [bugfix] dashboard doesn't load cruise_config.rb, and therefore is not affected by errors in it 
+  - [bugfix] dashboard doesn't load cruise_config.rb, and therefore is not affected by errors in it
+  - [bugfix] --username and --password options in add_project didn't work 
 
 ------------------------------------------------------------------------------------------------------------------------
 * 0.5.0

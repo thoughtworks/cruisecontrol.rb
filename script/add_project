@@ -13,10 +13,11 @@ ARGV.options do |opts|
   opts.separator ""
 
   opts.on("-u", "--url url", String,
-          "The subversion url for the project (eg. svn://rubyforge.org/var/svn/cruisecontrolrb)") { |v|
-            scm_options[:url] = v }
-  opts.on("--username username", String, "Specify a username for sourcecontrol") { |v| scm_options[:username] = v }
-  opts.on("--password password", String, "Specify a password for sourcecontrol") { |v| scm_options[:password] = v }
+          "The subversion url for the project (eg. svn://rubyforge.org/var/svn/cruisecontrolrb)") do |v|
+    scm_options[:url] = v
+  end
+  opts.on("--username username", String, "Specify a username for source control") { |v| scm_options[:username] = v }
+  opts.on("--password password", String, "Specify a password for source control") { |v| scm_options[:password] = v }
   opts.on('-t', '--trace', 'Print out exception stack traces') { trace = true }
 
   opts.separator ""
