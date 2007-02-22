@@ -21,8 +21,6 @@ namespace :cc do
 
   task 'build' do
 
-    ENV['RAILS_ENV'] ||= 'test'
-
     # if custom rake task defined, invoke that
     if ENV['CC_RAKE_TASK']
       tasks = ENV['CC_RAKE_TASK'].split(/\s+/)
@@ -36,7 +34,10 @@ namespace :cc do
     elsif Rake.application.lookup('cruise')
       cc_invoke 'cruise'
     else
-      if File.exists?(Dir.pwd + "/config/database.yml") 
+
+      ENV['RAILS_ENV'] ||= 'test'
+
+      if File.exists?(Dir.pwd + "/config/database.yml")
         if Dir[Dir.pwd + "/db/migrate/*.rb"].empty?
           raise "No migration scripts found in db/migrate/ but database.yml exists, " +
                 "CruiseControl won't be able to build the latest test database. Build aborted." 

@@ -139,12 +139,12 @@ class IntegrationTest < Test::Unit::TestCase
     
   end
 
-  def test_builder_should_clear_RAILS_ENV_and_invoke_cruise_if_this_task_is_defined
+  def test_builder_should_invoke_cruise_if_this_task_is_defined_and_should_not_set_RAILS_ENV
     with_project('project_with_cruise_and_default_tasks') do |project, sandbox|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
 
-      expected_output = "RAILS_ENV=\"test\"\ncruise invoked\n"
+      expected_output = "RAILS_ENV=nil\ncruise invoked\n"
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
     

@@ -18,7 +18,7 @@ Very truly yours,<br/>
 CruiseControl.rb team<br/>
 ThoughtWorks<br/>
 
-<small>P.S. We also want to know if we somehow fall short of these goal.</small>
+<small>P.S. We also want to know if we somehow fall short of these goals.</small>
 </div>
 
 h2. Basics

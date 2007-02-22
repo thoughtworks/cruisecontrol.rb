@@ -14,7 +14,7 @@ If CC.rb is unpacked into [cruise] directory , then:
 * [cruise]/projects/your_project/build-123/ contains build status file, list of changed files,
   and other "build artifacts" created while building revision 123.
 
-* [cruise]/projects/your_project/project_config.rb is builder configuration for your_project.
+* [cruise]/projects/your_project/cruise_config.rb is builder configuration for your_project.
 
 * [cruise]/config/site_config.rb is the file where you can make centralized changes to the configuration of dashboard
   and all builders.
@@ -34,18 +34,40 @@ Rolling your eyes already? Hold on, this is not J2EE deployment descriptors we a
 hand-crafted angled brackets just to get started here. A typical project configuration is about 3 to 5 lines of very
 simple Ruby. Yes, the configuration language of CC.rb is Ruby.
 
-In [cruise]/projects/your_project/ directory, create file project_config.rb. Write the following in it:
+In [cruise]/projects/your_project/ directory, create file cruise_config.rb. Write the following in it:
 
 <pre><code>Project.configure do |project|
 end
 </code></pre>
 
-Every project_config.rb must have these two lines. All your other configuration goes between them.
+Every cruise_config.rb must have these two lines. All your other configuration goes between them.
+
+You can also create cruise_config.rb in [cruise]/projects/your_project/work/ directory. In other words, check it into
+Subversion in the root directory of your project. Storing your CI configuration in your project's version control
+repository is a smart thing to do.
+
+It is also possible to have two cruise_config.rb files for a project, one in the [cruise]/projects/your_project/
+directory, and the other in Subversion. CruiseControl.rb loads both files, but settings from cruise_config.rb in
+[cruise]/projects/your_project/ override those defined in Subversion. This can be useful when you want to see the
+effect of some configuration settings without checking them in, or if you want to keep passwords away from
+a Subversion repository where too many people can see them.
 
 p(hint). Hint: configuration examples below include lines that look like '...' This represents other
-         configuration statements that may be in project_config.rb. You are not meant to copy-paste those dots into
+         configuration statements that may be in cruise_config.rb. You are not meant to copy-paste those dots into
          your configuration file. If you do, <code>./cruise start</code> will fail to start, saying something about
          syntax error (SyntaxError). Understandably, ... is not a valid Ruby expression.
+
+Since configuration files are written in a real programming language (Ruby), you can modularize them, use
+logical statements, and generally do whatever makes sense. For example, consider the following snippet:
+
+<pre><code>Project.configure do |project|
+  case project.name
+  when 'MyProject.Quick' then project.rake_task = 'test:units'
+  when 'MyProject.BigBertha' then project.rake_task = 'cruise:all_tests'
+  else raise "Don't know what to build for project #{project.name.inspect}"
+  end
+end
+</code></pre>
 
 
 h2. What will it build by default?
@@ -64,7 +86,7 @@ Rakefile, and do everything through that task and its dependencies.
 h2. How can I change what the build does?
 
 <code>cruise</code> may be the task for a quick build, but you may also want to run a long build with all acceptance
-tests included. This can be done by assigning the <code>project.rake_task</code> attribute in project_config.rb:
+tests included. This can be done by assigning the <code>project.rake_task</code> attribute in cruise_config.rb:
 
 <pre><code>Project.configure do |project|
   ...
@@ -88,9 +110,10 @@ Or you may not want to deal with Rake at all, but build your project by "make":h
 able to cope with non-Ruby projects!). 
 
 p(hint). So far, this statement is mostly theoretical. None of the authors actually used CruiseControl.rb with anything
-         but Rake. Please let us know if for some reason this feature doesn't work for you or for that matter if it does!
+         but Rake. Please let us know if for some reason this feature doesn't work for you, or, for that matter, if it
+         does!
 
-A custom build command can be set in <code>project.build_command</code> attribute. Modify project_config.rb file like
+A custom build command can be set in <code>project.build_command</code> attribute. Modify cruise_config.rb file like
 this:
 
 <pre><code>Project.configure do |project|
@@ -104,7 +127,7 @@ If <code>project.build_command</code> is set, CC.rb will change current working 
 [cruise]/projects/your_project/work/, invoke specified command and look at the exit code to determine whether the
 build passed or failed.
 
-p(hint) You cannot specify both <code>rake_task</code> and <code>build_command</code> attributes in project_config.rb.
+p(hint) You cannot specify both <code>rake_task</code> and <code>build_command</code> attributes in cruise_config.rb.
         It doesn't make sense, anyway.
 
 
@@ -133,7 +156,7 @@ to send email, and who to send it to. Do the following:
 1. Configure SMTP server connection. Copy [cruise]/config/site_config.rb_example to ~cruise/config/site_config.rb,
    read it and edit according to your situation.
 
-2. Tell the builder, whom do you want to receive build notices, by placing the following line in project_config.rb:
+2. Tell the builder, whom do you want to receive build notices, by placing the following line in cruise_config.rb:
 
 <pre><code>Project.configure do |project|
   ...
@@ -170,7 +193,7 @@ p(hint). Hint: CCTRay only works on a Windows desktop.
 h2. Build scheduling
 
 By default, the builder polls Subversion every 10 seconds for new revisions. This can be changed by adding the
-following line to project_config.rb:
+following line to cruise_config.rb:
 
 
 <pre><code>Project.configure do |project|
@@ -181,7 +204,7 @@ end
 </code></pre>
 
 What if you want a scheduler with some interesting logic? Well, a default scheduler can be substituted by placing
-your own scheduler implementation intpo the plugins directory and writing in project_config.rb something like this:
+your own scheduler implementation intpo the plugins directory and writing in cruise_config.rb something like this:
 
 <pre><code>Project.configure do |project|
   ...
@@ -190,7 +213,7 @@ your own scheduler implementation intpo the plugins directory and writing in pro
 end
 </code></pre>
 
-After initializing everything, and loading the project (step that includes evaluation of project_config.rb), the
+After initializing everything, and loading the project (step that includes evaluation of cruise_config.rb), the
 builder invokes project.scheduler.run. Project may detect that its configuraton has changed, so a scheduler needs to
 know how to recognize that situation.
 

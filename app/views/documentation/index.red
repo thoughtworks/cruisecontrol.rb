@@ -22,7 +22,7 @@ h2. Feature list
 * When a build is broken or fixed, notifies users via email, instant messaging or
   "CCTray":http://ccnet.sourceforge.net/CCNET/CCTray.html.
 
-* Track build status of your favourite projects via RSS/Atom feeds.
+* RSS feed to track the build status of your favourite projects.
 
 * Jump to the code causing a build error in one click.
 
@@ -42,6 +42,7 @@ h2. Feature list
 
 h2. Demo site
 
-"Here":http://cruisecontrolrb.thoughtworks.com/ is a public CruiseControl.rb instance building itself and some other open-source projects. 
+<strong>"Here":http://cruisecontrolrb.thoughtworks.com/</strong> is a public CruiseControl.rb instance building itself
+and some other open-source projects. 
 
 <div class="next_step">Next step: "download":download.html CruiseControl.rb</div>

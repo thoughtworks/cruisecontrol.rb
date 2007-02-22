@@ -16,10 +16,15 @@
   font-style: italic;
 }
 
-.hint code {
+code {
   font-family: courier, serif;
   font-style: normal;
   font-size: 1em;
+}
+
+.hint code {
+  font-style: normal;
+  padding:0 0.3em;
   background-color: #F5F5FF;
 }
 
