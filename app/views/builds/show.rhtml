@@ -17,16 +17,6 @@
 
 <br/>
 
-<% if !@build.additional_artifacts.empty? %>
-<div class="additional-artifacts">
-  <% @build.additional_artifacts.each do |artifact| %>
-    <div class="artifact">
-      <%= link_to artifact, :action => 'artifact', :project => @project.name, :build => @build.label, :path => artifact %>
-    </div>
-  <% end %>
-</div>
-<% end %>
-
 <div class="section-open">
   <div class="section-header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
   <div class="section-content">
@@ -36,12 +26,25 @@
 
 <% test_failures = get_test_failures_and_errors_if_any(@build.output) %>
 <% if test_failures %>
-<div class="section-open">
-  <div class="section-header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
-  <div class="section-content">
-    <%= test_failures %>
+  <div class="section-open">
+    <div class="section-header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
+    <div class="section-content">
+      <%= test_failures %>
+    </div>
   </div>
-</div>
+<% end %>
+
+<% unless @build.additional_artifacts.empty? %>
+  <div class="section-open">
+    <div class="section-header" onclick="toggle_section(this.parentNode)">Custom Build Artifacts</div>
+    <div class="section-content">
+      <% @build.additional_artifacts.each do |artifact| %>
+        <div class="artifact">
+          <%= link_to artifact, build_artifact_url(:project => @project.name, :build => @build.label, :path => artifact) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
 <% end %>
 
 <div class="section-closed">

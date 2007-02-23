@@ -312,12 +312,6 @@ a.never_built, a.never_built:visited {
   padding-left: .2em;
 }
 
-.additional-artifacts {
-  float:right;
-  border: 1px solid #507ec0;
-  padding: 0.3em;
-}
-
 .code {
   padding-left: 1em;
   font-family: courier, serif;
