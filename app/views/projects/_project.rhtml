@@ -48,7 +48,7 @@
 
   <td class="build_details">
     <% if (latest_build = recent_builds.first) %>
-        <%= "Building #{latest_build.label} for #{format_seconds(latest_build.elapsed_time_in_progress, :general)}" if latest_build.in_progress? %>
+        <%= "Building #{latest_build.label} for #{format_seconds(latest_build.elapsed_time_in_progress, :general)}" if latest_build.incomplete? %>
         <%= show_revisions_in_build(revisions_in_build(latest_build)) %>
     <% end %>
   </td>

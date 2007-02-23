@@ -51,8 +51,8 @@ class Build
     @status.failed?
   end
 
-  def in_progress?
-    @status.in_progress?
+  def incomplete?
+    @status.incomplete?
   end
   
   def changeset
@@ -116,4 +116,5 @@ class Build
   def elapsed_time_in_progress
     @status.elapsed_time_in_progress
   end
+
 end

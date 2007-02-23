@@ -55,13 +55,13 @@ class BuildTest < Test::Unit::TestCase
     end
   end
 
-  def test_in_progress?
+  def test_incomplete?
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-1/build_status.in_progress"
+      sandbox.new :file => "build-1/build_status.incomplete"
       sandbox.new :file => "build-2/build_status.something_else"
   
-      assert Build.new(project, 1).in_progress?
-      assert !Build.new(project, 2).in_progress?
+      assert Build.new(project, 1).incomplete?
+      assert !Build.new(project, 2).incomplete?
     end
   end
 

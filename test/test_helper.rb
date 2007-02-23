@@ -82,7 +82,7 @@ class Test::Unit::TestCase
     build.stubs(:time).returns(time)
     build.stubs(:failed?).returns(status == 'failed')
     build.stubs(:successful?).returns(status == 'success')
-    build.stubs(:in_progress?).returns(status == 'in_progress')
+    build.stubs(:incomplete?).returns(status == 'incomplete')
     build.stubs(:changeset).returns("bobby checked something in")
     build
   end

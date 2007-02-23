@@ -12,8 +12,8 @@ class BuildStatus
     read_latest_status == 'success'
   end
   
-  def in_progress?
-    read_latest_status == 'in_progress'
+  def incomplete?
+    read_latest_status == 'incomplete'
   end
   
   def failed?
@@ -22,7 +22,7 @@ class BuildStatus
 
   def start!
     remove_status_file
-    touch_status_file("in_progress")
+    touch_status_file("incomplete")
   end
   
   def succeed!(elapsed_time)
@@ -46,7 +46,7 @@ class BuildStatus
   end
   
   def elapsed_time_in_progress
-    in_progress? ? (Time.now - created_at).ceil : 0
+    incomplete? ? (Time.now - created_at).ceil : nil
   end
   
   def elapsed_time
