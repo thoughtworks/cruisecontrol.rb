@@ -1,4 +1,6 @@
-h1. Word from authors
+h1. Documentation
+
+h2. A word from the authors
 
 <div class="letter">
 *Dear build -monkey- -master- artist,*

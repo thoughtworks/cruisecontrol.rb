@@ -1,3 +1,4 @@
+<div id="docs_sidebar">
 <div class="box">
 
 h2. Documentation
@@ -20,4 +21,5 @@ ThoughtWorks has worked on a number of Open Source projects
 <a class="strong-link" href="http://opensource.thoughtworks.com/index.html">Read more</a>
     </p>
   </div>
+</div>
 </div>
