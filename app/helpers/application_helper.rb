@@ -106,15 +106,9 @@ module ApplicationHelper
   end
 
   def format_changeset_log(log)
-    preify(h(log.strip))
+    h(log.strip)
   end
   
-  def preify(value)
-    value.gsub(/\n/, "<br/>\n").
-          gsub(/  /, " &nbsp;").
-          gsub(/\.{10}/) { |match| "#{match}&#8203;" }
-  end
-
   def elapsed_time(build, format = :general)
     begin
       "<span>#{format_seconds(build.elapsed_time, format)}</span>"

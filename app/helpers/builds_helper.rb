@@ -2,9 +2,8 @@ module BuildsHelper
 
 
   def format_build_log(log)
-    preify(
-      link_to_code(h(log).
-        gsub(/(\d+ tests, \d+ assertions, \d+ failures, \d+ errors)/, '<div class="test-results">\1</div>')))
+    link_to_code(h(log).gsub(/(\d+ tests, \d+ assertions, \d+ failures, \d+ errors)/,
+                             '<div class="test-results">\1</div>'))
   end
   
   def link_to_code(log)
@@ -25,7 +24,7 @@ module BuildsHelper
     errors = TestFailureParser.new.get_test_failures(log) + TestErrorParser.new.get_test_errors(log)
     return nil if errors.empty?
     
-    preify(link_to_code(errors.collect{|error| format_test_error_output(error)}.join))
+    link_to_code(errors.collect{|error| format_test_error_output(error)}.join)
   end
 
   def format_test_error_output(test_error)

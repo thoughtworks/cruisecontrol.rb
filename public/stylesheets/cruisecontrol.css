@@ -216,12 +216,8 @@ a.never_built, a.never_built:visited {
   color: #F28218;
 }
 
-.error, .error a {
+.error, .error a, .error a:visited {
   color: #C00;
-}
-
-.error a {
-  text-decoration: underline;
 }
 
 .log {
@@ -259,11 +255,15 @@ a.never_built, a.never_built:visited {
 }
 
 #build_details {
-  width: 80%;
+  padding-left: 18em;
+  padding-right: 1.5em;
 }
 
 #build_details .section_content {
-  overflow: auto;
+  padding-left: 2em;
+  font-family: courier, serif;
+  word-wrap: break-word;
+  white-space: pre;
 }
 
 /* section stuff */
@@ -272,12 +272,7 @@ a.never_built, a.never_built:visited {
   font-size: 1.3em;
   padding-left: 1.3em;
   background: no-repeat center left;
-  margin-bottom: .4em;
-}
-
-#build_details .section_content {
-  padding-left: 2em;
-  font-family: courier, serif;
+  margin: .4em 0;
 }
 
 #build_details .section_closed .section_header { background-image: url(/images/arrow_closed.png); }
@@ -290,10 +285,9 @@ a.never_built, a.never_built:visited {
 }
 
 #builds_list {
-  width: 15%;
-  float: right;
-  clear: right;
-  margin: 1em 1.5em 1em 1em;
+  width: 15em;
+  float: left;
+  margin: 1em 1em 1em 0;
 }
 
 #builds_list .selected a {
@@ -310,9 +304,8 @@ a.never_built, a.never_built:visited {
   color: #FFF;
 }
 
-.build-link {
-  padding: 1px;
-  padding-left: .2em;
+.build_link {
+  padding: 1px 1px 1px 0;
 }
 
 .code {

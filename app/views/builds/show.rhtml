@@ -20,41 +20,27 @@
 
   <div class="section_open">
     <div class="section_header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
-    <div class="section_content">
-      <%= format_changeset_log(@build.changeset) %>
-    </div>
+    <div class="section_content"><%= format_changeset_log(@build.changeset) %></div>
   </div>
 
   <% test_failures = get_test_failures_and_errors_if_any(@build.output) %>
   <% if test_failures %>
     <div class="section_open">
       <div class="section_header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
-      <div class="section_content">
-        <%= test_failures %>
-      </div>
+      <div class="section_content"><%= test_failures %></div>
     </div>
   <% end %>
 
   <% unless @build.additional_artifacts.empty? %>
     <div class="section_open">
       <div class="section_header" onclick="toggle_section(this.parentNode)">Custom Build Artifacts</div>
-      <div class="section_content">
-        <% @build.additional_artifacts.each do |artifact| %>
-          <div class="artifact">
-            <%= link_to artifact, build_artifact_url(:project => @project.name, :build => @build.label, :path => artifact) %>
-          </div>
-        <% end %>
-      </div>
+      <div class="section_content"><% @build.additional_artifacts.each do |artifact| %><div class="artifact"><%= link_to artifact, build_artifact_url(:project => @project.name, :build => @build.label, :path => artifact) %></div><% end %></div>
     </div>
   <% end %>
 
   <div class="section_closed">
     <div class="section_header" onclick="toggle_section(this.parentNode)">Build Log</div>
-    <div class="section_content">
-      <div class="logfile">
-        <%= format_build_log(@build.output) %>
-      </div>
-    </div>
+    <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div></div>
   </div>
 </div>
 
