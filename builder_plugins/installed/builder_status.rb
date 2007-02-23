@@ -22,10 +22,14 @@ class BuilderStatus
     end
   end
 
-  def build_started(build)
+  def build_initiated
     set_status 'building'
   end
-  
+
+  def build_finished(build)
+    set_status 'sleeping'
+  end
+
   def sleeping
     set_status 'sleeping'
   end

@@ -93,6 +93,13 @@ a.failed, a.failed:visited {
   color: #C00;
 }
 
+a.incomplete, a.incomplete:visited {
+  font-weight: bold;
+  font-style: italic;
+  color: #888;
+}
+
+
 a.never_built, a.never_built:visited {
   font-weight: bold;
   color: #888;
@@ -106,7 +113,7 @@ a.never_built, a.never_built:visited {
   min-height: 9.2em;
 }  
 
-.build_success, .build_never_built {
+.build_success, .build_never_built, .build_incomplete {
   background-image: url(/images/gray_gradient.png);
   background-position: bottom;
   background-repeat: repeat-x;

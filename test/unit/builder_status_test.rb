@@ -10,11 +10,11 @@ class BuilderStatusTest < Test::Unit::TestCase
     ProjectBlocker.stubs(:blocked?).returns(true)
   end
   
-  def test_build_started_creates_file__building__
+  def test_build_initiated_creates_file__building__
     Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
     FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
     FileUtils.expects(:touch).with('project_root/builder_status.building')
-    @builder_status.build_started @mock_build
+    @builder_status.build_initiated
   end  
   
   def test_sleeping_creates_file__sleeping__

@@ -198,6 +198,7 @@ class Project
   end
 
   def build(revisions = nil)
+    notify(:build_initiated)
     if revisions.nil?
       revisions = new_revisions
       revisions = [@source_control.latest_revision(self)] if revisions.empty? 

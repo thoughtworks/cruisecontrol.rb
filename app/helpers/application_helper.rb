@@ -82,7 +82,9 @@ module ApplicationHelper
   def hyperlink_to_build_with_elapsed_time(project, build)
     text = build_label(build)
     if build.failed?
-      text += " <span class='error'>FAILED</span>"
+      text += " FAILED"
+    elsif build.incomplete?
+        text += " incomplete..."
     else
       elapsed_time_text = elapsed_time(build)
       text += " took #{elapsed_time_text}" unless elapsed_time_text.empty?
