@@ -1,4 +1,4 @@
-h3. What's this?
+h2. What's this?
 
 This is a builder plugin for "CruiseControl.rb":http://cruisecontrolrb.thoughtworks.com that sends build notices
 to instant messaging clients.
@@ -7,7 +7,7 @@ to instant messaging clients.
 IM systems, including AIM, Google Talk, ICQ, IRC, MSN and Yahoo.
 
 
-h3. Installation
+h2. Installation
 
 # Create a Jabber account that you will use for sending notifications.
 # Make sure that all who want to subscribe to build notices via Jabber can receive messages from this

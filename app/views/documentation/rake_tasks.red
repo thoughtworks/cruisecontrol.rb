@@ -1,8 +1,3 @@
----
-title: Rake Tasks
-inMenu: false
----
-
 h1. Default Rake targets
 
 By default, CC.rb assumes that your project is a "Rails":http://rubyonrails.org application built by

@@ -73,10 +73,6 @@ module ApplicationHelper
     EOL
   end
 
-  def link_to_documentation(text = 'Documentation')
-    link_to text, '/documentation'
-  end
-  
   def hyperlink_to_build(project, build)
     text = build_label(build)
     text += " <span class='error'>FAILED</span>" if build.failed?

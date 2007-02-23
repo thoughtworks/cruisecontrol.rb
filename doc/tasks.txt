@@ -1,5 +1,15 @@
+Questions
+---------
+
+can we keep build list on right?
+
 Bugs
 ----
+Code Coverage - If we're going to put it up there, it should actually be higher than 68% - JSS
+  - exclude redcloth.rb from rcov statistics (I think this will make a huge difference)
+  - move the helper tests & statistics to unit test
+  - fix coverage where it sucks the most
+
 What should be the status of a build that passed, but THEN the build loop crashed? Answer: it's not a build status, but
 a BUILDER status. Rolf suggested "Misbehaving". Add a story to the wiki.
 
@@ -27,8 +37,7 @@ Currently, we preserve newlines (looks nicer), but may cause complications if th
 Comments on the dashboard need tooltips or floating-divs to display the full message.
 
 If the build takes say 7501 seconds, it displays 2 hours and 5 minutes and 1 second.
-
-It might be better to display 2 hours, 5 minutes and 1 second.  Or perhaps drop the seconds?
+  - It might be better to display 2 hours, 5 minutes and 1 second.  Or perhaps drop the seconds?
 
 Looks like we won't detect cruise_config modification if it happens during the build
 

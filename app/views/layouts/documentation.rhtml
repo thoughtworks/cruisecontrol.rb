@@ -2,23 +2,35 @@
 <html>
 <head>
   <title>CruiseControl.rb<%= @title ? " - " + @title : '' %></title>
-  <%= stylesheet_link_tag 'cruisecontrol', :media => 'all' %>
+  <%= stylesheet_link_tag '/thoughtworks_studios/reset', :media => 'all' %>
+  <%= stylesheet_link_tag '/thoughtworks_studios/fonts', :media => 'all' %>
+  <%= stylesheet_link_tag '/thoughtworks_studios/grids', :media => 'all' %>
+  <%= stylesheet_link_tag '/thoughtworks_studios/base', :media => 'all' %>
   <%= stylesheet_link_tag 'documentation', :media => 'all' %>
+  <%= javascript_include_tag '/thoughtworks_studios/page' %>
   <%= javascript_include_tag :defaults %>
 </head>
-
 <body>
-  <%= render :partial => '/layouts/header' %>
-  
-  <div id="menu_pane">
-    <%= render :partial => '/documentation/menu'%>
-  </div>
-  <div id="content">
-    <h1 id='title'><%= @title %></h1>
-    <%= yield %>
-  </div>
+	<div id="doc" class="yui-t4">
+    <%= render :partial => '/documentation/header' %>
 
-  <%= render :partial => '/layouts/footer' %>
+		<div id="bd" class="thick">
+		  <div class="yui-b" id="side-bar">
+		    <div class="inner">
+          <%= render :partial => '/documentation/' + (@sidebar || 'sidebar_docs') %>
+		    </div>
+      </div>
 
+		  <div id="yui-main">
+		    <div class="yui-b">
+		      <div class="inner">
+		        <%= yield %>
+		      </div>
+		    </div>
+		  </div>
+    </div>
+
+    <%= render :partial => '/documentation/footer' %>
+  </div>
 </body>
 </html>

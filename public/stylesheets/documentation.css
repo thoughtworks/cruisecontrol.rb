@@ -1,10 +1,23 @@
-#menu_pane {
-  float:left;
-  padding: 1.5em;
+.letter {
+  font-family: georgia, times, serif;
+  color: #62A;
+  background-color: #FAFAFA;
+  font-style: italic;
+  padding: 0.5em 2em; 
 }
 
-#content {
-  padding-left: 12em;
+div.next_step {
+  color: #000;
+  background-color: #FFF0F5;
+  font-weight: bold;
+  margin: 3em 2em 1em 2em;
+  padding: 0.2em 1em;
+}
+
+.plugin_list {
+  width: 45%;
+  float: left;
+  margin-left: 5%;
 }
 
 .hint {
@@ -28,20 +41,10 @@ code {
   background-color: #F5F5FF;
 }
 
-div.next_step {
-  color: #000;
-  background-color: #FFF0F5;
-  font-weight: bold;
-  margin: 3em 2em 1em 2em;
-  padding: 0.2em 1em;
-}
-
-.letter {
-  font-family: georgia, times, serif;
-  color: #62A;
-  background-color: #FAFAFA;
-  font-style: italic;
-  padding: 0.5em 2em; 
+.def {
+  margin-left: 3em;
+  margin-right: 3em;
+  color: #555;
 }
 
 .screencast_image {
@@ -51,20 +54,3 @@ div.next_step {
   padding: 3px;
 }
 
-.def {
-  margin-left: 3em;
-  margin-right: 3em;
-  color: #555;
-}
-
-#plugin_list {
-  float: left;
-  width: 16em;
-}
-
-#plugin_documentation {
-  margin-left: 16em;
-  padding-left: 1em;
-  border-left: solid black 1px;
-  height: 100%;
-}

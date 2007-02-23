@@ -1,6 +1,4 @@
-<% @title = 'Welcome to CruiseControl.rb' %>
-
-h2. What is this?
+h1. What is CruiseControl.rb?
 
 CruiseControl.rb is a continuous integration tool. Its basic purpose in life is to alert members of a software project
 when one of them checks something into source control that breaks the build.
@@ -10,7 +8,7 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in "R
 p(hint). Hint: "Martin Fowler":http://martinfowler.com/ explains the how and why of Continuous Integration in this
          "article":http://martinfowler.com/articles/continuousIntegration.html.
 
-h2. Feature list
+h1. Feature list
 
 * Can be installed in 10 minutes.
 
@@ -40,7 +38,7 @@ h2. Feature list
 
 * Free as in "free beer".
 
-h2. Demo site
+h1. Demo site
 
 <strong>"Here":http://cruisecontrolrb.thoughtworks.com/</strong> is a public CruiseControl.rb instance building itself
 and some other open-source projects. 

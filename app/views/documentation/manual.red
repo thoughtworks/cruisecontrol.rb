@@ -1,6 +1,9 @@
-<% @title = 'The Manual' %>
+h1. Manual
 
-h2. Files and folders
+This is the cruisecontrol.rb manual, if you can't find what you're looking for here, make sure to look at the docs
+for "plugins":plugins.html or just "contact us":contact_us.html
+
+h1. Files and folders
 
 If CC.rb is unpacked into [cruise] directory , then:
 
@@ -20,7 +23,7 @@ If CC.rb is unpacked into [cruise] directory , then:
   and all builders.
 
 
-h2. Project builder configuration
+h1. Project builder configuration
 
 When you add a project to it, CruiseControl.rb will try to do something reasonable without any configuration.
 
@@ -70,7 +73,7 @@ end
 </code></pre>
 
 
-h2. What will it build by default?
+h1. What will it build by default?
 
 By default, CC.rb will search for "Rake":http://rake.rubyforge.org/ build file in your project. Then
 CC.rb will try to execute <code>cruise</code> task if it is defined. If it is not, it will try to perform standard Rails
@@ -83,7 +86,7 @@ behavior doesn't suit you for any reason, the easiest way around it is to define
 Rakefile, and do everything through that task and its dependencies.
 
 
-h2. How can I change what the build does?
+h1. How can I change what the build does?
 
 <code>cruise</code> may be the task for a quick build, but you may also want to run a long build with all acceptance
 tests included. This can be done by assigning the <code>project.rake_task</code> attribute in cruise_config.rb:
@@ -131,7 +134,7 @@ p(hint) You cannot specify both <code>rake_task</code> and <code>build_command</
         It doesn't make sense, anyway.
 
 
-h2. What should I do with custom build artifacts?
+h1. What should I do with custom build artifacts?
 
 your_project may have a special build task, producing some output that you want to keep, and see on
 the build page.
@@ -148,7 +151,7 @@ subdirectory under that directory.
 The build page includes links to every file or subdirectory found in the build artifacts directory.
 
 
-h2. Build monitoring via email
+h1. Build monitoring via email
 
 CruiseControl.rb can send email notices whenever build is broken or fixed. To make it happen, you need to tell it how
 to send email, and who to send it to. Do the following:
@@ -166,14 +169,14 @@ end
 </code></pre>
 
 
-h2. Build notices via instant messaging with Jabber
+h1. Build notices via instant messaging with Jabber
 
 "Jabber":http://www.jabber.org/ is an open protocol for instant messaging. Jabber messages can be sent to all sorts of
 IM systems, including AIM, Google Talk, ICQ, IRC, MSN and Yahoo. CC.rb comes with a Jabber plugin. Look
 at [cruise]/builder_plugins/available/jabber_notifier/README for the installation guide and further details.
 
 
-h2. Build monitoring with CCTray
+h1. Build monitoring with CCTray
 
 "CCTray":http://ccnet.sourceforge.net/CCNET/CCTray.html is a utility developed as part of CruiseControl.NET project
 that displays an icon in the bottom right corner of the screen. The icon changes its color to red when a build fails,
@@ -190,7 +193,7 @@ At the time of this writing, CC.rb was tested to work with CCTray 1.2.1
 p(hint). Hint: CCTRay only works on a Windows desktop.
 
 
-h2. Build scheduling
+h1. Build scheduling
 
 By default, the builder polls Subversion every 10 seconds for new revisions. This can be changed by adding the
 following line to cruise_config.rb:
@@ -220,13 +223,13 @@ know how to recognize that situation.
 Look at [cruise]/app/models/polling_scheduler.rb to understand how a scheduler interacts with a project.
 
 
-h2. Deleting a project
+h1. Deleting a project
 
 To remove your_project from CruiseControl.rb, kill its builder process and then delete the [cruise]/projects/your_project/
 directory.
 
 
-h2. Troubleshooting and support
+h1. Troubleshooting and support
 
 Beware, at the time of this writing, CC.rb is very young and not very stable. Good news is that it's simple (much, much
 simpler than other CruiseControl incarnations). The dashboard is just a small Rails app, and the builder is little
@@ -236,7 +239,7 @@ Don't forget to send us patches, please!
 OK, that was the pep talk. If you have an issue that you cannot fix on your own, subscribe to mail list
 cruisecontrolrb-users@rubyforge.org and ask for help.
 
-h2. Documentation that we haven't written yet
+h1. Documentation that we haven't written yet
 
 We should write about ways to run CC.rb as a service on various platforms, write about various troubleshooting
 techniques, document builder plugins etc.

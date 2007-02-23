@@ -1,6 +1,4 @@
-<% @title = 'Getting Started' %>
-
-h2. Word from authors
+h1. Word from authors
 
 <div class="letter">
 *Dear build -monkey- -master- artist,*
@@ -21,7 +19,7 @@ ThoughtWorks<br/>
 <small>P.S. We also want to know if we somehow fall short of these goals.</small>
 </div>
 
-h2. Basics
+h1. Basics
 
 CruiseControl.rb has two parts: a builder and a dashboard.
 
@@ -39,20 +37,20 @@ Each installation of CruiseControl.rb may have multiple projects and multiple bu
 also be multiple installations of CruiseControl.rb per computer.
 
 
-h2. Prerequisites
+h1. Prerequisites
 
 * "Ruby":http://www.ruby-lang.org/en/ 1.8.4 or later
 * "Subversion":http://subversion.tigris.org/ client 1.3.2 or later
 * svn and ruby executables must both be in the PATH.
 
 
-h2. Assumptions and limitations
+h1. Assumptions and limitations
 
 * CruiseControl.rb currently only works with Subversion.
 * Dashboard and all builders need to run on the same computer.
 
 
-h2. Installation
+h1. Installation
 
 Follow these directions or watch our "5 minute install":screencasts.html screencast.
 
