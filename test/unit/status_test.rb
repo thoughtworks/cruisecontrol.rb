@@ -74,4 +74,24 @@ class BuildStatusTest < Test::Unit::TestCase
     end
   end
   
+  def test_elapsed_time_in_progress
+    Dir.expects(:'[]').at_least(1).with("artifacts_directory/build_status.*").returns(['build_status.in_progress'])
+    File.expects(:mtime).with('build_status.in_progress').returns(Time.local(2000,"jan",1,20,15, 1))
+    Time.expects(:now).returns(Time.local(2000,"jan",1,20,15,10))
+    assert_equal 9, BuildStatus.new("artifacts_directory").elapsed_time_in_progress
+  end
+  
+  def test_elapsed_time_in_progress_should_return_zero_when_not_in_progress
+    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.success.in123s'])
+    assert_equal 0, BuildStatus.new("artifacts_directory").elapsed_time_in_progress
+  end
+
+  def test_elapsed_time_in_progress_ceils_fractionals
+    Dir.expects(:'[]').at_least(1).with("artifacts_directory/build_status.*").returns(['build_status.in_progress'])
+    File.expects(:mtime).with('build_status.in_progress').returns(Time.local(2000,"jan",1,20,15, 1))
+    time_with_fractional_seconds = Time.local(2000,"jan",1,20,15,10) + 0.2 #difference is 9.2 seconds
+    Time.expects(:now).returns(time_with_fractional_seconds) 
+    assert_equal 10, BuildStatus.new("artifacts_directory").elapsed_time_in_progress
+  end
+
 end

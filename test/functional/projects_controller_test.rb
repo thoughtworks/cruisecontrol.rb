@@ -134,16 +134,6 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_response 404
   end
 
-  def test_index_delete_in_progress_build_status_file_if_any
-    p1 = create_project_stub('one', 'success')
-    p2 = create_project_stub('two', 'failed', [create_build_stub('1', 'failed')])
-    Projects.stubs(:load_all).returns([p1, p2])
-    InProgressBuildStatus.expects(:delete_in_progress_build_status_file_if_any).with(p1)
-    InProgressBuildStatus.expects(:delete_in_progress_build_status_file_if_any).with(p2)
-    get :index
-  end
-  
-
   def stub_change_set_parser
     mock = Object.new  
     ChangesetLogParser.stubs(:new).returns(mock)

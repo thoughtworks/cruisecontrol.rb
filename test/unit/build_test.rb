@@ -55,6 +55,16 @@ class BuildTest < Test::Unit::TestCase
     end
   end
 
+  def test_in_progress?
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :file => "build-1/build_status.in_progress"
+      sandbox.new :file => "build-2/build_status.something_else"
+  
+      assert Build.new(project, 1).in_progress?
+      assert !Build.new(project, 2).in_progress?
+    end
+  end
+
   def test_run_successful_build
     with_sandbox_project do |sandbox, project|
       expected_build_directory = File.join(sandbox.root, 'build-123')
@@ -72,6 +82,8 @@ class BuildTest < Test::Unit::TestCase
         }
       Time.expects(:now).at_least(2).returns(Time.at(0), Time.at(3.2))
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
+
+      BuildStatus.any_instance.expects(:'start!')
       BuildStatus.any_instance.expects(:'succeed!').with(4)
       BuildStatus.any_instance.expects(:'fail!').never
       build.run
@@ -95,6 +107,7 @@ class BuildTest < Test::Unit::TestCase
   
       build.expects(:execute).with(build.rake, expected_redirect_options).raises(CommandLine::ExecutionError)
       Time.stubs(:now).returns(Time.at(1))
+      BuildStatus.any_instance.expects(:'start!')
       BuildStatus.any_instance.expects(:'fail!').with(0)  
       build.run
     end

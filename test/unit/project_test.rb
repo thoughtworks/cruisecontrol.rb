@@ -342,20 +342,6 @@ class ProjectTest < Test::Unit::TestCase
     project.build([new_revision(2)])
   end
   
-  def test_load_in_progress_build_status_if_any 
-    in_sandbox do |sandbox|
-      @project.path = sandbox.root
-      File.open(@project.in_progress_build_status_file,'w') do |f|
-        f.print("123.456")
-      end
-      
-      @project.load_in_progress_build_status_if_any
-
-      assert_equal "123.456", @project.currently_building_build.label
-    end  
-  end
-
-
   def test_should_load_configuration_from_work_directory_and_then_root_directory
     in_sandbox do |sandbox|
       @project.path = sandbox.root 

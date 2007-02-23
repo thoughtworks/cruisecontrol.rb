@@ -12,7 +12,7 @@ class Project
     @project_in_the_works = Project.new(File.basename(dir))
     begin
       @project_in_the_works.load_config if load_config
-      return @project_in_the_works.load_in_progress_build_status_if_any
+      return @project_in_the_works
     ensure
       @project_in_the_works = nil
     end
@@ -25,7 +25,7 @@ class Project
 
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path
   attr_writer :local_checkout 
-  attr_accessor :source_control, :scheduler, :currently_building_build
+  attr_accessor :source_control, :scheduler
 
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
@@ -59,21 +59,10 @@ class Project
     end
     self
   end
-1
+
   def path=(value)
     @config_tracker = ProjectConfigTracker.new(value)
     @path = value
-  end
-
-  def in_progress_build_status_file
-    File.expand_path(File.join(@path, 'builder.in_progress_build_status'))
-  end
-
-  def load_in_progress_build_status_if_any
-    if File.exists?(in_progress_build_status_file)
-      @currently_building_build = Build.new(self, File.read(in_progress_build_status_file).strip)
-    end
-    self
   end
 
   def instantiate_plugins

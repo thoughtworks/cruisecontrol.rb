@@ -12,10 +12,19 @@ class BuildStatus
     read_latest_status == 'success'
   end
   
+  def in_progress?
+    read_latest_status == 'in_progress'
+  end
+  
   def failed?
     read_latest_status == 'failed'
   end
 
+  def start!
+    remove_status_file
+    touch_status_file("in_progress")
+  end
+  
   def succeed!(elapsed_time)
     remove_status_file
     touch_status_file("success.in#{elapsed_time}s")
@@ -34,6 +43,10 @@ class BuildStatus
   
   def to_s
     read_latest_status.to_s
+  end
+  
+  def elapsed_time_in_progress
+    in_progress? ? (Time.now - created_at).ceil : 0
   end
   
   def elapsed_time

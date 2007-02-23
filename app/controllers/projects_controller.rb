@@ -4,10 +4,6 @@ class ProjectsController < ApplicationController
   def index
     @projects = Projects.load_all
     
-    @projects.each do |project|
-      InProgressBuildStatus.delete_in_progress_build_status_file_if_any(project)
-    end
-    
     respond_to do |format|
       format.html
       format.js { render :action => 'refresh_projects' }
@@ -26,7 +22,7 @@ class ProjectsController < ApplicationController
     @projects = Projects.load_all
 
     render :action => 'refresh_projects'
- end
+  end
   
   def code
     render :text => 'Project not specified', :status => 404 and return unless params[:project]

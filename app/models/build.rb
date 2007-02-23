@@ -16,6 +16,7 @@ class Build
     # build_command must be set before doing chdir, because there may be some relative paths
     build_command = self.command
     time = Time.now
+    @status.start!
     in_clean_environment_on_local_copy do
       execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
@@ -51,6 +52,10 @@ class Build
     @status.failed?
   end
 
+  def in_progress?
+    @status.in_progress?
+  end
+  
   def changeset
     File.read(artifact('changeset.log')) rescue ''
   end
@@ -107,4 +112,7 @@ class Build
     @status.elapsed_time
   end
 
+  def elapsed_time_in_progress
+    @status.elapsed_time_in_progress
+  end
 end
