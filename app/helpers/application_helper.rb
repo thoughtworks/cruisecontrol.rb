@@ -84,7 +84,7 @@ module ApplicationHelper
     if build.failed?
       text += " FAILED"
     elsif build.incomplete?
-        text += " incomplete..."
+        text += " incomplete"
     else
       elapsed_time_text = elapsed_time(build)
       text += " took #{elapsed_time_text}" unless elapsed_time_text.empty?
