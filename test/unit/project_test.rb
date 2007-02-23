@@ -272,7 +272,7 @@ class ProjectTest < Test::Unit::TestCase
   def test_request_build_should_start_builder_if_builder_was_down
     in_sandbox do |sandbox|
       @project.path = sandbox.root                        
-      @project.expects(:builder_state_and_activity).returns('builder_down') 
+      @project.expects(:builder_state_and_activity).times(2).returns('builder_down', 'sleeping')
       BuilderStarter.expects(:begin_builder).with(@project.name)
       @project.request_build
     end       

@@ -150,17 +150,24 @@ a.never_built, a.never_built:visited {
   display: inline;
 }
 
-.project .build_button {
-  color: #000000;
+.project .build_button, .project .build_button_disabled {
+  color: #000;
   font-weight:bold;
-  background-image:url(/images/button.png);
   background-repeat: no-repeat;
   font-size: 11px;
   text-align: center;
   width: 80px;
   height: 23px;
   border: none;
-  background-color:#FFFFFF;
+  background-color: transparent;
+}
+.project .build_button {
+  background-image:url(/images/button.png);
+}
+
+.project .build_button_disabled {
+  color: #999;
+  background-image:url(/images/button_disabled.png);
 }
 
 .project .recent_builds {

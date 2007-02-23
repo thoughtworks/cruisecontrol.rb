@@ -179,7 +179,13 @@ class Project
   end
   
   def request_build
-    BuilderStarter.begin_builder(name) if builder_state_and_activity == 'builder_down'
+    if builder_state_and_activity == 'builder_down'
+      BuilderStarter.begin_builder(name)
+      10.times do
+        sleep 1.second
+        break if builder_state_and_activity != 'builder_down' 
+      end
+    end
     unless build_requested?
       notify :build_requested
       create_build_requested_flag_file

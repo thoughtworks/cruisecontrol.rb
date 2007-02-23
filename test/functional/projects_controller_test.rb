@@ -123,14 +123,14 @@ class ProjectsControllerTest < Test::Unit::TestCase
     project = create_project_stub('two')
     Projects.expects(:find).with('two').returns(project)
     project.expects(:request_build)
-    post :build, :project => "two"
+    post :build, :id => "two"
     assert_response :success
     assert_equal 'two', assigns(:project).name
   end
   
   def test_build_for_non_existant_project
     Projects.expects(:find).with('non_existing_project').returns(nil)
-    post :build, :project => "non_existing_project"
+    post :build, :id => "non_existing_project"
     assert_response 404
   end
 
