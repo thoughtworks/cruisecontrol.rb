@@ -10,7 +10,7 @@ module BuildsHelper
   def link_to_code(log)
     @work_path ||= File.expand_path(@project.path + '/work')
 
-    log.gsub(/(([\w\.-]*\/[ \w\/\.-]+)\:(\d+))/) { 
+    log.gsub(/(([\w\.-]*\/[ \w\/\.-]+)\:(\d+))/) do
       path = File.expand_path($2, @work_path)
       if path.index(@work_path) == 0
         path = path[@work_path.size..-1]
@@ -18,7 +18,7 @@ module BuildsHelper
       else
         $1
       end
-    }
+    end
   end
 
   def get_test_failures_and_errors_if_any(log)
@@ -28,13 +28,13 @@ module BuildsHelper
     preify(link_to_code(errors.collect{|error| format_test_error_output(error)}.join))
   end
 
-  def format_test_error_output(testError)
-    message = testError.message.gsub(/\\n/, "\n");
+  def format_test_error_output(test_error)
+    message = test_error.message.gsub(/\\n/, "\n");
 
-    "Name: #{testError.test_name}\n" +
-    "Type: #{testError.type}\n" +
+    "Name: #{test_error.test_name}\n" +
+    "Type: #{test_error.type}\n" +
     "Message: #{h message}\n\n" +
-    "<span class=\"error\">#{h testError.stacktrace}</span>\n\n\n"
+    "<span class=\"error\">#{h test_error.stacktrace}</span>\n\n\n"
   end
   
   def display_build_time

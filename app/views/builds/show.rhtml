@@ -7,51 +7,54 @@
   <% end %>
 </div>
 
-<h1>
-  <%= h @project.name %> build <%= h @build.label %> 
-  <% if @build.failed? %><span class="error">FAILED</span><% end %>
-</h1>
-<div class="build-time">
-   <%= display_build_time %>
-</div>
-
-<br/>
-
-<div class="section-open">
-  <div class="section-header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
-  <div class="section-content">
-    <%= format_changeset_log(@build.changeset) %>
+<div id="build_details">
+  <h1>
+    <%= h @project.name %> build <%= h @build.label %>
+    <% if @build.failed? %><span class="error">FAILED</span><% end %>
+  </h1>
+  <div class="build-time">
+     <%= display_build_time %>
   </div>
-</div>
 
-<% test_failures = get_test_failures_and_errors_if_any(@build.output) %>
-<% if test_failures %>
+  <br/>
+
   <div class="section-open">
-    <div class="section-header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
+    <div class="section-header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
     <div class="section-content">
-      <%= test_failures %>
+      <%= format_changeset_log(@build.changeset) %>
     </div>
   </div>
-<% end %>
 
-<% unless @build.additional_artifacts.empty? %>
-  <div class="section-open">
-    <div class="section-header" onclick="toggle_section(this.parentNode)">Custom Build Artifacts</div>
-    <div class="section-content">
-      <% @build.additional_artifacts.each do |artifact| %>
-        <div class="artifact">
-          <%= link_to artifact, build_artifact_url(:project => @project.name, :build => @build.label, :path => artifact) %>
-        </div>
-      <% end %>
+  <% test_failures = get_test_failures_and_errors_if_any(@build.output) %>
+  <% if test_failures %>
+    <div class="section-open">
+      <div class="section-header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
+      <div class="section-content">
+        <%= test_failures %>
+      </div>
     </div>
-  </div>
-<% end %>
+  <% end %>
 
-<div class="section-closed">
-  <div class="section-header" onclick="toggle_section(this.parentNode)">Build Log</div>
-  <div class="section-content">
-    <div class="logfile">
-      <%= format_build_log(@build.output) %>
+  <% unless @build.additional_artifacts.empty? %>
+    <div class="section-open">
+      <div class="section-header" onclick="toggle_section(this.parentNode)">Custom Build Artifacts</div>
+      <div class="section-content">
+        <% @build.additional_artifacts.each do |artifact| %>
+          <div class="artifact">
+            <%= link_to artifact, build_artifact_url(:project => @project.name, :build => @build.label, :path => artifact) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="section-closed">
+    <div class="section-header" onclick="toggle_section(this.parentNode)">Build Log</div>
+    <div class="section-content">
+      <div class="logfile">
+        <%= format_build_log(@build.output) %>
+      </div>
     </div>
   </div>
 </div>
+
