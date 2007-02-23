@@ -2,10 +2,10 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 function toggle_section(section) {
-  if (section.className == "section-open")
-    section.className = "section-closed"
+  if (section.className == "section_open")
+    section.className = "section_closed"
   else
-    section.className = "section-open"
+    section.className = "section_open"
 }
 
 function disableBuildNowButton(button) {

@@ -253,13 +253,21 @@ a.never_built, a.never_built:visited {
   padding: 1ex;
 }
 
-.build-time {
+.build_time {
   margin-top: -1em;
   margin-left: 3em;
 }
 
+#build_details {
+  width: 80%;
+}
+
+#build_details .section_content {
+  overflow: auto;
+}
+
 /* section stuff */
-.section-header {
+#build_details .section_header {
   cursor: pointer;
   font-size: 1.3em;
   padding-left: 1.3em;
@@ -267,38 +275,38 @@ a.never_built, a.never_built:visited {
   margin-bottom: .4em;
 }
 
-.section-content {
+#build_details .section_content {
   padding-left: 2em;
   font-family: courier, serif;
 }
 
+#build_details .section_closed .section_header { background-image: url(/images/arrow_closed.png); }
+#build_details .section_open .section_header   { background-image: url(/images/arrow_open.png); }
 
-.section-closed .section-header { background-image: url(/images/arrow_closed.png); }
-.section-open .section-header   { background-image: url(/images/arrow_open.png); }
-
-.section-closed .section-content { display: none; }
+#build_details .section_closed .section_content { display: none; }
 
 .logfile {
   padding-top: 0;
 }
 
-#build-list {
-  width: 12em;
+#builds_list {
+  width: 15%;
   float: right;
-  padding: 1em 1.5em 1em 1em;
+  clear: right;
+  margin: 1em 1.5em 1em 1em;
 }
 
-#build-list .selected a {
+#builds_list .selected a {
   background-color: #507ec0;
   color: #FFF;
 }
 
-#build-list .selected a .error {
+#builds_list .selected a .error {
   background-color: #507ec0;
   color: #F66;
 }
 
-#build-list .selected a, #build-list .selected a:visited {
+#builds_list .selected a, #builds_list .selected a:visited {
   color: #FFF;
 }
 

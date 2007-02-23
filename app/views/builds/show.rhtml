@@ -1,4 +1,4 @@
-<div id="build-list">
+<div id="builds_list">
   <strong>Build history</strong>
   <% @project.builds.reverse.each do |build| %>
     <div class="build-link<%= ' selected' if @build.label == build.label %>">
@@ -12,33 +12,33 @@
     <%= h @project.name %> build <%= h @build.label %>
     <% if @build.failed? %><span class="error">FAILED</span><% end %>
   </h1>
-  <div class="build-time">
+  <div class="build_time">
      <%= display_build_time %>
   </div>
 
   <br/>
 
-  <div class="section-open">
-    <div class="section-header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
-    <div class="section-content">
+  <div class="section_open">
+    <div class="section_header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
+    <div class="section_content">
       <%= format_changeset_log(@build.changeset) %>
     </div>
   </div>
 
   <% test_failures = get_test_failures_and_errors_if_any(@build.output) %>
   <% if test_failures %>
-    <div class="section-open">
-      <div class="section-header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
-      <div class="section-content">
+    <div class="section_open">
+      <div class="section_header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
+      <div class="section_content">
         <%= test_failures %>
       </div>
     </div>
   <% end %>
 
   <% unless @build.additional_artifacts.empty? %>
-    <div class="section-open">
-      <div class="section-header" onclick="toggle_section(this.parentNode)">Custom Build Artifacts</div>
-      <div class="section-content">
+    <div class="section_open">
+      <div class="section_header" onclick="toggle_section(this.parentNode)">Custom Build Artifacts</div>
+      <div class="section_content">
         <% @build.additional_artifacts.each do |artifact| %>
           <div class="artifact">
             <%= link_to artifact, build_artifact_url(:project => @project.name, :build => @build.label, :path => artifact) %>
@@ -48,9 +48,9 @@
     </div>
   <% end %>
 
-  <div class="section-closed">
-    <div class="section-header" onclick="toggle_section(this.parentNode)">Build Log</div>
-    <div class="section-content">
+  <div class="section_closed">
+    <div class="section_header" onclick="toggle_section(this.parentNode)">Build Log</div>
+    <div class="section_content">
       <div class="logfile">
         <%= format_build_log(@build.output) %>
       </div>

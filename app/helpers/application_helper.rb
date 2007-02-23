@@ -112,7 +112,7 @@ module ApplicationHelper
   def preify(value)
     value.gsub(/\n/, "<br/>\n").
           gsub(/  /, " &nbsp;").
-          gsub(/\S{80}/) { |match| "#{match}&#8203;" }
+          gsub(/\.{10}/) { |match| "#{match}&#8203;" }
   end
 
   def elapsed_time(build, format = :general)

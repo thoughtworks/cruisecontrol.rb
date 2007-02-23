@@ -9,7 +9,6 @@ class Build
     FileUtils.mkdir_p(artifacts_directory)
     @status = BuildStatus.new(artifacts_directory)
   end
-  
 
   def run
     build_log = artifact 'build.log'
@@ -96,6 +95,8 @@ class Build
     ENV.delete('RAILS_ENV')
     # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
     ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
+    # CC_RAKE_TASK communicates to cc:build which task to build (if self.rake_task is not set, cc:build will try to be
+    # smart about it)
     ENV['CC_RAKE_TASK'] = self.rake_task
     begin
       Dir.chdir(project.local_checkout, &block)
