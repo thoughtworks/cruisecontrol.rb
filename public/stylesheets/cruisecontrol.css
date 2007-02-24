@@ -268,7 +268,7 @@ a.never_built, a.never_built:visited {
 
 #build_details .section_content {
   padding-left: 2em;
-  font-family: courier, serif;
+  font-family: courier, monospace;
   word-wrap: break-word;
   white-space: pre;
 }
@@ -317,7 +317,7 @@ a.never_built, a.never_built:visited {
 
 .code {
   padding-left: 1em;
-  font-family: courier, serif;
+  font-family: courier, monospace;
 }
 
 .code a {
