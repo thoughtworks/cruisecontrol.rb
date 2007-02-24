@@ -60,8 +60,9 @@ h3. Builder plugins
 While checking source control for new revisions, building, or handling errors, a builder generates events. You can
 write a listener for those events.
 
-To know the types of events a builder sends to its listeners, look at implementation and usages of
-<code>Project#notify()</code> method.
+<p>To know the types of events a builder sends to its listeners, look at implementation and usages of
+<code>Project#notify()</code>
+method.</p>
 
 For an example of a working plugin, look at builder_plugins/installed/email_notifier.rb or
 builder_plugins/available/jabber_notifier. Note that a plugin can be implemented as a single file, or a
@@ -95,8 +96,9 @@ h2. Submit patches
 
 We absolutely love receiving bug reports. Who doesn't, after all? But what can make us really happy is a bug
 report coming with a patch that fixes the bug and adds unit tests to prevent it from ever happening again.
-Contributing a well packaged patch that is accepted into the codebase will forever put your name into
-<em>CruiseControl.rb Eternal Hall of Fame</em>, aka the Contributors section of README.
+Contributing a well packaged patch that is accepted into the codebase places your name for posterity in
+  CruiseControl.rb Eternal Hall of Fame, aka the Contributors section of README.
+.
 
 <em>Official Standard Procedure for the Submission of Patches</em> is hereby defined as follows:
 
@@ -148,7 +150,7 @@ CruiseControl.rb is a professional open-source product developed by "ThoughtWork
 ThoughtWorks is an IT consultancy, and we build CruiseControl.rb primarily because our own project
 teams need such a tool (these days, we do a lot of Ruby work).
 
-It is released to the rest of the world under a free open-source "license":license.html. However, ThoughtWorks wants
+It is distributed under a free open-source "license":license.html. However, ThoughtWorks wants
 to have copyright on the entire codebase. So, if you contribute code to CruiseControl.rb, and you don't work for
 ThoughtWorks (by the way, is there any good reason why you don't?), we may ask you to grant copyright on your code
 to us. This is not some sort of evil world domination scheme, just a legal precaution. Apache Software Foundation,

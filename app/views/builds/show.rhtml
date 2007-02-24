@@ -31,6 +31,11 @@
     </div>
   <% end %>
 
+  <div class="section_closed">
+    <div class="section_header" onclick="toggle_section(this.parentNode)">Build Log</div>
+    <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div></div>
+  </div>
+
   <% unless @build.additional_artifacts.empty? %>
     <div class="section_open">
       <div class="section_header" onclick="toggle_section(this.parentNode)">Custom Build Artifacts</div>
@@ -38,9 +43,5 @@
     </div>
   <% end %>
 
-  <div class="section_closed">
-    <div class="section_header" onclick="toggle_section(this.parentNode)">Build Log</div>
-    <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div></div>
-  </div>
 </div>
 
