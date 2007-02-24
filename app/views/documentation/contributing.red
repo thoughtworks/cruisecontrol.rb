@@ -13,8 +13,8 @@ There are four ways you can help:
 
 h2. Report bugs
 
-CruiseControl.rb uses a public "JIRA bug tracker":http://jira.public.thoughtworks.org/browse/CCRB to keep track of bugs 
-and future development stories.
+CruiseControl.rb uses a public "JIRA bug tracker":http://jira.public.thoughtworks.org/browse/CCRB to keep track of bugs,
+patches, ideas and development stories.
 
 Before you can submit a bug, you need to
 "create an account":http://jira.public.thoughtworks.org/secure/Signup!default.jspa.
@@ -33,9 +33,14 @@ h2. Create plugins
 
 TODO: write me
 
-h2. Create plugins
+h2. Submit patches
 
-TODO: write me
+We absolutely love receiving bug reports. After all, who doesn't? What can make us really ecstatic, however, is a bug
+report coming with a patch that fixes the bug and adds unit tests to prevent it from ever happening again.
+Contributing a well packaged patch that is accepted into the codebase will forever put your name into
+<em>CruiseControl.rb Hall of Fame</em>, aka the Contributors section of README.
+
+TODO: finish me
 
 h2. Improve documentation
 
