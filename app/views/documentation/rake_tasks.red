@@ -1,8 +1,8 @@
 h1. Default Rake targets
 
 By default, CC.rb assumes that your project is a "Rails":http://rubyonrails.org application built by
-"Rake":http://rake.rubyforge.org/, and Rakefile is in the root directory of the project. Just running
-<code>default</code> Rake task is not good enough, because in a standard Rails application this task needs an
+"Rake":http://rake.rubyforge.org/, and Rakefile is in the root directory of the project. Under these assumptions, just
+running <code>default</code> Rake task is not good enough, because in a normal Rails application this task needs an
 up-to-date development database to work. On a continuous build server there is usually no such thing.
 
 Therefore, CC.rb uses the following logic to determine what to build:
