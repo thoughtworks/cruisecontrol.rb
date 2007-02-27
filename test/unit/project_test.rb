@@ -254,7 +254,7 @@ class ProjectTest < Test::Unit::TestCase
     
     plugin.expects(:hey_you).raises("Plugin talking")
     
-    assert_raises("Plugin error: Object: Plugin talking") { @project.notify(:hey_you) }
+    assert_raises("Error in plugin Object: Plugin talking") { @project.notify(:hey_you) }
   end
 
   def test_notify_should_handle_multiple_plugin_errors
@@ -266,7 +266,7 @@ class ProjectTest < Test::Unit::TestCase
     plugin1.expects(:hey_you).raises("Plugin 1 talking")
     plugin2.expects(:hey_you).raises("Plugin 2 talking")
 
-    assert_raises("Plugin error:\n  Object: Plugin 1 talking\n  Object: Plugin 2 talking") { @project.notify(:hey_you) }
+    assert_raises("Errors in plugins:\n  Object: Plugin 1 talking\n  Object: Plugin 2 talking") { @project.notify(:hey_you) }
   end
 
   def test_request_build_should_start_builder_if_builder_was_down

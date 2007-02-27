@@ -246,9 +246,9 @@ class Project
       return results.compact
     else
       if errors.size == 1
-        error_message = "Plugin error: #{errors.first}"
+        error_message = "Error in plugin #{errors.first}"
       else
-        error_message = "Plugin error:\n" + errors.map { |e| "  #{e}" }.join("\n")
+        error_message = "Errors in plugins:\n" + errors.map { |e| "  #{e}" }.join("\n")
       end
       raise error_message
     end
