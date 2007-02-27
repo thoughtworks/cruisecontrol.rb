@@ -1,6 +1,6 @@
 h1. Manual
 
-This is the cruisecontrol.rb manual, if you can't find what you're looking for here, make sure to look at the docs
+This is the CruiseControl.rb manual. If you can't find what you're looking for here, make sure to look at the docs
 for "plugins":plugins.html or just "contact us":contact_us.html
 
 h1. Files and folders
@@ -28,10 +28,11 @@ h1. Project builder configuration
 When you add a project to it, CruiseControl.rb will try to do something reasonable without any configuration.
 
 However, there are things that builder cannot know in advance. For example, who needs to receive an email notice
-when the build is broken? The default answer is _"nobody"_, and it may be good enough if you use CCTray or have a
-big projector screen displaying the dashboard to monitor the build status. What if it's not good enough?
-To make the builder aware of all these other things that you want it to do, you will have to write them down in a
-project configuration file.
+when the build is broken? The default answer is "nobody", and it may be good enough if you use CCTray or have an
+LCD panel displaying the dashboard on the wall of your office to monitor the build status.
+
+What if it's not good enough? To make the builder aware of all these other things that you want it to do, you will
+have to write them down in a project configuration file.
 
 Rolling your eyes already? Hold on, this is not J2EE deployment descriptors we are talking about. No two pages of
 hand-crafted angled brackets just to get started here. A typical project configuration is about 3 to 5 lines of very
@@ -47,13 +48,13 @@ Every cruise_config.rb must have these two lines. All your other configuration g
 
 You can also create cruise_config.rb in [cruise]/projects/your_project/work/ directory. In other words, check it into
 Subversion in the root directory of your project. Storing your CI configuration in your project's version control
-repository is a smart thing to do.
+repository is usually a smart thing to do.
 
 It is also possible to have two cruise_config.rb files for a project, one in the [cruise]/projects/your_project/
 directory, and the other in Subversion. CruiseControl.rb loads both files, but settings from cruise_config.rb in
 [cruise]/projects/your_project/ override those defined in Subversion. This can be useful when you want to see the
-effect of some configuration settings without checking them in, or if you want to keep passwords away from
-a Subversion repository where too many people can see them.
+effect of some configuration settings without checking them in, or if to keep passwords away from a Subversion
+repository where too many people can see them.
 
 p(hint). Hint: configuration examples below include lines that look like '...' This represents other
          configuration statements that may be in cruise_config.rb. You are not meant to copy-paste those dots into
@@ -75,16 +76,17 @@ end
 
 h1. What will it build by default?
 
-By default, CC.rb will search for "Rake":http://rake.rubyforge.org/ build file in your project. Then
-CC.rb will try to execute <code>cruise</code> task if it is defined. If it is not, it will try to perform standard Rails
-tasks that prepare a test database by deleting everything from it and executing
+By default, CruiseControl.rb will search for "Rake":http://rake.rubyforge.org/ build file in your project. Then
+it will try to execute <code>cruise</code> task and stop right there, if <code>cruise</code> task is defined in your
+build.
+
+p(hint). If you don't want to leave the question "how to build this project?" to CruiseControl's best guesses
+         just define <code>cruise</code> task in your build explicitly.
+
+If there is no <code>cruise</code> task anywhere in sight, CruiseControl.rb will try to perform standard
+Rails tasks that prepare a test database by deleting everything from it and executing
 "migration":http://www.rubyonrails.org/api/classes/ActiveRecord/Migration.html scripts from your_project/db/migrate.
 Finally, it will run all your automated tests.
-
-p(hint). We have a "more detailed description":rake_tasks.html of default build behavior. However, if default build
-behavior doesn't suit you for any reason, the easiest way around it is to define a <code>cruise</code> task in your own
-Rakefile, and do everything through that task and its dependencies.
-
 
 h1. How can I change what the build does?
 

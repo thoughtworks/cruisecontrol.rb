@@ -27,7 +27,8 @@ CruiseControl.rb has two parts: a builder and a dashboard.
 
 *Builder* is a daemon process that polls source control every once in a while for new revisions.
 
-When someone performs a check in, the builder
+When someone performs a check in, the builder:
+
 # detects it
 # updates its own copy of the project
 # runs the build
@@ -64,8 +65,10 @@ Follow these directions or watch our "5 minute install":screencasts.html screenc
 2. From [cruise], run <code>./cruise add your_project --url [URL of your_project Subversion trunk]</code>.
 
   p(def). Optionally, you can specify username and password by adding <code> --username [your_user] --password 
-    [your_password]</code> to the command. This creates a directory for your_project's builds at 
-    [cruise]/builds/your_project/, and checks out your_project from subversion URL specified to 
+    [your_password]</code> to the command.
+
+  p(def). This creates a directory for your_project's builds at
+    [cruise]/builds/your_project/, and checks out your_project from subversion URL specified to
     [cruise]/builds/your_project/work/.
 
   p(def hint). Hint: Rakefile of your_project should be in [cruise]/builds/your_project/work/ directory, not anywhere under

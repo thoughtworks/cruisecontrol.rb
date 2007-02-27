@@ -29,6 +29,10 @@ div.next_step {
   font-style: italic;
 }
 
+pre {
+  margin: 1em;
+}
+
 code {
   font-family: courier, monospace;
   font-style: normal;
@@ -66,32 +70,46 @@ div.box li{
 	}
 
 .large_number{
-	font-family:Arial, Helvetica, sans-serif;
-	font-size: 500%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 5em;
 	font-weight: bold;
 	display: block;
-	margin: 0;
-	margin-top: -15px;
+	margin: -15px 0.1em 0 0;
 	vertical-align: text-top;
-	}
+  float: left;
+  }
+
+td.instruction_detail, td.instruction_detail_final {
+  vertical-align: top;
+  width: 33.3%;
+}
+
+.instruction_text {
+  margin-left: 3.5em;
+}
+
 td.instruction_detail{
 	border-right: 30px solid white;
 	border-left: 5px solid white;
-	}
+}
+
 td.instruction_detail_final{
 	border-right: 5px solid white;
 	border-left: 5px solid white;
-	}
+}
+
 .install_step_title{
 	font-weight: bold;
-	}
+}
+
 ul.instruction{
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	}
+}
+
 ul li.instruction{
 	float: left;
 	margin: 0;
 	padding: 0;
-	}
+}

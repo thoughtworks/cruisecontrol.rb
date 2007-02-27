@@ -97,12 +97,13 @@ h2. Submit patches
 We absolutely love receiving bug reports. Who doesn't, after all? But what can make us really happy is a bug
 report coming with a patch that fixes the bug and adds unit tests to prevent it from ever happening again.
 Contributing a well packaged patch that is accepted into the codebase places your name for posterity in
-  CruiseControl.rb Eternal Hall of Fame, aka the Contributors section of README.
-.
+CruiseControl.rb Eternal Hall of Fame, aka the Contributors section of README.
 
 <em>Official Standard Procedure for the Submission of Patches</em> is hereby defined as follows:
 
-1. Check out the latest source from Subversion repository: <code>svn co svn://.......</code>
+1. Check out the latest source from Subversion repository:<br/>
+
+<pre><code>    svn co svn://rubyforge.org/var/svn/cruisecontrolrb</code></pre>
 
 2. Run the build, make sure that it passes: <code>rake</code>
 
