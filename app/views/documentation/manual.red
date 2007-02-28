@@ -155,21 +155,7 @@ The build page includes links to every file or subdirectory found in the build a
 
 h1. Build monitoring via email
 
-CruiseControl.rb can send email notices whenever build is broken or fixed. To make it happen, you need to tell it how
-to send email, and who to send it to. Do the following:
-
-1. Configure SMTP server connection. Copy [cruise]/config/site_config.rb_example to ~cruise/config/site_config.rb,
-   read it and edit according to your situation.
-
-2. Tell the builder, whom do you want to receive build notices, by placing the following line in cruise_config.rb:
-
-<pre><code>Project.configure do |project|
-  ...
-  project.email_notifier.emails = ['john@doe.com', 'jane@doe.com']
-  ...
-end
-</code></pre>
-
+<%= render_plugin_doc 'installed/email_notifier.rb' %>
 
 h1. Build notices via instant messaging with Jabber
 

@@ -13,6 +13,13 @@ class DocumentationControllerTest < Test::Unit::TestCase
 
   def test_documentation
     get :get, :path => []
+    assert_redirected_to :path => 'index.html'
+    
+    get :get, :path => 'docs.html'
+    assert_template 'documentation/docs'
+    
+    get :get, :path => 'bad_request.html'
+    assert_response 404
   end
   
   def test_plugins

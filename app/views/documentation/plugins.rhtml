@@ -19,8 +19,6 @@
     <h1><%= @plugin_title + " Plugin" %></h1>
     <%= render_plugin_doc @file || '' %>
   <% else %>
-    <h2>What is a plugin?</h2>
-    CruiseControl.rb uses plugins to extend it's core.  Click on one of the above plugins to see the docs about that plugin.
-    To "install" a plugin, 
+    <%= render :partial => 'about_plugins' %>
   <% end %>
 </div>

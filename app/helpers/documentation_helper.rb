@@ -1,5 +1,6 @@
 module DocumentationHelper
   def render_plugin_doc(file)
+    file = File.join(RAILS_ROOT, 'builder_plugins', file)
     if File.directory?(file)
       if File.exists?(file + '/README')
         render :inline => markup(File.read(file + '/README')), :layout => true
@@ -16,7 +17,7 @@ module DocumentationHelper
   end
   
   def comments(text)
-    text = text.gsub(/^[^#].*$\n?/, '').gsub(/^#+ */, '').strip
+    text = text.gsub(/^[^#].*$\n?/, '').gsub(/^# ?/, '').strip
     text.empty? ? 'this plugin has no comments' : text
   end
   
