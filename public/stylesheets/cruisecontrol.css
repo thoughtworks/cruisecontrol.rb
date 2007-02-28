@@ -262,7 +262,7 @@ a.never_built, a.never_built:visited {
 }
 
 #build_details {
-  padding-left: 18em;
+  margin-left: 12em;
   padding-right: 1.5em;
 }
 
@@ -287,14 +287,10 @@ a.never_built, a.never_built:visited {
 
 #build_details .section_closed .section_content { display: none; }
 
-.logfile {
-  padding-top: 0;
-}
-
 #builds_list {
-  width: 15em;
+  width: 12em;
   float: left;
-  margin: 1em 1em 1em 0;
+  margin: 0.2em 1em 1em 0;
 }
 
 #builds_list .selected a {
@@ -309,6 +305,10 @@ a.never_built, a.never_built:visited {
 
 #builds_list .selected a, #builds_list .selected a:visited {
   color: #FFF;
+}
+
+.logfile {
+  padding-top: 0;
 }
 
 .build_link {

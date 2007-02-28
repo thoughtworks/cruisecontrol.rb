@@ -1,7 +1,7 @@
 h2. What's new?
 
 *Feb 27, 2007* Dude, I think you're one of the first to make it.<br/>
-"Download CruiseControl.rb...":http://rubyforge.org/frs/?group_id=2918 then go tell all your friends.
+<%= link_to_download("Download CruiseControl.rb...") %> then go tell all your friends.
 
 *Feb 23, 2007* The website's due to go live soon. Aww yeah!<br /><br />
 

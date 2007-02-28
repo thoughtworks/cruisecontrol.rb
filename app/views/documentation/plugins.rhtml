@@ -13,12 +13,14 @@
   </div>
 <% end %>
 
-<div class="clear">
 
 <div id="plugin_documentation">
-  <% if @plugin_title %>
-  <h1><%= @plugin_title + " Plugin" %></h1>
+  <% if @file %>
+    <h1><%= @plugin_title + " Plugin" %></h1>
+    <%= render_plugin_doc @file || '' %>
+  <% else %>
+    <h2>What is a plugin?</h2>
+    CruiseControl.rb uses plugins to extend it's core.  Click on one of the above plugins to see the docs about that plugin.
+    To "install" a plugin, 
   <% end %>
-  
-  <%= render_plugin_doc @file || '' %>
 </div>

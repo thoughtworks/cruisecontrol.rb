@@ -122,7 +122,7 @@ p(hint). Besides, your tests should not leave any by-products in the file system
 
 8. Create a new issue, prefix the summary with the word [PATCH].
 
-9. Keep in touch by monitoring the issue. Think about joining the cruisecontrolrb-developers mailing list.
+9. Keep in touch by monitoring the issue. Think about joining the <%= link_to_developers_mailing_list 'cruisecontrolrb-developers mailing list'%>.
 
 h2. Improve documentation
 

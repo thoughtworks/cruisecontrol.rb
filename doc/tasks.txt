@@ -1,15 +1,8 @@
 Questions
 ---------
 
-can we keep build list on right?
-
 Bugs
 ----
-Code Coverage - If we're going to put it up there, it should actually be higher than 68% - JSS
-  - exclude redcloth.rb from rcov statistics (I think this will make a huge difference)
-  - move the helper tests & statistics to unit test
-  - fix coverage where it sucks the most
-
 What should be the status of a build that passed, but THEN the build loop crashed? Answer: it's not a build status, but
 a BUILDER status. Rolf suggested "Misbehaving". Add a story to the wiki.
 

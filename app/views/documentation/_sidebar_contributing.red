@@ -7,8 +7,8 @@ h2. Source code
 
 h2. Maillists
 
-* "cruisecontrolrb-developers":http://rubyforge.org/mailman/listinfo/cruisecontrolrb-developers
-* "cruisecontrolrb-users":http://rubyforge.org/mailman/listinfo/cruisecontrolrb-users
+* <%= link_to_developers_mailing_list 'cruisecontrolrb-developers'%>
+* <%= link_to_users_mailing_list 'cruisecontrolrb-users'%>
 
 h2. Bugs and patches
 

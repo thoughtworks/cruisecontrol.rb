@@ -9,11 +9,12 @@ module BuildsHelper
   def link_to_code(log)
     @work_path ||= File.expand_path(@project.path + '/work')
 
-    log.gsub(/(([\w\.-]*\/[ \w\/\.-]+)\:(\d+))/) do
-      path = File.expand_path($2, @work_path)
+    log.gsub(/((\#\{RAILS_ROOT\}\/)?([\w\.-]*\/[ \w\/\.-]+)\:(\d+))/) do
+      path, line = File.expand_path($3, @work_path), $4
+      
       if path.index(@work_path) == 0
         path = path[@work_path.size..-1]
-        link_to ".#{path}:#{$3}", "/projects/code/#{@project.name}#{path}?line=#{$3}##{$3}"
+        link_to ".#{path}:#{line}", "/projects/code/#{@project.name}#{path}?line=#{line}##{line}"
       else
         $1
       end

@@ -32,7 +32,7 @@
               <div class="instruction_text">
                 <div class="install_step_title">Download</div>
                 Believe it or not, you're gonna have to download CruiseControl.rb in order to use it.<br/>
-                <a href="download.html">Download it now</a>
+                <%= link_to_download('Download it now') %>
               </div>
             </td>
             <td class="instruction_detail">
@@ -40,8 +40,8 @@
               <div class="instruction_text">
                 <div class="install_step_title">Install</div>
                 You'll be running in 10 minutes or less. Watch the
-                <a href="documentation/screencasts.html">screencast</a>, or check out the
-                <a href="documentation/getting_started.html">getting started</a> page.
+                <a href="screencasts.html">screencast</a>, or check out the
+                <a href="getting_started.html">getting started</a> page.
               </div>
             </td>
             <td class="instruction_detail_final">
@@ -49,7 +49,7 @@
               <div class="instruction_text">
                 <div class="install_step_title">You're Done.</div>
                 That's it, you're good to go! If you need todo something special, or more help,
-                read the <a href="documentation.html">docs</a> and ask on <a href="???">maillist</a>.
+                read the <a href="docs.html">docs</a> and ask on <%= link_to_users_mailing_list('mailing list')%>.
               </div>
             </td>
           </tr>
