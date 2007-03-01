@@ -2,7 +2,7 @@ class Build
   include CommandLine
 
   attr_reader :project, :label
-  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|changeset.log)$/
+  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|changeset.log|cruise_config.rb)$/
 
   def initialize(project, label)
     @project, @label = project, label
@@ -12,6 +12,8 @@ class Build
 
   def run
     build_log = artifact 'build.log'
+    File.open(artifact('cruise_config.rb'), 'w') {|f| f << @project.settings }
+    
     # build_command must be set before doing chdir, because there may be some relative paths
     build_command = self.command
     time = Time.now
@@ -22,7 +24,7 @@ class Build
     @status.succeed!((Time.now - time).ceil)    
   rescue => e
     CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
-    @status.fail!((Time.now - time).ceil)
+   @status.fail!((Time.now - (time || Time.now)).ceil)
   end
 
   def abort
@@ -61,6 +63,10 @@ class Build
 
   def output
     File.read(artifact('build.log')) rescue ''
+  end
+  
+  def project_settings
+    File.read(artifact('cruise_config.rb')) rescue ''
   end
   
   def time

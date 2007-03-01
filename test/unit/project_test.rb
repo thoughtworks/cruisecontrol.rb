@@ -356,6 +356,18 @@ class ProjectTest < Test::Unit::TestCase
       end
     end
   end
+  
+  def test_should_remember_settings
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root 
+      sandbox.new :file => 'work/cruise_config.rb', :with_contents => 'good = 4'
+      sandbox.new :file => 'cruise_config.rb', :with_contents => 'time = 5'
+        
+      @project.load_config
+      
+      assert_equal "good = 4\ntime = 5\n", @project.settings
+    end
+  end
 
       
   private

@@ -12,5 +12,4 @@ class Revision
   def to_i
     number.to_i
   end
-
 end

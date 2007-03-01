@@ -23,7 +23,7 @@ class Project
     yield @project_in_the_works
   end
 
-  attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path
+  attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings
   attr_writer :local_checkout 
   attr_accessor :source_control, :scheduler
 
@@ -35,15 +35,22 @@ class Project
     @plugins = []
     @plugins_by_name = {}
     @config_tracker = ProjectConfigTracker.new(self.path)
+    @settings = ""
     
     instantiate_plugins
+  end
+  
+  def load_and_remember(file)
+    return if !File.file?(file)
+    @settings << File.read(file) << "\n"
+    load file
   end
 
   def load_config
     begin
       retried_after_update = false
       begin
-        load config_tracker.central_config_file if File.file?(config_tracker.central_config_file)
+        load_and_remember config_tracker.central_config_file
       rescue
         if retried_after_update
           raise
@@ -53,7 +60,7 @@ class Project
           retry
         end
       end
-      load config_tracker.local_config_file if File.file?(config_tracker.local_config_file)
+      load_and_remember config_tracker.local_config_file
     rescue => e
       raise "Could not load project configuration: #{e.message} in #{e.backtrace.first}"
     end

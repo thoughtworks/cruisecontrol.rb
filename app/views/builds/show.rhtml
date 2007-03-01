@@ -42,6 +42,12 @@
       <div class="section_content"><% @build.additional_artifacts.each do |artifact| %><div class="artifact"><%= link_to artifact, build_artifact_url(:project => @project.name, :build => @build.label, :path => artifact) %></div><% end %></div>
     </div>
   <% end %>
+  
+  <div class="section_closed">
+    <div class="section_header" onclick="toggle_section(this.parentNode)">Project Settings</div>
+    <div class="section_content"><%= format_project_settings(@build.project_settings) %></div>
+  </div>
+
 
 </div>
 

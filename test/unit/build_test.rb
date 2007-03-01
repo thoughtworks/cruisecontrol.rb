@@ -5,7 +5,7 @@ class BuildTest < Test::Unit::TestCase
 
   def test_initialize_should_load_status_file_and_build_log
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-2/build_status.success"
+      sandbox.new :file => "build-2/build_status.success.in9.235s"
       sandbox.new :file => "build-2/build.log", :with_content => "some content"
       build = Build.new(project, 2)
   
@@ -17,7 +17,7 @@ class BuildTest < Test::Unit::TestCase
 
   def test_initialize_should_load_failed_status_file
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-2/build_status.failed"
+      sandbox.new :file => "build-2/build_status.failed.in2s"
       build = Build.new(project, 2)
   
       assert_equal 2, build.label
@@ -69,8 +69,6 @@ class BuildTest < Test::Unit::TestCase
     with_sandbox_project do |sandbox, project|
       expected_build_directory = File.join(sandbox.root, 'build-123')
   
-      FileUtils.expects(:mkdir_p).with(expected_build_directory).returns(expected_build_directory)
-  
       build = Build.new(project, 123)
   
       expected_command = build.rake
@@ -90,11 +88,24 @@ class BuildTest < Test::Unit::TestCase
     end
   end
 
+  def test_run_stores_settings
+    with_sandbox_project do |sandbox, project|
+      expected_build_directory = File.join(sandbox.root, 'build-123')
+      project.stubs(:settings).returns("cool project settings")
+  
+      build = Build.new(project, 123)
+      build.stubs(:execute)
+
+      build.run
+
+      assert_equal 'cool project settings', file('build-123/cruise_config.rb').contents
+      assert_equal 'cool project settings', Build.new(project, 123).project_settings
+    end
+  end
+
   def test_run_unsuccessful_build
     with_sandbox_project do |sandbox, project|
       expected_build_directory = File.join(sandbox.root, 'build-123')
-  
-      FileUtils.expects(:mkdir_p).with(expected_build_directory).returns(expected_build_directory)
   
       build = Build.new(project, 123)
   
@@ -139,8 +150,6 @@ class BuildTest < Test::Unit::TestCase
     end
   end
   
- 
-
   def test_build_should_know_about_additional_artifacts
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => "build-1/coverage/index.html"
@@ -148,6 +157,7 @@ class BuildTest < Test::Unit::TestCase
       sandbox.new :file => "build-1/coverage/functionals/index.html"
       sandbox.new :file => "build-1/foo"
       sandbox.new :file => "build-1/foo.txt"
+      sandbox.new :file => "build-1/cruise_config.rb"
       sandbox.new :file => "build.log"
       sandbox.new :file => "build_status.failure"
       sandbox.new :file => "changeset.log"

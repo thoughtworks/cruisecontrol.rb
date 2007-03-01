@@ -1,6 +1,5 @@
 module BuildsHelper
 
-
   def format_build_log(log)
     link_to_code(h(log).gsub(/(\d+ tests, \d+ assertions, \d+ failures, \d+ errors)/,
                              '<div class="test-results">\1</div>'))
@@ -21,6 +20,15 @@ module BuildsHelper
     end
   end
 
+  def format_project_settings(settings)
+    settings = settings.strip
+    if settings.empty?
+      "this project is using the defaults, to customize your build, see the " + link_to("manual", '/documentation/manual.html')
+    else
+      h(settings)
+    end
+  end
+  
   def get_test_failures_and_errors_if_any(log)
     errors = TestFailureParser.new.get_test_failures(log) + TestErrorParser.new.get_test_errors(log)
     return nil if errors.empty?

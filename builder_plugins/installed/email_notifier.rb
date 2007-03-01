@@ -20,13 +20,26 @@ class EmailNotifier
   end
 
   def build_finished(build)
-    return if @emails.empty?
-    BuildMailer.deliver_build_failed(build, @emails) if build.failed?
+    return if @emails.empty? or !build.failed?
+
+    email :deliver_build_failed, build
   end
 
   def build_fixed(build, previous_build)
     return if @emails.empty?
-    BuildMailer.deliver_build_fixed(build, @emails)
+    
+    email :deliver_build_fixed, build
+  end
+  
+  private
+  
+  def email(message, build)
+    BuildMailer.send(message, build, @emails)
+    CruiseControl::Log.event("Sent e-mail to #{@emails.size == 1 ? "1 person" : "#{@emails.size} people"}", :info)
+  rescue
+    settings = ActionMailer::Base.smtp_settings.map {|k,v| "  #{k.inspect} = #{v.inspect}"}.join("\n")
+    CruiseControl::Log.event("Error sending e-mail - current server settings are :\n#{settings}", :error)
+    raise
   end
 
 end
