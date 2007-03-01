@@ -1,10 +1,7 @@
 Questions
 ---------
 main page is a little hokey
-test email works
-java app onto cc.rb
 email working on cc.rb
-failing project on cc.rb
 
 Bugs
 ----
