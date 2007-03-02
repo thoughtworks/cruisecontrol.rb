@@ -11,15 +11,4 @@ h2. Documentation
 * "Screencasts":/documentation/screencasts.html
 
 </div>
-<div class="box">
-
-h2. ThoughtWorks Open Source
-
-<div id="tws">
-<br><br><br><br><br><br>
-
-ThoughtWorks has worked on a number of Open Source projects
-<a class="strong-link" href="http://opensource.thoughtworks.com/index.html">Read more</a>
-</div>
-</div>
 </div>

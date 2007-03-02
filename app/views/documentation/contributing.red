@@ -6,13 +6,12 @@ h1. Contributing
 makes the world a happier place.</em>
 
 You can help in four different ways:
+* <a href="#report">report bugs</a>
+* <a href="#plugins">create and publish your own plugins</a>
+* <a href="#patches">fix bugs and submit patches</a>
+* <a href="#documentation">improve documentation</a>
 
-* report bugs
-* create and publish your own plugins
-* fix bugs and submit patches
-* improve documentation
-
-h2. Report bugs
+h2. <a name="report">Report bugs</a>
 
 CruiseControl.rb uses a public "JIRA bug tracker":http://jira.public.thoughtworks.org/browse/CCRB to keep track of bugs,
 patches, ideas and development stories.
@@ -30,7 +29,7 @@ Also, please try to make sure that the problem is in CruiseControl.rb, not in yo
 quite embarrassing to go through a long chain of emails, and learn at the end of it that it was your problem and you
 could have easily figured it out yourself.
 
-h2. Create plugins
+h2. <a name="plugins">Create plugins</a>
 
 CruiseControl.rb design philosophy can be summarized as "be simple, and people will come to you". Of course, many
 an open-source project started this way, and ended up as a truckload of half-heartedly implemented features. We have no
@@ -92,7 +91,7 @@ At the moment, we only have one kind of a scheduler: a PollingScheduler, which s
 to check if source control has new revisions. You can write your own scheduler and inject it into the project through
 a configuration file: <code>project.scheduler = AstrologyAwareScheduler.new(current_phase_of_the_moon)</code>
 
-h2. Submit patches
+h2. <a name="patches">Submit patches</a>
 
 We absolutely love receiving bug reports. Who doesn't, after all? But what can make us really happy is a bug
 report coming with a patch that fixes the bug and adds unit tests to prevent it from ever happening again.
@@ -124,7 +123,7 @@ p(hint). Besides, your tests should not leave any by-products in the file system
 
 9. Keep in touch by monitoring the issue. Think about joining the <%= link_to_developers_mailing_list 'cruisecontrolrb-developers mailing list'%>.
 
-h2. Improve documentation
+h2. <a name="documentation">Improve documentation</a>
 
 Believe it or not, but we value contributions to end user documentation as much as (if not more than) we value patches.
 
