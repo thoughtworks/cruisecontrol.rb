@@ -39,10 +39,10 @@ This is why CruiseControl is trying to satisfy the basic needs of its primary au
 Ruby or Rails projects), while providing enough opportunity for extending and hacking the tool without affecting the
 sweet simplicity of the core codebase.
 
-Ruby, of course, is an interpreted language with open classes. You can do practically anything you want, but remember:
-with great powers come great dangers. In our case, the danger is that the next version of CruiseControl.rb may
-simply be incompatible with your black belt hackery. To avoid such a scenario, you better constrain yourself to 
-interface points that are designed for pluggability.
+Ruby, of course, is an interpreted language with open classes that lets you do anything you want.
+Remember: with great powers come great dangers. The next version of CruiseControl.rb may
+simply be incompatible with your black belt hackery. Be wise and constrain yourself to interface points
+designed for pluggability.
 
 CruiseControl.rb has a few of these.
 
@@ -56,7 +56,7 @@ Rails
 
 h3. Builder plugins
 
-While checking source control for new revisions, building, or handling errors, a builder generates events. You can
+While checking source control for new revisions, building, or handling errors, a builder generates events. Anyone can
 write a listener for those events.
 
 <p>To know the types of events a builder sends to its listeners, look at implementation and usages of
@@ -76,7 +76,7 @@ Build and Project instances, and know location of the build artifacts directory 
 h3. Custom Rake tasks
 
 Surely, if there is a CI tool for Ruby, its capabilities can be greatly enhanced by writing cool Rake tasks and
-sharing them with the world to.
+sharing them with the world.
 
 For example, how about deploying an app to another box via Capistrano, running a battery of Selenium tests against it,
 then pulling back test results and placing them in CC_BUILD_ARTIFACTS directory?
@@ -87,7 +87,7 @@ request for the Big Bang Selenium build described above?
 h3. Custom schedulers
 
 Scheduler is an object responsible for telling a Project when to build itself.
-At the moment, we only have one kind of a scheduler: a PollingScheduler, which simply tells the project every so often
+At the moment, we only have one kind of a scheduler: a PollingScheduler, which simply tells the builder every so often
 to check if source control has new revisions. You can write your own scheduler and inject it into the project through
 a configuration file: <code>project.scheduler = AstrologyAwareScheduler.new(current_phase_of_the_moon)</code>
 
@@ -121,7 +121,8 @@ p(hint). Besides, your tests should not leave any by-products in the file system
 
 8. Create a new issue, prefix the summary with the word [PATCH].
 
-9. Keep in touch by monitoring the issue. Think about joining the <%= link_to_developers_mailing_list 'cruisecontrolrb-developers mailing list'%>.
+9. Keep in touch by monitoring the issue. Think about joining the
+   <%= link_to_developers_mailing_list 'cruisecontrolrb-developers mailing list'%>.
 
 h2. <a name="documentation">Improve documentation</a>
 
@@ -146,12 +147,12 @@ browser as soon as you hit the Refresh button.
 
 h2. Copyright considerarions
 
-CruiseControl.rb is a professional open-source product developed by "ThoughtWorks":http://www.thoughtworks.com.
-ThoughtWorks is an IT consultancy, and we build CruiseControl.rb primarily because our own project
-teams need such a tool (these days, we do a lot of Ruby work).
+CruiseControl.rb is developed by "ThoughtWorks":http://www.thoughtworks.com.
+ThoughtWorks is an IT consultancy, and we built this tool primarily because our own project
+teams need it (these days, we do a lot of Ruby work).
 
 It is distributed under a free open-source "license":license.html. However, ThoughtWorks wants
-to have copyright on the entire codebase. So, if you contribute code to CruiseControl.rb, and you don't work for
-ThoughtWorks (by the way, is there any good reason why you don't?), we may ask you to grant copyright on your code
-to us. This is not some sort of evil world domination scheme, just a legal precaution. Apache Software Foundation,
-in fact, does "something quite similar":http://www.apache.org/licenses/icla.txt.
+to retain copyright on the entire codebase. So, if you want to contribute code to CruiseControl.rb, and you don't work
+for ThoughtWorks (by the way, is there any good reason why you don't?), we may ask you to grant copyright on your
+contribution to us. This is not some sort of evil world domination scheme, just a legal precaution. Apache Software
+Foundation, in fact, does "something quite similar":http://www.apache.org/licenses/icla.txt.

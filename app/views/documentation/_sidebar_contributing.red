@@ -15,8 +15,8 @@ h2. Bugs and patches
 * "Browse bug tracker":http://jira.public.thoughtworks.org/browse/CCRB
 
 <small><em>
-Note: to submit a bug or a patch, you need to
-"create an account":http://jira.public.thoughtworks.org/secure/Signup!default.jspa in CruiseControl'rb bug tracker 
+Note: to submit a bug or a patch to our bug tracker, you need to
+"create a JIRA account":http://jira.public.thoughtworks.org/secure/Signup!default.jspa  
 </em></small>
 
 </div>

@@ -4,6 +4,7 @@ h2. Quick links
 * "Get started":screencasts.html
 * "Bug tracker":http://jira.public.thoughtworks.org/browse/CCRB
 * "Users mail list":http://rubyforge.org/mailman/listinfo/cruisecontrolrb-users
+* "How to contribute":contributing.html
 
 <div class="box">
 
