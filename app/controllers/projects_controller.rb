@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
   layout 'default'
-
+  
   def index
     @projects = Projects.load_all
     

@@ -1,10 +1,11 @@
 h2. Quick links
 
-* "Download":http://rubyforge.org/frs/?group_id=2918
-* "Get started":screencasts.html
-* "Bug tracker":http://jira.public.thoughtworks.org/browse/CCRB
-* "Users mail list":http://rubyforge.org/mailman/listinfo/cruisecontrolrb-users
-* "How to contribute":contributing.html
+* <%= link_to_download 'Download' %>
+* "Get started":/documentation/screencasts.html
+* "Report a Bug":http://jira.public.thoughtworks.org/browse/CCRB
+* "Request a Feature":http://jira.public.thoughtworks.org/browse/CCRB
+* <%= link_to_users_mailing_list 'Users mailing list' %>
+* "How to contribute":/documentation/contributing.html
 
 <div class="box">
 

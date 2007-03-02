@@ -1,5 +1,6 @@
 class Configuration
 
+  @default_page = {:controller => 'projects', :action => 'index' }
   @projects_directory = File.expand_path(File.join(RAILS_ROOT, 'projects'))
   @default_polling_interval = 10.seconds
   @sleep_after_build_loop_error = 30.seconds
@@ -8,7 +9,7 @@ class Configuration
 
   class << self
     attr_accessor :projects_directory, :default_polling_interval, :sleep_after_build_loop_error,
-                  :build_request_checking_interval, :context
+                  :build_request_checking_interval, :context, :default_page
   end
 
 end

@@ -17,6 +17,11 @@ config.action_controller.perform_caching             = true
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
+# Local configuration, for example, details of the SMTP server for email notification, should be 
+# written in ./config/site_config.rb. See ./config/site_config.rb_example for an example of what this file may 
+# look like.
+require 'site_config' if File.exists?("#{RAILS_ROOT}/config/site_config.rb")
+
 # Start builders after config initialization if we are running a web server here
 if $CRUISE_CONTROL_CONTEXT == :webapp
   config.after_initialize do

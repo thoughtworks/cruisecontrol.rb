@@ -3,14 +3,14 @@ ENV["RAILS_ENV"] = 'builder'
 require File.dirname(__FILE__) + '/../config/boot'
 require 'optparse'
 
-OPTIONS = { :verbose => false }
+CRUISE_OPTIONS = { :verbose => false }
 
 ARGV.options do |opts|
   opts.banner = "Usage: cruise builder <project_name> []options]"
 
   opts.separator ""
 
-  opts.on("-t", "--trace", "Trace-level (verbose) logging") { OPTIONS[:verbose] = true }
+  opts.on("-t", "--trace", "Trace-level (verbose) logging") { CRUISE_OPTIONS[:verbose] = true }
   opts.on("-h", "--help",
           "Show this help message.") { puts opts; exit }
 
@@ -23,27 +23,27 @@ ARGV.options do |opts|
     exit(-1)
   end
 
-  OPTIONS[:project_name] = args[0]
-  OPTIONS[:log_file_name] = "log/#{OPTIONS[:project_name]}_builder.log"
+  CRUISE_OPTIONS[:project_name] = args[0]
+  CRUISE_OPTIONS[:log_file_name] = "log/#{CRUISE_OPTIONS[:project_name]}_builder.log"
 end
 
 require RAILS_ROOT + "/config/environment"
-CruiseControl::Log.verbose = OPTIONS[:verbose]
+CruiseControl::Log.verbose = CRUISE_OPTIONS[:verbose]
 
-project_path = File.expand_path(File.join(Configuration.projects_directory, OPTIONS[:project_name]))
+project_path = File.expand_path(File.join(Configuration.projects_directory, CRUISE_OPTIONS[:project_name]))
 
 unless File.directory? project_path
-  STDERR.puts "Project '#{OPTIONS[:project_name]}' not found in '#{Configuration.projects_directory}'"
+  STDERR.puts "Project '#{CRUISE_OPTIONS[:project_name]}' not found in '#{Configuration.projects_directory}'"
   exit(-1)
 end
 
 def write_to_log_and_console(message, severity = :info)
   CruiseControl::Log.event(message, severity) rescue nil
-  (puts message unless OPTIONS[:verbose]) rescue nil 
+  (puts message unless CRUISE_OPTIONS[:verbose]) rescue nil 
 end
 
 def cleanup(project)
-  write_to_log_and_console "Builder for project '#{OPTIONS[:project_name]}' exited"
+  write_to_log_and_console "Builder for project '#{CRUISE_OPTIONS[:project_name]}' exited"
   if project
     ProjectBlocker.release(project) rescue nil
   end
@@ -69,7 +69,7 @@ begin
     ProjectBlocker.block(project)
 
     write_to_log_and_console "Builder for project '#{project.name}' started"
-    puts "Logging to: #{File.expand_path(OPTIONS[:log_file_name])}"
+    puts "Logging to: #{File.expand_path(CRUISE_OPTIONS[:log_file_name])}"
 
 	  while (true) do
       catch(:reload_project) do
@@ -90,7 +90,7 @@ begin
         STDERR.puts logging_error.message
         STDERR.puts logging_error.backtrace
     end
-    OPTIONS[:verbose] ? raise : exit(1)
+    CRUISE_OPTIONS[:verbose] ? raise : exit(1)
   ensure
     cleanup(project)
   end
