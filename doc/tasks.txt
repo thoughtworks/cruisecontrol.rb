@@ -1,7 +1,6 @@
 Questions
 ---------
 main page is a little hokey
-email working on cc.rb
 
 Bugs
 ----
@@ -85,12 +84,7 @@ Concerns
 ? Builder should do something about local changes in the checked out copy of the project. Options are: ignore them (worst), 
   write a warning, or overwrite these changes during 'svn update'
   
-? What to do when we are building revision X, and there is already a directory from our previous attempt to 
-  build that same revision?
-
-  jss: delete it
-
-? Parser doesn't handle gracefully a situation when local copy is ahead of the repository (perhaps, after 
+? Parser doesn't handle gracefully a situation when local copy is ahead of the repository (perhaps, after
   the repository was restored from a backup)
     C:/projects/lipid/builds/passing_project/work averkhov$ svn log -r HEAD:BASE
     svn: No such revision 7
@@ -98,7 +92,5 @@ Concerns
             from ./subversion_log_parser.rb:7:in `parse'
             ...
 
-? we need to present times very readable manner in the timezone of one's browser
+? we need to present times in a very readable manner in the timezone of one's browser
   * 10:30 AM today, 1:30 PM yesterday, 3:00 AM 5 days ago, 5:30 PM May 3, 2006, etc
-
-? Is 10 seconds a good default for polling interval? Methinks, it's not polite when dealing with rubyforge.org. Alex
