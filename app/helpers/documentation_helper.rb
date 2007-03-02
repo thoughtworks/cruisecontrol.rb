@@ -22,7 +22,7 @@ module DocumentationHelper
   end
   
   def link_to_download(text)
-    link_to text, "http://rubyforge.org/frs/?group_id=2918"    
+    link_to text, "http://rubyforge.org/frs/?group_id=2918"
   end
   
   def link_to_users_mailing_list(text)

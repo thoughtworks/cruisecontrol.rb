@@ -1,12 +1,15 @@
+<div class="box">
+
 h2. Quick links
 
 * <%= link_to_download 'Download' %>
-* "Get started":/documentation/screencasts.html
+* "Watch 5 min install":/documentation/screencasts.html
 * "Report a Bug":http://jira.public.thoughtworks.org/browse/CCRB
 * "Request a Feature":http://jira.public.thoughtworks.org/browse/CCRB
 * <%= link_to_users_mailing_list 'Users mailing list' %>
 * "How to contribute":/documentation/contributing.html
 
+</div>
 <div class="box">
 
 h2. Live demo

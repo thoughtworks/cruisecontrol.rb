@@ -2,6 +2,23 @@
   display:block;
 }
 
+#main_image {
+  background-image: url(/images/header_stock.jpg);
+  width: 644px;
+  height: 165px;
+  text-align: right;
+  padding-top: 85px;
+  padding-right: 22px;
+  color: white;
+  font: 10px "Verdana";
+  font-weight: bold;
+}
+
+#download_button {
+  padding-top: 40px;
+  margin-right: -5px;
+}
+
 .letter {
   font-family: georgia, times, serif;
   color: #62A;
@@ -73,7 +90,7 @@ div.box li{
 .instruction{
 	}
 
-.large_number{
+.large_number {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 5em;
 	font-weight: bold;
@@ -81,7 +98,16 @@ div.box li{
 	margin: -15px 0.1em 0 0;
 	vertical-align: text-top;
   float: left;
-  }
+}
+
+code.steps {
+  white-space: pre;
+  font-size: 0.9em;  
+  font-weight: bold;
+  display: block;
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+}
 
 td.instruction_detail, td.instruction_detail_final {
   vertical-align: top;
@@ -93,7 +119,7 @@ td.instruction_detail, td.instruction_detail_final {
 }
 
 td.instruction_detail{
-	border-right: 30px solid white;
+	border-right: 25px solid white;
 	border-left: 5px solid white;
 }
 

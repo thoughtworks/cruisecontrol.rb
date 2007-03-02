@@ -1,7 +1,7 @@
 <% @sidebar = 'sidebar_index' %>
 
-<div>
-  <img src="/images/header_stock.jpg" alt="CruiseControl.rb. Continuous Integration in Ruby">
+<div id="main_image">
+  <div id="download_button"><%= link_to_download image_tag('download_now_orange.png') %></div>
 </div>
 
 <div class="section">
@@ -39,18 +39,18 @@
               <div class="large_number">2</div>
               <div class="instruction_text">
                 <div class="install_step_title">Add Your Project</div>
-                ./cruise add &lt;name&gt; -u &lt;url&gt;<br/>
-                Watch the <a href="/documentation/screencasts.html">screencast</a>, or check out the
-                <a href="/documentation/getting_started.html">getting started</a> page.
+                <code class="steps">cruise add &lt;name&gt; -u &lt;url&gt;</code>
+                You can <%= link_to "watch us", '/downloads/screencasts.html' %> setup a typical rails project, or read 
+                more on the <a href="/documentation/getting_started.html">getting started</a> page.
               </div>
             </td>
             <td class="instruction_detail_final">
               <div class="large_number">3</div>
               <div class="instruction_text">
                 <div class="install_step_title">Start Cruise</div>
-                ./cruise start<br/>
-                That's it, you're good to go! If you need todo something special, or more help,
-                read the <a href="/documentation/docs.html">docs</a> and ask on <%= link_to_users_mailing_list('mailing list')%>.
+                <code class="steps">cruise start</code>
+                That's it! If you have any issues, 
+                read the <a href="/documentation/docs.html">docs</a> or <%= link_to_users_mailing_list('ask us')%>.
               </div>
             </td>
           </tr>
