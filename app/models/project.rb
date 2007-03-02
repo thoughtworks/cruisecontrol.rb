@@ -35,7 +35,7 @@ class Project
     @plugins = []
     @plugins_by_name = {}
     @config_tracker = ProjectConfigTracker.new(self.path)
-    @settings = ""
+    @settings = ''
     
     instantiate_plugins
   end

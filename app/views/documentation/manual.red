@@ -28,8 +28,9 @@ h1. Project builder configuration
 When you add a project to it, CruiseControl.rb will try to do something reasonable without any configuration.
 
 However, there are things that builder cannot know in advance. For example, who needs to receive an email notice
-when the build is broken? The default answer is "nobody", and it may be good enough if you use CCTray or have an
-LCD panel displaying the dashboard on the wall of your office to monitor the build status.
+when the build is broken? The default answer is "nobody", and it may be good enough if you use
+"CCTray":http://ccnet.sourceforge.net/CCNET/CCTray.html or have an LCD panel displaying the dashboard on the wall of
+your office to monitor the build status.
 
 What if it's not good enough? To make the builder aware of all these other things that you want it to do, you will
 have to write them down in a project configuration file.
@@ -111,12 +112,9 @@ p(hint). Hint: Ideally, you'd also want some way to chain builds so that the lon
          schedulers. CruiseControl.rb team intends to provide built-in support for this scenario in a future version.
 
 Or you may not want to deal with Rake at all, but build your project by "make":http://www.gnu.org/software/make/,
-"Ant":http://ant.apache.org/ or "MSBuild":http://msdn2.microsoft.com/en-us/library/wea2sca5.aspx (yes, CC.rb should be
-able to cope with non-Ruby projects!). 
-
-p(hint). So far, this statement is mostly theoretical. None of the authors actually used CruiseControl.rb with anything
-         but Rake. Please let us know if for some reason this feature doesn't work for you, or, for that matter, if it
-         does!
+"Ant":http://ant.apache.org/ or "MSBuild":http://msdn2.microsoft.com/en-us/library/wea2sca5.aspx.
+Yes, CC.rb can deal with non-Ruby projects! We are running "JBehave":http://jbehave.org/ builds on
+our "demo site":http://cruisecontrolrb.thoughtworks.com/builds/JBehave to prove the point.
 
 A custom build command can be set in <code>project.build_command</code> attribute. Modify cruise_config.rb file like
 this:
@@ -170,10 +168,10 @@ h1. Build monitoring with CCTray
 that displays an icon in the bottom right corner of the screen. The icon changes its color to red when a build fails,
 and back to green when the build is fixed.
 
-CruiseControl.rb can be monitored by CCTray. To connect CCTray to CC.rb server, start CCTray, right click on CCTray
-icon, select Settings..., click on Add button, click on Add Server button, select "Via CruiseControl.NET Dashboard"
-option and type http://<cruise_host>:3333 in the text box. Click OK, select your project, click OK again, close the
-Settings dialog. Voila, you are monitoring your build with CCTray.
+CruiseControl.rb can be monitored by CCTray. To connect CCTray to CruiseControl.rb dashboard, start CCTray, right
+click on CCTray icon, select Settings..., click on Add button, click on Add Server button, select
+"Via CruiseControl.NET Dashboard" option and type http://<cruise_host>:3333 in the text box. Click OK, select
+your project, click OK again, close the Settings dialog. Voila, you are monitoring your build with CCTray.
 
 At the time of this writing, CC.rb was tested to work with CCTray 1.2.1
 <small>("download":http://downloads.sourceforge.net/ccnet/CruiseControl.NET-CCTray-1.2.1-Setup.exe?modtime=1170786355&big_mirror=0)</small>
