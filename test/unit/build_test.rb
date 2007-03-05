@@ -158,9 +158,11 @@ class BuildTest < Test::Unit::TestCase
       sandbox.new :file => "build-1/foo"
       sandbox.new :file => "build-1/foo.txt"
       sandbox.new :file => "build-1/cruise_config.rb"
+      sandbox.new :file => "build-1/plugin_errors.log"
       sandbox.new :file => "build.log"
       sandbox.new :file => "build_status.failure"
       sandbox.new :file => "changeset.log"
+
       
       build = Build.new(project, 1)
       assert_equal(%w(coverage foo foo.txt), build.additional_artifacts.sort)

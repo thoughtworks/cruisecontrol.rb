@@ -2,7 +2,7 @@ class Build
   include CommandLine
 
   attr_reader :project, :label
-  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|changeset.log|cruise_config.rb)$/
+  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|changeset.log|cruise_config.rb|plugin_errors.log)$/
 
   def initialize(project, label)
     @project, @label = project, label
@@ -68,7 +68,11 @@ class Build
   def project_settings
     File.read(artifact('cruise_config.rb')) rescue ''
   end
-  
+
+  def plugin_errors
+    File.read(artifact('plugin_errors.log')) rescue ''
+  end
+
   def time
     @status.created_at
   end

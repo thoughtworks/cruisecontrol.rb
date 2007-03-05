@@ -8,6 +8,7 @@ class ProjectTest < Test::Unit::TestCase
   def setup
     @svn = Object.new
     @project = Project.new("lemmings")
+    @project.source_control = @svn
   end
 
   def test_default_scheduler
@@ -41,7 +42,6 @@ class ProjectTest < Test::Unit::TestCase
   
   def test_should_build_with_no_logs
     in_sandbox do |sandbox|
-      @project.source_control = @svn
       @project.path = sandbox.root
 
       revision = new_revision(5)
@@ -62,7 +62,6 @@ class ProjectTest < Test::Unit::TestCase
 
   def test_build_if_necessary_should_generate_events
     in_sandbox do |sandbox|
-      @project.source_control = @svn
       @project.path = sandbox.root
 
       revision = new_revision(5)
@@ -93,7 +92,6 @@ class ProjectTest < Test::Unit::TestCase
 
   def test_build_should_generate_event_when_build_loop_crashes
     in_sandbox do |sandbox|
-      @project.source_control = @svn
       @project.path = sandbox.root
 
       @project.expects(:builds).returns([])
@@ -113,7 +111,6 @@ class ProjectTest < Test::Unit::TestCase
 
   def test_build_should_generate_event_when_build_is_broken
     in_sandbox do |sandbox|
-      @project.source_control = @svn
       @project.path = sandbox.root
 
       successful_build = stub_build(1)
@@ -145,7 +142,6 @@ class ProjectTest < Test::Unit::TestCase
 
   def test_build_should_detect_config_modifications
     in_sandbox do |sandbox|
-      @project.source_control = @svn
       @project.path = sandbox.root
 
       revision = new_revision(1)
@@ -169,9 +165,41 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
 
+  def test_notify_should_create_plugin_error_log_if_plugin_fails_and_notify_has_a_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      
+      mock_build = Object.new
+      mock_build.stubs(:artifacts_directory).returns(sandbox.root)
+
+      listener = Object.new
+      listener.expects(:build_finished).with(mock_build).raises(StandardError.new("Listener failed"))
+
+      @project.add_plugin listener
+
+      assert_raises('Error in plugin Object: Listener failed') { @project.notify(:build_finished, mock_build) }
+
+      assert_match /^Listener failed at/, File.read("#{mock_build.artifacts_directory}/plugin_errors.log")
+    end
+  end
+
+  def test_notify_should_not_fail_if_plugin_fails_and_notify_has_no_build_or_no_arguments_at_all
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+
+      listener = Object.new
+      listener.expects(:sleeping).raises(StandardError.new("Listener failed"))
+      listener.expects(:doing_something).with(:foo).raises(StandardError.new("Listener failed with :foo"))
+
+      @project.add_plugin listener
+
+      assert_raises('Error in plugin Object: Listener failed') { @project.notify(:sleeping) }
+      assert_raises('Error in plugin Object: Listener failed with :foo') { @project.notify(:doing_something, :foo) }
+    end
+  end
+
   def test_build_should_generate_event_when_build_is_fixed
     in_sandbox do |sandbox|
-      @project.source_control = @svn
       @project.path = sandbox.root
 
       failing_build = stub_build(1)
@@ -202,7 +230,6 @@ class ProjectTest < Test::Unit::TestCase
 
   def test_should_build_when_logs_are_not_current
     in_sandbox do |sandbox|
-      @project.source_control = @svn
       @project.path = sandbox.root
 
       @project.stubs(:builds).returns([Build.new(@project, 1)])
@@ -222,7 +249,6 @@ class ProjectTest < Test::Unit::TestCase
 
   def test_should_not_build_when_logs_are_current
     in_sandbox do |sandbox|
-      @project.source_control = @svn
       @project.path = sandbox.root
       @project.stubs(:config_modified?).returns(false)
       @project.stubs(:builds).returns([Build.new(@project, 2)])
@@ -387,7 +413,7 @@ class ProjectTest < Test::Unit::TestCase
   def new_mock_build(label)
     build = Object.new
     Build.expects(:new).with(@project, label).returns(build)
-    build.stubs(:artifacts_directory).returns("project1/build_#{label}")
+    build.stubs(:artifacts_directory).returns("project1/build-#{label}")
     build.stubs(:last).returns(nil)
     build.stubs(:label).returns(label)
     build

@@ -31,6 +31,14 @@
     </div>
   <% end %>
 
+  <% plugin_errors = @build.plugin_errors %>
+  <% unless plugin_errors.empty? %>
+    <div class="section_open">
+      <div class="section_header" onclick="toggle_section(this.parentNode)">Plugin Errors</div>
+      <div class="section_content"><%= h plugin_errors %></div>
+    </div>
+  <% end %>
+
   <div class="section_closed">
     <div class="section_header" onclick="toggle_section(this.parentNode)">Build Log</div>
     <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div></div>

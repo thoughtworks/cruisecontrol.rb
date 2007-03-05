@@ -38,7 +38,8 @@ class Projects
     begin
       @list << project
       save_project(project)
-      checkout_local_copy(project)  
+      checkout_local_copy(project)
+      write_config_example(project)
       self
     rescue
       FileUtils.rm_rf "#{@dir}/#{project.name}"
@@ -56,7 +57,16 @@ class Projects
     FileUtils.mkdir_p work_dir
     project.source_control.checkout work_dir
   end
-  
+
+  def write_config_example(project)
+    config_example = File.join(RAILS_ROOT, 'config', 'project_config.rb.example')
+    config_in_subversion = File.join(project.path, 'work', 'project_config.rb')
+    project_config = File.join(project.path, 'project_config.rb')
+    if File.exists?(config_example) and not File.exists?(config_in_subversion)
+      FileUtils.cp(config_example, project_config)
+    end
+  end
+
   # delegate everything else to the underlying @list
   def method_missing(method, *args, &block)
     @list.send(method, *args, &block)
