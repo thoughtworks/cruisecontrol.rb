@@ -28,6 +28,8 @@ ARGV.options do |opts|
 end
 
 require RAILS_ROOT + "/config/environment"
+require 'site_config' if File.exists?("#{RAILS_ROOT}/config/site_config.rb")
+
 CruiseControl::Log.verbose = CRUISE_OPTIONS[:verbose]
 
 project_path = File.expand_path(File.join(Configuration.projects_directory, CRUISE_OPTIONS[:project_name]))
