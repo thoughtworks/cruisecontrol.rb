@@ -5,7 +5,7 @@ require 'optparse'
 
 project_name = ARGV.shift
 trace = false
-scm_options = { }
+scm_options = {:interactive => true}
 
 ARGV.options do |opts|
   opts.banner = "usage: cruise add <project-name> --url <URL> [subversion options]"
@@ -42,7 +42,7 @@ ARGV.options do |opts|
   end
 end
 
-puts "Adding project '#{project_name}'..."
+puts "Adding project '#{project_name}' (this may take a while)..."
 
 begin 
 	require RAILS_ROOT + "/config/environment"
@@ -51,6 +51,14 @@ begin
 	project = Project.new(project_name, source_control)
 	projects = Projects.load_all
 	projects << project
+	
+	if source_control.url =~ /^svn\+ssh\:\/\//
+    puts "IMPORTANT!!! - It looks like you are connecting to your repository with an svn+ssh connection.  " +
+         "For cruise to build this project, you need to have set up authentication caching for ssh, see this article"
+    puts "   http://subversion.tigris.org/faq.html#ssh-auth-cache"
+    puts
+  end
+  
 rescue => e
   if trace
     raise

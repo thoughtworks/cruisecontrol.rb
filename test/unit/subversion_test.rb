@@ -108,6 +108,13 @@ integration test does a checkout
 
     svn.checkout('.', Revision.new(5))
   end
+  
+  def test_allowing_interaction
+    svn = Subversion.new(:url => 'svn://foo.com/', :interactive => true)
+    svn.expects(:execute).with("svn co svn://foo.com/ .")
+    svn.checkout('.')
+    svn.verify
+  end
 
   def test_checkout_requires_url
     assert_raises('URL not specified') { Subversion.new.checkout('.') }

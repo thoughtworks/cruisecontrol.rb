@@ -16,7 +16,7 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ru
 
 === Project web site
 
-* http://cruisecontrolrb.rubyforge.org
+* http://cruisecontrolrb.thoughtworks.com
 
 
 ===Project RubyForge site (for developers)
@@ -32,9 +32,15 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ru
 ---
 Maintainers::
 * Alexey Verkhovsky [averkhov at thoughtworks.com]
-* Jeremy Stell-Smith [JStell-Smith at thoughtworks.com]
+* Jeremy Stell-Smith [jeremystellsmith at gmail.com]
 
 Contributors::
-* Arthur Tam, Dmitry Verkhovsky, Joe Poon, Josh Evnin, Peter Zhao, Ricky Lui, Stephen Chu
+* Arthur Tam
+* Dmitry Verkhovsky
+* Joe Poon
+* Josh Evnin
+* Peter Zhao
+* Ricky Lui
+* Stephen Chu
 
 (C) ThoughtWorks 2007

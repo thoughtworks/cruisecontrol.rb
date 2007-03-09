@@ -10,7 +10,6 @@ class BuilderStarter
   def self.start_builders
     if @@run_builders_at_startup
       Projects.load_all.each do |project|
-        puts "begin #{project.name}"
         begin_builder(project.name)
       end
     end

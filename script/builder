@@ -81,6 +81,8 @@ begin
       # this will cause the next call to scheduler to run the build immediately
       project.request_build rescue nil
     end
+  rescue Interrupt
+    # this is okay, we're just control-c'ing the app
   rescue Exception => e
     begin 
       CruiseControl::Log.fatal(e)

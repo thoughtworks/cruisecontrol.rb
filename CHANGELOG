@@ -1,9 +1,19 @@
 TRUNK
   - IMPORTANT: 'project_config.rb' renamed to 'cruise_config.rb'
   - IMPORTANT: RAILS_ENV is not set to "test" before calling "cruise" or a custom Rake task 
-  - cruise_config.rb can be in either [cruise]/projects/my_project/ or [cruise]/projects/my_project/work/. In ohter
+  - checkins (and comments) now show up on dashboard
+  - cruise_config.rb can be in either [cruise]/projects/my_project/ or [cruise]/projects/my_project/work/. In other
     words, cruise_config.rb can be placed directly into the version control and obtained from there.
   - Build Now button changes buider state to 'build requested' immediately upon click 
+  - long lines on build page are better after putting the build log on the right column, they scroll off the screen,
+    but not under build list
+  - build artifacts are now in their own section on build page
+  - in progress builds are now shown on dashboard
+    * if you go to the the in progress build page, build artifacts & build log are visible as they are created / saved
+  - new look and feel for http://cruisecontrolrb.thoughtworks.com/
+  - comprehensive documentation built into app
+    * plugin documentation is dynamic and loaded from plugin file / directory
+  - project settings added to build page
   - [bugfix] dashboard doesn't load cruise_config.rb, and therefore is not affected by errors in it
   - [bugfix] --username and --password options in add_project didn't work
   - [bugfix] Rendering of long lines in build log on IE

@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class IntegrationTest < Test::Unit::TestCase
+class BuilderIntegrationTest < Test::Unit::TestCase
   include FileSandbox
 
   def test_checkout

@@ -4,7 +4,8 @@ class Subversion
   attr_accessor :url, :username, :password
 
   def initialize(options = {})
-    @url, @username, @password = options.delete(:url), options.delete(:username), options.delete(:password)
+    @url, @username, @password, @interactive = 
+          options.delete(:url), options.delete(:username), options.delete(:password), options.delete(:interactive)
     raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
   end
 
@@ -13,23 +14,22 @@ class Subversion
     Subversion.new(options).checkout(target_directory, revision)
   end
     
-  # FIXME: options should be passed either to the constructor, or to the method, not both
   def checkout(target_directory, revision = nil)
     @url or raise 'URL not specified'
 
-    cmd = "svn --non-interactive co #{@url} #{target_directory}"
-    cmd << " --username #{@username}" if username
-    cmd << " --password #{@password}" if password
-    cmd << " --revision #{revision_number(revision)}" if revision
+    options = "#{@url} #{target_directory}"
+    options << " --username #{@username}" if username
+    options << " --password #{@password}" if password
+    options << " --revision #{revision_number(revision)}" if revision
 
     # need to read from command output, because otherwise tests break
-    execute(cmd) { |io| io.readlines }
+    execute(svn(:co, options)) { |io| io.readlines }
   end
 
   def info(project)
     result = Hash.new
     Dir.chdir(project.local_checkout) do
-      execute 'svn --non-interactive info' do |io|
+      execute svn(:info) do |io|
         io.each_line do |line|
           line.chomp!
           next if line.empty?
@@ -45,8 +45,7 @@ class Subversion
 
   def latest_revision(project)
     last_locally_known_revision = info(project)['Last Changed Rev']
-    svn_output = execute_in_local_copy(project, 
-        "svn --non-interactive log --revision HEAD:#{last_locally_known_revision} --verbose")
+    svn_output = execute_in_local_copy(project, svn(:log, "--revision HEAD:#{last_locally_known_revision} --verbose"))
     SubversionLogParser.new.parse_log(svn_output).first
   end
 
@@ -55,7 +54,7 @@ class Subversion
   end
 
   def revisions_since(project, revision_number)
-    svn_output = execute_in_local_copy(project, "svn --non-interactive log --revision HEAD:#{revision_number} --verbose")
+    svn_output = execute_in_local_copy(project, svn(:log, "--revision HEAD:#{revision_number} --verbose"))
     new_revisions = SubversionLogParser.new.parse_log(svn_output).reverse
     new_revisions.delete_if { |r| r.number == revision_number }
     new_revisions
@@ -63,8 +62,18 @@ class Subversion
 
   def update(project, revision = nil)
     revision_number = revision ? revision_number(revision) : 'HEAD'
-    svn_output = execute_in_local_copy(project, "svn --non-interactive update --revision #{revision_number}")
+    svn_output = execute_in_local_copy(project, svn(:update, "--revision #{revision_number}"))
     SubversionLogParser.new.parse_update(svn_output)
+  end
+  
+  private
+  
+  def svn(operation, options = nil)
+    command = "svn"
+    command << " --non-interactive" if !@interactive
+    command << " " << operation.to_s
+    command << " " << options if options
+    command
   end
 
   def revision_number(revision)
