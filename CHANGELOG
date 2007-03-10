@@ -17,6 +17,8 @@ TRUNK
   - [bugfix] dashboard doesn't load cruise_config.rb, and therefore is not affected by errors in it
   - [bugfix] --username and --password options in add_project didn't work
   - [bugfix] Rendering of long lines in build log on IE
+  - [bugfix] RSS feed autodiscovery link was wrong for any action that did not belong to ProjectsController
+
 
 ------------------------------------------------------------------------------------------------------------------------
 * 0.5.0
