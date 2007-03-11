@@ -17,6 +17,7 @@ class BuildMailerTest < Test::Unit::TestCase
   end
 
   def test_test
+    Time.stubs(:now).returns(Time.at(100000))
     @expected.subject = 'Test CI E-mail'
     @expected.body    = read_fixture('test')
     @expected.from    = "cruisecontrol@thoughtworks.com"
