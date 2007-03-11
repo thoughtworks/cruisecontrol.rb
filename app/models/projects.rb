@@ -59,11 +59,11 @@ class Projects
   end
 
   def write_config_example(project)
-    config_example = File.join(RAILS_ROOT, 'config', 'project_config.rb.example')
-    config_in_subversion = File.join(project.path, 'work', 'project_config.rb')
-    project_config = File.join(project.path, 'project_config.rb')
+    config_example = File.join(RAILS_ROOT, 'config', 'cruise_config.rb.example')
+    config_in_subversion = File.join(project.path, 'work', 'cruise_config.rb')
+    cruise_config = File.join(project.path, 'cruise_config.rb')
     if File.exists?(config_example) and not File.exists?(config_in_subversion)
-      FileUtils.cp(config_example, project_config)
+      FileUtils.cp(config_example, cruise_config)
     end
   end
 

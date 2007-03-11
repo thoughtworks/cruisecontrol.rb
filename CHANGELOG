@@ -1,4 +1,7 @@
 TRUNK
+
+------------------------------------------------------------------------------------------------------------------------
+* 1.0.0
   - IMPORTANT: 'project_config.rb' renamed to 'cruise_config.rb'
   - IMPORTANT: RAILS_ENV is not set to "test" before calling "cruise" or a custom Rake task 
   - checkins (and comments) now show up on dashboard
