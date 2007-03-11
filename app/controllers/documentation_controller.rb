@@ -1,4 +1,7 @@
 class DocumentationController < ApplicationController
+
+  caches_page :get
+
   def get
     path = File.join('documentation', params[:path]).gsub(/.html$/, '')
     
