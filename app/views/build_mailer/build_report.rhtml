@@ -1,0 +1,20 @@
+<% if Configuration.dashboard_url -%>
+<%= @message %>
+See <%= "#{Configuration.dashboard_url}/builds/#{@build.project.name}/#{@build.to_param}" %> for details.
+<% else -%>
+<%= @message %>
+
+  Note: if you set Configuration.dashboard_url in config/site_config.rb, you'd see a link to the build page here.
+
+CHANGES
+-------
+<%= @build.changeset %>
+
+BUILD LOG
+---------
+<%= @build.output %>
+
+PROJECT SETTINGS
+----------------
+<%= @build.project_settings %>
+<% end -%>

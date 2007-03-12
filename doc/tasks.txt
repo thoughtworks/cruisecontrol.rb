@@ -1,6 +1,5 @@
 Questions
 ---------
-main page is a little hokey
 
 Bugs
 ----
@@ -9,14 +8,11 @@ a BUILDER status. Rolf suggested "Misbehaving". Add a story to the wiki.
 
 CruiseControl.NET tray (projects.rxml) - what should we set for next build time?
 
-Generalize things like build.changeset, build.output; makes them write out error messages when the file doesn't exist,
+Generalize things like build.changeset, build.output; make them write out error messages when the file doesn't exist,
 or exists but is not readable
 
 Contents of a project panel "build details" section on the dashboard can be prerendered by the builder (as Ruby,
 or even directly as XHTML) and cached in the build artifacts directory (? but complexity cost may be too high ?)
-
-Style links to code (no underline except on hover, maybe make them consistent color in test failures and log)
-  - I think they should have underlines, because you might not know they are links otherwise, as they will be surrounded by text - jss
 
 Link to /builds/Project.four (project with a dot without builds) breaks, because of the way routes.rb parses the dot
 
@@ -26,9 +22,9 @@ To finish the RSS story:
 
 Committed_by and comments on the dashboard need to be limited to a certain number of characters.
 
-Currently, we preserve newlines (looks nicer), but may cause complications if there are too many newlines.
+Currently, we preserve newlines (looks nicer), but it may cause complications if there are too many newlines.
 
-Comments on the dashboard need tooltips or floating-divs to display the full message.
+Comments on the dashboard need tooltips to display the full message.
 
 If the build takes say 7501 seconds, it displays 2 hours and 5 minutes and 1 second.
   - It might be better to display 2 hours, 5 minutes and 1 second.  Or perhaps drop the seconds?
@@ -39,12 +35,13 @@ Tech
 ----
 Update all Rails-generated files to Rails 1.2.2 versions thereof
 
+look for a way to generate URLs in email templates through Rails' routes
+
 Necessary
 ---------
 * test application_helper
 * builder
   * should reload server settings every time it wakes up, too
-  * should sleep for at least 30 secs by default
 
 Build
 -----

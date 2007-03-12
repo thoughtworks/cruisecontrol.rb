@@ -16,7 +16,9 @@ TRUNK
   - new look and feel for http://cruisecontrolrb.thoughtworks.com/
   - comprehensive documentation built into app
     * plugin documentation is dynamic and loaded from plugin file / directory
-  - project settings added to build page
+  - project settings are displayed on the build page
+  - Email notifier sends a link to the build page in the message if Configuration.dashboard_url is set, 
+    or changeset, build output and project settings otherwise
   - [bugfix] dashboard doesn't load cruise_config.rb, and therefore is not affected by errors in it
   - [bugfix] --username and --password options in add_project didn't work
   - [bugfix] Rendering of long lines in build log on IE

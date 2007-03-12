@@ -1,17 +1,8 @@
 class BuildMailer < ActionMailer::Base
 
-  def build_failed(build, recipients, sent_at = Time.now)
-    @subject    = "#{build.project.name} Build #{build.label} - FAILED"
-    @body       = {:build_log => build.output}
-    @recipients = recipients
-    @from       = 'cruisecontrol@thoughtworks.com'
-    @sent_on    = sent_at
-    @headers    = {}
-  end
-
-  def build_fixed(build, recipients, sent_at = Time.now)
-    @subject    = "#{build.project.name} Build #{build.label} - FIXED"
-    @body       = {:build_log => build.output}
+  def build_report(build, recipients, subject, message, sent_at = Time.now)
+    @subject    = "[CruiseControl] #{subject}"
+    @body       = {:build => build, :message => message}
     @recipients = recipients
     @from       = 'cruisecontrol@thoughtworks.com'
     @sent_on    = sent_at

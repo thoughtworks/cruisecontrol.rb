@@ -38,8 +38,7 @@ class EmailNotifierTest < Test::Unit::TestCase
     mail = ActionMailer::Base.deliveries[0]
 
     assert_equal @notifier.emails, mail.to
-    assert_equal "myproj Build 5 - FAILED", mail.subject
-    assert_equal BUILD_LOG, mail.body
+    assert_equal "[CruiseControl] myproj build 5 failed", mail.subject
   end
 
   def test_send_email_with_fixed_build
@@ -50,30 +49,36 @@ class EmailNotifierTest < Test::Unit::TestCase
     mail = ActionMailer::Base.deliveries[0]
 
     assert_equal @notifier.emails, mail.to
-    assert_equal "myproj Build 5 - FIXED", mail.subject
-    assert_equal BUILD_LOG, mail.body
+    assert_equal "[CruiseControl] myproj build 5 fixed", mail.subject
   end
   
   def test_logging_on_send
-    CruiseControl::Log.expects(:event).with("Sent e-mail to 4 people", :info)
+    CruiseControl::Log.expects(:event).with("Sent e-mail to 4 people", :debug)
+    BuildMailer.expects(:deliver_build_report)
     @notifier.emails = ['foo@happy.com', 'bar@feet.com', 'you@me.com', 'uncle@tom.com']
     @notifier.build_finished(failing_build)
+    BuildMailer.verify
     CruiseControl::Log.verify
 
-    CruiseControl::Log.expects(:event).with("Sent e-mail to 1 person", :info)
+    CruiseControl::Log.expects(:event).with("Sent e-mail to 1 person", :debug)
+    BuildMailer.expects(:deliver_build_report)
     @notifier.emails = ['foo@happy.com']
     @notifier.build_finished(failing_build)
+    BuildMailer.verify
     CruiseControl::Log.verify
 
     CruiseControl::Log.expects(:event).never
+    BuildMailer.expects(:deliver_build_report).never
     @notifier.emails = []
     @notifier.build_finished(failing_build)
+    BuildMailer.verify
+    CruiseControl::Log.verify
   end
   
   def test_useful_errors
-    ActionMailer::Base.smtp_settings = {:foo => 5}
+    ActionMailer::Base.stubs(:smtp_settings).returns(:foo => 5)
     CruiseControl::Log.expects(:event).with("Error sending e-mail - current server settings are :\n  :foo = 5", :error)
-    BuildMailer.expects(:deliver_build_failed).raises('something')
+    BuildMailer.expects(:deliver_build_report).raises('something')
     
     @notifier.emails = ['foo@crapty.com']
     
