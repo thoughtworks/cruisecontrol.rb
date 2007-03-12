@@ -5,12 +5,13 @@ class Configuration
   @default_polling_interval = 10.seconds
   @sleep_after_build_loop_error = 30.seconds
   @build_request_checking_interval = 5.seconds
+  @dashboard_refresh_interval = 5.seconds
   @context = nil
   @dashboard_url = nil
 
   class << self
     attr_accessor :projects_directory, :default_polling_interval, :sleep_after_build_loop_error,
-                  :build_request_checking_interval, :context, :default_page
+                  :build_request_checking_interval, :context, :default_page, :dashboard_refresh_interval
 
     attr_reader :dashboard_url
 
