@@ -143,3 +143,16 @@ ul li.instruction{
 	margin: 0;
 	padding: 0;
 }
+h2 a, h2 a:hover {
+	clear: both;
+	font-size: 110%;
+	/*color: #E65414;*/
+	color: #f28218;
+	font-weight: bold;
+	background: url("../images/hdbg.gif") top left repeat;
+	padding: 4px;
+	margin-bottom: 10px;
+}
+h2{
+	color: #f28218 !important;
+}
