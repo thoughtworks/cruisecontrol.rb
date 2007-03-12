@@ -1,18 +1,18 @@
 h1. Getting Started
 
-h3. A word from the authors
+<!-- h3. A word from the authors -->
 
 <div id="letter_shadow">
 	<div class="letter">
-		*Dear build -monkey- -master- artist,*
+		<p>*Dear build -monkey- -master- artist,*</p>
 
-		We created CruiseControl.rb so that you can kick ass.
+		<p>We created CruiseControl.rb so that you can kick ass.</p>
 
-		We want you to have basic continuous integration up and running 10 minutes after reading this page.
+		<p>We want you to have basic continuous integration up and running 10 minutes after reading this page.
 		After that, we want you to find that the tool looks good, does what you expect, and basically just
-		works. Finally, when you need to do something unusual, we want you to be surprised by how easy that was, too.
+		works. Finally, when you need to do something unusual, we want you to be surprised by how easy that was, too. </p>
 
-		In short, we want you to *love* CruiseControl.rb.
+		<p>In short, we want you to *love* CruiseControl.rb.</p>
 
 		Very truly yours,<br/>
 		<br/>
