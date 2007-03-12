@@ -18,13 +18,28 @@
   padding-top: 35px;
   margin-right: -6px;
 }
-
+#letter_shadow {
+  padding-bottom: 18px;
+  margin-bottom: 5px;
+  background-image: url(/images/float-letter.png);
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  
+}
 .letter {
   font-family: georgia, times, serif;
-  color: #62A;
+  /*color: #62A;
   background-color: #FAFAFA;
-  font-style: italic;
-  padding: 0.5em 2em; 
+  
+  padding: 0.5em 2em; */
+  /*font-style: italic;*/
+  padding: 1em;
+  background: #f2f2f2;
+  /*color: #000000;*/
+}
+.letter p{
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 div.next_step {
