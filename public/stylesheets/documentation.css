@@ -30,15 +30,10 @@
 }
 .letter {
   font-family: georgia, times, serif;
-  /*color: #62A;
-  background-color: #FAFAFA;
-  
-  padding: 0.5em 2em; */
   font-style: italic;
-  padding: 2em 2em;
+  padding: 2em 2em 10em 2em;
   background: #fff;
   border: 1px solid #333;
-  /*color: #000000;*/
 }
 .letter p{
   margin-bottom: 0;
@@ -164,7 +159,6 @@ ul li.instruction{
 h2 a, h2 a:hover {
 	clear: both;
 	font-size: 110%;
-	/*color: #E65414;*/
 	color: #f28218;
 	font-weight: bold;
 	background: url("../images/hdbg.gif") top left repeat;
