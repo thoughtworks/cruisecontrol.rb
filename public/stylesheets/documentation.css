@@ -24,6 +24,8 @@
   background-image: url(/images/float-letter.png);
   background-position: bottom right;
   background-repeat: no-repeat;
+  width: 450px;
+  margin: 0 auto;
   
 }
 .letter {
@@ -32,9 +34,10 @@
   background-color: #FAFAFA;
   
   padding: 0.5em 2em; */
-  /*font-style: italic;*/
-  padding: 1em;
-  background: #f2f2f2;
+  font-style: italic;
+  padding: 2em 2em;
+  background: #fff;
+  border: 1px solid #333;
   /*color: #000000;*/
 }
 .letter p{
