@@ -3,7 +3,7 @@ module CruiseControl
     unless defined? MAJOR
       MAJOR = 1 
       MINOR = 0
-      MAINTENANCE = '+'
+      MAINTENANCE = 0
 
       STRING = [MAJOR, MINOR, MAINTENANCE].join('.')
     end
