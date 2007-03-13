@@ -1,5 +1,7 @@
 TRUNK
 
+  - [bugfix] Corrected documentation to say "[cruise]/projects/" instead of "[cruise]/builds/"
+
 ------------------------------------------------------------------------------------------------------------------------
 * 1.0.0
   - IMPORTANT: 'project_config.rb' renamed to 'cruise_config.rb'
