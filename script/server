@@ -21,7 +21,7 @@ ARGV.clone.options do |opts|
   opts.parse!
 end
    
-# Remove custom options so that are not interpreted by 'commands/server'   
+# Remove custom options so that they are not interpreted by 'commands/server'   
 ARGV.delete("-w")
 ARGV.delete("--without-builders")
     

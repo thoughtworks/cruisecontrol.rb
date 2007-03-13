@@ -43,4 +43,7 @@ h1. Demo site
 <strong>"Here":http://cruisecontrolrb.thoughtworks.com/projects</strong> is a public CruiseControl.rb instance
 building itself and some other open-source projects. 
 
-<div class="next_step">Next step: "download":download.html CruiseControl.rb</div>
+<div class="next_step">
+  Next step: <%= link_to_download 'Download' %> CruiseControl.rb and
+  "get started":getting_started.html 
+</div>
