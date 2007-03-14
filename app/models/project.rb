@@ -131,6 +131,13 @@ class Project
   def last_build
     builds.last
   end
+  
+  def last_complete_build
+    builds.reverse.each do |build|
+      return build unless build.incomplete?
+    end
+    nil
+  end
 
   def find_build(label)
     # this could be optimized a lot

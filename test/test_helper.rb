@@ -72,6 +72,12 @@ class Test::Unit::TestCase
     project.stubs(:last_five_builds).returns(last_five_builds)
     project.stubs(:builder_state_and_activity).returns('building')
     project.stubs(:last_build).returns(last_five_builds.last)
+    
+    project.stubs(:last_complete_build).returns(nil)
+    last_five_builds.reverse.each do |build|
+      project.stubs(:last_complete_build).returns(build) unless build.incomplete?
+    end
+    
     project
   end
 

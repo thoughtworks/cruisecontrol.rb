@@ -32,6 +32,16 @@ class ProjectTest < Test::Unit::TestCase
       assert_equal('10', @project.last_build.label)
     end
   end
+  
+  def test_project_should_know_last_complete_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      sandbox.new :file => "build-1/build_status.success"
+      sandbox.new :file => "build-2/build_status.failure"
+      sandbox.new :file => "build-3/build_status.incomplete"
+      assert_equal('2', @project.last_complete_build.label)
+    end
+  end
 
   def test_builds_should_return_empty_array_when_project_has_no_builds
     in_sandbox do |sandbox|

@@ -7,7 +7,7 @@ xml.rss('version' => '2.0') do
     xml.ttl('10')
 
     for project in @projects
-      last_build = project.last_build
+      last_build = project.last_complete_build
       xml.item do
         xml.title(rss_title(project, last_build))
         xml.description("<pre>#{rss_description(project, last_build)}</pre>")

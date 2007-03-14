@@ -55,6 +55,17 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal "<pre>bobby checked something in</pre>", REXML::XPath.first(xml, '/rss/channel/item[1]/description').text
     assert_equal "<pre></pre>", REXML::XPath.first(xml, '/rss/channel/item[2]/description').text
   end
+  
+  def test_rss_should_exclude_incomplete_build
+    Projects.expects(:load_all).returns([
+        create_project_stub('one', 'success', [create_build_stub('1', 'success')]),
+        create_project_stub('two', 'incomplete', [create_build_stub('10', 'failed'), create_build_stub('11', 'incomplete')])
+        ])
+    post :index, :format => 'rss'
+    
+    xml = REXML::Document.new(@response.body)
+    assert_equal "two build 10 failed", REXML::XPath.first(xml, '/rss/channel/item[2]/title').text
+  end
 
   def test_index_cctray
     Projects.expects(:load_all).returns([
