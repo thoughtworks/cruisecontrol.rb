@@ -11,6 +11,12 @@ class ProjectsController < ApplicationController
       format.cctray { render :action => 'cctray', :layout => false }
     end
   end
+  
+  def rss
+    @projects = []
+    @projects << Projects.find(params[:project])
+    render :layout => false
+  end
 
   def build
     render :text => 'Project not specified', :status => 404 and return unless params[:id]

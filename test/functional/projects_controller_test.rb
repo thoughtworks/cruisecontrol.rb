@@ -66,6 +66,15 @@ class ProjectsControllerTest < Test::Unit::TestCase
     xml = REXML::Document.new(@response.body)
     assert_equal "two build 10 failed", REXML::XPath.first(xml, '/rss/channel/item[2]/title').text
   end
+  
+  def test_should_be_able_to_provide_rss_for_single_project
+    Projects.expects(:find).with('one').returns(create_project_stub('one', 'success', [create_build_stub('10', 'success')]))
+    post :rss, :project => 'one'
+    assert_response :success
+    
+    xml = REXML::Document.new(@response.body)
+    assert_equal "one build 10 success", REXML::XPath.first(xml, '/rss/channel/item[1]/title').text
+  end
 
   def test_index_cctray
     Projects.expects(:load_all).returns([
