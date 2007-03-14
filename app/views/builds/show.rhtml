@@ -1,3 +1,5 @@
+<% @rss_url = {:controller => 'projects', :action => 'rss', :project => @project.name} %>
+
 <div id="builds_list">
   <strong>Build history</strong>
   <% @project.builds.reverse.each do |build| %>

@@ -175,6 +175,18 @@ class BuildsControllerTest < Test::Unit::TestCase
     assert_response 404
     assert_equal 'Build "1" not found', @response.body
   end
+  
+  def test_should_link_rss_for_just_this_project
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :file => 'build-1/build_status.pingpong'
+    
+      Projects.expects(:find).with(project.name).returns(project)
+      get :show, :project => project.name
+      assert_tag :tag => "link", :attributes => {
+        :href => "http://test.host/projects/rss/#{project.name}", 
+        :title => "RSS feed"}
+    end    
+  end
 
   def assert_type(file, type)
     @sandbox.new :file => "build-1/#{file}", :with_content => 'lemon'
