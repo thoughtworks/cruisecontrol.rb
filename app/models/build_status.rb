@@ -41,6 +41,16 @@ class BuildStatus
     end
   end
   
+  def timestamp
+    build_dir_mtime = File.mtime(@artifacts_directory)
+    begin
+      build_log_mtime = File.mtime("#{@artifacts_directory}/build.log")
+    rescue
+      return build_dir_mtime
+    end      
+    build_log_mtime > build_dir_mtime ? build_log_mtime : build_dir_mtime
+  end
+  
   def to_s
     read_latest_status.to_s
   end

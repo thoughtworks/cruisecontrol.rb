@@ -69,6 +69,23 @@ class BuildStatusTest < Test::Unit::TestCase
     assert_equal now, BuildStatus.new("artifacts_directory").created_at
   end
 
+  def test_timestamp_returns_later_mtime_of_build_log_or_build_dir
+    build_log_mtime = Time.now
+    File.expects(:mtime).with("artifacts_directory/build.log").returns(build_log_mtime)
+
+    build_dir_mtime = 2.days.since
+    File.expects(:mtime).with("artifacts_directory").returns(build_dir_mtime)    
+
+    assert_equal build_dir_mtime, BuildStatus.new("artifacts_directory").timestamp
+  end
+  
+  def test_timestamp_returns_build_dir_mtime_if_build_log_not_exist
+    build_dir_mtime = Time.now
+    File.expects(:mtime).with("artifacts_directory").returns(build_dir_mtime)
+    File.expects(:mtime).with("artifacts_directory/build.log").raises
+    assert_equal build_dir_mtime, BuildStatus.new("artifacts_directory").timestamp
+  end
+
   def test_created_at_returns_nil_when_file_not_exist
     Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns([])
     assert_equal nil, BuildStatus.new("artifacts_directory").created_at

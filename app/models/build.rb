@@ -74,7 +74,7 @@ class Build
   end
 
   def time
-    @status.created_at
+    @status.timestamp
   end
 
   def artifacts_directory
