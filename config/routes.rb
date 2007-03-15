@@ -3,7 +3,6 @@ ActionController::Routing::Routes.draw do |map|
   map.home '', Configuration.default_page
   
   map.resources :projects
-  map.project_rss 'projects/rss/:project', :controller => 'projects', :action => 'rss'
 
   map.project_without_builds 'builds/:project', :controller => 'builds', :action => 'show'
   map.build 'builds/:project/:build', :controller => 'builds', :action => 'show', :build => /[^\/]+/

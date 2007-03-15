@@ -7,6 +7,7 @@
     <div>
       <span class="project_name">
         <%= link_to project.name, :controller => 'builds', :action => 'show', :project => project.name %>
+        <%= link_to image_tag("rss.gif", :border => 0), :action => 'show', :id => project.name, :format => 'rss' %>
       </span>
     </div>
 

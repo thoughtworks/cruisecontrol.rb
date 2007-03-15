@@ -12,10 +12,10 @@ class ProjectsController < ApplicationController
     end
   end
   
-  def rss
+  def show
     @projects = []
-    @projects << Projects.find(params[:project])
-    render :layout => false
+    @projects << Projects.find(params[:id])
+    render :action => 'rss', :layout => false
   end
 
   def build

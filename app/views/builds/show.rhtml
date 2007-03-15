@@ -1,4 +1,4 @@
-<% @rss_url = {:controller => 'projects', :action => 'rss', :project => @project.name} %>
+<% @rss_url = {:controller => 'projects', :action => 'show', :id => @project.name, :format => 'rss'} %>
 
 <div id="builds_list">
   <strong>Build history</strong>

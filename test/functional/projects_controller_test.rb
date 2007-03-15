@@ -28,6 +28,14 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
   end
   
+  def test_index_rhtml_should_link_to_rss_for_separated_projects
+    p1 = create_project_stub('one', 'success')
+    Projects.expects(:load_all).returns([p1])
+
+    get :index
+    assert_tag :tag => 'a', :attributes => {:href => '/projects/one.rss'},  :child => {:tag => "img", :attributes => {:src => /\/images\/rss.gif/}}
+  end
+  
   def test_index_rjs
     Projects.expects(:load_all).returns([create_project_stub('one'), create_project_stub('two')])
     
@@ -69,8 +77,9 @@ class ProjectsControllerTest < Test::Unit::TestCase
   
   def test_should_be_able_to_provide_rss_for_single_project
     Projects.expects(:find).with('one').returns(create_project_stub('one', 'success', [create_build_stub('10', 'success')]))
-    post :rss, :project => 'one'
+    post :show, :id => 'one', :format => 'rss'
     assert_response :success
+    assert_template 'rss'
     
     xml = REXML::Document.new(@response.body)
     assert_equal "one build 10 success", REXML::XPath.first(xml, '/rss/channel/item[1]/title').text
