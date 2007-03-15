@@ -54,7 +54,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     post :index, :format => 'rss'
 
     assert_response :success
-    assert_template 'rss'
+    assert_template 'index_rss'
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
 
     xml = REXML::Document.new(@response.body)
@@ -79,7 +79,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     Projects.expects(:find).with('one').returns(create_project_stub('one', 'success', [create_build_stub('10', 'success')]))
     post :show, :id => 'one', :format => 'rss'
     assert_response :success
-    assert_template 'rss'
+    assert_template 'index_rss'
     
     xml = REXML::Document.new(@response.body)
     assert_equal "one build 10 success", REXML::XPath.first(xml, '/rss/channel/item[1]/title').text
@@ -93,7 +93,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     post :index, :format => 'cctray'
 
     assert_response :success
-    assert_template 'cctray'
+    assert_template 'index_cctray'
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
     
     xml = REXML::Document.new(@response.body)

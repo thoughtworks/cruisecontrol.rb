@@ -7,15 +7,19 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html
       format.js { render :action => 'refresh_projects' }
-      format.rss { render :action => 'rss', :layout => false }
-      format.cctray { render :action => 'cctray', :layout => false }
+      format.rss { render :action => 'index_rss', :layout => false }
+      format.cctray { render :action => 'index_cctray', :layout => false }
     end
   end
-  
+
+  # Projects#show serves RSS feed for a specific project. So far, we have no HTML view associated with one project
   def show
-    @projects = []
-    @projects << Projects.find(params[:id])
-    render :action => 'rss', :layout => false
+    render :text => 'Project not specified', :status => 404 and return unless params[:id]
+
+    @projects = [Projects.find(params[:id])]
+    respond_to do |format|
+      format.rss { render :action => 'index_rss', :layout => false }
+    end
   end
 
   def build
