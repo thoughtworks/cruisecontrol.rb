@@ -61,8 +61,10 @@ class Project
         end
       end
       load_and_remember config_tracker.local_config_file
-    rescue => e
-      raise "Could not load project configuration: #{e.message} in #{e.backtrace.first}"
+    rescue Exception => e
+      message = "Could not load project configuration: #{e.message} in #{e.backtrace.first}"    
+      CruiseControl::Log.event(message, :fatal) rescue nil
+      @settings = ""
     end
     self
   end

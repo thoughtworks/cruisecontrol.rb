@@ -393,6 +393,15 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
   
+  def test_should_use_empty_configuration_if_exception_raised_during_load_config
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root 
+      sandbox.new :file => 'work/cruise_config.rb', :with_contents => 'class Invalid'
+      @project.load_config
+      assert @project.settings.empty?
+    end
+  end
+  
   def test_should_remember_settings
     in_sandbox do |sandbox|
       @project.path = sandbox.root 
