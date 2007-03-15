@@ -15,6 +15,9 @@ h1. Feature list
 * Works out of the box with a regular "Ruby":http://www.ruby-lang.org/en/ or "Ruby on Rails":http://rubyonrails.org
   project. No configuration necessary.
 
+* Works with Java Ant, .NET NAnt and any build tool that can be invoked through command line and returns a non-zero exit code if
+  the build fails.
+
 * Web-based dashboard, convenient, useful and pretty.
 
 * When a build is broken or fixed, notifies users via email, instant messaging or
@@ -25,12 +28,6 @@ h1. Feature list
 * Jump to the code causing a build error in one click.
 
 * Displays custom build artifacts. No configuration necessary.
-
-* Can interoperate with any build tool that can be invoked through command line and returns a non-zero exit code if
-  the build fails. Like:
-** nant
-** ant
-** etc...
 
 * Extendable through builder plugins, custom build schedulers and other configuration options.
 
