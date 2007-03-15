@@ -1,6 +1,7 @@
 TRUNK
 
   - [bugfix] Corrected documentation to say "[cruise]/projects/" instead of "[cruise]/builds/"
+  - [bugfix] Recognize Solaris as a platform
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.0.0
