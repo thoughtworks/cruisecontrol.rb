@@ -10,6 +10,7 @@ module Platform
     when /solaris/ then 'solaris'
     when /freebsd/ then 'freebsd'
     when /linux/ then 'linux'
+    when /solaris/ then 'solaris'
     else raise "Unknown OS: #{target_os}"
     end
   end
