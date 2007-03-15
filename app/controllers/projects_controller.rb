@@ -21,6 +21,7 @@ class ProjectsController < ApplicationController
 
     @projects = [project]
     respond_to do |format|
+      format.html { redirect_to :controller => "builds", :action => "show", :project => project.name }
       format.rss { render :action => 'index_rss', :layout => false }
     end
   end

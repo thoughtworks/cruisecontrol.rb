@@ -77,12 +77,25 @@ class ProjectsControllerTest < Test::Unit::TestCase
   
   def test_should_be_able_to_provide_rss_for_single_project
     Projects.expects(:find).with('one').returns(create_project_stub('one', 'success', [create_build_stub('10', 'success')]))
-    post :show, :id => 'one', :format => 'rss'
+    get :show, :id => 'one', :format => 'rss'
     assert_response :success
     assert_template 'index_rss'
     
     xml = REXML::Document.new(@response.body)
     assert_equal "one build 10 success", REXML::XPath.first(xml, '/rss/channel/item[1]/title').text
+  end
+
+  def test_dashboard_should_have_link_to_single_project
+    Projects.expects(:load_all).returns([create_project_stub('one', 'success')])
+    get :index
+    assert_tag :tag => "a", :attributes => {:href => /\/projects\/one/}, :content => "one"
+  end
+
+  def test_show_action_with_html_format_should_redirect_to_builds_show
+    Projects.expects(:find).with('one').returns(create_project_stub('one', 'success', [create_build_stub('10', 'success')]))
+    get :show, :id => 'one'
+    assert_response :redirect
+    assert_redirected_to :controller => "builds", :action => "show", :project => "one"
   end
 
   def test_index_cctray
@@ -162,7 +175,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     post :build, :id => "non_existing_project"
     assert_response 404
   end
-
+  
   def test_show_unspecified_project
     post :show, :format => 'rss'
     assert_response 404

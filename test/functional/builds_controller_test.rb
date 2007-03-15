@@ -183,7 +183,7 @@ class BuildsControllerTest < Test::Unit::TestCase
       Projects.expects(:find).with(project.name).returns(project)
       get :show, :project => project.name
       assert_tag :tag => "link", :attributes => {
-        :href => "http://test.host/projects/#{project.name}.rss", 
+        :href => /\/projects\/#{project.name}.rss/, 
         :title => "RSS feed"}
     end    
   end
