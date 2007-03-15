@@ -79,7 +79,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     Projects.expects(:find).with('one').returns(create_project_stub('one', 'success', [create_build_stub('10', 'success')]))
     get :show, :id => 'one', :format => 'rss'
     assert_response :success
-    assert_template 'index_rss'
+    assert_template 'show_rss'
     
     xml = REXML::Document.new(@response.body)
     assert_equal "one build 10 success", REXML::XPath.first(xml, '/rss/channel/item[1]/title').text
@@ -92,10 +92,11 @@ class ProjectsControllerTest < Test::Unit::TestCase
   end
 
   def test_show_action_with_html_format_should_redirect_to_builds_show
-    Projects.expects(:find).with('one').returns(create_project_stub('one', 'success', [create_build_stub('10', 'success')]))
+    stub_project = Object.new
+    Projects.expects(:find).with('one').returns(stub_project)
     get :show, :id => 'one'
     assert_response :redirect
-    assert_redirected_to :controller => "builds", :action => "show", :project => "one"
+    assert_redirected_to :controller => "builds", :action => "show", :project => stub_project
   end
 
   def test_index_cctray

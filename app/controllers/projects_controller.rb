@@ -16,13 +16,12 @@ class ProjectsController < ApplicationController
   def show
     render :text => 'Project not specified', :status => 404 and return unless params[:id]
 
-    project = Projects.find(params[:id])
-    render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless project
+    @project = Projects.find(params[:id])
+    render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project
 
-    @projects = [project]
     respond_to do |format|
-      format.html { redirect_to :controller => "builds", :action => "show", :project => project.name }
-      format.rss { render :action => 'index_rss', :layout => false }
+      format.html { redirect_to :controller => "builds", :action => "show", :project => @project }
+      format.rss { render :action => 'show_rss', :layout => false }
     end
   end
 
