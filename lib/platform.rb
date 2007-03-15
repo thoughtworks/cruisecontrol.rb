@@ -7,6 +7,7 @@ module Platform
     when /darwin/ then 'powerpc-darwin'
     when /32/ then 'mswin32'
     when /cyg/ then 'cygwin'
+    when /solaris/ then 'solaris'
     when /freebsd/ then 'freebsd'
     when /linux/ then 'linux'
     else raise "Unknown OS: #{target_os}"
