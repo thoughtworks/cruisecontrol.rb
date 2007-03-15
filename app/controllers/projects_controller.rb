@@ -6,7 +6,7 @@ class ProjectsController < ApplicationController
     
     respond_to do |format|
       format.html
-      format.js { render :action => 'refresh_projects' }
+      format.js { render :action => 'index_js' }
       format.rss { render :action => 'index_rss', :layout => false }
       format.cctray { render :action => 'index_cctray', :layout => false }
     end
@@ -16,7 +16,10 @@ class ProjectsController < ApplicationController
   def show
     render :text => 'Project not specified', :status => 404 and return unless params[:id]
 
-    @projects = [Projects.find(params[:id])]
+    project = Projects.find(params[:id])
+    render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless project
+
+    @projects = [project]
     respond_to do |format|
       format.rss { render :action => 'index_rss', :layout => false }
     end
@@ -31,7 +34,7 @@ class ProjectsController < ApplicationController
     @project.request_build rescue nil
     @projects = Projects.load_all
 
-    render :action => 'refresh_projects'
+    render :action => 'index_js'
   end
   
   def code

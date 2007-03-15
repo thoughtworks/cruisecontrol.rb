@@ -42,7 +42,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     post :index, :format => 'js'
 
     assert_response :success
-    assert_template 'refresh_projects'
+    assert_template 'index_js'
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
   end
 
@@ -157,10 +157,23 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal 'two', assigns(:project).name
   end
   
-  def test_build_for_non_existant_project
+  def test_build_non_existant_project
     Projects.expects(:find).with('non_existing_project').returns(nil)
     post :build, :id => "non_existing_project"
     assert_response 404
+  end
+
+  def test_show_unspecified_project
+    post :show, :format => 'rss'
+    assert_response 404
+    assert_equal 'Project not specified', @response.body
+  end
+
+  def test_show_non_existant_project
+    Projects.expects(:find).with('non_existing_project').returns(nil)
+    post :show, :id => "non_existing_project", :format => 'rss'
+    assert_response 404
+    assert_equal 'Project "non_existing_project" not found', @response.body
   end
 
   def stub_change_set_parser
