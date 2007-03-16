@@ -395,10 +395,13 @@ class ProjectTest < Test::Unit::TestCase
   
   def test_should_use_empty_configuration_if_exception_raised_during_load_config
     in_sandbox do |sandbox|
+      invalid_ruby_code = 'class Invalid'
       @project.path = sandbox.root 
-      sandbox.new :file => 'work/cruise_config.rb', :with_contents => 'class Invalid'
+      sandbox.new :file => 'work/cruise_config.rb', :with_contents => invalid_ruby_code
       @project.load_config
       assert @project.settings.empty?
+      assert_equal invalid_ruby_code, @project.config_file_content.strip
+      assert !@project.config_valid?
     end
   end
   
@@ -407,10 +410,10 @@ class ProjectTest < Test::Unit::TestCase
       @project.path = sandbox.root 
       sandbox.new :file => 'work/cruise_config.rb', :with_contents => 'good = 4'
       sandbox.new :file => 'cruise_config.rb', :with_contents => 'time = 5'
-        
+
       @project.load_config
-      
       assert_equal "good = 4\ntime = 5\n", @project.settings
+      assert @project.config_valid?
     end
   end
 

@@ -23,7 +23,7 @@ class Project
     yield @project_in_the_works
   end
 
-  attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings
+  attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content
   attr_writer :local_checkout 
   attr_accessor :source_control, :scheduler
 
@@ -36,13 +36,14 @@ class Project
     @plugins_by_name = {}
     @config_tracker = ProjectConfigTracker.new(self.path)
     @settings = ''
-    
+    @config_file_content = ''
     instantiate_plugins
   end
   
   def load_and_remember(file)
     return if !File.file?(file)
     @settings << File.read(file) << "\n"
+    @config_file_content = @settings
     load file
   end
 
@@ -99,6 +100,10 @@ class Project
   
   def ==(another)
     another.is_a?(Project) and another.name == self.name
+  end
+  
+  def config_valid?
+    @settings == @config_file_content
   end
 
   def build_command=(value)

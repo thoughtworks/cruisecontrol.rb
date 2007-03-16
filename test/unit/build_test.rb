@@ -91,7 +91,7 @@ class BuildTest < Test::Unit::TestCase
   def test_run_stores_settings
     with_sandbox_project do |sandbox, project|
       expected_build_directory = File.join(sandbox.root, 'build-123')
-      project.stubs(:settings).returns("cool project settings")
+      project.stubs(:config_file_content).returns("cool project settings")
   
       build = Build.new(project, 123)
       build.stubs(:execute)
@@ -168,5 +168,16 @@ class BuildTest < Test::Unit::TestCase
       assert_equal(%w(coverage foo foo.txt), build.additional_artifacts.sort)
     end
   end
+  
+  def test_build_should_fail_if_project_config_is_invalid
+    with_sandbox_project do |sandbox, project|
+      expected_build_directory = File.join(sandbox.root, 'build-123')
+      project.stubs(:config_file_content).returns("cool project settings")
+      project.expects(:'config_valid?').returns(false)
+      build = Build.new(project, 123)
+      build.run
+      assert build.failed?
+    end
+  end  
     
 end
