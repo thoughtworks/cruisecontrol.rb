@@ -14,7 +14,7 @@ class Build
     build_log = artifact 'build.log'
     File.open(artifact('cruise_config.rb'), 'w') {|f| f << @project.config_file_content }
     
-    raise "cruise_config.rb is invalid" unless @project.config_valid?
+    raise @project.error_message unless @project.config_valid?
     
     # build_command must be set before doing chdir, because there may be some relative paths
     build_command = self.command
@@ -25,6 +25,7 @@ class Build
     end
     @status.succeed!((Time.now - time).ceil)    
   rescue => e
+    File.open(build_log, 'a'){|f| f << e.message }
     CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
     @status.fail!((Time.now - (time || Time.now)).ceil)
   end

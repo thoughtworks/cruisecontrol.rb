@@ -23,7 +23,7 @@ class Project
     yield @project_in_the_works
   end
 
-  attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content
+  attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
   attr_writer :local_checkout 
   attr_accessor :source_control, :scheduler
 
@@ -37,6 +37,7 @@ class Project
     @config_tracker = ProjectConfigTracker.new(self.path)
     @settings = ''
     @config_file_content = ''
+    @error_message = ''
     instantiate_plugins
   end
   
@@ -63,8 +64,8 @@ class Project
       end
       load_and_remember config_tracker.local_config_file
     rescue Exception => e
-      message = "Could not load project configuration: #{e.message} in #{e.backtrace.first}"    
-      CruiseControl::Log.event(message, :fatal) rescue nil
+      @error_message = "Could not load project configuration: #{e.message} in #{e.backtrace.first}"    
+      CruiseControl::Log.event(@error_message, :fatal) rescue nil
       @settings = ""
     end
     self

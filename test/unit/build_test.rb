@@ -173,10 +173,13 @@ class BuildTest < Test::Unit::TestCase
     with_sandbox_project do |sandbox, project|
       expected_build_directory = File.join(sandbox.root, 'build-123')
       project.stubs(:config_file_content).returns("cool project settings")
+      project.stubs(:error_message).returns("some project config error")
       project.expects(:'config_valid?').returns(false)
       build = Build.new(project, 123)
       build.run
       assert build.failed?
+      log_message = File.open("build-123/build.log"){|f| f.read }
+      assert_equal "some project config error", log_message
     end
   end  
     

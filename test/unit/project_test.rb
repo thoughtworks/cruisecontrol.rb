@@ -402,6 +402,7 @@ class ProjectTest < Test::Unit::TestCase
       assert @project.settings.empty?
       assert_equal invalid_ruby_code, @project.config_file_content.strip
       assert !@project.config_valid?
+      assert_match /Could not load project configuration:/, @project.error_message
     end
   end
   
@@ -414,9 +415,9 @@ class ProjectTest < Test::Unit::TestCase
       @project.load_config
       assert_equal "good = 4\ntime = 5\n", @project.settings
       assert @project.config_valid?
+      assert @project.error_message.empty?
     end
   end
-
       
   private
   
