@@ -30,7 +30,7 @@ class BuilderStatusTest < Test::Unit::TestCase
     FileUtils.expects(:touch).with('project_root/builder_status.checking_for_modifications')
     @builder_status.polling_source_control
   end
-
+  
   def test_build_loop_failed_creates_file__build_loop_failed__
     Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
     FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
@@ -42,6 +42,25 @@ class BuilderStatusTest < Test::Unit::TestCase
     Dir.expects(:'[]').with('project_root/builder_status.*').returns([])
     @project.stubs(:build_requested?).returns(false)
     assert_equal 'sleeping', @builder_status.status
+  end
+    
+  include FileSandbox
+  def test_status_should_return_svn_error
+    in_sandbox do |sandbox|
+      error_message = "nsubversion is down"
+      sandbox.new :file => "project_root/svn.err", :with_content => "echo command line\n#{error_message}"
+      assert_equal error_message, @builder_status.svn_error
+      assert_equal 'svn_error', @builder_status.status
+      
+      
+      FileUtils.rm "#{sandbox.root}/project_root/svn.err"
+      sandbox.new :file => "project_root/svn.err", :with_content => "echo command line\n \n "
+      assert_equal 'sleeping', @builder_status.status
+      
+      FileUtils.rm "#{sandbox.root}/project_root/svn.err"
+      assert_equal "", @builder_status.svn_error
+      assert_equal 'sleeping', @builder_status.status
+    end
   end
     
   def test_status_should_return_status_file_extension_when_status_file_exists

@@ -190,7 +190,7 @@ a.never_built, a.never_built:visited {
   float: left;
 }
 
-.project .builder_control .builder_status_builder_down, .project .builder_control .builder_status_unknown {
+.project .builder_control .builder_status_builder_down, .project .builder_control .builder_status_unknown, .project .builder_control .builder_status_svn_error {
   font-weight: bold;
   padding-top: 5px;
   padding-left: 25px;

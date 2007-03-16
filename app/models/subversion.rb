@@ -82,7 +82,10 @@ class Subversion
 
   def execute_in_local_copy(project, command)
     Dir.chdir(project.local_checkout) do
-      execute(command) { |io| return io.readlines }
+      err_file_path = project.path + "/svn.err"
+      FileUtils.rm_f(err_file_path)
+      FileUtils.touch(err_file_path)
+      execute(command, :stderr => err_file_path) { |io| return io.readlines }
     end
   end
 

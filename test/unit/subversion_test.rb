@@ -2,6 +2,11 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'stringio'
 
 class SubversionTest < Test::Unit::TestCase
+  include FileSandbox
+  
+  def teardown
+    FileUtils.rm_f "./svn.err"
+  end
 
   LOG_ENTRY = <<-EOF
 ------------------------------------------------------------------------
@@ -42,7 +47,7 @@ integration test does a checkout
     revision_number = 10
 
     svn = Subversion.new
-    svn.expects(:execute).with("svn --non-interactive update --revision #{revision_number}").returns("your mom")
+    svn.expects(:execute).with("svn --non-interactive update --revision #{revision_number}", {:stderr => './svn.err'}).returns("your mom")
 
     svn.update(dummy_project, Revision.new(revision_number))
   end
@@ -51,7 +56,7 @@ integration test does a checkout
     svn = Subversion.new
 
     svn.expects(:info).with(dummy_project).returns('Last Changed Rev' => '10')
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:10 --verbose").yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:10 --verbose", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
 
     revision = svn.latest_revision(dummy_project)
 
@@ -61,7 +66,7 @@ integration test does a checkout
   def test_revisions_since_should_reverse_the_log_entries_and_skip_the_one_corresponding_to_current_revision
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:15 --verbose").yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:15 --verbose", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
 
     revisions = svn.revisions_since(dummy_project, 15)
 
@@ -71,7 +76,7 @@ integration test does a checkout
   def test_revisions_since_should_return_all_revisions_when_curreent_revision_is_not_in_the_log_output
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose").yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
 
     revisions = svn.revisions_since(dummy_project, 14)
 
@@ -81,7 +86,7 @@ integration test does a checkout
   def test_revisions_since_should_return_an_empty_array_for_empty_log_output
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose").yields(StringIO.new(EMPTY_LOG))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose", {:stderr => './svn.err'}).yields(StringIO.new(EMPTY_LOG))
 
     revisions = svn.revisions_since(dummy_project, 14)
 
@@ -93,6 +98,20 @@ integration test does a checkout
     svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project .")
 
     svn.checkout('.')
+  end
+
+  def test_should_write_error_info_to_log_when_svn_server_not_available
+    in_sandbox do |sandbox|
+      sandbox.new :file => "project/work/empty", :with_content => ""
+      project = Object.new
+      project.stubs(:local_checkout).returns("#{sandbox.root}/project/work")
+      project.stubs(:path).returns("#{sandbox.root}/project")
+      svn = Subversion.new
+      svn.revisions_since(project, 1)
+      
+      log_content = File.open("#{sandbox.root}/project/svn.err"){|f| f.read}
+      assert_match /not a working copy/, log_content
+    end
   end
 
   def test_checkout_with_user_password
@@ -132,9 +151,9 @@ integration test does a checkout
     }
   end
 
-  DummyProject = Struct.new :local_checkout
+  DummyProject = Struct.new :local_checkout, :path
   def dummy_project
-    DummyProject.new('.')
+    DummyProject.new('.', '.')
   end
 
 end
