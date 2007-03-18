@@ -39,7 +39,9 @@ Rolling your eyes already? Hold on, this is not J2EE deployment descriptors we a
 hand-crafted angled brackets just to get started here. A typical project configuration is about 3 to 5 lines of very
 simple Ruby. Yes, the configuration language of CC.rb is Ruby.
 
-In [cruise]/projects/your_project/ directory, create file cruise_config.rb. Write the following in it:
+As you add a project, a configuration file is created for you in [cruise]/projects/your_project/ directory. It's named
+cruise_config.rb and almost everything in it is initially commented out. In fact, you can delete it and this will not
+change anything. There are two lines not commented out:
 
 <pre><code>Project.configure do |project|
 end
@@ -47,15 +49,14 @@ end
 
 Every cruise_config.rb must have these two lines. All your other configuration goes between them.
 
-You can also create cruise_config.rb in [cruise]/projects/your_project/work/ directory. In other words, check it into
+You can move cruise_config.rb in [cruise]/projects/your_project/work/ directory. In other words, check it into
 Subversion in the root directory of your project. Storing your CI configuration in your project's version control
-repository is usually a smart thing to do.
+is usually a smart thing to do.
 
 It is also possible to have two cruise_config.rb files for a project, one in the [cruise]/projects/your_project/
-directory, and the other in Subversion. CruiseControl.rb loads both files, but settings from cruise_config.rb in
-[cruise]/projects/your_project/ override those defined in Subversion. This can be useful when you want to see the
-effect of some configuration settings without checking them in, or if to keep passwords away from a Subversion
-repository where too many people can see them.
+directory, and the other in version control. CruiseControl.rb loads both files, but settings from cruise_config.rb in
+[cruise]/projects/your_project/ override those stored in version control. This can be useful when you want to see the
+effect of some configuration settings without checking them in, or have some local settings for this installation.
 
 p(hint). Hint: configuration examples below include lines that look like '...' This represents other
          configuration statements that may be in cruise_config.rb. You are not meant to copy-paste those dots into
@@ -74,7 +75,6 @@ logical statements, and generally do whatever makes sense. For example, consider
 end
 </code></pre>
 
-
 h1. What will it build by default?
 
 By default, CruiseControl.rb will search for "Rake":http://rake.rubyforge.org/ build file in your project. Then
@@ -88,6 +88,11 @@ If there is no <code>cruise</code> task anywhere in sight, CruiseControl.rb will
 Rails tasks that prepare a test database by deleting everything from it and executing
 "migration":http://www.rubyonrails.org/api/classes/ActiveRecord/Migration.html scripts from your_project/db/migrate.
 Finally, it will run all your automated tests.
+
+p(hint). WARNING: with Rails projects, it is important that RAILS_ENV does not default to 'production'.
+         Unless you want your migration scripts and unit tests to hit your production database, of course.
+         CruiseControl.reb clears this environment variable before calling 'cruise' or custom Rake task, and sets
+         it to 'test' before calling the defaults.
 
 h1. How can I change what the build does?
 
@@ -108,12 +113,13 @@ p(hint). Hint: When you have two builds for the same projects, and want to run t
          <code>ENV['RAILS_ENV'] = 'big_bertha'</code> as the first line of your <code>Big_Bertha_build</code> Rake task.
 
 p(hint). Hint: Ideally, you'd also want some way to chain builds so that the long build only for a new checkin is
-         launched once the short build has finished succesfully. For now, you can achieve something this with custom
-         schedulers. CruiseControl.rb team intends to provide built-in support for this scenario in a future version.
+         launched once the short build has finished succesfully. For now, you can achieve something like this with a
+         custom scheduler. CruiseControl.rb team intends to provide built-in support for this scenario in some future
+         version.
 
 Or you may not want to deal with Rake at all, but build your project by "make":http://www.gnu.org/software/make/,
 "Ant":http://ant.apache.org/ or "MSBuild":http://msdn2.microsoft.com/en-us/library/wea2sca5.aspx.
-Yes, CC.rb can deal with non-Ruby projects! We are running "JBehave":http://jbehave.org/ builds on
+Yes, CC.rb can deal with non-Ruby projects! We are running "JBehave":http://jbehave.org/ build on
 our "demo site":http://cruisecontrolrb.thoughtworks.com/builds/JBehave to prove the point.
 
 A custom build command can be set in <code>project.build_command</code> attribute. Modify cruise_config.rb file like
@@ -232,4 +238,3 @@ techniques, document builder plugins etc.
 
 p(hint). Hint to would-be contributors: documentation patches will be appreciated as highly as, if not higher than,
 source patches.
-
