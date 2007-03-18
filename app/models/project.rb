@@ -174,9 +174,10 @@ class Project
       end
     rescue => e
       notify(:build_loop_failed, e) rescue nil
+      @build_loop_failed = true
       raise
     ensure
-      notify(:sleeping) rescue nil
+      notify(:sleeping) unless @build_loop_failed rescue nil
     end
   end
 

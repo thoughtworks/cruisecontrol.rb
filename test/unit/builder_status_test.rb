@@ -35,7 +35,7 @@ class BuilderStatusTest < Test::Unit::TestCase
     Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
     FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
     FileUtils.expects(:touch).with('project_root/builder_status.error')
-    @builder_status.build_loop_failed
+    @builder_status.build_loop_failed(nil)
   end
   
   def test_status_should_return_sleeping_when_status_file_does_not_exist
@@ -45,24 +45,6 @@ class BuilderStatusTest < Test::Unit::TestCase
   end
     
   include FileSandbox
-  def test_status_should_return_svn_error
-    in_sandbox do |sandbox|
-      error_message = "nsubversion is down"
-      sandbox.new :file => "project_root/svn.err", :with_content => "echo command line\n#{error_message}"
-      assert_equal error_message, @builder_status.svn_error
-      assert_equal 'svn_error', @builder_status.status
-      
-      
-      FileUtils.rm "#{sandbox.root}/project_root/svn.err"
-      sandbox.new :file => "project_root/svn.err", :with_content => "echo command line\n \n "
-      assert_equal 'sleeping', @builder_status.status
-      
-      FileUtils.rm "#{sandbox.root}/project_root/svn.err"
-      assert_equal "", @builder_status.svn_error
-      assert_equal 'sleeping', @builder_status.status
-    end
-  end
-    
   def test_status_should_return_status_file_extension_when_status_file_exists
     ProjectBlocker.expects(:blocked?).with(@project).returns(true)
     @project.stubs(:build_requested?).returns(false)
@@ -101,5 +83,18 @@ class BuilderStatusTest < Test::Unit::TestCase
 
     assert_equal 'checking_for_modifications', @builder_status.status
   end
+  
+  def test_build_loop_failed_should_set_status_according_exception_passed_in
+    e = BuilderError.new("message", "status")
+    @builder_status.expects(:set_status).with("status")
+    @builder_status.build_loop_failed(e)
+    
+    e = BuilderError.new("message")
+    @builder_status.expects(:set_status).with("error")
+    @builder_status.build_loop_failed(e)
 
+    e = RuntimeError.new("message")
+    @builder_status.expects(:set_status).with("error")
+    @builder_status.build_loop_failed(e)
+  end
 end

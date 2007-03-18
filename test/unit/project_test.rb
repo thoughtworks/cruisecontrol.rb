@@ -113,12 +113,11 @@ class ProjectTest < Test::Unit::TestCase
 
       listener.expects(:polling_source_control)
       listener.expects(:build_loop_failed).with(error)
-      listener.expects(:sleeping)
       @project.add_plugin listener
       assert_raises(error) { @project.build_if_necessary }
     end
   end
-
+  
   def test_build_should_generate_event_when_build_is_broken
     in_sandbox do |sandbox|
       @project.path = sandbox.root
@@ -393,7 +392,7 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
   
-  def test_should_use_empty_configuration_if_exception_raised_during_load_config
+  def test_should_mark_config_invalid_if_exception_raised_during_load_config
     in_sandbox do |sandbox|
       invalid_ruby_code = 'class Invalid'
       @project.path = sandbox.root 

@@ -1,3 +1,5 @@
+require 'builder_error'
+
 class Subversion
   include CommandLine
 
@@ -85,7 +87,16 @@ class Subversion
       err_file_path = project.path + "/svn.err"
       FileUtils.rm_f(err_file_path)
       FileUtils.touch(err_file_path)
-      execute(command, :stderr => err_file_path) { |io| return io.readlines }
+      execute(command, :stderr => err_file_path) do |io| 
+        result = io.readlines 
+        begin 
+          error_message = File.open(err_file_path){|f|f.read}.strip.split("\n")[1] || ""
+        rescue
+          error_message = ""
+        end
+        raise BuilderError.new(error_message, "svn_error") unless error_message.empty?
+        return result
+      end
     end
   end
 

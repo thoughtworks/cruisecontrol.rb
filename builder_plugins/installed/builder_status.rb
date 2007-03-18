@@ -13,7 +13,6 @@ class BuilderStatus
     if builder_down?
       'builder_down'
     else
-      return 'svn_error' unless svn_error.empty?
       case _status = read_status
       when 'checking_for_modifications', 'sleeping'
         @project.build_requested? ? 'build_requested' : _status
@@ -39,16 +38,14 @@ class BuilderStatus
     set_status 'checking_for_modifications'
   end
 
-  def build_loop_failed
-    set_status 'error'
+  def build_loop_failed(e)
+    if e.is_a?(BuilderError)
+      set_status e.status
+    else
+      set_status 'error'
+    end
   end
   
-  def svn_error
-    File.open("#{@project.path}/svn.err"){|f| f.read}.strip.split("\n")[1] || ""
-  rescue => e
-    ""
-  end
-
   private
   
   def read_status

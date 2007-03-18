@@ -107,7 +107,10 @@ integration test does a checkout
       project.stubs(:local_checkout).returns("#{sandbox.root}/project/work")
       project.stubs(:path).returns("#{sandbox.root}/project")
       svn = Subversion.new
-      svn.revisions_since(project, 1)
+      begin
+        svn.revisions_since(project, 1)
+      rescue BuilderError => e
+      end
       
       log_content = File.open("#{sandbox.root}/project/svn.err"){|f| f.read}
       assert_match /not a working copy/, log_content
