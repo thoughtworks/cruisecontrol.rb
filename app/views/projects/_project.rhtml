@@ -40,7 +40,11 @@
                         "Element.update('build_#{project.to_param}', 'Wait...')"
            ) do %>
         <button id="build_<%= project.to_param %>" type="submit" class="build_button" value="txt" alt="Build Now">
-          Build Now
+          <% if project.builder_state_and_activity == 'builder_down' %>
+            Start Builder
+          <% else %>
+            Build Now
+          <% end %>
         </button>
       <% end %>
     </div>

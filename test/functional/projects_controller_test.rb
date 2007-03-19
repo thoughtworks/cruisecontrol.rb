@@ -90,6 +90,19 @@ class ProjectsControllerTest < Test::Unit::TestCase
     get :index
     assert_tag :tag => "a", :attributes => {:href => /\/projects\/one/}, :content => "one"
   end
+  
+  def test_dashboard_should_have_button_to_start_builder_if_builder_is_down
+    project = create_project_stub('one', 'success')
+    Projects.stubs(:load_all).returns([project])
+    
+    project.stubs(:builder_state_and_activity).returns("builder_down")
+    get :index
+    assert_tag :tag => "button", :content => /Start Builder/
+
+    project.stubs(:builder_state_and_activity).returns("sleeping")
+    get :index
+    assert_tag :tag => "button", :content => /Build Now/
+  end
 
   def test_show_action_with_html_format_should_redirect_to_builds_show
     stub_project = Object.new
