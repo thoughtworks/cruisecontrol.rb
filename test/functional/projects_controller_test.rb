@@ -208,4 +208,11 @@ class ProjectsControllerTest < Test::Unit::TestCase
     ChangesetLogParser.stubs(:new).returns(mock)
     mock.expects(:parse_log).returns([])
   end
+  
+  def test_should_disable_build_now_button_if_DISABLE_BUILD_is_set_true
+    $DISABLE_BUILD = true
+    Projects.expects(:load_all).returns([create_project_stub('one', 'success')])
+    get :index
+    assert_tag :tag => "button", :attributes => {:onclick => /return false;/}
+  end
 end

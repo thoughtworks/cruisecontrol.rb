@@ -30,3 +30,6 @@
 #
 # For further details about configuring email notification, see Ruby On Rails documentation for ActionMailer::Base.
 
+# If you don't want to allow anyone trigger build through dashboard, you can set as follow:
+# $DISABLE_BUILD = true
+# Notice: if you set above attribute, all projects on the dashboard are disable to trigger build.

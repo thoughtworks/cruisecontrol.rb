@@ -58,3 +58,4 @@ require 'cruise_control/version'
 
 # custom MIME type for CCTray application
 Mime::Type.register "application/cctray", :cctray
+

@@ -39,7 +39,9 @@
                         "$('build_#{project.to_param}').className = 'build_button_disabled'; " +
                         "Element.update('build_#{project.to_param}', 'Wait...')"
            ) do %>
-        <button id="build_<%= project.to_param %>" type="submit" class="build_button" value="txt" alt="Build Now">
+        <button 
+            <% if $DISABLE_BUILD %>onclick="alert('Build Now button is disabled on the demo site.'); return false;"<% end %>
+            id="build_<%= project.to_param %>" type="submit" class="build_button" value="txt" alt="Build Now">
           <% if project.builder_state_and_activity == 'builder_down' %>
             Start Builder
           <% else %>
@@ -67,7 +69,6 @@
       <% end %>
     <% end %>   
   </td>
-
 </tr>
 </table>
 </div>
