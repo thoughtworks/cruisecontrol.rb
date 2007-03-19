@@ -35,7 +35,8 @@ class ProjectLogger
 
   def build_loop_failed(error)
     CruiseControl::Log.event("Build loop failed", :debug)
-    CruiseControl::Log.debug("#{error.class}: #{error.message}\n" + error.backtrace.map { |line| "  #{line}" }.join("\n"))
+    backtrace = error.backtrace.map { |line| "  #{line}" }.join("\n") rescue ""
+    CruiseControl::Log.debug("#{error.class}: #{error.message}\n#{backtrace}")
   end
 
 end

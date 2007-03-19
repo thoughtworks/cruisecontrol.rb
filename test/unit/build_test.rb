@@ -130,7 +130,7 @@ class BuildTest < Test::Unit::TestCase
       Build.new(project, 123).status
     end
   end
-
+  
   def test_build_command_customization
     with_sandbox_project do |sandbox, project|
       build_with_defaults = Build.new(project, '1')
@@ -183,4 +183,25 @@ class BuildTest < Test::Unit::TestCase
     end
   end  
     
+  def test_should_pass_error_to_build_status_if_config_file_is_invalid
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :file => "build-1/build.log"
+      project.stubs(:error_message).returns("fail message")
+      project.stubs(:"config_valid?").returns(false)
+      
+      build = Build.new(project, 1)
+      build.run
+      assert_equal "fail message", File.open("build-1/build_status.failed.in0s"){|f|f.read}
+      assert_equal "config error", build.brief_error
+    end   
+  end
+    
+  def test_should_pass_error_to_build_status_if_plugin_error_happens
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :file => "build-1/build_status.success.in0s"
+      build = Build.new(project, 1)
+      build.stubs(:plugin_errors).returns("plugin error")
+      assert_equal "plugin error", build.brief_error
+    end   
+  end    
 end

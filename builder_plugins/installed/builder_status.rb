@@ -22,6 +22,10 @@ class BuilderStatus
     end
   end
 
+  def fatal?
+    status == 'svn_error'
+  end
+  
   def build_initiated
     set_status 'building'
   end

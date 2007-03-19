@@ -16,7 +16,7 @@ class BuilderStatusTest < Test::Unit::TestCase
     FileUtils.expects(:touch).with('project_root/builder_status.building')
     @builder_status.build_initiated
   end  
-  
+ 
   def test_sleeping_creates_file__sleeping__
     Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
     FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
@@ -96,5 +96,10 @@ class BuilderStatusTest < Test::Unit::TestCase
     e = RuntimeError.new("message")
     @builder_status.expects(:set_status).with("error")
     @builder_status.build_loop_failed(e)
+  end
+  
+  def test_should_know_fatal_status
+    @builder_status.expects(:status).returns("svn_error")
+    assert @builder_status.fatal?
   end
 end

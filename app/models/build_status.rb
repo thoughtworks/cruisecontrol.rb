@@ -1,5 +1,5 @@
 class BuildStatus
-
+  
   def initialize(artifacts_directory)
     @artifacts_directory = artifacts_directory 
   end
@@ -19,7 +19,7 @@ class BuildStatus
   def failed?
     read_latest_status == 'failed'
   end
-
+  
   def start!
     remove_status_file
     touch_status_file("incomplete")
@@ -30,11 +30,11 @@ class BuildStatus
     touch_status_file("success.in#{elapsed_time}s")
   end
   
-  def fail!(elapsed_time)
+  def fail!(elapsed_time, error_message=nil)
     remove_status_file
-    touch_status_file("failed.in#{elapsed_time}s")
+    touch_status_file("failed.in#{elapsed_time}s", error_message)
   end
-    
+  
   def created_at
     if file = status_file
       File.mtime(file)
@@ -63,32 +63,36 @@ class BuildStatus
     file = status_file
     match_elapsed_time(File.basename(file))
   end
-
+  
   def match_elapsed_time(file_name)
     match =  /^build_status\.[^\.]+\.in(\d+)s$/.match(file_name)
     raise 'Could not parse elapsed time.' if !match or !$1
     $1.to_i
   end
-        
+ 
+  def status_file
+      Dir["#{@artifacts_directory}/build_status.*"].first
+  end
+  
   private
   
   def read_latest_status
     file = status_file
     file ? match_status(File.basename(file)).downcase : 'never_built'
   end
-
+  
   def remove_status_file
     FileUtils.rm_f(Dir["#{@artifacts_directory}/build_status.*"])
   end
   
-  def touch_status_file(status)
-    FileUtils.touch("#{@artifacts_directory}/build_status.#{status}")
+  def touch_status_file(status, error_message=nil)
+    filename = "#{@artifacts_directory}/build_status.#{status}"
+    FileUtils.touch(filename)
+    if error_message
+      File.open(filename, "w"){|f|f.write error_message}
+    end
   end
-  
-  def status_file
-    Dir["#{@artifacts_directory}/build_status.*"].first
-  end
-  
+    
   def match_status(file_name)
      /^build_status\.([^\.]+)(\..+)?/.match(file_name)[1]
   end

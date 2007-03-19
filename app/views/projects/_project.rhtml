@@ -57,7 +57,11 @@
         </div>
       <% end %>
       <%= show_revisions_in_build(revisions_in_build(latest_build)) %>
-    <% end %>
+      <br>
+      <% if latest_build.brief_error %>
+        <div><%= link_to latest_build.brief_error, {:action => 'show', :id => project.name}, {:class => "failed"} %></div>
+      <% end %>
+    <% end %>   
   </td>
 
 </tr>

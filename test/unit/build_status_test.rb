@@ -126,7 +126,7 @@ class BuildStatusTest < Test::Unit::TestCase
     Time.expects(:now).returns(time_with_fractional_seconds)
     assert_equal 10, BuildStatus.new("artifacts_directory").elapsed_time_in_progress
   end
-
+  
   private
 
   def assert_exception_when_parsing_elapsed_time(file_name)

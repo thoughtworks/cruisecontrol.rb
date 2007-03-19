@@ -21,7 +21,7 @@ ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
 
 class Test::Unit::TestCase
-
+  
   def assert_raises(arg1 = nil, arg2 = nil)
     expected_error = arg1.is_a?(Exception) ? arg1 : nil
     expected_class = arg1.is_a?(Class) ? arg1 : nil
@@ -39,11 +39,11 @@ class Test::Unit::TestCase
       assert_matched(expected_message, e.message, "Unexpected error message") if expected_message.is_a? Regexp
     end
   end
-
+  
   def assert_false(expression)
     assert_equal false, expression
   end
-
+  
   def in_total_sandbox(&block)
     in_sandbox do |sandbox|
       @dir = File.expand_path(sandbox.root)
@@ -53,14 +53,14 @@ class Test::Unit::TestCase
       yield(sandbox)
     end
   end
-
+  
   def with_sandbox_project(&block)
     in_total_sandbox do |sandbox|
       FileUtils.mkdir_p("#{sandbox.root}/work")
-
+      
       project = Project.new('my_project')
       project.path = sandbox.root
-
+      
       yield(sandbox, project)
     end
   end
@@ -80,7 +80,7 @@ class Test::Unit::TestCase
     
     project
   end
-
+  
   def create_build_stub(label, status, time = Time.at(0))
     build = Object.new
     build.stubs(:label).returns(label)
@@ -90,19 +90,21 @@ class Test::Unit::TestCase
     build.stubs(:successful?).returns(status == 'success')
     build.stubs(:incomplete?).returns(status == 'incomplete')
     build.stubs(:changeset).returns("bobby checked something in")
+    build.stubs(:brief_error).returns(nil)
+    
     build
   end
-
+  
   class FakeSourceControl
     attr_reader :username
     
     def initialize(username)
       @username = username
     end
-
+    
     def checkout(dir)
       File.open("#{dir}/README", "w") {|f| f << "some text"}
     end
-
+    
   end  
 end

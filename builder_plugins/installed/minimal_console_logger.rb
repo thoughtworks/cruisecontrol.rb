@@ -22,7 +22,8 @@ class MinimalConsoleLogger
 
   def build_loop_failed(error)
     puts "Build loop failed"
-    puts "#{error.class}: #{error.message}\n" + error.backtrace.map { |line| "  #{line}" }.join("\n")
+    puts "#{error.class}: #{error.message}"
+    puts error.backtrace.map { |line| "  #{line}" }.join("\n") rescue nil
   end
   
   def configuration_modified

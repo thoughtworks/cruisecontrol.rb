@@ -153,6 +153,7 @@ class Project
   end
     
   def last_build_status
+    return "failed" if BuilderStatus.new(self).fatal?
     builds.empty? ? 'never_built' : last_build.status
   end
 
