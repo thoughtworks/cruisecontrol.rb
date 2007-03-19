@@ -21,9 +21,9 @@
         <div class="builds_list">
           <% recent_builds.each do |build| %>
             <% if build == recent_builds.first %>
-                <div class="build_summary"><%= hyperlink_to_build_with_elapsed_time(project, build) %></div>
+                <div class="build_summary"><%= link_to_build_with_elapsed_time(project, build) %></div>
             <% else %>
-                <div class="build_summary"><%= hyperlink_to_build(project, build) %></div>
+                <div class="build_summary"><%= link_to_build(project, build) %></div>
             <% end %>
           <% end %>
         </div>

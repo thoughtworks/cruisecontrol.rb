@@ -5,6 +5,7 @@ class ProjectsController
 end
 
 class BuildsHelperTest < Test::Unit::TestCase
+
   include BuildsHelper
   include ApplicationHelper
   include ActionView::Helpers::UrlHelper
@@ -21,7 +22,7 @@ class BuildsHelperTest < Test::Unit::TestCase
 
   def test_format_build_log_links_to_code_inside_project
     expected = <<-EOL
-<a href="/projects/code/mine/vendor/rails/activesupport/lib/active_support/dependencies.rb?line=477#477">./vendor/rails/activesupport/lib/active_support/dependencies.rb:477</a>:in `const_missing'
+<a href="/projects/code/mine/vendor/rails/activesupport/lib/active_support/dependencies.rb?line=477#477">/Users/jeremy/src/cruisecontrolrb/builds/CruiseControl/work/config/../vendor/rails/actionpack/lib/../../activesupport/lib/active_support/dependencies.rb:477</a>:in `const_missing'
 <a href="/projects/code/mine/test/unit/builder_status_test.rb?line=8#8">./test/unit/builder_status_test.rb:8</a>:in `setup'
     EOL
     
@@ -35,13 +36,13 @@ class BuildsHelperTest < Test::Unit::TestCase
 
   def test_format_build_log_links_to_code_knows_about_rails_root
     expected = <<-EOL
-<a href="/projects/code/mine/test/unit/builder_status_test.rb?line=8#8">./test/unit/builder_status_test.rb:8</a>:in `setup'
-<a href="/projects/code/mine/test/unit/builder_status_test.rb?line=8#8">./test/unit/builder_status_test.rb:8</a>:in `setup'
+<a href="/projects/code/mine/test/unit/builder_status_test.rb?line=8#8">test/unit/builder_status_test.rb:8</a>:in `setup'
+<a href="/projects/code/mine/test/unit/builder_status_test.rb?line=8#8">\#{RAILS_ROOT}/test/unit/builder_status_test.rb:8</a>:in `setup'
     EOL
     
     log = <<-EOL
 test/unit/builder_status_test.rb:8:in `setup'
-\#\{RAILS_ROOT\}/test/unit/builder_status_test.rb:8:in `setup'
+\#{RAILS_ROOT}/test/unit/builder_status_test.rb:8:in `setup'
     EOL
     
     assert_equal expected, format_build_log(log)
@@ -50,7 +51,7 @@ test/unit/builder_status_test.rb:8:in `setup'
   def test_format_build_log_doesnt_link_to_code_outside_project
     expected = <<-EOL
 ../foo:20
-<a href="/projects/code/mine/index.html?line=30#30">./index.html:30</a>
+<a href="/projects/code/mine/index.html?line=30#30">../work/index.html:30</a>
 /ruby/gems/ruby.rb:25
     EOL
     
@@ -103,4 +104,5 @@ Message: NameError: uninitialized constant BuilderStatusTest::BuilderStatus
   def h(text)
     text
   end
+  
 end

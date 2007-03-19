@@ -1,7 +1,7 @@
 h1. Manual
 
 This is the CruiseControl.rb manual. If you can't find what you're looking for here, make sure to look at the docs
-for "plugins":plugins.html or just "contact us":contact_us.html
+for "plugins":/documentation/plugins or just "contact us":/documentation/contact_us
 
 h1. Files and folders
 

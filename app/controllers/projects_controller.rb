@@ -12,7 +12,6 @@ class ProjectsController < ApplicationController
     end
   end
 
-  # Projects#show serves RSS feed for a specific project. So far, we have no HTML view associated with one project
   def show
     render :text => 'Project not specified', :status => 404 and return unless params[:id]
 

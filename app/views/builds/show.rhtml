@@ -4,7 +4,7 @@
   <strong>Build history</strong>
   <% @project.builds.reverse.each do |build| %>
     <div class="build-link<%= ' selected' if @build.label == build.label %>">
-      <%= hyperlink_to_build(@project, build) %>
+      <%= link_to_build(@project, build) %>
     </div>
   <% end %>
 </div>

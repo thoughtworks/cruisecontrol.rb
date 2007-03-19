@@ -42,5 +42,5 @@ building itself and some other open-source projects.
 
 <div class="next_step">
   Next step: <%= link_to_download 'Download' %> CruiseControl.rb and
-  "get started":getting_started.html 
+  "get started":/documentation/getting_started
 </div>

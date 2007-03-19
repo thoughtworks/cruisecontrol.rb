@@ -23,10 +23,10 @@ class BuildsController < ApplicationController
     path = File.join(@build.artifacts_directory, params[:path])
 
     if File.directory? path
-      if File.exists? path + "/index.html"
+      if File.exists?(path + '/index.html')
         redirect_to :path => File.join(params[:path], 'index.html')
       else
-        # eventually spit up an index
+        # TODO: generate an index from directory contents
         render :text => "this should be an index of #{params[:path]}"
       end
     elsif File.exists? path

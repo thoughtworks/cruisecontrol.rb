@@ -3,11 +3,11 @@
 h2. Quick links
 
 * <%= link_to_download 'Download' %>
-* "Watch 5 min install":/documentation/screencasts.html
+* "Watch 5 min install":/documentation/screencasts
 * "Report a Bug":http://jira.public.thoughtworks.org/browse/CCRB
 * "Request a Feature":http://jira.public.thoughtworks.org/browse/CCRB
 * <%= link_to_users_mailing_list 'Users mailing list' %>
-* "How to contribute":/documentation/contributing.html
+* "How to contribute":/documentation/contributing
 
 </div>
 <div class="box">

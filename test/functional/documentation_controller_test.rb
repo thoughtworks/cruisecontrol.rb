@@ -13,16 +13,19 @@ class DocumentationControllerTest < Test::Unit::TestCase
 
   def test_documentation
     get :get, :path => []
-    assert_redirected_to :path => 'index.html'
+    assert_response :success
     
-    get :get, :path => 'docs.html'
+    get :get, :path => 'docs'
+    assert_response :success
     assert_template 'documentation/docs'
     
-    get :get, :path => 'bad_request.html'
+    get :get, :path => 'bad_request'
     assert_response 404
   end
   
   def test_plugins
     get :plugins, :type => 'installed', :name => 'builder_status.rb'
+    assert_response :success
   end
+
 end

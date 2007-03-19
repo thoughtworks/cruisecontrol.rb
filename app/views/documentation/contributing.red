@@ -22,8 +22,8 @@ the tracker against spam and make sure that we can get in touch with you if we h
 
 Please try to be as specific as possible about the symptoms and likely root causes of the problem, include
 screenshots, stack traces, quotes from log files or any other relevant information. Do not neglect
-<strong>"reading the fine manual":manual.html</strong>, and consulting the "troubleshooting guide":troubleshooting.html
-for some useful debugging / evidence gathering techniques.
+<strong>"reading the fine manual":/documentation/manual</strong>, and consulting the
+"troubleshooting guide":/documentation/troubleshooting for some useful debugging / evidence gathering techniques.
 
 Also, please try to make sure that the problem is in CruiseControl.rb, not in your build or CI configuration. It can be
 quite embarrassing to go through a long chain of emails, and learn at the end of it that it was your problem and you
@@ -153,7 +153,8 @@ teams need it (these days, we do a lot of Ruby work).
 
   Therefore, we ask that all contributors to CruiseControl.rb share ownership of their contribution with us.  
 
-It is distributed under a free open-source "license":license.html. However, ThoughtWorks wants to ensure that ownership of the codebase remains clear. So, if you want to contribute code to CruiseControl.rb, and you don't work
+It is distributed under a free open-source "license":/documentation/license. However, ThoughtWorks wants to ensure
+that ownership of the codebase remains clear. So, if you want to contribute code to CruiseControl.rb, and you don't work
 for ThoughtWorks (by the way, is there any good reason why you don't?), we may ask you to share ownership of your
 contributions to us. This is not some sort of evil world domination scheme, just a legal precaution. Apache Software
-Foundation, in fact, does "something quite similar":http://www.apache.org/licenses/icla.txt.
+Foundation, in fact, does "something similar":http://www.apache.org/licenses/icla.txt.

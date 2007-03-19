@@ -55,10 +55,10 @@ h1. Assumptions and limitations
 
 h1. Installation
 
-Follow these directions or watch our "5 minute install":screencasts.html screencast.
+Follow these directions or watch our "5 minute install":/documentation/screencasts screencast.
 
 
-1. "Download":download.html and unpack CruiseControl.rb
+1. "Download":/documentation/download and unpack CruiseControl.rb
 
   p(def). (below, we will refer to the place where you unpack it as [cruise])
 
@@ -104,4 +104,4 @@ Follow these directions or watch our "5 minute install":screencasts.html screenc
     displays options available for each command.
 
 
-<div class="next_step">Next step: read the "manual":manual.html</div>
+<div class="next_step">Next step: read the "manual":/documentation/manual</div>
