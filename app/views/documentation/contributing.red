@@ -154,10 +154,8 @@ CruiseControl.rb is developed by "ThoughtWorks":http://www.thoughtworks.com.
 ThoughtWorks is an IT consultancy, and we built this tool primarily because our own project
 teams need it (these days, we do a lot of Ruby work).
 
-  Therefore, we ask that all contributors to CruiseControl.rb share ownership of their contribution with us.  
-
 It is distributed under a free open-source "license":/documentation/license. However, ThoughtWorks wants to ensure
 that ownership of the codebase remains clear. So, if you want to contribute code to CruiseControl.rb, and you don't work
-for ThoughtWorks (by the way, is there any good reason why you don't?), we may ask you to share ownership of your
+for ThoughtWorks (by the way, is there any good reason why you don't?), we will ask you to share ownership of your
 contributions to us. This is not some sort of evil world domination scheme, just a legal precaution. Apache Software
 Foundation, in fact, does "something similar":http://www.apache.org/licenses/icla.txt.

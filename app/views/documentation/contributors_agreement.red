@@ -1,6 +1,6 @@
 Hi &lt;Billy-Joe&gt; Contributor, 
 
-CruiseControl.rb is distributed under the Apache 2.0 open-source license. However, ThoughtWorks wants to ensure that ownership of the codebase remains clear. Therefore, we ask that all contributors to CruiseControl.rb share ownership of their contribution with us. This is not some sort of evil world domination scheme, just a legal precaution. Apache Software Foundation in fact does something to accomplish a similar outcome: http://www.apache.org/licenses/icla.txt . 
+CruiseControl.rb is distributed under the Apache 2.0 open-source license. However, ThoughtWorks wants to ensure that ownership of the codebase remains clear. Therefore, we ask that all contributors to CruiseControl.rb share ownership of their contribution with us. This is not some sort of evil world domination scheme, just a legal precaution. Apache Software Foundation in fact does something similar: http://www.apache.org/licenses/icla.txt . 
 
 We deeply value contributions from the community (what is an open source project without any?) and request that you read and respond to this email indicating your agreement to the following terms so that we can accept your contribution. 
 
