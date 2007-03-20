@@ -51,5 +51,9 @@ module BuildsHelper
     build_time_text = format_time(@build.time, :verbose)
     elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}"
   end
-
+  
+  def navigate_build_link(text, project, build)
+    link_to text, build_url(:project => project.name, :build => build.label), :class => 'navigate_build'
+  end
+  
 end

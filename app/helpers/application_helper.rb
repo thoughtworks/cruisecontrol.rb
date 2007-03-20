@@ -60,15 +60,13 @@ module ApplicationHelper
       '' # The build time is not present.
     end
   end
-      
-  private
-  
-  def build_label(build)
-    "#{build.label} (#{format_time(build.time, :human)})"
-  end
   
   def build_link(text, project, build)
     link_to text, build_url(:project => project.name, :build => build.label), :class => build.status
   end
-    
+        
+  private 
+  def build_label(build)
+    "#{build.label} (#{format_time(build.time, :human)})"
+  end    
 end

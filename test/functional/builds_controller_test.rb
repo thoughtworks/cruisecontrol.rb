@@ -44,6 +44,18 @@ class BuildsControllerTest < Test::Unit::TestCase
       assert_template 'show'
       assert_equal project, assigns(:project)
       assert_equal '24', assigns(:build).label
+      
+      assert_tag :tag => 'a', 
+                 :content => 'Next Build',
+                 :attributes => {:href => /\/builds\/#{project.name}\/25/}
+
+      assert_tag :tag => 'a', 
+                 :content => 'Previous Build',
+                 :attributes => {:href => /\/builds\/#{project.name}\/24/}
+
+      assert_tag :tag => 'a', 
+                 :content => 'Latest Build',
+                 :attributes => {:href => /\/builds\/#{project.name}\/25/}
     end
   end
 

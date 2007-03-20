@@ -140,6 +140,28 @@ class Project
     builds.last
   end
   
+  def previous_build(current_build)  
+    all_builds = builds
+    index = get_build_index(all_builds, current_build.label)
+    
+    if index > 0
+      return all_builds[index-1]
+    else  
+      return all_builds[0]
+    end
+  end
+  
+  def next_build(current_build)
+    all_builds = builds
+    index = get_build_index(all_builds, current_build.label)
+
+    if index == 0 || index == (all_builds.size - 1)
+      return last_build
+    else
+      return all_builds[index + 1]
+    end
+  end
+  
   def last_complete_build
     builds.reverse.each do |build|
       return build unless build.incomplete?
@@ -339,7 +361,12 @@ class Project
   def remove_build_requested_flag_file
     FileUtils.rm_f(Dir[build_requested_flag_file])
   end
-
+  
+  def get_build_index(all_builds, build_label)
+    result = 0;
+    all_builds.each_with_index {|build, index| result = index if build.label.to_s == build_label}
+    result 
+  end
 end
 
 # TODO make me pretty, move me to another file, invoke me from environment.rb

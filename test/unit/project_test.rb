@@ -424,7 +424,38 @@ class ProjectTest < Test::Unit::TestCase
     BuilderStatus.expects(:new).with(@project).returns(builder_status)
     assert_equal "failed", @project.last_build_status
   end
+   
+   
+  def test_should_be_able_to_get_previous_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      sandbox.new :file => "build-1/build_status.success"
+      sandbox.new :file => "build-2/build_status.failure"
+      sandbox.new :file => "build-3/build_status.incomplete"
       
+      build = @project.find_build('2')
+      assert_equal('1', @project.previous_build(build).label)
+      
+      build = @project.find_build('1')
+      assert_equal('1', @project.previous_build(build).label)
+    end
+  end
+  
+  def test_should_be_able_to_get_next_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      sandbox.new :file => "build-1/build_status.success"
+      sandbox.new :file => "build-2/build_status.failure"
+      sandbox.new :file => "build-3/build_status.incomplete"
+      
+      build = @project.find_build('2')
+      assert_equal('3', @project.next_build(build).label)
+      
+      build = @project.find_build('3')
+      assert_equal('3', @project.next_build(build).label)
+    end
+  end
+   
   private
   
   def stub_build(label)

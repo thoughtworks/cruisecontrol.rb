@@ -338,3 +338,8 @@ a.never_built, a.never_built:visited {
   background-color: #ccf;
 }
 
+.navigate_build {
+  color: #0000FF;
+  font-size: 1.5em;
+  padding: 1em 1em 1em 1em;
+}

@@ -9,6 +9,13 @@
   <% end %>
 </div>
 
+<br>
+<div>
+  <%= navigate_build_link 'Previous Build', @project, @project.previous_build(@build) %>
+  <%= navigate_build_link 'Next Build', @project, @project.next_build(@build) %>
+  <%= navigate_build_link 'Latest Build', @project, @project.last_build %>
+</div>
+
 <div id="build_details">
   <h1>
     <%= h @project.name %> build <%= h @build.label %>
