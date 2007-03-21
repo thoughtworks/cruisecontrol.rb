@@ -7,9 +7,9 @@ xml.Projects do
     :name => project.name,
     :category => "",
     :activity => map_to_cctray_activity(project.builder_state_and_activity),
-    :lastBuildStatus => map_to_cctray_project_status(project.last_build_status),
-    :lastBuildLabel => (project.last_build ? project.last_build.label : 'Unknown'),
-    :lastBuildTime => (project.last_build ? format_time(project.last_build.time, :round_trip_local) : '1970-01-01T00:00:00Z'),
+    :lastBuildStatus => map_to_cctray_project_status(project.last_complete_build_status),
+    :lastBuildLabel => (project.last_complete_build ? project.last_complete_build.label : 'Unknown'),
+    :lastBuildTime => (project.last_complete_build ? format_time(project.last_complete_build.time, :round_trip_local) : '1970-01-01T00:00:00Z'),
     :nextBuildTime => '1970-01-01T00:00:00Z',
     :projectWebUrl => cc_url)
   end

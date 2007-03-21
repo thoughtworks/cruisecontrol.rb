@@ -174,9 +174,9 @@ class Project
     builds.find { |build| build.label.to_s == label }
   end
     
-  def last_build_status
+  def last_complete_build_status
     return "failed" if BuilderStatus.new(self).fatal?
-    builds.empty? ? 'never_built' : last_build.status
+    last_complete_build ? last_complete_build.status : 'never_built'
   end
 
   def last_five_builds

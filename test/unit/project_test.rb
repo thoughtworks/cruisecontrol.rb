@@ -418,11 +418,11 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
   
-  def test_last_build_status_should_be_failed_if_builder_status_is_fatal
+  def test_last_complete_build_status_should_be_failed_if_builder_status_is_fatal
     builder_status = Object.new
     builder_status.expects(:"fatal?").returns(true)
     BuilderStatus.expects(:new).with(@project).returns(builder_status)
-    assert_equal "failed", @project.last_build_status
+    assert_equal "failed", @project.last_complete_build_status
   end
    
    

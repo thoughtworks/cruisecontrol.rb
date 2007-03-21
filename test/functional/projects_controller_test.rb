@@ -131,6 +131,21 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal 'two', REXML::XPath.first(xml, '/Projects/Project[2]]').attributes['name']
   end
 
+  def test_index_cctray_should_exclude_incomplete_build
+    Projects.expects(:load_all).returns([
+        create_project_stub('one', 'failed', [create_build_stub('10', 'failed'), create_build_stub('11', 'incomplete')])
+        ])
+
+    post :index, :format => 'cctray'
+
+    xml = REXML::Document.new(@response.body)
+    assert_equal 'one', REXML::XPath.first(xml, '/Projects/Project[1]]').attributes['name']
+    assert_equal 'Failure', REXML::XPath.first(xml, '/Projects/Project[1]]').attributes['lastBuildStatus']
+    assert_equal '10', REXML::XPath.first(xml, '/Projects/Project[1]').attributes['lastBuildLabel']
+    assert_equal 'Building', REXML::XPath.first(xml, '/Projects/Project[1]]').attributes['activity']
+  end
+
+
   def test_code
     in_sandbox do |sandbox|
       project = Project.new('three')
@@ -203,16 +218,17 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal 'Project "non_existing_project" not found', @response.body
   end
 
-  def stub_change_set_parser
-    mock = Object.new  
-    ChangesetLogParser.stubs(:new).returns(mock)
-    mock.expects(:parse_log).returns([])
-  end
-  
   def test_should_disable_build_now_button_if_configured_to_do_so
-    Configuration.stubs(:disable_build_now).returns(true)
+    Configuration.stubs(:disable_build_now).returns(:true)
     Projects.expects(:load_all).returns([create_project_stub('one', 'success')])
     get :index
     assert_tag :tag => "button", :attributes => {:onclick => /return false;/}
   end
+
+  def stub_change_set_parser
+    mock = Object.new
+    ChangesetLogParser.stubs(:new).returns(mock)
+    mock.expects(:parse_log).returns([])
+  end
+
 end

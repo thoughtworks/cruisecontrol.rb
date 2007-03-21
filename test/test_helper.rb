@@ -65,10 +65,10 @@ class Test::Unit::TestCase
     end
   end
   
-  def create_project_stub(name, last_build_status = 'failed', last_five_builds = [])
+  def create_project_stub(name, last_complete_build_status = 'failed', last_five_builds = [])
     project = Object.new
     project.stubs(:name).returns(name)
-    project.stubs(:last_build_status).returns(last_build_status)
+    project.stubs(:last_complete_build_status).returns(last_complete_build_status)
     project.stubs(:last_five_builds).returns(last_five_builds)
     project.stubs(:builder_state_and_activity).returns('building')
     project.stubs(:last_build).returns(last_five_builds.last)
