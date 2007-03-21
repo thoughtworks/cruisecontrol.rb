@@ -55,7 +55,7 @@ class BuildsControllerTest < Test::Unit::TestCase
 
       assert_tag :tag => 'a', 
                  :content => 'Latest Build',
-                 :attributes => {:href => /\/builds\/#{project.name}\/25/}
+                 :attributes => {:href => /\/builds\/#{project.name}/}
     end
   end
 

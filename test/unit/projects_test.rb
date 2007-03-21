@@ -23,6 +23,25 @@ class ProjectsTest < Test::Unit::TestCase
     end
   end
 
+  def test_should_always_reload_project_objects
+    in_sandbox do |sandbox|
+      sandbox.new :file => "one/cruise_config.rb", :with_content => ""
+      sandbox.new :file => "two/cruise_config.rb", :with_content => ""
+
+      projects = Projects.new(sandbox.root)
+      old_projects = projects.load_all
+      old_project_one = Project.read("#{sandbox.root}/one", false)
+      
+      sandbox.new :file => "three/cruise_config.rb", :with_content => ""
+      projects = Projects.new(sandbox.root)
+      current_projects = projects.load_all
+      current_project_one = Project.read("#{sandbox.root}/one", false)
+      
+      assert_not_equal old_projects, current_projects
+      assert_not_same old_project_one, current_project_one
+    end
+  end
+
   def test_add
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
