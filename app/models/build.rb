@@ -6,7 +6,7 @@ class Build
 
   def initialize(project, label)
     @project, @label = project, label
-    FileUtils.mkdir_p(artifacts_directory)
+    FileUtils.mkdir_p(artifacts_directory) unless File.exist?(artifacts_directory)
     @status = BuildStatus.new(artifacts_directory)
   end
 
