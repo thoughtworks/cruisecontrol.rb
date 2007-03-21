@@ -59,6 +59,22 @@ class BuildsControllerTest < Test::Unit::TestCase
     end
   end
 
+  def test_show_only_30_builds_and_drop_down_list
+    with_sandbox_project do |sandbox, project|
+      (1..50).each{|i| sandbox.new :file => "build-#{i}/build_status.pingpong"}
+      Projects.stubs(:find).with(project.name).returns(project)
+      
+      get :show, :project => project.name
+      assert_tag :tag => 'a', :content => /30 \(.*\)/
+      assert_no_tag :tag => 'a', :content => /11 \(.*\)/
+      assert_tag :tag => "option", :parent => {:tag => "select"}, :content => /11 \(.*\)/
+      assert_tag :tag => "option", :attributes => {:selected => "selected"}, :content => "Older Builds..."
+
+      get :show, :project => project.name, :build => "11"
+      assert_tag :tag => "option", :attributes => {:selected => "selected"}, :content => /11 \(.*\)/
+    end
+  end
+
   def test_show_with_no_build
     with_sandbox_project do |sandbox, project|
       Projects.expects(:find).with(project.name).returns(project)

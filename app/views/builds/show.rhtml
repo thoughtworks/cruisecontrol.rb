@@ -2,11 +2,17 @@
 
 <div id="builds_list">
   <strong>Build history</strong>
-  <% @project.builds.reverse.each do |build| %>
+  <% @project.last_builds(30).each do |build| %>
     <div class="build-link<%= ' selected' if @build.label == build.label %>">
       <%= link_to_build(@project, build) %>
     </div>
   <% end %>
+
+  <div>
+  <% form_tag({:action => 'show'}, :method => :get) do %>
+  <%= select_builds_except_last @project, 30 %>
+  <% end %>
+  </div>
 </div>
 
 <br>

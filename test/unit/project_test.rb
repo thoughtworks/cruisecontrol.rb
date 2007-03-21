@@ -455,6 +455,18 @@ class ProjectTest < Test::Unit::TestCase
       assert_equal('3', @project.next_build(build).label)
     end
   end
+  
+  def test_should_be_able_to_get_last_n_builds
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      sandbox.new :file => "build-1/build_status.success"
+      sandbox.new :file => "build-2/build_status.failure"
+      sandbox.new :file => "build-3/build_status.incomplete"
+      
+      assert_equal 2, @project.last_builds(2).length
+      assert_equal 3, @project.last_builds(5).length
+    end
+  end
    
   private
   

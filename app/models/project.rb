@@ -180,7 +180,11 @@ class Project
   end
 
   def last_five_builds
-    builds.reverse[0..4]
+    last_builds(5)
+  end
+  
+  def last_builds(n)
+    result = builds.reverse[0..(n-1)]
   end
 
   def build_if_necessary
