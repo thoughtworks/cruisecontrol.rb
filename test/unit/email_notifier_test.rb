@@ -18,8 +18,11 @@ class EmailNotifierTest < Test::Unit::TestCase
     @project.path = @sandbox.root
     @build = Build.new(@project, 5)
     @previous_build = Build.new(@project, 4)
+
     @notifier = EmailNotifier.new
     @notifier.emails = ["jeremystellsmith@gmail.com", "jeremy@thoughtworks.com"]
+    @notifier.from = 'cruisecontrol@thoughtworks.com'
+    
     @project.add_plugin(@notifier)
   end
   
@@ -81,11 +84,23 @@ class EmailNotifierTest < Test::Unit::TestCase
     BuildMailer.expects(:deliver_build_report).raises('something')
     
     @notifier.emails = ['foo@crapty.com']
-    
+
+    # FIXME: how does this 'something' match? Something must be wrong with assert_raises 
     assert_raises('something') { @notifier.build_finished(failing_build) }
     CruiseControl::Log.verify
   end
-  
+
+  def test_configuration_email_from_should_be_used_when_notifier_from_is_not_specified
+    Configuration.expects(:email_from).returns('central@foo.com')
+    @notifier.from = nil
+    build = failing_build()
+    
+    BuildMailer.expects(:deliver_build_report).with(build, ['jeremystellsmith@gmail.com', 'jeremy@thoughtworks.com'],
+                        'central@foo.com', 'myproj build 5 failed', 'The build failed.')
+
+    @notifier.build_finished(failing_build)
+  end
+
   private
   
   def failing_build

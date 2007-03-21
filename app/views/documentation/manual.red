@@ -23,6 +23,14 @@ If CC.rb is unpacked into [cruise] directory , then:
   and all builders.
 
 
+h1. Site configuration
+
+CruiseControl.rb package includes a file called [cruise]/config/site_config.rb.example. By copying it to
+[cruise]/config/site_config.rb, and uncommenting some lines you can change a number of parameters not related to
+a specific project. In normal life, your only reason to do it would be configuring SMTP connection, for sending
+email notices. See the section on "Build monitoring via email" below. 
+
+
 h1. Project builder configuration
 
 When you add a project to it, CruiseControl.rb will try to do something reasonable without any configuration.

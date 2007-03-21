@@ -1,22 +1,32 @@
 class Configuration
 
-  @default_page = {:controller => 'projects', :action => 'index' }
+  @default_page = {:controller => 'projects', :action => 'index'}
   @projects_directory = File.expand_path(File.join(RAILS_ROOT, 'projects'))
   @default_polling_interval = 10.seconds
   @sleep_after_build_loop_error = 30.seconds
   @build_request_checking_interval = 5.seconds
   @dashboard_refresh_interval = 5.seconds
-  @context = nil
   @dashboard_url = nil
+  @email_from = 'cruisecontrol@thoughtworks.com'
+  @disable_build_now = false
 
   class << self
-    attr_accessor :projects_directory, :default_polling_interval, :sleep_after_build_loop_error,
-                  :build_request_checking_interval, :context, :default_page, :dashboard_refresh_interval
-
+    # published configuration options (mentioned in config/site_config.rb.example)
+    attr_accessor :default_polling_interval, :disable_build_now, :email_from,
+                  :dashboard_refresh_interval
     attr_reader :dashboard_url
 
+    # non-published configuration options (obscure stuff, mostly useful for http://cruisecontrolrb.thoughtworks.com)
+    attr_accessor :sleep_after_build_loop_error, :projects_directory, :default_page, :build_request_checking_interval
+
     def dashboard_url=(value)
-      @dashboard_url = value.sub(/\/$/, '')
+      @dashboard_url = remove_trailing_slash(value)
+    end
+
+    private
+
+    def remove_trailing_slash(str)
+      str.sub(/\/$/, '')
     end
    
   end

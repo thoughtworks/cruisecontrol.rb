@@ -1,5 +1,6 @@
 TRUNK
-
+  - documented options configurable through config/site_config.rb  
+  - added a "from" option to EmailNotifier configuration
   - [bugfix] Corrected documentation to say "[cruise]/projects/" instead of "[cruise]/builds/"
   - [bugfix] Recognize Solaris as a platform
 

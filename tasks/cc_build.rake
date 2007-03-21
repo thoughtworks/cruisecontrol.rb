@@ -35,7 +35,7 @@ namespace :cc do
       CruiseControl::invoke_rake_task 'cruise'
     else
 
-      ENV['RAILS_ENV'] ||= 'test'
+      ENV['RAILS_ENV'] = 'test'
 
       if File.exists?(Dir.pwd + "/config/database.yml")
         if Dir[Dir.pwd + "/db/migrate/*.rb"].empty?

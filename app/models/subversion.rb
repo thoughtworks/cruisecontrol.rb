@@ -72,7 +72,7 @@ class Subversion
   
   def svn(operation, options = nil)
     command = "svn"
-    command << " --non-interactive" if !@interactive
+    command << " --non-interactive" unless @interactive
     command << " " << operation.to_s
     command << " " << options if options
     command

@@ -4,11 +4,18 @@
 # 1. Configure SMTP server connection. Copy [cruise]/config/site_config.rb_example to ~cruise/config/site_config.rb,
 #    read it and edit according to your situation.
 # 
-# 2. Tell the builder, whom do you want to receive build notices, by placing the following line in cruise_config.rb:
-# 
+# 2. Tell the builder, whom do you want to receive build notices:
 # <pre><code>Project.configure do |project|
 #   ...
 #   project.email_notifier.emails = ['john@doe.com', 'jane@doe.com']
+#   ...
+# end</code></pre>
+#
+# You can also specify who to send the email from, either for the entire site by setting Configuration.email_from
+# in [cruise]/config/site_config.rb, or on a per project basis, by placing the following line in cruise_config.rb:
+# <pre><code>Project.configure do |project|
+#   ...
+#   project.email_notifier.from = "cruisecontrol@doe.com"
 #   ...
 # end</code></pre>
 #
@@ -19,9 +26,14 @@
 
 class EmailNotifier
   attr_accessor :emails
+  attr_writer :from
   
   def initialize(project = nil)
     @emails = []
+  end
+
+  def from
+    @from || Configuration.email_from
   end
 
   def build_finished(build)
@@ -37,7 +49,7 @@ class EmailNotifier
   private
   
   def email(template, build, *args)
-    BuildMailer.send(template, build, @emails, *args)
+    BuildMailer.send(template, build, @emails, from, *args)
     CruiseControl::Log.event("Sent e-mail to #{@emails.size == 1 ? "1 person" : "#{@emails.size} people"}", :debug)
   rescue => e
     settings = ActionMailer::Base.smtp_settings.map { |k,v| "  #{k.inspect} = #{v.inspect}" }.join("\n")

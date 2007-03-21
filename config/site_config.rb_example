@@ -28,8 +28,28 @@
 # The same approach works for other SMTP servers thet require authentication. Note that GMail's SMTP server runs on a 
 # non-standard port 587 (standard port for SMTP is 25).
 #
-# For further details about configuring email notification, see Ruby On Rails documentation for ActionMailer::Base.
+# For further details about configuration of outgoing email, see Ruby On Rails documentation for ActionMailer::Base.
 
-# If you don't want to allow anyone trigger build through dashboard, you can set as follow:
-# $DISABLE_BUILD = true
-# Notice: if you set above attribute, all projects on the dashboard are disable to trigger build.
+# Other site-wide options are available through Configuration class:
+
+# Change how often CC.rb pings Subversion for new requests. Default is 10.seconds, which should be OK for a local
+# SVN repository, but probably isn't very polite for a public repository, such as RubyForge. This can also be set for
+# each project individually, through project.scheduler.polling_interval option:
+# Configuration.default_polling_interval = 1.minute
+
+# How often the dashboard page refreshes itself. If you have more than 10-20 dashboards open,
+# it is advisable to set it to something higher than the default 5 seconds:
+# Configuration.dashboard_refresh_interval = 20.seconds
+
+# Site-wide setting for the email "from" field. This can also be set on per-project basis,
+# through project.email.notifier.from attribute
+# Configuration.email_from = 'cruisecontrolrb@mydomain.com'
+
+# Root URL of the dashboard application. Setting this attribute allows various notifiers to include a link to the
+# build page in the notification message. 
+# Configuration.dashboard_url = http://my.cruisecontrolrb.host/
+
+# If you don't want to allow triggering builds through dashboard Build Now button. Useful when you host CC.rb as a
+# public web site (such as http://cruisecontrolrb.thoughtworks.com/projects - try clicking on Build Now button there
+# and see what happens):
+# Configuration.disable_build_now = true

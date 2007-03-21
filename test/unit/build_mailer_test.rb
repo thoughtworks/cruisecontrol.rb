@@ -16,12 +16,12 @@ class BuildMailerTest < Test::Unit::TestCase
     @expected.mime_version = '1.0'
   end
 
+  # TODO: this test makes little sense as it doesn't invoke any production code directly. How to test mailer properly?
   def test_test
     Time.stubs(:now).returns(Time.at(100000))
     @expected.subject = 'Test CI E-mail'
-    @expected.body    = read_fixture('test')
-    @expected.from    = "cruisecontrol@thoughtworks.com"
-    @expected.date    = Time.now
+    @expected.body = read_fixture('test')
+    @expected.date = Time.now
     @expected.to = "Joe"
 
     assert_equal @expected.encoded, BuildMailer.create_test("Joe", @expected.date).encoded
