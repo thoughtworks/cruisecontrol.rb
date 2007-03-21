@@ -1,0 +1,21 @@
+h2. What's this?
+
+This is a builder plugin for "CruiseControl.rb":http://cruisecontrolrb.thoughtworks.com that sends build notices
+to "Growl":http://growl.info clients.
+
+h2. Installation
+
+# Copy the growl_notifier folder from builder_plugins/available to builder_plugins/installed
+# Modify builds/your_project/cruise_config.rb by adding the hosts to notify:
+    <pre><code>
+      Project.configure do |project|
+        ...
+        project.growl_notifier.subscribers = %w[192.168.0.100 192.168.0.101]
+        ...
+      end
+    </code></pre>
+# Start the builder (./cruise build your_project)
+
+h2. Growl Configuration
+
+This plugin will be registered as 'CruiseControl.rb' in your Growl applications list.

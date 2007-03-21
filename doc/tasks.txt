@@ -3,6 +3,9 @@ Questions
 
 Bugs
 ----
+If you create a symlink in installed -> a directory in available plugins, the documentation can't read the directory
+under installed.
+
 What should be the status of a build that passed, but THEN the build loop crashed? Answer: it's not a build status, but
 a BUILDER status. Rolf suggested "Misbehaving". Add a story to the wiki.
 
