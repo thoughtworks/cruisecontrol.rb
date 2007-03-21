@@ -1,0 +1,51 @@
+/home/gigix/Projects/cc.rb/projects/connect_four/work gigix$ ruby -e require 'rubygems' rescue nil; require 'rake'; load '/home/gigix/Projects/cc.rb/tasks/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'; Rake.application.run
+/home/gigix/Projects/cc.rb/projects/connect_four/work/config/boot.rb:29:Warning: require_gem is obsolete.  Use gem instead.
+The rake task migrate has been deprecated, please use the replacement version db:migrate
+rm -rf coverage
+rm -rf ./coverage/units
+/usr/bin/ruby1.8 "/home/gigix/Projects/cc.rb/projects/connect_four/work/vendor/plugins/rails_rcov/tasks/rails_rcov.rake" --run-rake-task=test:units
+(in /home/gigix/Projects/cc.rb/projects/connect_four/work)
+[CruiseControl] Invoking Rake task "cruise"
+/home/gigix/Projects/cc.rb/projects/connect_four/work/config/boot.rb:29:Warning: require_gem is obsolete.  Use gem instead.
+rcov -o "/home/gigix/Projects/cc.rb/projects/connect_four/work/coverage/units" -T -x "rubygems/*,rcov*" --rails  -Ilib:test "/usr/lib/ruby/gems/1.8/gems/rake-0.7.2/lib/rake/rake_test_loader.rb" "test/unit/person_test.rb" "test/unit/store_test.rb" 
+(in /home/gigix/Projects/cc.rb/projects/connect_four/work)
+/home/gigix/Projects/cc.rb/projects/connect_four/work/config/boot.rb:29:Warning: require_gem is obsolete.  Use gem instead.
+Loaded suite /usr/local/bin/rcov
+Started
+F22.2580687589322
+.#<GeoKit::GeoLoc:0xb6cdb264 @street_address=nil, @full_address="San Francisco, CA 94117, USA", @zip="94117", @precision="unknown", @state="CA", @provider="google", @lng=-122.441272, @success=true, @city="San Francisco", @lat=37.771234, @country_code="US">
+..
+Finished in 0.8142 seconds.
+
+  1) Failure:
+test_truth(PersonTest) [./test/unit/person_test.rb:9]:
+Flunked.
+
+4 tests, 3 assertions, 1 failures, 0 errors
++----------------------------------------------------+-------+-------+--------+
+|                  File                              | Lines |  LOC  |  COV   |
++----------------------------------------------------+-------+-------+--------+
+|app/controllers/application.rb                      |     7 |     3 | 100.0% |
+|app/helpers/application_helper.rb                   |     3 |     2 | 100.0% |
+|app/models/person.rb                                |     2 |     2 | 100.0% |
+|app/models/store.rb                                 |     3 |     3 | 100.0% |
++----------------------------------------------------+-------+-------+--------+
+|Total                                               |    15 |    10 | 100.0% |
++----------------------------------------------------+-------+-------+--------+
+100.0%   4 file(s)   15 Lines   10 LOC
+rake aborted!
+Command failed with status (1): [rcov -o "/home/gigix/Projects/cc.rb/projec...]
+
+(See full trace by running task with --trace)
+rake aborted!
+Command failed with status (1): [/usr/bin/ruby1.8 "/home/gigix/Projects/cc....]
+
+(See full trace by running task with --trace)
+
+dir : /home/gigix/Projects/cc.rb/projects/connect_four/work
+command : ruby -e "require 'rubygems' rescue nil; require 'rake'; load '/home/gigix/Projects/cc.rb/tasks/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'; Rake.application.run"
+executed command : echo /home/gigix/Projects/cc.rb/projects/connect_four/work gigix$ ruby -e "require 'rubygems' rescue nil; require 'rake'; load '/home/gigix/Projects/cc.rb/tasks/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'; Rake.application.run" >> /home/gigix/Projects/cc.rb/projects/connect_four/build-52/build.log && ruby -e "require 'rubygems' rescue nil; require 'rake'; load '/home/gigix/Projects/cc.rb/tasks/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'; Rake.application.run" >> /home/gigix/Projects/cc.rb/projects/connect_four/build-52/build.log 2>&1
+exitstatus: 1
+STDERR TAIL START
+
+STDERR TAIL END

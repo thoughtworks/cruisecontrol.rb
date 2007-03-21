@@ -1,0 +1,4 @@
+Revision 52 committed by gigix on 2007-03-19 11:32:31
+don't send mail notification
+  M /connect_four/cruise_config.rb
+
