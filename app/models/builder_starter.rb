@@ -19,7 +19,10 @@ class BuilderStarter
     if ruby_platform =~ /mswin32/
       Thread.new(project_name) { |my_project_name| system("cruise.cmd build #{project_name}") }
     else
-      fork || exec("#{RAILS_ROOT}/cruise build #{project_name}")
+      pid = fork || exec("#{RAILS_ROOT}/cruise build #{project_name}")
+      project_pid_location = "#{RAILS_ROOT}/tmp/pids/builders"
+      FileUtils.mkdir project_pid_location unless File.exist? project_pid_location
+      File.open("#{project_pid_location}//#{project_name}.pid", "w") {|f| f.write pid }
     end
   end
   

@@ -251,6 +251,8 @@ class Project
   end
 
   def build(revisions = nil)
+    @builds = nil
+  
     notify(:build_initiated)
     if revisions.nil?
       revisions = new_revisions

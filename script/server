@@ -2,6 +2,7 @@
 require File.dirname(__FILE__) + '/../config/boot'
 require 'builder_starter'
 require 'optparse'
+require 'fileutils'
 
 # HACK: Options copy/pasted from mongrel.rb in order to add custom options.
 # (this section, therefore, may need to be manually updated when upgrading to a new Rails version)
@@ -37,5 +38,6 @@ if (ARGV & ['-e', '--environment']).empty?
 end
 
 $CRUISE_CONTROL_CONTEXT = :webapp
+FileUtils.touch File.dirname(__FILE__) + "/../tmp/cc_context_webapp"
 
 require 'commands/server'

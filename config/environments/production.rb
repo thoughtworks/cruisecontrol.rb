@@ -23,6 +23,11 @@ config.action_controller.perform_caching             = true
 require 'site_config' if File.exists?("#{RAILS_ROOT}/config/site_config.rb")
 
 # Start builders after config initialization if we are running a web server here
+if File.exist?("#{RAILS_ROOT}/tmp/cc_context_webapp")
+  $CRUISE_CONTROL_CONTEXT = :webapp
+  FileUtils.rm "#{RAILS_ROOT}/tmp/cc_context_webapp"
+end
+
 if $CRUISE_CONTROL_CONTEXT == :webapp
   config.after_initialize do
     BuilderStarter.start_builders
