@@ -124,15 +124,12 @@ class Project
   def builds
     raise "Project #{name.inspect} has no path" unless path
 
-    return @builds if @builds
-
     the_builds = Dir["#{path}/build-*/build_status.*"].collect do |status_file|
       build_directory = File.basename(File.dirname(status_file))
       build_label = build_directory[6..-1]
       Build.new(self, build_label)
     end
-    @builds = order_by_label(the_builds)
-    return @builds
+    order_by_label(the_builds)
   end
 
   def builder_state_and_activity
@@ -251,8 +248,6 @@ class Project
   end
 
   def build(revisions = nil)
-    @builds = nil
-  
     notify(:build_initiated)
     if revisions.nil?
       revisions = new_revisions
