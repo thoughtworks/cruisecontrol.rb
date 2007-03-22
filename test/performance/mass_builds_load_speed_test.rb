@@ -27,14 +27,14 @@ class MassBuildsLoadSpeedTest < ActionController::IntegrationTest
 
     log_time("START TEST")
     
-#    it takes 3 seconds to display dashboard. looks fine.    
+#    it takes about 1 seconds to display dashboard. looks fine.    
     get "/projects"
     log_time("DASHBOARD DISPLAYED")
 
     get "/projects.js"
     log_time("index.js RENDERED")
 
-#    it takes 5 seconds to display builds default page. looks fine too.
+#    it takes about 1 seconds to display builds default page. looks fine too.
     get "/builds/performance_test"
     log_time("builds DEFAULT PAGE DISPLAYED")
   end  
