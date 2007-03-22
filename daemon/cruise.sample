@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+# in order to make cruise run as daemon, you need:
+# 1. cp $CCRB_HOME/daemon/cruise.sample $CCRB_HOME/daemon/cruise
+# 2. specify your cruise_path to $CCRB_HOME in $CCRB_HOME/daemon/cruise file
+# 3. ln -s $CCRB_HOME/daemon/cruise /etc/init.d/cruise (you may need sudo this)
+# 4. update-rc.d cruise (you may want to choose options by yourself, and you may need sudo this)
+# 5. it's done :>
+
+require "fileutils"
+include FileUtils
+
+def cruise_path
+  # NOTE: you must specify $CCRB_HOME here
+  # "/home/gigix/Projects/cc.rb"
+  raise "Please specify your $CCRB_HOME path in this method."
+end
+
+command = ARGV.shift
+
+case command
+when 'start'
+  cd cruise_path
+  system "nohup ./cruise start &"
+  exit 0
+when 'stop'
+  system "pkill -9 ruby"
+  exit 0
+else
+  p "Usage: /etc/init.d/cruise start|stop"
+  exit 1
+end
