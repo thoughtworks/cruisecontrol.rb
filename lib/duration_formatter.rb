@@ -21,28 +21,28 @@ class DurationFormatter
     end
   end
 
-end
+  def precise
+    result = []
+    result << "#{@hours} #{hours_label}" unless @hours == 0
+    result << "#{@minutes} #{minutes_label}" unless @minutes == 0
+    result << "#{@seconds} #{seconds_label}" unless @seconds == 0 and @duration != 0
+    result.join(" and ")
+  end
 
-def precise
-  result = []
-  result << "#{@hours} #{hours_label}" unless @hours == 0
-  result << "#{@minutes} #{minutes_label}" unless @minutes == 0
-  result << "#{@seconds} #{seconds_label}" unless @seconds == 0 and @duration != 0
-  result.join(" and ")
-end
+  def hours_label
+    @hours == 1 ? hours_label = "hour" : hours_label = "hours"
+  end
 
-def hours_label
-  @hours == 1 ? hours_label = "hour" : hours_label = "hours"
-end
+  def minutes_label
+    @minutes == 1 ? 'minute' : 'minutes'
+  end
 
-def minutes_label
-  @minutes == 1 ? 'minute' : 'minutes'
-end
+  def seconds_label
+    @seconds == 1 ? 'second' : 'seconds'
+  end
 
-def seconds_label
-  @seconds == 1 ? 'second' : 'seconds'
-end
+  def method_missing(format, *args)
+    raise "Unknown duration format #{format.inspect}"
+  end
 
-def method_missing(format, *args)
-  raise "Unknown duration format #{format.inspect}"
 end

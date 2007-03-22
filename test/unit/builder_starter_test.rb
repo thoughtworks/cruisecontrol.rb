@@ -23,14 +23,14 @@ class BuilderStarterTest < Test::Unit::TestCase
   def test_on_win32_begin_builder_should_thread_to_run_builder_command
     Thread.expects(:new).with(@one.name).yields(@one.name)
   
-    BuilderStarter.expects(:ruby_platform).returns("i386-mswin32")
+    Platform.expects(:family).returns("mswin32")
     BuilderStarter.expects(:system).with("cruise.cmd build #{@one.name}")
     
     BuilderStarter.begin_builder(@one.name)
   end
   
   def test_on_non_win32_begin_builder_should_fork_and_execute_builder_command
-    BuilderStarter.expects(:ruby_platform).returns("i386-os2")
+    Platform.expects(:family).returns("linux")
     BuilderStarter.expects(:fork).returns(nil)
     BuilderStarter.expects(:exec).with("#{RAILS_ROOT}/cruise build #{@one.name}")
     
