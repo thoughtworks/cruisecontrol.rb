@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 load "#{File.dirname(__FILE__)}/lib/cruise_control/version.rb"
 
 def start
