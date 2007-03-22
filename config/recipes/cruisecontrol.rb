@@ -39,7 +39,7 @@ Capistrano.configuration(:must_exist).load do
     unless ENV['NAME'] && ENV['URL'] 
       raise ArgumentError, "***** You must specify the NAME and URL parameters to add a project. *****" 
     end   
-    run "#{current_release}/cruise add #{ENV['NAME']} –url #{ENV['URL']}"
+    run "#{current_release}/cruise add #{ENV['NAME']} -u #{ENV['URL']}"
   end
     
 end
