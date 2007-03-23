@@ -262,7 +262,7 @@ a.never_built, a.never_built:visited {
 }
 
 #build_details {
-  margin-left: 12em;
+  margin-left: 14em;
   padding-right: 1.5em;
 }
 
@@ -288,7 +288,7 @@ a.never_built, a.never_built:visited {
 #build_details .section_closed .section_content { display: none; }
 
 #builds_list {
-  width: 12em;
+  width: 14em;
   float: left;
   margin: 0.2em 1em 1em 0;
 }
@@ -338,8 +338,12 @@ a.never_built, a.never_built:visited {
   background-color: #ccf;
 }
 
-.navigate_build {
-  color: #0000FF;
-  font-size: 1.5em;
-  padding: 1em 1em 1em 1em;
+#navigate_build {
+  color: #aaa;
+  margin: 1em -5em 1em -1.2em;
+}
+
+#navigate_build strong {
+  color: black;
+  font-weight: normal;
 }

@@ -5,10 +5,12 @@ class ProjectsController
 end
 
 class BuildsHelperTest < Test::Unit::TestCase
-
+  include FileSandbox
   include BuildsHelper
   include ApplicationHelper
   include ActionView::Helpers::UrlHelper
+  include ActionView::Helpers::TagHelper
+  include ActionView::Helpers::FormTagHelper
   
   def setup
     @work_path = File.expand_path('/Users/jeremy/src/cruisecontrolrb/builds/CruiseControl/work')
@@ -101,6 +103,48 @@ Message: NameError: uninitialized constant BuilderStatusTest::BuilderStatus
     assert_equal expected, get_test_failures_and_errors_if_any(log)
   end
   
+  BuildStub = Struct.new :label, :time, :state # failed, incomplete
+  class BuildStub
+    def failed?() @state == 'failed' end
+    def incomplete?() @state == 'incomplete' end
+  end
+  
+  def test_select_builds
+    @build = BuildStub.new(4)
+    
+    assert_equal "", select_builds([])
+    
+    assert_equal "<select id=\"build\" name=\"build\" onChange=\"this.form.submit();\">" +
+                 "<option value='' selected='selected'>Older Builds...</option>" +
+                 "<option value='1'>1 (1 Jan 06)</option>" +
+                 "</select>", select_builds([BuildStub.new(1, Date.new(2006,1,1).to_time)])
+    
+    @build = BuildStub.new(3)
+    assert_equal "<select id=\"build\" name=\"build\" onChange=\"this.form.submit();\">" +
+                 "<option value='1'>1 (1 Jan 06)</option>" +
+                 "<option value='3' selected='selected'>3 (5 Jan 06)</option>" +
+                 "<option value='5'>5 (10 Jan 06)</option>" +
+                 "</select>", select_builds([BuildStub.new(1, Date.new(2006,1,1).to_time),
+                                             BuildStub.new(3, Date.new(2006,1,5).to_time),
+                                             BuildStub.new(5, Date.new(2006,1,10).to_time)])
+  end
+
+  def test_builds_except_last
+    with_sandbox_project do |sandbox, project|
+      project.stubs(:builds).returns((1..10).to_a.map {|i| Build.new(project, i)})
+      
+      assert_builds [10,9,8,7,6,5,4,3,2,1], builds_except_last(project, 0)
+      assert_builds [], builds_except_last(project, 10)
+      assert_builds [5,4,3,2,1], builds_except_last(project, 5)
+    end
+  end
+  
+  private
+  
+  def assert_builds(expected, actual)
+    assert_equal expected, actual.map{|b| b.label}
+  end
+
   def h(text)
     text
   end

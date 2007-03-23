@@ -1,7 +1,14 @@
 <% @rss_url = {:controller => 'projects', :action => 'show', :id => @project.name, :format => 'rss'} %>
 
 <div id="builds_list">
-  <strong>Build history</strong>
+  <div id="navigate_build">
+    <% prev_build, next_build = @project.previous_build(@build), @project.next_build(@build)%>
+    
+    <%= link_to_unless !prev_build, '< prev', :project => @project, :build => prev_build %>
+    <strong><%= @build.label %></strong>
+    <%= link_to_unless !next_build, 'next >', :project => @project, :build => next_build %>
+    <%= link_to_unless !next_build, 'latest >>', :project => @project.name %>
+  </div>
   <% @project.last_builds(30).each do |build| %>
     <div class="build-link<%= ' selected' if @build.label == build.label %>">
       <%= link_to_build(@project, build) %>
@@ -10,17 +17,12 @@
 
   <div>
   <% form_tag({:action => 'show'}, :method => :get) do %>
-  <%= select_builds_except_last @project, 30 %>
+  <%= select_builds(builds_except_last(@project, 30)) %>
   <% end %>
   </div>
 </div>
 
 <br>
-<div>
-  <%= navigate_build_link 'Previous Build', @project, @project.previous_build(@build) %>
-  <%= navigate_build_link 'Next Build', @project, @project.next_build(@build) %>
-  <%= navigate_build_link 'Latest Build', @project %>
-</div>
 
 <div id="build_details">
   <h1>

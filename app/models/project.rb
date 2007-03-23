@@ -147,7 +147,7 @@ class Project
     if index > 0
       return all_builds[index-1]
     else  
-      return all_builds[0]
+      return nil
     end
   end
   
@@ -155,8 +155,8 @@ class Project
     all_builds = builds
     index = get_build_index(all_builds, current_build.label)
 
-    if index == 0 || index == (all_builds.size - 1)
-      return last_build
+    if index == (all_builds.size - 1)
+      return nil
     else
       return all_builds[index + 1]
     end

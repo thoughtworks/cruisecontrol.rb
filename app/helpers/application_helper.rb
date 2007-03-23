@@ -24,20 +24,6 @@ module ApplicationHelper
     text += " <span class='error'>FAILED</span>" if build.failed?
     build_link(text, project, build)
   end
-  
-  def select_builds_except_last(project, n)
-    all_builds = project.builds.reverse
-    all_builds = all_builds - all_builds[0..(n-1)]
-    options = ["<option value='' selected='selected'>Older Builds...</option>"]
-    options = options + all_builds.map do |build|
-      "<option value='#{build.label}' #{selected build}>#{text_to_build(build)}</option>"
-    end
-    select_tag "build", options, :onChange => "this.form.submit();"
-  end
-  
-  def selected(build)
-    build.label == @build.label ? "selected = 'selected'" : "" 
-  end
 
   def text_to_build(build)
     text = build_label(build)

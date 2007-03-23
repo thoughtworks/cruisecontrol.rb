@@ -437,7 +437,7 @@ class ProjectTest < Test::Unit::TestCase
       assert_equal('1', @project.previous_build(build).label)
       
       build = @project.find_build('1')
-      assert_equal('1', @project.previous_build(build).label)
+      assert_equal(nil, @project.previous_build(build))
     end
   end
   
@@ -448,11 +448,14 @@ class ProjectTest < Test::Unit::TestCase
       sandbox.new :file => "build-2/build_status.failure"
       sandbox.new :file => "build-3/build_status.incomplete"
       
+      build = @project.find_build('1')
+      assert_equal('2', @project.next_build(build).label)
+      
       build = @project.find_build('2')
       assert_equal('3', @project.next_build(build).label)
       
       build = @project.find_build('3')
-      assert_equal('3', @project.next_build(build).label)
+      assert_equal(nil, @project.next_build(build))
     end
   end
   

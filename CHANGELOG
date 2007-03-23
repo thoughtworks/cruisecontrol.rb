@@ -5,6 +5,7 @@ TRUNK
   - [bugfix] Fixed problems with CCTray introduced in 1.0 by adding a new build status 'incomplete'
   - [bugfix] Corrected documentation to say "[cruise]/projects/" instead of "[cruise]/builds/"
   - [bugfix] Recognize Solaris as a platform
+  - [bugfix] Now handle localized svn correctly (by using --xml flag)
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.0.0

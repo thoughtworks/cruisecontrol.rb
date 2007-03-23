@@ -33,6 +33,7 @@ class BuildsControllerTest < Test::Unit::TestCase
 
   def test_show_specific_build
     with_sandbox_project do |sandbox, project|
+      sandbox.new :file => "build-23/build_status.pingpong"
       sandbox.new :file => "build-24/build_status.pingpong"
       sandbox.new :file => "build-25/build_status.pingpong"
 
@@ -46,15 +47,15 @@ class BuildsControllerTest < Test::Unit::TestCase
       assert_equal '24', assigns(:build).label
       
       assert_tag :tag => 'a', 
-                 :content => 'Next Build',
+                 :content => 'next >',
                  :attributes => {:href => /\/builds\/#{project.name}\/25/}
 
       assert_tag :tag => 'a', 
-                 :content => 'Previous Build',
-                 :attributes => {:href => /\/builds\/#{project.name}\/24/}
+                 :content => '< prev',
+                 :attributes => {:href => /\/builds\/#{project.name}\/23/}
 
       assert_tag :tag => 'a', 
-                 :content => 'Latest Build',
+                 :content => 'latest >>',
                  :attributes => {:href => /\/builds\/#{project.name}/}
     end
   end

@@ -1,4 +1,23 @@
 module BuildsHelper
+
+  def builds_except_last(project, n)
+    project.builds.reverse[n..-1]
+  end
+  
+  def select_builds(builds)
+    return "" if !builds || builds.empty?
+
+    first = "<option value='' selected='selected'>Older Builds...</option>"
+    options = builds.map do |build|
+      selected = build.label == @build.label ? " selected='selected'" : nil
+      first = nil if selected  
+      
+      "<option value='#{build.label}'#{selected}>#{text_to_build(build)}</option>"
+    end
+    options.unshift first if first
+    
+    select_tag "build", options, :onChange => "this.form.submit();"
+  end
   
   def format_build_log(log)
     link_to_code(h(log).gsub(/(\d+ tests, \d+ assertions, \d+ failures, \d+ errors)/,
@@ -51,13 +70,4 @@ module BuildsHelper
     build_time_text = format_time(@build.time, :verbose)
     elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}"
   end
-  
-  def navigate_build_link(text, project, build = nil)
-    if build.nil?
-      link_to text, url_for(:project => project.name), :class => 'navigate_build'
-    else
-      link_to text, url_for(:project => project.name, :build => build.label), :class => 'navigate_build'
-    end
-  end
-  
 end
