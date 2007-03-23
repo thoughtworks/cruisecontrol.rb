@@ -10,6 +10,15 @@
 require "fileutils"
 include FileUtils
 
+require "rubygems"
+
+begin
+  gem 'mongrel'
+rescue => e
+  puts "Error: daemon mode of CC.rb requires mongrel installed"
+  exit 1
+end
+
 def cruise_path
   # NOTE: you must specify $CCRB_HOME here
   # "/home/gigix/Projects/cc.rb"
