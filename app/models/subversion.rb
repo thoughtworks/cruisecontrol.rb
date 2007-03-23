@@ -29,34 +29,22 @@ class Subversion
   end
 
   def info(project)
-    result = Hash.new
-    Dir.chdir(project.local_checkout) do
-      execute svn(:info) do |io|
-        io.each_line do |line|
-          line.chomp!
-          next if line.empty?
-          match = line.match(/^([^:]+):\s*(.*)$/)
-          raise "#{line.inspect} does not match 'name: value' pattern" unless match
-          key, value = match[1..2]
-          result[key] = value
-        end
-      end
-    end
-    result
+    svn_output = execute_in_local_copy(project, svn(:info, "--xml"))
+    SubversionLogParser.new.parse_info(svn_output)
   end
 
   def latest_revision(project)
-    last_locally_known_revision = info(project)['Last Changed Rev']
-    svn_output = execute_in_local_copy(project, svn(:log, "--revision HEAD:#{last_locally_known_revision} --verbose"))
+    last_locally_known_revision = info(project).last_changed_revision
+    svn_output = execute_in_local_copy(project, svn(:log, "--revision HEAD:#{last_locally_known_revision} --verbose --xml"))
     SubversionLogParser.new.parse_log(svn_output).first
   end
 
   def current_revision(project)
-    info(project)["Revision"].to_i
+    info(project).revision
   end
 
   def revisions_since(project, revision_number)
-    svn_output = execute_in_local_copy(project, svn(:log, "--revision HEAD:#{revision_number} --verbose"))
+    svn_output = execute_in_local_copy(project, svn(:log, "--revision HEAD:#{revision_number} --verbose --xml"))
     new_revisions = SubversionLogParser.new.parse_log(svn_output).reverse
     new_revisions.delete_if { |r| r.number == revision_number }
     new_revisions
@@ -99,5 +87,6 @@ class Subversion
       end
     end
   end
-
+  
+  Info = Struct.new :revision, :last_changed_revision, :last_changed_author
 end

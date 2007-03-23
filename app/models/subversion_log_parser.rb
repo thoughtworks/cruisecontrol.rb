@@ -1,18 +1,12 @@
 require 'date'
+require 'xml_simple'
 
 class SubversionLogParser
 
   def parse_log(lines)
     return [] if lines.empty?
-    lines.shift #ignore first dashed line
-
-    revisions = []
-    while not lines.empty?
-      revision = parse_revision(lines)
-      revisions << revision
-    end
-
-  revisions
+    entries = XmlSimple.xml_in(lines.join, 'ForceArray' => ['logentry','path'])['logentry'] || []
+    entries.map {|entry| parse_revision(entry) }
   end
 
   UPDATE_PATTERN = /^(...)  (\S.*)$/
@@ -28,28 +22,27 @@ class SubversionLogParser
     end.compact
   end
 
+  def parse_info(xml)
+    info = XmlSimple.xml_in(xml.to_s, 'ForceArray' => false)['entry']
+    Subversion::Info.new(info['revision'].to_i, info['commit']['revision'].to_i, info['commit']['author'])
+  end
+
   private
-
-  REVISION_PATTERN = /^r(\d+) \| ([^|]+) \| ([^|]+) \| .*$/
-  CHANGESET_PATTERN = /^\s*(\S+)\s+(.*)$/
-  def parse_revision(lines)
-    number, committed_by, time = REVISION_PATTERN.match(lines.shift)[1..3]
-    revision = Revision.new(number.to_i, committed_by, DateTime.parse(time), '', [])
-
-    line = lines.shift
-    if line =~ /^Changed paths:/
-      while (line = lines.shift) and not line.strip.empty?  do
-        match = CHANGESET_PATTERN.match(line)
-        raise "Line #{line.inspect} does not like a changeset line from 'svn log --verbose'" unless match
-        operation, file = match[1..2]
-        ChangesetEntry.new(operation.strip, file)
-        revision.changeset << ChangesetEntry.new(operation, file)
-      end
+  
+  def parse_revision(hash)
+    changesets = hash.fetch('paths', {}).fetch('path', {}).map do |entry| 
+      ChangesetEntry.new(entry['action'], entry['content'])
     end
+    
+    date = hash['date'] ? DateTime.parse(hash['date']) : nil
+    Revision.new(hash['revision'].to_i, hash['author'], date, hash['msg'], changesets)
+  end
 
-    revision.message << line while (line = lines.shift).strip != '-' * 72
-    revision.message.strip!
-
-    revision
+  def parse_to_localtime(time_string)
+    Time.parse(time_string).getlocal.strftime("%F %T %z (%a, %d %b %Y)")
+  end
+  
+  def parse_node(info, key, &value_block)
+    (info[key] = yield value_block) rescue nil
   end
 end

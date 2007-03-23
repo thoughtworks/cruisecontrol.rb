@@ -13,18 +13,20 @@ class BuilderIntegrationTest < Test::Unit::TestCase
   def test_new_revisions
     with_project('passing_project', :revision => 2) do |project, sandbox|
       expected_revisions = [
-          Revision.new(3, 'averkhov', DateTime.new(2007, 01, 11, 14, 01, 43, Rational(-7, 24)),
+          Revision.new(3, 'averkhov', DateTime.parse('2007-01-11T21:01:43.441137Z'),
                        'another revision',
                        [ChangesetEntry.new('M', '/passing_project/revision_label.txt')]),
-          Revision.new(4, 'averkhov', DateTime.new(2007, 01, 11, 14, 02, 03, Rational(-7, 24)),
+          Revision.new(4, 'averkhov', DateTime.parse('2007-01-11T21:02:03.471105Z'),
                        'and one more revision, for good measure',
                        [ChangesetEntry.new('M', '/passing_project/revision_label.txt')]),
-          Revision.new(7, 'averkhov', DateTime.new(2007, 01, 12, 18, 05, 26, Rational(-7, 24)),
+          Revision.new(7, 'averkhov', DateTime.parse('2007-01-13T01:05:26.919332Z'),
                        'Making both revision labels up to date',
-                       [ChangesetEntry.new('M', '/failing_project/revision_label.txt'),
-                        ChangesetEntry.new('M', '/passing_project/revision_label.txt')])
+                       [ChangesetEntry.new('M', '/passing_project/revision_label.txt'),
+                        ChangesetEntry.new('M', '/failing_project/revision_label.txt')])
           ]
-      assert_equal expected_revisions, Subversion.new.revisions_since(project, 2)
+      actual = Subversion.new.revisions_since(project, 2)
+      
+      assert_equal expected_revisions, actual
     end
   end
 
