@@ -22,3 +22,10 @@ Take a look at a <a href="http://cruisecontrolrb.thoughtworks.com/projects">work
 It's pretty sweet.
 
 </div>
+<div class="box">
+
+h2. Friends of CC.rb
+
+<a href="http://studios.thoughtworks.com/"><img src="images/mingle_v_v_small.gif"></a>
+
+</div>
