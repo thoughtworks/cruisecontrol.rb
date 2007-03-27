@@ -14,6 +14,7 @@ ARGV.clone.options do |opts|
           "Specifies the environment to run this server under (test/development/production).",
           "Default: production") {}
   opts.on("-w", "--without-builders", "Run without starting the project builders.") { BuilderStarter.run_builders_at_startup = false }
+  opts.on("--trace", "Start builders in verbose mode."){ $VERBOSE_MODE = true }
 
   opts.separator ""
 
@@ -21,10 +22,11 @@ ARGV.clone.options do |opts|
 
   opts.parse!
 end
-   
+
 # Remove custom options so that they are not interpreted by 'commands/server'   
 ARGV.delete("-w")
 ARGV.delete("--without-builders")
+ARGV.delete("--trace")
     
 # change default port from Rails' usual 3000 to 3333, so that it doesn't clash with other Rails apps 
 # running on the same box.
