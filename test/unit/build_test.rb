@@ -210,7 +210,7 @@ class BuildTest < Test::Unit::TestCase
       sandbox.new :file => "build-1/build_status.success.in0s"
       build = Build.new(project, 1)
 
-      dashboard_url = "http://www.my.com/"
+      dashboard_url = "http://www.my.com"
       Configuration.expects(:dashboard_url).returns(dashboard_url)      
       assert_equal "#{dashboard_url}/builds/#{project.name}/#{build.to_param}", build.url
       
