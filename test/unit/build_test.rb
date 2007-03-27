@@ -204,4 +204,18 @@ class BuildTest < Test::Unit::TestCase
       assert_equal "plugin error", build.brief_error
     end   
   end    
+  
+  def test_should_generate_build_url_with_dashboard_url
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :file => "build-1/build_status.success.in0s"
+      build = Build.new(project, 1)
+
+      dashboard_url = "http://www.my.com/"
+      Configuration.expects(:dashboard_url).returns(dashboard_url)      
+      assert_equal "#{dashboard_url}/builds/#{project.name}/#{build.to_param}", build.url
+      
+      Configuration.expects(:dashboard_url).returns(nil)
+      assert_raise(RuntimeError) { build.url }
+    end   
+  end
 end

@@ -26,7 +26,7 @@ class BuildMailerTest < Test::Unit::TestCase
 
     assert_equal @expected.encoded, BuildMailer.create_test("Joe", @expected.date).encoded
   end
-
+  
   private
     def read_fixture(action)
       IO.readlines("#{FIXTURES_PATH}/build_mailer/#{action}")

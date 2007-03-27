@@ -99,6 +99,12 @@ class Build
     @artifacts_dir ||= File.join(@project.path, "build-#{label}")
   end
   
+  def url
+    dashboard_url = Configuration.dashboard_url
+    raise "Configuration.dashboard_url is not specified" if dashboard_url.nil? || dashboard_url.empty?
+    "#{dashboard_url}/builds/#{project.name}/#{to_param}"
+  end
+  
   def artifact(file_name)
     File.join(artifacts_directory, file_name)
   end
