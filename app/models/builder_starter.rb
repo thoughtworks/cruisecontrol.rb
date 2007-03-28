@@ -11,16 +11,16 @@ class BuilderStarter
     @@run_builders_at_startup = value
   end
 
-  def self.start_builders(verbose = false)
+  def self.start_builders
     if @@run_builders_at_startup
       Projects.load_all.each do |project|
-        begin_builder(project.name, verbose)
+        begin_builder project.name
       end
     end
   end
   
-  def self.begin_builder(project_name, verbose)
-    verbose_option = verbose ? "--trace" : ""
+  def self.begin_builder(project_name)
+    verbose_option = $VERBOSE_MODE ? "--trace" : ""
     if Platform.family == 'mswin32'
       Thread.new(project_name) { |my_project_name| system("cruise.cmd build #{project_name} #{verbose_option}") }
     else

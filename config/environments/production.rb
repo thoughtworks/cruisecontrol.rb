@@ -30,6 +30,6 @@ end
 
 if $CRUISE_CONTROL_CONTEXT == :webapp
   config.after_initialize do
-    BuilderStarter.start_builders $VERBOSE_MODE
+    BuilderStarter.start_builders
   end
 end
