@@ -5,9 +5,12 @@
 <head>
   <title>CruiseControl.rb<%= @title ? " - " + @title : '' %></title>
   <%= stylesheet_link_tag 'cruisecontrol', :media => 'all' %>
-  
-  <% default_rss_url = {:controller => 'projects', :action => 'index', :format => 'rss'} %>
-  <%= auto_discovery_link_tag :rss, @rss_url||default_rss_url, {:title => "RSS feed"} %>
+
+  <% if @rss_feeds -%>
+    <% @rss_feeds.sort.each do |title, url| -%>
+      <%= auto_discovery_link_tag :rss, url, {:title => title} %>
+    <% end -%>
+  <% end -%>
   <%= javascript_include_tag :defaults %>
 </head>
 

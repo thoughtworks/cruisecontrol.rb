@@ -213,7 +213,7 @@ class BuildsControllerTest < Test::Unit::TestCase
       get :show, :project => project.name
       assert_tag :tag => "link", :attributes => {
         :href => /\/projects\/#{project.name}.rss/, 
-        :title => "RSS feed"}
+        :title => "#{project.name} builds"}
     end    
   end
 
