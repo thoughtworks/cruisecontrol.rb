@@ -35,7 +35,8 @@ class SubversionLogParser
     end
     
     date = hash['date'] ? DateTime.parse(hash['date']) : nil
-    Revision.new(hash['revision'].to_i, hash['author'], date, hash['msg'], changesets)
+    message = hash['msg'] == {} ? nil : hash['msg']
+    Revision.new(hash['revision'].to_i, hash['author'], date, message, changesets)
   end
 
   def parse_to_localtime(time_string)
