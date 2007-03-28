@@ -38,12 +38,4 @@ class SubversionLogParser
     message = hash['msg'] == {} ? nil : hash['msg']
     Revision.new(hash['revision'].to_i, hash['author'], date, message, changesets)
   end
-
-  def parse_to_localtime(time_string)
-    Time.parse(time_string).getlocal.strftime("%F %T %z (%a, %d %b %Y)")
-  end
-  
-  def parse_node(info, key, &value_block)
-    (info[key] = yield value_block) rescue nil
-  end
 end

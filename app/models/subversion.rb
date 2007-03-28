@@ -11,11 +11,6 @@ class Subversion
     raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
   end
 
-  def self.checkout(target_directory, options)
-    revision = options.delete(:revision)
-    Subversion.new(options).checkout(target_directory, revision)
-  end
-    
   def checkout(target_directory, revision = nil)
     @url or raise 'URL not specified'
 
@@ -28,19 +23,10 @@ class Subversion
     execute(svn(:co, options)) { |io| io.readlines }
   end
 
-  def info(project)
-    svn_output = execute_in_local_copy(project, svn(:info, "--xml"))
-    SubversionLogParser.new.parse_info(svn_output)
-  end
-
   def latest_revision(project)
     last_locally_known_revision = info(project).last_changed_revision
     svn_output = execute_in_local_copy(project, svn(:log, "--revision HEAD:#{last_locally_known_revision} --verbose --xml"))
     SubversionLogParser.new.parse_log(svn_output).first
-  end
-
-  def current_revision(project)
-    info(project).revision
   end
 
   def revisions_since(project, revision_number)
@@ -58,6 +44,11 @@ class Subversion
   
   private
   
+  def info(project)
+    svn_output = execute_in_local_copy(project, svn(:info, "--xml"))
+    SubversionLogParser.new.parse_info(svn_output)
+  end
+
   def svn(operation, options = nil)
     command = "svn"
     command << " --non-interactive" unless @interactive
