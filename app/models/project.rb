@@ -42,7 +42,7 @@ class Project
   end
   
   def load_and_remember(file)
-    return if !File.file?(file)
+    return unless File.file?(file)
     @settings << File.read(file) << "\n"
     @config_file_content = @settings
     load file

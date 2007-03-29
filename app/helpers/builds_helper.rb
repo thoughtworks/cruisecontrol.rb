@@ -12,7 +12,7 @@ module BuildsHelper
       selected = build.label == @build.label ? " selected='selected'" : nil
       first = nil if selected  
       
-      "<option value='#{build.label}'#{selected}>#{text_to_build(build)}</option>"
+      "<option value='#{build.label}'#{selected}>#{text_to_build(build, false)}</option>"
     end
     options.unshift first if first
     

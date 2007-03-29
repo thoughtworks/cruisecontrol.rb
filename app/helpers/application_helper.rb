@@ -25,7 +25,7 @@ module ApplicationHelper
     build_link(text, project, build)
   end
 
-  def text_to_build(build)
+  def text_to_build(build, with_elapsed_time = true)
     text = build_label(build)
     if build.failed?
       text += ' FAILED'
@@ -33,11 +33,11 @@ module ApplicationHelper
       text += ' incomplete'
     else
       elapsed_time_text = elapsed_time(build)
-      text += " took #{elapsed_time_text}" unless elapsed_time_text.empty?
+      text += " took #{elapsed_time_text}" if (with_elapsed_time and !elapsed_time_text.empty?)
     end
     return text
   end
-
+  
   def link_to_build_with_elapsed_time(project, build)
     build_link(text_to_build(build), project, build)
   end
