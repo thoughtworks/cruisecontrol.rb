@@ -72,6 +72,8 @@ class Subversion
           error_message = File.open(err_file_path){|f|f.read}.strip.split("\n")[1] || ""
         rescue
           error_message = ""
+        ensure
+          FileUtils.rm_f(err_file_path)
         end
         raise BuilderError.new(error_message, "svn_error") unless error_message.empty?
         return result
