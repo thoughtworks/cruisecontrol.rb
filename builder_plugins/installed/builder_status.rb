@@ -27,7 +27,6 @@ class BuilderStatus
   end
   
   def error_message
-    existing_status_file = Dir["#{@project.path}/builder_status.*"].first
     File.open(existing_status_file){|f| f.read} rescue ""
   end
   
@@ -56,9 +55,11 @@ class BuilderStatus
   end
   
   private
+  def existing_status_file
+    Dir["#{@project.path}/builder_status.*"].first
+  end
   
   def read_status
-    existing_status_file = Dir["#{@project.path}/builder_status.*"].first
     if existing_status_file
       File.basename(existing_status_file)[15..-1]
     else
