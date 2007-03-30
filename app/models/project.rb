@@ -53,6 +53,7 @@ class Project
       retried_after_update = false
       begin
         load_and_remember config_tracker.central_config_file
+      # TODO shouldn't it be "rescue Exception => e"?
       rescue
         if retried_after_update
           raise
@@ -64,7 +65,7 @@ class Project
       end
       load_and_remember config_tracker.local_config_file
     rescue Exception => e
-      @error_message = "Could not load project configuration: #{e.message} in #{e.backtrace.first}"    
+      @error_message = "Could not load project configuration: #{e.message} in #{e.backtrace.first}"
       CruiseControl::Log.event(@error_message, :fatal) rescue nil
       @settings = ""
     end

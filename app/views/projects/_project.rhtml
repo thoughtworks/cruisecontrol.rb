@@ -7,7 +7,6 @@
     <div>
       <span class="project_name">
         <%= link_to project.name, :action => 'show', :id => project.name %>
-        <%= link_to image_tag("rss.gif", :border => 0), :action => 'show', :id => project.name, :format => 'rss' %>
       </span>
     </div>
 
@@ -15,7 +14,11 @@
 
       <% recent_builds = project.last_five_builds %>
 
-      <span class="lead"><%= recent_builds.first ? 'build ' : '<span class="build_status">Never built</span>' %></span>
+      <span class="lead">
+        <%= recent_builds.first ? 'build ' : '<span class="build_status">Never built</span>' %>
+        <br/>
+        <%= link_to image_tag('rss_light.gif'), :action => 'show', :id => project.name, :format => 'rss' %>
+      </span>
 
       <% unless recent_builds.empty? %>
         <div class="builds_list">
