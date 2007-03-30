@@ -28,14 +28,6 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
   end
   
-  def test_index_rhtml_should_link_to_rss_for_separated_projects
-    p1 = create_project_stub('one', 'success')
-    Projects.expects(:load_all).returns([p1])
-
-    get :index
-    assert_tag :tag => 'a', :attributes => {:href => '/projects/one.rss'},  :child => {:tag => "img", :attributes => {:src => /\/images\/rss.gif/}}
-  end
-  
   def test_index_rjs
     Projects.expects(:load_all).returns([create_project_stub('one'), create_project_stub('two')])
     
