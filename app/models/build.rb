@@ -25,6 +25,19 @@ class Build
     end
     @status.succeed!((Time.now - time).ceil)    
   rescue => e
+    if File.exists?(project.local_checkout + "/trunk")
+      msg = <<EOF
+
+WARNING:
+Directory #{project.local_checkout}/trunk exists. 
+Maybe that's your APP_ROOT directory. 
+Try to remove this project, then re-add it with correct APP_ROOT, e.g.
+
+rm -rf #{project.path}
+./cruise add #{project.name} svn://my.svn.com/#{project.name}/trunk
+EOF
+      File.open(build_log, 'a'){|f| f << msg }
+    end
     File.open(build_log, 'a'){|f| f << e.message }
     CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
     time_escaped = (Time.now - (time || Time.now)).ceil
