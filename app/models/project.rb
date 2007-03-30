@@ -136,6 +136,10 @@ class Project
     BuilderStatus.new(self).status
   end 
   
+  def builder_error_message
+    BuilderStatus.new(self).error_message
+  end
+  
   def last_build
     builds.last
   end

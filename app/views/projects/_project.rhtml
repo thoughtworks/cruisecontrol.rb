@@ -69,6 +69,7 @@
       <% if latest_build.brief_error %>
         <div><%= link_to latest_build.brief_error, {:action => 'show', :id => project.name}, {:class => "failed"} %></div>
       <% end %>
+      <div class="error_message"><%= project.builder_error_message %></div>
     <% end %>   
   </td>
 </tr>

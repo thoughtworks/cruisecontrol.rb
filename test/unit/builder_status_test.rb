@@ -86,20 +86,37 @@ class BuilderStatusTest < Test::Unit::TestCase
   
   def test_build_loop_failed_should_set_status_according_exception_passed_in
     e = BuilderError.new("message", "status")
-    @builder_status.expects(:set_status).with("status")
+    @builder_status.expects(:set_status).with("status", "message")
     @builder_status.build_loop_failed(e)
     
     e = BuilderError.new("message")
-    @builder_status.expects(:set_status).with("error")
+    @builder_status.expects(:set_status).with("error", "message")
     @builder_status.build_loop_failed(e)
 
     e = RuntimeError.new("message")
     @builder_status.expects(:set_status).with("error")
     @builder_status.build_loop_failed(e)
   end
+
+  def test_builder_error_message_should_be_recorded
+    in_sandbox do |sandbox|
+      sandbox.new :file => "#{@project.path}/builder_status.sleeping", :with_content => ""
+      e = BuilderError.new("message", "status")
+      @builder_status.build_loop_failed(e)
+      log = File.open("#{@project.path}/builder_status.status"){|f| f.read }
+      assert_equal "message", log
+    end
+  end
   
   def test_should_know_fatal_status
     @builder_status.expects(:status).returns("svn_error")
     assert @builder_status.fatal?
+  end
+  
+  def test_should_know_builder_error_message
+    in_sandbox do |sandbox|
+      sandbox.new :file => "#{@project.path}/builder_status.some_error", :with_content => "error message"
+      assert_equal "error message", @builder_status.error_message
+    end
   end
 end

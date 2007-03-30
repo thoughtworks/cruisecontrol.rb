@@ -112,11 +112,11 @@ class SubversionTest < Test::Unit::TestCase
       svn = Subversion.new
       begin
         svn.revisions_since(project, 1)
+        flunk
       rescue BuilderError => e
+        assert_match /not a working copy/, e.message
       end
       
-      log_content = File.open("#{sandbox.root}/project/svn.err"){|f| f.read}
-      assert_match /not a working copy/, log_content
     end
   end
 

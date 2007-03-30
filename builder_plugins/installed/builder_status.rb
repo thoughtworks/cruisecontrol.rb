@@ -26,6 +26,11 @@ class BuilderStatus
     status == 'svn_error'
   end
   
+  def error_message
+    existing_status_file = Dir["#{@project.path}/builder_status.*"].first
+    File.open(existing_status_file){|f| f.read} rescue ""
+  end
+  
   def build_initiated
     set_status 'building'
   end
@@ -44,7 +49,7 @@ class BuilderStatus
 
   def build_loop_failed(e)
     if e.is_a?(BuilderError)
-      set_status e.status
+      set_status e.status, e.message
     else
       set_status 'error'
     end
@@ -61,9 +66,11 @@ class BuilderStatus
     end
   end
 
-  def set_status(status)
+  def set_status(status, message = nil)
     FileUtils.rm_f(Dir["#{@project.path}/builder_status.*"])
-    FileUtils.touch("#{@project.path}/builder_status.#{status}")
+    status_file = "#{@project.path}/builder_status.#{status}"
+    FileUtils.touch(status_file)
+    File.open(status_file, "w"){|f| f.write message } if message
   end
 
   def builder_down?
