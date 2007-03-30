@@ -16,6 +16,11 @@ h2. Can I use CC.rb to build a java or c# project?
 The answer is a qualified yes.  You should be able to have any command line tool build your project including ant or 
 nant or even msbuild.  See the "manual":/documentation/manual for more information.
 
+h2. Can I use CC.rb to build a project with Selenium tests in it?
+
+Yes, you can, although there are some stuff you should pay attention to. See "Working with Selenium":/documentation/selenium 
+for detail.
+
 h2. What source control systems do you support?
 
 We currently only support "Subversion":http://subversion.tigris.org/.  We are planning on adding support for
