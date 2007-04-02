@@ -19,22 +19,20 @@ class BuildStatusTest < Test::Unit::TestCase
   end
 
   def test_never_built_is_true_when_file_is_missing
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns([])
     assert_equal true, BuildStatus.new("artifacts_directory").never_built?
   end
 
   def test_never_built_is_false_when_file_exists
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.anything'])
+    File.expects(:"exist?").with("artifacts_directory").returns(true)
     assert_equal false, BuildStatus.new("artifacts_directory").never_built?
   end
 
   def test_succeeded_is_true_when_file_is___success__
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.success'])
-    assert_equal true, BuildStatus.new("artifacts_directory").succeeded?
+    File.expects(:"exist?").with("build-1-success").returns(true)
+    assert_equal true, BuildStatus.new("build-1-success").succeeded?
   end
 
   def test_succeeded_is_false_when_file_is_not___success__
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns([])
     assert_equal false, BuildStatus.new("artifacts_directory").succeeded?
   end
 
@@ -47,12 +45,11 @@ class BuildStatusTest < Test::Unit::TestCase
   end
 
   def test_failed_is_true_when_file_is___failed__
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.failed.in3.5s'])
-    assert_equal true, BuildStatus.new("artifacts_directory").failed?
+    File.expects(:"exist?").with('build-1-failed').returns(true)
+    assert_equal true, BuildStatus.new("build-1-failed").failed?
   end
 
   def test_failed_is_false_when_file_is_not___failed__
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns([])
     assert_equal false, BuildStatus.new("artifacts_directory").failed?
   end
 
@@ -66,8 +63,7 @@ class BuildStatusTest < Test::Unit::TestCase
 
   def test_created_at_returns_creation_time_for_status_file
     now = Time.now
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns([:some_file])
-    File.expects(:mtime).with(:some_file).returns(now)
+    File.expects(:mtime).with('artifacts_directory').returns(now)
     assert_equal now, BuildStatus.new("artifacts_directory").created_at
   end
 
@@ -89,7 +85,6 @@ class BuildStatusTest < Test::Unit::TestCase
   end
 
   def test_created_at_returns_nil_when_file_not_exist
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns([])
     assert_equal nil, BuildStatus.new("artifacts_directory").created_at
   end
 
@@ -110,23 +105,22 @@ class BuildStatusTest < Test::Unit::TestCase
   end
 
   def test_elapsed_time_in_progress
-    Dir.expects(:'[]').at_least(1).with("artifacts_directory/build_status.*").returns(['build_status.incomplete'])
-    File.expects(:mtime).with('build_status.incomplete').returns(Time.local(2000,"jan",1,20,15, 1))
+    File.expects(:"exist?").with('build-1-incomplete').returns(true)
+    File.expects(:mtime).with('build-1-incomplete').returns(Time.local(2000,"jan",1,20,15, 1))
     Time.expects(:now).returns(Time.local(2000,"jan",1,20,15,10))
-    assert_equal 9, BuildStatus.new("artifacts_directory").elapsed_time_in_progress
+    assert_equal 9, BuildStatus.new("build-1-incomplete").elapsed_time_in_progress
   end
 
   def test_elapsed_time_in_progress_should_return_nil_when_not_incomplete
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.success.in123s'])
-    assert_nil BuildStatus.new("artifacts_directory").elapsed_time_in_progress
+    assert_nil BuildStatus.new("build-1-success.in123s").elapsed_time_in_progress
   end
 
   def test_elapsed_time_in_progress_ceils_fractionals
-    Dir.expects(:'[]').at_least(1).with("artifacts_directory/build_status.*").returns(['build_status.incomplete'])
-    File.expects(:mtime).with('build_status.incomplete').returns(Time.local(2000,"jan",1,20,15, 1))
+    File.expects(:"exist?").with('build-1-incomplete').returns(true)
+    File.expects(:mtime).with('build-1-incomplete').returns(Time.local(2000,"jan",1,20,15, 1))
     time_with_fractional_seconds = Time.local(2000,"jan",1,20,15,10) + 0.2 #difference is 9.2 seconds
     Time.expects(:now).returns(time_with_fractional_seconds)
-    assert_equal 10, BuildStatus.new("artifacts_directory").elapsed_time_in_progress
+    assert_equal 10, BuildStatus.new("build-1-incomplete").elapsed_time_in_progress
   end
   
   private

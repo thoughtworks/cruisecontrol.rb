@@ -19,12 +19,12 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.path = sandbox.root
 
-      sandbox.new :file => "build-1/build_status.success"
-      sandbox.new :file => "build-10/build_status.success"
-      sandbox.new :file => "build-3/build_status.failure"
-      sandbox.new :file => "build-5/build_status.success"
-      sandbox.new :file => "build-5.2/build_status.success"
-      sandbox.new :file => "build-5.12/build_status.success"
+      sandbox.new :file => "build-1-success/build_status.success"
+      sandbox.new :file => "build-10-success/build_status.success"
+      sandbox.new :file => "build-3-failure/build_status.failure"
+      sandbox.new :file => "build-5-success/build_status.success"
+      sandbox.new :file => "build-5.2-success/build_status.success"
+      sandbox.new :file => "build-5.12-success/build_status.success"
 
       assert_equal("1 - success, 3 - failure, 5 - success, 5.2 - success, 5.12 - success, 10 - success",
                    @project.builds.collect {|b| "#{b.label} - #{b.status}"}.join(", "))
@@ -36,8 +36,8 @@ class ProjectTest < Test::Unit::TestCase
   def test_project_should_know_last_complete_build
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      sandbox.new :file => "build-1/build_status.success"
-      sandbox.new :file => "build-2/build_status.failure"
+      sandbox.new :file => "build-1-success/build_status.success"
+      sandbox.new :file => "build-2-failure/build_status.failure"
       sandbox.new :file => "build-3/build_status.incomplete"
       assert_equal('2', @project.last_complete_build.label)
     end

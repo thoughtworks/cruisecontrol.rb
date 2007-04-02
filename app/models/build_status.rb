@@ -40,9 +40,7 @@ class BuildStatus
   end
   
   def created_at
-    if file = status_file
-      File.mtime(file)
-    end
+    File.mtime(@artifacts_directory) rescue nil
   end
   
   def timestamp
@@ -73,16 +71,16 @@ class BuildStatus
     raise 'Could not parse elapsed time.' if !match or !$1
     $1.to_i
   end
- 
+  
   def status_file
-      Dir["#{@artifacts_directory}/build_status.*"].first
+    Dir["#{@artifacts_directory}/build_status.*"].first
   end
   
   private
   
   def read_latest_status
-    file = status_file
-    file ? match_status(File.basename(file)).downcase : 'never_built'
+    return 'never_built' unless File.exist? @artifacts_directory
+    match_status(@artifacts_directory).downcase
   end
   
   def remove_status_file
@@ -96,8 +94,10 @@ class BuildStatus
       File.open(filename, "w"){|f|f.write error_message}
     end
   end
-    
-  def match_status(file_name)
-     /^build_status\.([^\.]+)(\..+)?/.match(file_name)[1]
+  
+  def match_status(dir_name)
+    a = dir_name.split("-")
+    return a.last.split(".").first if  a.size > 2
+    return "incomplete"
   end
 end
