@@ -7,7 +7,10 @@ class Build
   def initialize(project, label)
     @project, @label = project, label
     FileUtils.mkdir_p(artifacts_directory) unless File.exist?(artifacts_directory)
-    @status = BuildStatus.new(artifacts_directory)
+  end
+
+  def build_status
+    BuildStatus.new(artifacts_directory)
   end
 
   def run
@@ -19,11 +22,11 @@ class Build
     # build_command must be set before doing chdir, because there may be some relative paths
     build_command = self.command
     time = Time.now
-    @status.start!
+    build_status.start!
     in_clean_environment_on_local_copy do
       execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
-    @status.succeed!((Time.now - time).ceil)    
+    build_status.succeed!((Time.now - time).ceil)    
   rescue => e
     if File.exists?(project.local_checkout + "/trunk")
       msg = <<EOF
@@ -42,14 +45,14 @@ EOF
     CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
     time_escaped = (Time.now - (time || Time.now)).ceil
     if e.is_a? ConfigError
-      @status.fail!(time_escaped, e.message)
+      build_status.fail!(time_escaped, e.message)
     else
-      @status.fail!(time_escaped)
+      build_status.fail!(time_escaped)
     end
   end
   
   def brief_error
-    if File.size(@status.status_file) > 0
+    if File.size(build_status.status_file) > 0
       return "config error"
     end
     unless plugin_errors.empty?
@@ -67,25 +70,25 @@ EOF
   end
   
   def status
-    @status.to_s
+    build_status.to_s
   end
   
   def status=(value)
     FileUtils.rm_f(Dir["#{artifacts_directory}/build_status.*"])
     FileUtils.touch(artifact("build_status.#{value}"))
-    @status = value
+    build_status = value
   end
 
   def successful?
-    @status.succeeded?
+    build_status.succeeded?
   end
 
   def failed?
-    @status.failed?
+    build_status.failed?
   end
 
   def incomplete?
-    @status.incomplete?
+    build_status.incomplete?
   end
   
   def changeset
@@ -105,11 +108,11 @@ EOF
   end
 
   def time
-    @status.timestamp
+    build_status.timestamp
   end
 
   def artifacts_directory
-    @artifacts_dir ||= File.join(@project.path, "build-#{label}")
+    Dir["#{@project.path}/build-#{label}*"].first || File.join(@project.path, "build-#{label}")
   end
   
   def url
@@ -158,11 +161,11 @@ EOF
   end
   
   def elapsed_time
-    @status.elapsed_time
+    build_status.elapsed_time
   end
 
   def elapsed_time_in_progress
-    @status.elapsed_time_in_progress
+    build_status.elapsed_time_in_progress
   end
 
 end

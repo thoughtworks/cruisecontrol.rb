@@ -160,10 +160,11 @@ class ProjectTest < Test::Unit::TestCase
         true
       end
 
-      FileUtils.mkdir_p 'build-1' 
+      FileUtils.mkdir_p 'build-1-success.in40s' 
       mock_build = Object.new
-      Build.expects(:new).returns(mock_build)
-      mock_build.expects(:artifacts_directory).returns('build-1')
+      Build.stubs(:new).returns(mock_build)
+      mock_build.stubs(:label).returns("1")
+      mock_build.expects(:artifacts_directory).returns('build-1-success.in40s')
       mock_build.expects(:abort)
 
       listener = Object.new

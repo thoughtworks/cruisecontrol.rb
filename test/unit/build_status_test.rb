@@ -40,6 +40,7 @@ class BuildStatusTest < Test::Unit::TestCase
 
   def test_succeed_creates_file___success
     Dir.stubs(:'[]').returns(['artifacts_directory/build_status.foo'])
+    FileUtils.expects(:mv).with("artifacts_directory", "artifacts_directory-success.in3.5s")
     FileUtils.expects(:rm_f).with(["artifacts_directory/build_status.foo"])
     FileUtils.expects(:touch).with("artifacts_directory/build_status.success.in3.5s")
     BuildStatus.new("artifacts_directory").succeed!(3.5)
@@ -57,6 +58,7 @@ class BuildStatusTest < Test::Unit::TestCase
 
   def test_fail_creates_file___failed__
     Dir.stubs(:'[]').returns(['artifacts_directory/build_status.foo'])
+    FileUtils.expects(:mv).with("artifacts_directory", "artifacts_directory-failed.in3.5s")
     FileUtils.expects(:rm_f).with(["artifacts_directory/build_status.foo"])
     FileUtils.expects(:touch).with("artifacts_directory/build_status.failed.in3.5s")
     BuildStatus.new("artifacts_directory").fail!(3.5)

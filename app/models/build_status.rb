@@ -26,13 +26,17 @@ class BuildStatus
   end
   
   def succeed!(elapsed_time)
+    status_message = "success.in#{elapsed_time}s"
     remove_status_file
-    touch_status_file("success.in#{elapsed_time}s")
+    touch_status_file(status_message)
+    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{status_message}"
   end
   
   def fail!(elapsed_time, error_message=nil)
+    status_message = "failed.in#{elapsed_time}s"
     remove_status_file
-    touch_status_file("failed.in#{elapsed_time}s", error_message)
+    touch_status_file(status_message, error_message)
+    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{status_message}"
   end
   
   def created_at

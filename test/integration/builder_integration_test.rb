@@ -50,9 +50,10 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
       assert_equal true, result.successful?
       
-      assert Dir["#{sandbox.root}/passing_project/build-7/build_status.success.*"][0]
-      assert File.exists?("#{sandbox.root}/passing_project/build-7/changeset.log")
-      assert File.exists?("#{sandbox.root}/passing_project/build-7/build.log")
+      build_dir = Dir["#{sandbox.root}/passing_project/build-7-success.*"][0]
+      assert build_dir
+      assert File.exists?("#{build_dir}/changeset.log")
+      assert File.exists?("#{build_dir}/build.log")
     end
   end
 
@@ -95,11 +96,12 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       assert result.is_a?(Build)
       assert_equal true, result.failed?
 
-      assert Dir["failing_project/build-7/build_status.failed.*"][0]
-      assert_equal false, file("failing_project/build-7/build_status.success").exists?
+      build_dir = Dir["failing_project/build-7-failed.*"][0]
+      assert build_dir
+      assert_equal false, file("#{build_dir}/build_status.success").exists?
 
-      assert file("failing_project/build-7/changeset.log").exists?
-      assert file("failing_project/build-7/build.log").exists?
+      assert file("#{build_dir}/changeset.log").exists?
+      assert file("#{build_dir}/build.log").exists?
     end
   end
 
@@ -126,7 +128,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
       assert_equal true, result.successful?
 
-      assert Dir[new_status_file_full_path][0]
+      assert Dir["passing_project/build-7.1-success.*/build_status.success.*"][0]
      end
   end  
     

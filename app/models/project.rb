@@ -125,9 +125,9 @@ class Project
   def builds
     raise "Project #{name.inspect} has no path" unless path
 
-    the_builds = Dir["#{path}/build-*/build_status.*"].collect do |status_file|
-      build_directory = File.basename(File.dirname(status_file))
-      build_label = build_directory[6..-1]
+    the_builds = Dir["#{path}/build-*"].collect do |build_dir|
+      build_directory = File.basename(build_dir)
+      build_label = build_directory.split("-")[1]
       Build.new(self, build_label)
     end
     order_by_label(the_builds)
