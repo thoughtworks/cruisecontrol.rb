@@ -6,7 +6,6 @@ class Build
 
   def initialize(project, label)
     @project, @label = project, label
-    FileUtils.mkdir_p(artifacts_directory) unless File.exist?(artifacts_directory)
   end
 
   def build_status
@@ -112,7 +111,9 @@ EOF
   end
 
   def artifacts_directory
-    Dir["#{@project.path}/build-#{label}*"].first || File.join(@project.path, "build-#{label}")
+    @artifacts_directory = Dir["#{@project.path}/build-#{label}*"].first || File.join(@project.path, "build-#{label}")
+    FileUtils.mkdir_p @artifacts_directory
+    @artifacts_directory
   end
   
   def url
