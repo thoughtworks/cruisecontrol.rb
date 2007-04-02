@@ -20,23 +20,14 @@ class BuildStatus
     read_latest_status == 'failed'
   end
   
-  def start!
-    remove_status_file
-    touch_status_file("incomplete")
-  end
-  
   def succeed!(elapsed_time)
-    status_message = "success.in#{elapsed_time}s"
-    remove_status_file
-    touch_status_file(status_message)
-    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{status_message}"
+    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-success.in#{elapsed_time}s"
   end
   
   def fail!(elapsed_time, error_message=nil)
-    status_message = "failed.in#{elapsed_time}s"
-    remove_status_file
-    touch_status_file(status_message, error_message)
-    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{status_message}"
+    error_message_file = File.join(@artifacts_directory, "error.log")
+    File.open(error_message_file, "w+"){|f| f.write error_message } if error_message
+    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-failed.in#{elapsed_time}s"
   end
   
   def created_at
@@ -62,18 +53,17 @@ class BuildStatus
   end
   
   def elapsed_time
-    file = status_file
-    match_elapsed_time(File.basename(file))
+    match_elapsed_time(File.basename(@artifacts_directory))
   end
   
   def match_elapsed_time(file_name)
-    match =  /^build_status\.[^\.]+\.in(\d+)s$/.match(file_name)
+    match =  /^build-[^\.]+\.in(\d+)s$/.match(file_name)
     raise 'Could not parse elapsed time.' if !match or !$1
     $1.to_i
   end
   
-  def status_file
-    Dir["#{@artifacts_directory}/build_status.*"].first
+  def error_message_file
+    Dir["#{@artifacts_directory}/error.log"].first
   end
   
   private
@@ -81,18 +71,6 @@ class BuildStatus
   def read_latest_status
     return 'never_built' unless File.exist? @artifacts_directory
     match_status(@artifacts_directory).downcase
-  end
-  
-  def remove_status_file
-    FileUtils.rm_f(Dir["#{@artifacts_directory}/build_status.*"])
-  end
-  
-  def touch_status_file(status, error_message=nil)
-    filename = "#{@artifacts_directory}/build_status.#{status}"
-    FileUtils.touch(filename)
-    if error_message
-      File.open(filename, "w"){|f|f.write error_message}
-    end
   end
   
   def match_status(dir_name)

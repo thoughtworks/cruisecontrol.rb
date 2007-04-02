@@ -81,7 +81,6 @@ class BuildTest < Test::Unit::TestCase
       Time.expects(:now).at_least(2).returns(Time.at(0), Time.at(3.2))
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
 
-      BuildStatus.any_instance.expects(:'start!')
       BuildStatus.any_instance.expects(:'succeed!').with(4)
       BuildStatus.any_instance.expects(:'fail!').never
       build.run
@@ -118,7 +117,6 @@ class BuildTest < Test::Unit::TestCase
   
       build.expects(:execute).with(build.rake, expected_redirect_options).raises(CommandLine::ExecutionError)
       Time.stubs(:now).returns(Time.at(1))
-      BuildStatus.any_instance.expects(:'start!')
       BuildStatus.any_instance.expects(:'fail!').with(0)  
       build.run
     end
@@ -214,14 +212,14 @@ class BuildTest < Test::Unit::TestCase
       
       build = Build.new(project, 1)
       build.run
-      assert_equal "fail message", File.open("build-1-failed.in0s/build_status.failed.in0s"){|f|f.read}
+      assert_equal "fail message", File.open("build-1-failed.in0s/error.log"){|f|f.read}
       assert_equal "config error", build.brief_error
     end   
   end
     
   def test_should_pass_error_to_build_status_if_plugin_error_happens
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-1/build_status.success.in0s"
+      sandbox.new :file => "build-1-success.in0s/error.log"
       build = Build.new(project, 1)
       build.stubs(:plugin_errors).returns("plugin error")
       assert_equal "plugin error", build.brief_error

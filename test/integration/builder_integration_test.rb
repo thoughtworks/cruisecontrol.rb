@@ -128,7 +128,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
       assert_equal true, result.successful?
 
-      assert Dir["passing_project/build-7.1-success.*/build_status.success.*"][0]
+      assert Dir["passing_project/build-7.1-success.*"][0]
      end
   end  
     

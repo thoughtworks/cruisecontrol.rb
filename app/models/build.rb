@@ -22,7 +22,6 @@ class Build
     # build_command must be set before doing chdir, because there may be some relative paths
     build_command = self.command
     time = Time.now
-    build_status.start!
     in_clean_environment_on_local_copy do
       execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
@@ -52,7 +51,8 @@ EOF
   end
   
   def brief_error
-    if File.size(build_status.status_file) > 0
+    return nil unless build_status.error_message_file
+    if File.size(build_status.error_message_file) > 0
       return "config error"
     end
     unless plugin_errors.empty?

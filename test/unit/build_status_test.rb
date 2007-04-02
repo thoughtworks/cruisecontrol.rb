@@ -8,8 +8,8 @@ class BuildStatusTest < Test::Unit::TestCase
   end
   
   def test_should_parse_elapsed_time     
-    assert_equal 10, @status.match_elapsed_time('build_status.success.in10s')
-    assert_equal 760, @status.match_elapsed_time('build_status.failed.in760s')    
+    assert_equal 10, @status.match_elapsed_time('build-1-success.in10s')
+    assert_equal 760, @status.match_elapsed_time('build-2-failed.in760s')    
   end
   
   def test_should_raise_exception_when_elapsed_time_not_parsable 
@@ -39,8 +39,6 @@ class BuildStatusTest < Test::Unit::TestCase
   def test_succeed_creates_file___success
     Dir.stubs(:'[]').returns(['artifacts_directory/build_status.foo'])
     FileUtils.expects(:mv).with("artifacts_directory", "artifacts_directory-success.in3.5s")
-    FileUtils.expects(:rm_f).with(["artifacts_directory/build_status.foo"])
-    FileUtils.expects(:touch).with("artifacts_directory/build_status.success.in3.5s")
     BuildStatus.new("artifacts_directory").succeed!(3.5)
   end
 
@@ -56,8 +54,6 @@ class BuildStatusTest < Test::Unit::TestCase
   def test_fail_creates_file___failed__
     Dir.stubs(:'[]').returns(['artifacts_directory/build_status.foo'])
     FileUtils.expects(:mv).with("artifacts_directory", "artifacts_directory-failed.in3.5s")
-    FileUtils.expects(:rm_f).with(["artifacts_directory/build_status.foo"])
-    FileUtils.expects(:touch).with("artifacts_directory/build_status.failed.in3.5s")
     BuildStatus.new("artifacts_directory").fail!(3.5)
   end
 
@@ -93,12 +89,10 @@ class BuildStatusTest < Test::Unit::TestCase
   end
 
   def test_elapsed_time_should_return_elapsed_seconds_if_build_succeeded
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.success.in3s'])
-    assert_equal 3, BuildStatus.new("artifacts_directory").elapsed_time
+    assert_equal 3, BuildStatus.new("build-1-success.in3s").elapsed_time
   end
 
   def test_elapsed_time_should_return_blank_if_elapsed_time_not_availabe
-    Dir.expects(:'[]').with("artifacts_directory/build_status.*").returns(['build_status.hoo'])
     assert_raises("Could not parse elapsed time.") do
       BuildStatus.new("artifacts_directory").elapsed_time
     end
