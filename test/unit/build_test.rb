@@ -31,6 +31,19 @@ class BuildTest < Test::Unit::TestCase
       assert_equal ['line 1', 'line 2'], Build.new(project, 1).output
     end
   end
+
+  def test_artifacts_directory_method_should_remove_cached_pages
+    with_sandbox_project do |sandbox, project|
+      build = Build.new(project, 2)
+      build.expects(:clear_cache)
+      build.artifacts_directory      
+    end
+    
+    project = create_project_stub('one', 'success')
+    build = Build.new(project, 1)
+    FileUtils.expects(:rm_rf).with("#{RAILS_ROOT}/public/builds/older/#{project.name}")
+    build.clear_cache
+  end
   
   def test_output_gives_empty_string_when_file_does_not_exist
     with_sandbox_project do |sandbox, project|

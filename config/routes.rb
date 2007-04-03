@@ -4,6 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :projects
 
+  map.builds_drop_down 'builds/older/:project/:build', :controller => 'builds', :action => 'drop_down', :build => /[^\/]+/
   map.project_without_builds 'builds/:project', :controller => 'builds', :action => 'show'
   map.build 'builds/:project/:build', :controller => 'builds', :action => 'show', :build => /[^\/]+/
 

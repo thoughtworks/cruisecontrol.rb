@@ -15,11 +15,13 @@
     </div>
   <% end %>
 
-  <div>
-  <% form_tag({:action => 'show'}, :method => :get) do %>
-  <%= select_builds(builds_except_last(@project, 30)) %>
-  <% end %>
+  <div id="builds_drop_down">
+    <%= image_tag "spinner.gif" %>
   </div>
+  
+  <script>
+  <%= remote_function :update => 'builds_drop_down', :url => {:action => 'drop_down', :project => @project, :build => @build}, :method => "GET" %>
+  </script>
 </div>
 
 <br>

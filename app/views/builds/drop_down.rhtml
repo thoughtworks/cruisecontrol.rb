@@ -1,0 +1,3 @@
+  <% form_tag({:action => 'show'}, :method => :get) do %>
+      <%= select_builds(builds_except_last(@project, 30)) %>
+  <% end %>

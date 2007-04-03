@@ -19,7 +19,7 @@ class MassBuildsLoadSpeedTest < ActionController::IntegrationTest
       touch "#{project_root}/builder_status.sleeping"
       
       (1..3000).each do |i|
-        build_dir = "#{project_root}/build-#{i}"
+        build_dir = "#{project_root}/build-#{i}-failed.in9s"
         cp_r File.dirname(__FILE__) + "/build-sample", project_root
         mv "#{project_root}/build-sample", build_dir
       end
@@ -45,7 +45,6 @@ class MassBuildsLoadSpeedTest < ActionController::IntegrationTest
   end
   
   def log_to_file(filename, message)
-    touch filename
-    File.open(filename, "w"){|f|f.write(message)}
+    File.open(filename, "w+"){|f|f.write(message)}
   end
 end

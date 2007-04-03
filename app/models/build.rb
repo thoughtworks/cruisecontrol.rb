@@ -112,8 +112,15 @@ EOF
 
   def artifacts_directory
     @artifacts_directory = Dir["#{@project.path}/build-#{label}*"].first || File.join(@project.path, "build-#{label}")
-    FileUtils.mkdir_p @artifacts_directory
+    unless File.exist? @artifacts_directory
+      FileUtils.mkdir_p @artifacts_directory
+      clear_cache
+    end
     @artifacts_directory
+  end
+  
+  def clear_cache
+    FileUtils.rm_rf "#{RAILS_ROOT}/public/builds/older/#{@project.name}"
   end
   
   def url
