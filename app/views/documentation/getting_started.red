@@ -42,8 +42,8 @@ also be multiple installations of CruiseControl.rb per computer.
 
 h1. Prerequisites
 
-* "Ruby":http://www.ruby-lang.org/en/ 1.8.4 or later
-* "Subversion":http://subversion.tigris.org/ client 1.3.2 or later
+* "Ruby":http://www.ruby-lang.org/en/ 1.8.4 or 1.8.5 (Note: at the time of this writing there is a known problem with Ruby 1.8.6 that should be fixed in the next release of Ruby 1.8)
+* "Subversion":http://subversion.tigris.org/ client 1.4 or later
 * svn and ruby executables must both be in the PATH.
 
 
@@ -64,12 +64,12 @@ Follow these directions or watch our "5 minute install":/documentation/screencas
 
 2. From [cruise], run <code>./cruise add your_project --url [URL of your_project Subversion trunk]</code>.
 
-  p(def). Optionally, you can specify username and password by adding <code> --username [your_user] --password 
-    [your_password]</code> to the command.
+  <p class="def hint">Optionally, you can specify username and password by adding <code> --username [your_user] --password 
+    [your_password]</code> to the command</p>
 
-  p(def). This creates a directory for your_project's builds at
-    [cruise]/projects/your_project/, and checks out your_project from subversion URL specified to
-    [cruise]/projects/your_project/work/.
+
+  p(def). This creates a directory for your_project's builds at [cruise]/projects/your_project/, and 
+    checks out your_project from subversion URL specified to [cruise]/projects/your_project/work/.
 
   p(def hint). Hint: Rakefile of your_project should be in [cruise]/projects/your_project/work/ directory, not anywhere under
     it. A common mistake is to specify in <code>--url</code> option the root of project's SVN repository instead of the trunk.
@@ -77,13 +77,13 @@ Follow these directions or watch our "5 minute install":/documentation/screencas
 
 3. From [cruise], run <code>./cruise start</code>.
 
-  p(def hint). Hint: This starts cruise on port 3333, if you want to run your server on a different port, just type 
-    <code>./cruise start -p [port]</code>
+  p(def hint). Hint: This starts CruiseControl.rb dashboard and builder(s). By default, the dashboard is bound to port 3333, 
+    if you want to run your server on a different port, just type <code>./cruise start -p [port]</code>
 
 4. Browse to "http://localhost:3333":http://localhost:3333. 
 
   p(def). All going well, weather permitting, you will see a page with CruiseControl.rb logo. This is the dashboard, and it 
-    should display your project.  If it's passing, you're done - though you should double check it's doing what it should be 
+    should display your project.  If it's passing, you're done - though you should double check that it's doing what it should be 
     by clicking on the project name and looking at the build log for the last build.  If it's failing or otherwise misbehaving, go 
     on to step 5.
    

@@ -57,8 +57,8 @@ end
 
 Every cruise_config.rb must have these two lines. All your other configuration goes between them.
 
-You can move cruise_config.rb in [cruise]/projects/your_project/work/ directory. In other words, check it into
-Subversion in the root directory of your project. Storing your CI configuration in your project's version control
+You can move cruise_config.rb to [cruise]/projects/your_project/work/ directory. In other words, check it into
+Subversion, in the root directory of your project. Storing your CruiseControl.rb configuration in your project's version control
 is usually a smart thing to do.
 
 It is also possible to have two cruise_config.rb files for a project, one in the [cruise]/projects/your_project/
@@ -83,9 +83,11 @@ logical statements, and generally do whatever makes sense. For example, consider
 end
 </code></pre>
 
+p(hint). Use code like above to source-control configuration of multiple CruiseControl.rb projects building the same codebase.
+
 h1. What will it build by default?
 
-By default, CruiseControl.rb will search for "Rake":http://rake.rubyforge.org/ build file in your project. Then
+Unless told otherwise, CruiseControl.rb will search for "Rake":http://rake.rubyforge.org/ build file in your project. Then
 it will try to execute <code>cruise</code> task and stop right there, if <code>cruise</code> task is defined in your
 build.
 
@@ -101,6 +103,7 @@ p(hint). WARNING: with Rails projects, it is important that RAILS_ENV does not d
          Unless you want your migration scripts and unit tests to hit your production database, of course.
          CruiseControl.reb leaves this variable unchanged when invoking 'cruise' or other custom Rake task, and sets
          it to 'test' before invoking the defaults.
+
 
 h1. How can I change what the build does?
 
@@ -118,10 +121,10 @@ p(hint). Hint: When you have two builds for the same projects, and want to run t
          actually takes more than just a different Rake task. At the very least, you want to have separate databases
          for those two builds. You can achieve this by creating a separate environment and setting RAILS_ENV to it in
          your Rakefile. Copy config/environments/test.rb to config/environments/big_bertha.rb, add a :Big_Bertha_init
-         task with <code>ENV['RAILS_ENV'] = 'big_bertha'</code> in it, and put it in the beginning of
-         <code>Big_Bertha_build</code> list of depenedencies.
+         Rake task with <code>ENV['RAILS_ENV'] = 'big_bertha'</code> in it, and put it in the beginning of
+         <code>:Big_Bertha_build</code> list of depenedencies.
 
-p(hint). Hint: Ideally, you'd also want some way to chain builds so that the long build only for a new checkin is
+p(hint). Hint: Ideally, you'd also want some way to chain builds so that the long build for a new checkin is only
          launched once the short build has finished succesfully. For now, you can achieve something like this with a
          custom scheduler. CruiseControl.rb team intends to provide built-in support for this scenario in some future
          version.
@@ -145,7 +148,7 @@ If <code>project.build_command</code> is set, CC.rb will change current working 
 [cruise]/projects/your_project/work/, invoke specified command and look at the exit code to determine whether the
 build passed or failed.
 
-p(hint) You cannot specify both <code>rake_task</code> and <code>build_command</code> attributes in cruise_config.rb.
+p(hint). You cannot specify both <code>rake_task</code> and <code>build_command</code> attributes in cruise_config.rb.
         It doesn't make sense, anyway.
 
 
@@ -166,18 +169,18 @@ subdirectory under that directory.
 The build page includes links to every file or subdirectory found in the build artifacts directory.
 
 
-h1. Build monitoring via email
+h1. Build monitoring
+
+Let's admit it, the main duty of continuous integration tool is to annoy developers when the build is broken. 
+CruiseControl.rb is capable of delivering carefully measured doses of annoyance on demand, through a variety 
+of communication channels, including email, instant messaging, RSS feeds etc, etc.
+
+h2. Monitoring via email
 
 <%= render_plugin_doc 'installed/email_notifier.rb' %>
 
-h1. Build notices via instant messaging with Jabber
 
-"Jabber":http://www.jabber.org/ is an open protocol for instant messaging. Jabber messages can be sent to all sorts of
-IM systems, including AIM, Google Talk, ICQ, IRC, MSN and Yahoo. CC.rb comes with a Jabber plugin. Look
-at [cruise]/builder_plugins/available/jabber_notifier/README for the installation guide and further details.
-
-
-h1. Build monitoring with CCTray
+h2. Monitoring with CCTray
 
 "CCTray":http://ccnet.sourceforge.net/CCNET/CCTray.html is a utility developed as part of CruiseControl.NET project
 that displays an icon in the bottom right corner of the screen. The icon changes its color to red when a build fails,
@@ -192,6 +195,15 @@ At the time of this writing, CC.rb was tested to work with CCTray 1.2.1
 <small>("download":http://downloads.sourceforge.net/ccnet/CruiseControl.NET-CCTray-1.2.1-Setup.exe?modtime=1170786355&big_mirror=0)</small>
 
 p(hint). Hint: CCTRay only works on a Windows desktop.
+
+
+h2. Monitoring by other means
+
+Dashboard has RSS feeds both for the entire site and each project individually. This is useful for watching the build status of projects that 
+you are not actively working on. 
+
+Version 1.1 also has plugins to get notifications via Jabber (instant messaging), and Growl. Read about these and other plugins in 
+"plugin documentation":/documentation/plugins. It's also quite easy to write your own notification plugin if needed.
 
 
 h1. Build scheduling
@@ -217,9 +229,9 @@ your own scheduler implementation intpo the plugins directory and writing in cru
 end
 </code></pre>
 
-After initializing everything, and loading the project (step that includes evaluation of cruise_config.rb), the
-builder invokes project.scheduler.run. Project may detect that its configuraton has changed, so a scheduler needs to
-know how to recognize that situation.
+After initializing everything, and loading the project (this step includes evaluation of cruise_config.rb), the
+builder invokes project.scheduler.run. A builder must be able to detect when its configuraton has changed, or when a 
+build is requested by user (pressing the Build Now button), so a custom scheduler needs to know how to recognize that situation.
 
 Look at [cruise]/app/models/polling_scheduler.rb to understand how a scheduler interacts with a project.
 
@@ -232,13 +244,17 @@ directory.
 
 h1. Troubleshooting and support
 
-Beware, at the time of this writing, CC.rb is very young and not very stable. Good news is that it's simple (much, much
-simpler than other CruiseControl incarnations). The dashboard is just a small Rails app, and the builder is little
-more than a dumb, single-threaded Ruby script. Therefore, it's easy to debug. So, you are your own support hotline.
-Don't forget to send us patches, please!
+Beware, at the time of this writing, CC.rb is quite young and may have some heinous bugs (although we do have several 
+thousand users, including some happy ones).  Good news is that CC.rb is simple (much, much
+simpler than other CruiseControl incarnations). The dashboard is just a small Rails app, and the builder process is little
+more than a dumb, single-threaded endless loop. No queues, relational databases, remoting, WS* web services or other such things.
+Therefore, it's easy to debug. So, you are your own support hotline. Don't forget to send us patches, please!
 
 OK, that was the pep talk. If you have an issue that you cannot fix on your own, subscribe to mail list
 cruisecontrolrb-users@rubyforge.org and ask for help.
+
+Should you require commercial support, training or consulting around this tool, ThoughtWorks can provide it to you.
+
 
 h1. Documentation that we haven't written yet
 
