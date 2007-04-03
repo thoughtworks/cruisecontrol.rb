@@ -1,4 +1,7 @@
 TRUNK
+
+------------------------------------------------------------------------------------------------------------------------
+* 1.0.0
   - individual RSS feeds for each project
   - documented options configurable through config/site_config.rb
   - added a "from" option to EmailNotifier configuration
