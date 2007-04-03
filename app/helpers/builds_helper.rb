@@ -7,14 +7,10 @@ module BuildsHelper
   def select_builds(builds)
     return "" if !builds || builds.empty?
 
-    first = "<option value='' selected='selected'>Older Builds...</option>"
     options = builds.map do |build|
-      selected = build.label == @build.label ? " selected='selected'" : nil
-      first = nil if selected  
-      
-      "<option value='#{build.label}'#{selected}>#{text_to_build(build, false)}</option>"
+      "<option value='#{build.label}'>#{text_to_build(build, false)}</option>"
     end
-    options.unshift first if first
+    options.unshift "<option value=''>Older Builds...</option>"
     
     select_tag "build", options, :onChange => "this.form.submit();"
   end

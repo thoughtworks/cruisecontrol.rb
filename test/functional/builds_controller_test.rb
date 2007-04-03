@@ -78,10 +78,10 @@ class BuildsControllerTest < Test::Unit::TestCase
 
       get :drop_down, :format => 'js', :project => project.name
       assert_tag :tag => "option", :parent => {:tag => "select"}, :content => /11 \(.*\)/
-      assert_tag :tag => "option", :attributes => {:selected => "selected"}, :content => "Older Builds..."
+      assert_tag :tag => "option", :content => "Older Builds..."
 
       get :drop_down, :format => 'js', :project => project.name, :build => "11"
-      assert_tag :tag => "option", :attributes => {:selected => "selected"}, :content => /11 \(.*\)/
+      assert_tag :tag => "option", :content => /11 \(.*\)/
     end
   end
 

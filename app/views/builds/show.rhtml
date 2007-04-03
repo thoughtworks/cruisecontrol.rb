@@ -20,7 +20,21 @@
   </div>
   
   <script>
-  <%= remote_function :update => 'builds_drop_down', :url => {:action => 'drop_down', :project => @project, :build => @build}, :method => "GET" %>
+  <%= remote_function(
+        :update => 'builds_drop_down', :method => "GET",
+        :url => {:action => 'drop_down', :project => @project},  
+        :complete => "selectCurrentBuild()"
+        )%>
+        
+  function selectCurrentBuild() {
+    options = $('build').options
+    for(i = 0; options.length > i; i++) {
+        if(options[i].value == '<%= @build.label %>') {
+            $('build').selectedIndex = i
+            $('build').options[0] = null
+        }
+    }
+  }
   </script>
 </div>
 

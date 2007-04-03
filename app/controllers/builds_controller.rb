@@ -3,14 +3,17 @@ class BuildsController < ApplicationController
   caches_page :drop_down
   
   def show
-    err = load_project_and_build
-    render :text => err[0], :status => err[1] and return if err
-    render :action => (@build ? 'show' : 'no_builds_yet')
+    render :text => 'Project not specified', :status => 404 and return unless params[:project]
+    @project = Projects.find(params[:project])
+    render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
+
+    @build = (params[:build] ? @project.find_build(params[:build]) : @project.last_build)
+    render :action => (@build ? 'show' : 'no_builds_yet') 
   end
 
   def drop_down
-    err = load_project_and_build
-    render :text => err[0], :status => err[1] and return if err
+    render :text => 'Project not specified', :status => 404 and return unless params[:project]
+    @project = Projects.find(params[:project])
     render :layout => false
   end
   
@@ -41,15 +44,6 @@ class BuildsController < ApplicationController
   end
   
   private
-  def load_project_and_build
-    return ['Project not specified', 404] unless params[:project]
-    @project = Projects.find(params[:project])
-    return ["Project #{params[:project].inspect} not found", 404] unless @project
-    @build = (params[:build] ? @project.find_build(params[:build]) : @project.last_build)
-    return nil
-  end
-  
-  
   def get_mime_type(name)
     case name.downcase
     when /\.html$/

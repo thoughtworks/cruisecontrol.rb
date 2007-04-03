@@ -115,14 +115,15 @@ Message: NameError: uninitialized constant BuilderStatusTest::BuilderStatus
     assert_equal "", select_builds([])
     
     assert_equal "<select id=\"build\" name=\"build\" onChange=\"this.form.submit();\">" +
-                 "<option value='' selected='selected'>Older Builds...</option>" +
+                 "<option value=''>Older Builds...</option>" +
                  "<option value='1'>1 (1 Jan 06)</option>" +
                  "</select>", select_builds([BuildStub.new(1, Date.new(2006,1,1).to_time)])
     
     @build = BuildStub.new(3)
     assert_equal "<select id=\"build\" name=\"build\" onChange=\"this.form.submit();\">" +
+                 "<option value=''>Older Builds...</option>" +
                  "<option value='1'>1 (1 Jan 06)</option>" +
-                 "<option value='3' selected='selected'>3 (5 Jan 06)</option>" +
+                 "<option value='3'>3 (5 Jan 06)</option>" +
                  "<option value='5'>5 (10 Jan 06)</option>" +
                  "</select>", select_builds([BuildStub.new(1, Date.new(2006,1,1).to_time),
                                              BuildStub.new(3, Date.new(2006,1,5).to_time),
