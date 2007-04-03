@@ -1,12 +1,20 @@
 TRUNK
+  - individual RSS feeds for each project
   - documented options configurable through config/site_config.rb
   - added a "from" option to EmailNotifier configuration
-  - added growl notifier
-  - builder is now transparent to the value of RAILS_ENV environment variable (in earlier versions it was clearing it) 
+  - added Growl notifier to available plugins
+  - email notices can contain either full build log, or a link to the dashboard
+  - builder does not clear RAILS_ENV environment variable before calling custom tasks
+  - builder always sets RAILS_ENV environment to 'test' before calling default tasks
+  - "cannot connect to Subversion" situations, plugin errors and other problems that occur outside of a build loop are
+    now displayed on the dashboard
+  - custom project settings are displayed on the build log page
+  - [bugfix] Fixed cruise start --daemon option
+  - [bugfix] Removed incomplete builds from RSS feeds
+  - [bugfix] CC.rb can now live with localized (non-English) Subversion
   - [bugfix] Fixed problems with CCTray introduced in 1.0 by adding a new build status 'incomplete'
   - [bugfix] Corrected documentation to say "[cruise]/projects/" instead of "[cruise]/builds/"
   - [bugfix] Recognize Solaris as a platform
-  - [bugfix] Now handle localized svn correctly (by using --xml flag)
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.0.0
