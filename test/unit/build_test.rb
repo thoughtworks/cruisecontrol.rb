@@ -41,7 +41,7 @@ class BuildTest < Test::Unit::TestCase
     
     project = create_project_stub('one', 'success')
     build = Build.new(project, 1)
-    FileUtils.expects(:rm_rf).with("#{RAILS_ROOT}/public/builds/older/#{project.name}")
+    FileUtils.expects(:rm_f).with("#{RAILS_ROOT}/public/builds/older/#{project.name}.html")
     build.clear_cache
   end
   

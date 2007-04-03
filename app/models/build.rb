@@ -120,7 +120,7 @@ EOF
   end
   
   def clear_cache
-    FileUtils.rm_rf "#{RAILS_ROOT}/public/builds/older/#{@project.name}"
+    FileUtils.rm_f "#{RAILS_ROOT}/public/builds/older/#{@project.name}.html"
   end
   
   def url
