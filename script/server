@@ -39,7 +39,6 @@ if (ARGV & ['-e', '--environment']).empty?
   ARGV << '-e' << 'production'
 end
 
-$CRUISE_CONTROL_CONTEXT = :webapp
 tmp_dir = File.dirname(__FILE__) + "/../tmp"
 FileUtils.mkdir tmp_dir unless File.exist? tmp_dir
 FileUtils.touch "#{tmp_dir}/cc_context_webapp"

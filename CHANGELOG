@@ -1,7 +1,8 @@
 TRUNK
-  - documented options configurable through config/site_config.rb  
+  - documented options configurable through config/site_config.rb
   - added a "from" option to EmailNotifier configuration
   - added growl notifier
+  - builder is now transparent to the value of RAILS_ENV environment variable (in earlier versions it was clearing it) 
   - [bugfix] Fixed problems with CCTray introduced in 1.0 by adding a new build status 'incomplete'
   - [bugfix] Corrected documentation to say "[cruise]/projects/" instead of "[cruise]/builds/"
   - [bugfix] Recognize Solaris as a platform

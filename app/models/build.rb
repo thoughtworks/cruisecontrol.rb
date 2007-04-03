@@ -141,19 +141,13 @@ EOF
   end
 
   def in_clean_environment_on_local_copy(&block)
-    old_rails_env = ENV['RAILS_ENV']
-    # If we don't clean RAILS_ENV OS variable, tests of the project we are building would be 
-    # executed under 'builder' Rails environment
-    ENV.delete('RAILS_ENV')
     # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
     ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
     # CC_RAKE_TASK communicates to cc:build which task to build (if self.rake_task is not set, cc:build will try to be
     # smart about it)
     ENV['CC_RAKE_TASK'] = self.rake_task
-    begin
-      Dir.chdir(project.local_checkout, &block)
-    ensure
-      ENV['RAILS_ENV'] = old_rails_env
+    Dir.chdir(project.local_checkout) do
+      block.call
     end
   end
 

@@ -143,15 +143,20 @@ class BuilderIntegrationTest < Test::Unit::TestCase
     
   end
 
-  def test_builder_should_invoke_cruise_if_this_task_is_defined_and_should_not_set_RAILS_ENV
-    with_project('project_with_cruise_and_default_tasks') do |project, sandbox|
-      build = project.build
-      build_log = File.read("#{build.artifacts_directory}/build.log")
+  def test_builder_should_be_transparent_to_RAILS_ENV
+    ENV['RAILS_ENV'] = 'foo'
 
-      expected_output = "RAILS_ENV=nil\ncruise invoked\n"
-      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
+    begin
+      with_project('project_with_cruise_and_default_tasks') do |project, sandbox|
+        build = project.build
+        build_log = File.read("#{build.artifacts_directory}/build.log")
+
+        expected_output = "RAILS_ENV=\"foo\"\ncruise invoked\n"
+        assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
+      end
+    ensure
+      ENV.delete('RAILS_ENV')
     end
-    
   end
 
   def test_custom_build_command
