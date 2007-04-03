@@ -99,8 +99,8 @@ Finally, it will run all your automated tests.
 
 p(hint). WARNING: with Rails projects, it is important that RAILS_ENV does not default to 'production'.
          Unless you want your migration scripts and unit tests to hit your production database, of course.
-         CruiseControl.reb clears this environment variable before calling 'cruise' or custom Rake task, and sets
-         it to 'test' before calling the defaults.
+         CruiseControl.reb leaves this variable unchanged when invoking 'cruise' or other custom Rake task, and sets
+         it to 'test' before invoking the defaults.
 
 h1. How can I change what the build does?
 
@@ -117,8 +117,9 @@ end
 p(hint). Hint: When you have two builds for the same projects, and want to run them on the same build server, it
          actually takes more than just a different Rake task. At the very least, you want to have separate databases
          for those two builds. You can achieve this by creating a separate environment and setting RAILS_ENV to it in
-         your Rakefile. Copy config/environments/test.rb to config/environments/big_bertha.rb and write something like
-         <code>ENV['RAILS_ENV'] = 'big_bertha'</code> as the first line of your <code>Big_Bertha_build</code> Rake task.
+         your Rakefile. Copy config/environments/test.rb to config/environments/big_bertha.rb, add a :Big_Bertha_init
+         task with <code>ENV['RAILS_ENV'] = 'big_bertha'</code> in it, and put it in the beginning of
+         <code>Big_Bertha_build</code> list of depenedencies.
 
 p(hint). Hint: Ideally, you'd also want some way to chain builds so that the long build only for a new checkin is
          launched once the short build has finished succesfully. For now, you can achieve something like this with a

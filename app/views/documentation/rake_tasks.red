@@ -17,9 +17,8 @@ Therefore, CC.rb uses the following logic to determine what to build:
    <code>db:test:purge</code> and <code>db:migrate</code> tasks (if they are defined in your build), then calling
    <code>test</code> target.
 
-p(hint) Unless your Rakefile has already set it to something else, operating system variable RAILS_ENV is set to
-        "test" before calling other default Rails tasks. This is to make sure that db: tasks work with the 
-        right database environment.
+p(hint) Operating system variable RAILS_ENV is set to "test" before calling other default Rails tasks.
+        This is to make sure that db:migrate connects to the appropriate database.
 
 4. Finally, if there is no <code>test</code> target, CC.rb will try to invoke <code>default</code> target.
 
