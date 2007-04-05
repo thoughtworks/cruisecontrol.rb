@@ -13,15 +13,15 @@ class Build
   end
 
   def run
+    build_log = artifact 'build.log'
+
     File.open(artifact('cruise_config.rb'), 'w') {|f| f << @project.config_file_content }
-    
     raise ConfigError.new(@project.error_message) unless @project.config_valid?
     
     # build_command must be set before doing chdir, because there may be some relative paths
     build_command = self.command
     time = Time.now
 
-    build_log = artifact 'build.log'
     in_clean_environment_on_local_copy do
       execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
