@@ -4,13 +4,12 @@ module Platform
   def family
     target_os = Config::CONFIG["target_os"] or raise 'Cannot determine operating system'
     case target_os
-    when /darwin/ then 'powerpc-darwin'
+    when /linux/ then 'linux'
     when /32/ then 'mswin32'
+    when /darwin/ then 'powerpc-darwin'
     when /cyg/ then 'cygwin'
     when /solaris/ then 'solaris'
-    when /freebsd/ then 'freebsd'
-    when /linux/ then 'linux'
-    when /solaris/ then 'solaris'
+    when /freebsd/, /netbsd/ then 'bsd'
     else raise "Unknown OS: #{target_os}"
     end
   end

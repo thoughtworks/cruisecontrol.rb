@@ -21,7 +21,11 @@ module ApplicationHelper
 
   def link_to_build(project, build)
     text = build_label(build)
-    text += " <span class='error'>FAILED</span>" if build.failed?
+    if build.failed?
+      text += " FAILED"
+    elsif build.incomplete?
+      text += " incomplete"
+    end
     build_link(text, project, build)
   end
 

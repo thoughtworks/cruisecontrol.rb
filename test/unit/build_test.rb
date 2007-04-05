@@ -142,7 +142,7 @@ class BuildTest < Test::Unit::TestCase
       expected_build_directory = File.join(sandbox.root, 'build-123')
   
       build = Build.new(project, 123)
-  
+
       expected_build_log = File.join(expected_build_directory, 'build.log')
       expected_redirect_options = {
         :stdout => expected_build_log,

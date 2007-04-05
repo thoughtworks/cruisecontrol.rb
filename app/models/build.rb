@@ -13,7 +13,6 @@ class Build
   end
 
   def run
-    build_log = artifact 'build.log'
     File.open(artifact('cruise_config.rb'), 'w') {|f| f << @project.config_file_content }
     
     raise ConfigError.new(@project.error_message) unless @project.config_valid?
@@ -21,6 +20,8 @@ class Build
     # build_command must be set before doing chdir, because there may be some relative paths
     build_command = self.command
     time = Time.now
+
+    build_log = artifact 'build.log'
     in_clean_environment_on_local_copy do
       execute build_command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
     end
@@ -30,8 +31,8 @@ class Build
       msg = <<EOF
 
 WARNING:
-Directory #{project.local_checkout}/trunk exists. 
-Maybe that's your APP_ROOT directory. 
+Directory #{project.local_checkout}/trunk exists.
+Maybe that's your APP_ROOT directory.
 Try to remove this project, then re-add it with correct APP_ROOT, e.g.
 
 rm -rf #{project.path}
@@ -39,6 +40,7 @@ rm -rf #{project.path}
 EOF
       File.open(build_log, 'a'){|f| f << msg }
     end
+
     File.open(build_log, 'a'){|f| f << e.message }
     CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
     time_escaped = (Time.now - (time || Time.now)).ceil
