@@ -24,4 +24,17 @@ module Platform
     prompt = "#{dir.gsub(/\//, File::SEPARATOR)} #{user}$"
   end
   module_function :prompt
+
+  def create_child_process(project_name, command)
+    if Kernel.respond_to?(:fork)
+      pid = fork || exec(command)
+      pid_file = File.join(RAILS_ROOT, 'tmp', 'pids', 'builders', "#{project_name}.pid")
+      FileUtils.mkdir_p(File.dirname(pid_file))
+      File.open(pid_file, "w") {|f| f.write pid }
+    else
+      Thread.new { system(command) }
+    end
+  end
+  module_function :create_child_process
+
 end

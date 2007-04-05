@@ -20,34 +20,29 @@ class BuilderStarterTest < Test::Unit::TestCase
     BuilderStarter.start_builders
   end
   
+  def test_should_use_platform_specific_executable
+    Platform.expects(:family).returns("mswin32")
+    Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise.cmd build #{@one.name}")
+    BuilderStarter.begin_builder(@one.name)
+
+    Platform.expects(:family).returns("linux")
+    Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise build #{@one.name}")
+    BuilderStarter.begin_builder(@one.name)
+  end
+
   def test_should_invoke_cruise_in_verbose_mode
     $VERBOSE_MODE = true
-  
-    Thread.expects(:new).with(@one.name).yields(@one.name)
-    Platform.expects(:family).returns("mswin32")
-    BuilderStarter.expects(:system).with("cruise.cmd build #{@one.name} --trace")
-    BuilderStarter.begin_builder(@one.name)
+    begin
+      Platform.expects(:family).returns("mswin32")
+      Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise.cmd build #{@one.name} --trace")
+      BuilderStarter.begin_builder(@one.name)
 
-    Platform.expects(:family).returns("linux")
-    BuilderStarter.expects(:fork).returns(nil)
-    BuilderStarter.expects(:exec).with("#{RAILS_ROOT}/cruise build #{@one.name} --trace")
-    BuilderStarter.begin_builder(@one.name)  
+      Platform.expects(:family).returns("linux")
+      Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise build #{@one.name} --trace")
+      BuilderStarter.begin_builder(@one.name)
+    ensure
+      $VERBOSE_MODE = false
+    end
   end
 
-  def test_on_win32_begin_builder_should_thread_to_run_builder_command
-    Thread.expects(:new).with(@one.name).yields(@one.name)
-  
-    Platform.expects(:family).returns("mswin32")
-    BuilderStarter.expects(:system).with("cruise.cmd build #{@one.name} ")
-    
-    BuilderStarter.begin_builder(@one.name)
-  end
-  
-  def test_on_non_win32_begin_builder_should_fork_and_execute_builder_command
-    Platform.expects(:family).returns("linux")
-    BuilderStarter.expects(:fork).returns(nil)
-    BuilderStarter.expects(:exec).with("#{RAILS_ROOT}/cruise build #{@one.name} ")
-    
-    BuilderStarter.begin_builder(@one.name)
-  end
 end

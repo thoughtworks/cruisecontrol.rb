@@ -20,15 +20,10 @@ class BuilderStarter
   end
   
   def self.begin_builder(project_name)
-    verbose_option = $VERBOSE_MODE ? "--trace" : ""
-    if Platform.family == 'mswin32'
-      Thread.new(project_name) { |my_project_name| system("cruise.cmd build #{project_name} #{verbose_option}") }
-    else
-      pid = fork || exec("#{RAILS_ROOT}/cruise build #{project_name} #{verbose_option}")
-      project_pid_location = "#{RAILS_ROOT}/tmp/pids/builders"
-      FileUtils.mkdir_p project_pid_location
-      File.open("#{project_pid_location}/#{project_name}.pid", "w") {|f| f.write pid }
-    end
+    verbose_option = $VERBOSE_MODE ? " --trace" : ""
+    cruise_executable = File.join(RAILS_ROOT, (Platform.family == 'mswin32' ? 'cruise.cmd' : 'cruise'))
+    command = "#{cruise_executable} build #{project_name}#{verbose_option}"
+    Platform.create_child_process(project_name, command)
   end
   
 end
