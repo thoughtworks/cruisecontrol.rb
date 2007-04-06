@@ -205,17 +205,24 @@ class Project
         return build(revisions)
       end
     rescue => e
-      notify(:build_loop_failed, e) rescue nil
-      @build_loop_failed = true
-      raise
+      unless e.message.include? "No commit found in the repository."
+        notify(:build_loop_failed, e) rescue nil
+        @build_loop_failed = true
+        raise
+      end 
     ensure
       notify(:sleeping) unless @build_loop_failed rescue nil
     end
   end
 
   def new_revisions
-    builds.empty? ? [@source_control.latest_revision(self)] :
-                    @source_control.revisions_since(self, builds.last.label.to_i)
+    if builds.empty?
+      latest_revision = @source_control.latest_revision(self)
+      raise "No commit found in the repository." if latest_revision.nil?
+      [@source_control.latest_revision(self)]
+    else 
+      @source_control.revisions_since(self, builds.last.label.to_i)
+    end
   end
   
   def build_requested?
@@ -253,6 +260,7 @@ class Project
   end
 
   def build(revisions = nil)
+    new_revisions rescue return
     notify(:build_initiated)
     if revisions.nil?
       revisions = new_revisions
