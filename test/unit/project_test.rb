@@ -61,7 +61,7 @@ class ProjectTest < Test::Unit::TestCase
       
       @project.stubs(:builds).returns([])
       @project.stubs(:config_modified?).returns(false)
-      @svn.expects(:latest_revision).returns(revision)
+      @svn.stubs(:latest_revision).returns(revision)
       @svn.expects(:update).with(@project, revision)
 
       build.expects(:run)
@@ -80,7 +80,7 @@ class ProjectTest < Test::Unit::TestCase
 
       @project.stubs(:builds).returns([])
       @project.stubs(:config_modified?).returns(false)
-      @svn.expects(:latest_revision).returns(revision)
+      @svn.stubs(:latest_revision).returns(revision)
       @svn.expects(:update).with(@project, revision)
 
       build.expects(:run)
@@ -134,6 +134,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.expects(:last_build).returns(successful_build)
       @project.stubs(:builds).returns([successful_build])
       @project.stubs(:log_changeset)
+      @project.stubs(:new_revisions).returns(nil)
       @svn.stubs(:update)
 
       # event expectations
@@ -166,7 +167,8 @@ class ProjectTest < Test::Unit::TestCase
       mock_build.stubs(:label).returns("1")
       mock_build.expects(:artifacts_directory).returns('build-1-success.in40s')
       mock_build.expects(:abort)
-
+      @project.stubs(:new_revisions).returns(nil)
+      
       listener = Object.new
       listener.expects(:configuration_modified)
       @project.add_plugin listener
@@ -211,7 +213,7 @@ class ProjectTest < Test::Unit::TestCase
   def test_build_should_generate_event_when_build_is_fixed
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-
+      
       failing_build = stub_build(1)
       failing_build.stubs(:successful?).returns(false)
       failing_build.stubs(:failed?).returns(true)
@@ -223,6 +225,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.expects(:last_build).returns(failing_build)
       @project.stubs(:builds).returns([failing_build])
       @project.stubs(:log_changeset)
+      @project.stubs(:new_revisions).returns(nil)
       @svn.stubs(:update)
 
       # event expectations
@@ -248,7 +251,7 @@ class ProjectTest < Test::Unit::TestCase
       build = new_mock_build('2')
       @project.stubs(:last_build).returns(nil)
       build.stubs(:artifacts_directory).returns(sandbox.root)      
-      @svn.expects(:revisions_since).with(@project, 1).returns([revision])
+      @svn.stubs(:revisions_since).with(@project, 1).returns([revision])
       @svn.expects(:update).with(@project, revision)
 
       build.expects(:run)
@@ -370,7 +373,9 @@ class ProjectTest < Test::Unit::TestCase
     @svn.stubs(:update)
     project.stubs(:log_changeset) 
     project.stubs(:builds).returns([existing_build1, existing_build2])
-    project.stubs(:last_build).returns(nil)      
+    project.stubs(:last_build).returns(nil) 
+    project.stubs(:new_revisions).returns(nil)
+         
     Build.expects(:new).with(project, '20.2').returns(new_build) 
     project.build([new_revision(20)])
 
