@@ -5,7 +5,6 @@ class BuildTest < Test::Unit::TestCase
 
   def test_initialize_should_load_status_file_and_build_log
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-2-success.in9.235s/build_status.success.in9.235s"
       sandbox.new :file => "build-2-success.in9.235s/build.log", :with_content => "some content"
       build = Build.new(project, 2)
   
@@ -17,7 +16,7 @@ class BuildTest < Test::Unit::TestCase
 
   def test_initialize_should_load_failed_status_file
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-2-failed.in2s/build_status.failed.in2s"
+      sandbox.new :directory => "build-2-failed.in2s"
       build = Build.new(project, 2)
   
       assert_equal 2, build.label
@@ -54,12 +53,12 @@ class BuildTest < Test::Unit::TestCase
   
   def test_successful?
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-1-success/build_status.success"
-      sandbox.new :file => "build-2-Success/build_status.Success"
-      sandbox.new :file => "build-3-failure/build_status.failure"
-      sandbox.new :file => "build-4-crap/build_status.crap"
-      sandbox.new :file => "build-5/foo"
-  
+      sandbox.new :directory => "build-1-success"
+      sandbox.new :directory => "build-2-Success"
+      sandbox.new :directory => "build-3-failure"
+      sandbox.new :directory => "build-4-crap"
+      sandbox.new :directory => "build-5"
+
       assert Build.new(project, 1).successful?
       assert Build.new(project, 2).successful?
       assert !Build.new(project, 3).successful?
@@ -70,8 +69,8 @@ class BuildTest < Test::Unit::TestCase
 
   def test_incomplete?
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-1-incomplete/build_status.incomplete"
-      sandbox.new :file => "build-2-something_else/build_status.something_else"
+      sandbox.new :directory => "build-1-incomplete"
+      sandbox.new :directory => "build-2-something_else"
   
       assert Build.new(project, 1).incomplete?
       assert !Build.new(project, 2).incomplete?

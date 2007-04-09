@@ -9,6 +9,10 @@ Revision #{number} committed by #{committed_by} on #{time.strftime('%Y-%m-%d %H:
     EOL
   end
 
+  def ==(other)
+    number == other.number
+  end
+  
   def to_i
     number
   end

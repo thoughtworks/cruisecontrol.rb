@@ -77,7 +77,7 @@ begin
     write_to_log_and_console "Builder for project '#{project.name}' started"
     puts "Logging to: #{File.expand_path(CRUISE_OPTIONS[:log_file_name])}"
 
-	while (true) do
+	  while (true) do
       catch(:reload_project) do
         project.scheduler.run
       end

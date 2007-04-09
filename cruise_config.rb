@@ -4,4 +4,5 @@
 
 Project.configure do |project|
   project.email_notifier.emails = ["cruisecontrol-developers@rubyforge.org"]
+#  project.triggered_by successful_build_of(:cruise_control_fast)
 end

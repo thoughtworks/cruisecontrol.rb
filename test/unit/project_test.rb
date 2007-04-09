@@ -476,7 +476,7 @@ class ProjectTest < Test::Unit::TestCase
       assert_equal 3, @project.last_builds(5).length
     end
   end
-   
+  
   private
   
   def stub_build(label)

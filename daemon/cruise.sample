@@ -3,8 +3,8 @@
 # in order to make cruise run as daemon, you need:
 # 1. cp $CCRB_HOME/daemon/cruise.sample $CCRB_HOME/daemon/cruise
 # 2. specify your cruise_path to $CCRB_HOME in $CCRB_HOME/daemon/cruise file
-# 3. ln -s $CCRB_HOME/daemon/cruise /etc/init.d/cruise (you may need sudo this)
-# 4. update-rc.d cruise (you may want to choose options by yourself, and you may need sudo this)
+# 3. ln -s $CCRB_HOME/daemon/cruise /etc/init.d/cruise (you may need to 'sudo' this)
+# 4. update-rc.d cruise (you may want to choose options by yourself, and you may need to 'sudo' this)
 # 5. it's done :>
 
 require "fileutils"

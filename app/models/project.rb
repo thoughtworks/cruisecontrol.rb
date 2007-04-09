@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'triggers'
 
 class Project
   @@plugin_names = []
@@ -38,6 +39,7 @@ class Project
     @settings = ''
     @config_file_content = ''
     @error_message = ''
+    @trigger = ChangeInSourceControlTrigger.new
     instantiate_plugins
   end
   
@@ -145,6 +147,12 @@ class Project
     builds.last
   end
   
+  def create_build(label)
+    build = Build.new(self, label)
+    build.artifacts_directory # create the build directory
+    build
+  end
+  
   def previous_build(current_build)  
     all_builds = builds
     index = get_build_index(all_builds, current_build.label)
@@ -193,9 +201,9 @@ class Project
   end
 
   def build_if_necessary
-    notify :polling_source_control
     begin
-      revisions = new_revisions
+      revisions = @trigger.get_revisions_to_build(self)
+      
       if revisions.empty?
         notify :no_new_revisions_detected
         return nil

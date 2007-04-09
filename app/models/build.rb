@@ -73,12 +73,6 @@ EOF
   def status
     build_status.to_s
   end
-  
-  def status=(value)
-    FileUtils.rm_f(Dir["#{artifacts_directory}/build_status.*"])
-    FileUtils.touch(artifact("build_status.#{value}"))
-    build_status = value
-  end
 
   def successful?
     build_status.succeeded?

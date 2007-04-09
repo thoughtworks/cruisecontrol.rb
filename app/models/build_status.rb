@@ -1,33 +1,37 @@
 class BuildStatus
+  SUCCESS = 'success'
+  FAILED = 'failed'
+  INCOMPLETE = 'incomplete'
+  NEVER_BUILT = 'never_built'
   
   def initialize(artifacts_directory)
     @artifacts_directory = artifacts_directory 
   end
   
   def never_built?
-    read_latest_status == 'never_built'
+    read_latest_status == NEVER_BUILT
   end
   
   def succeeded?
-    read_latest_status == 'success'
+    read_latest_status == SUCCESS
   end
   
   def incomplete?
-    read_latest_status == 'incomplete'
+    read_latest_status == INCOMPLETE
   end
   
   def failed?
-    read_latest_status == 'failed'
+    read_latest_status == FAILED
   end
   
   def succeed!(elapsed_time)
-    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-success.in#{elapsed_time}s"
+    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{SUCCESS}.in#{elapsed_time}s"
   end
   
   def fail!(elapsed_time, error_message=nil)
     error_message_file = File.join(@artifacts_directory, "error.log")
     File.open(error_message_file, "w+"){|f| f.write error_message } if error_message
-    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-failed.in#{elapsed_time}s"
+    FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{FAILED}.in#{elapsed_time}s"
   end
   
   def created_at
@@ -69,13 +73,13 @@ class BuildStatus
   private
   
   def read_latest_status
-    return 'never_built' unless File.exist? @artifacts_directory
+    return NEVER_BUILT unless File.exist? @artifacts_directory
     match_status(@artifacts_directory).downcase
   end
   
   def match_status(dir_name)
     a = dir_name.split("-")
     return a.last.split(".").first if  a.size > 2
-    return "incomplete"
+    return INCOMPLETE
   end
 end
