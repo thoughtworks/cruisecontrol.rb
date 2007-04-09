@@ -22,11 +22,11 @@ class BuilderStarterTest < Test::Unit::TestCase
   
   def test_should_use_platform_specific_executable
     Platform.expects(:family).returns("mswin32")
-    Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise.cmd build #{@one.name}")
+    Platform.expects(:create_child_process).with(@one.name, "\"#{RAILS_ROOT}/cruise.cmd\" build #{@one.name}")
     BuilderStarter.begin_builder(@one.name)
 
     Platform.expects(:family).returns("linux")
-    Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise build #{@one.name}")
+    Platform.expects(:create_child_process).with(@one.name, "\"#{RAILS_ROOT}/cruise\" build #{@one.name}")
     BuilderStarter.begin_builder(@one.name)
   end
 
@@ -34,11 +34,11 @@ class BuilderStarterTest < Test::Unit::TestCase
     $VERBOSE_MODE = true
     begin
       Platform.expects(:family).returns("mswin32")
-      Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise.cmd build #{@one.name} --trace")
+      Platform.expects(:create_child_process).with(@one.name, "\"#{RAILS_ROOT}/cruise.cmd\" build #{@one.name} --trace")
       BuilderStarter.begin_builder(@one.name)
 
       Platform.expects(:family).returns("linux")
-      Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise build #{@one.name} --trace")
+      Platform.expects(:create_child_process).with(@one.name, "\"#{RAILS_ROOT}/cruise\" build #{@one.name} --trace")
       BuilderStarter.begin_builder(@one.name)
     ensure
       $VERBOSE_MODE = false

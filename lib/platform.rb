@@ -26,12 +26,13 @@ module Platform
   module_function :prompt
 
   def create_child_process(project_name, command)
-    if Kernel.respond_to?(:fork)
+    Thread.new { system(command) } unless Kernel.respond_to?(:fork)
+    begin
       pid = fork || exec(command)
       pid_file = File.join(RAILS_ROOT, 'tmp', 'pids', 'builders', "#{project_name}.pid")
       FileUtils.mkdir_p(File.dirname(pid_file))
       File.open(pid_file, "w") {|f| f.write pid }
-    else
+    rescue NotImplementedError   # Kernel.fork exists but not implemented in Windows
       Thread.new { system(command) }
     end
   end

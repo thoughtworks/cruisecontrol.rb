@@ -109,8 +109,7 @@ class BuildTest < Test::Unit::TestCase
       build.stubs(:execute)
 
       build.run
-
-      assert_equal 'cool project settings', file('build-123-success.in1s/cruise_config.rb').contents
+      assert_equal 'cool project settings', file(Dir['build-123-success.in*s/cruise_config.rb'][0]).contents
       assert_equal 'cool project settings', Build.new(project, 123).project_settings
     end
   end
@@ -153,7 +152,7 @@ class BuildTest < Test::Unit::TestCase
       build.expects(:execute).with(build.rake, expected_redirect_options).raises(CommandLine::ExecutionError)
       build.run
       
-      log = File.open("build-123-failed.in1s/build.log"){|f| f.read }
+      log = file(Dir["build-123-failed.in*s/build.log"][0]).content
       assert_match /trunk exists/, log
     end
   end

@@ -22,7 +22,7 @@ class BuilderStarter
   def self.begin_builder(project_name)
     verbose_option = $VERBOSE_MODE ? " --trace" : ""
     cruise_executable = File.join(RAILS_ROOT, (Platform.family == 'mswin32' ? 'cruise.cmd' : 'cruise'))
-    command = "#{cruise_executable} build #{project_name}#{verbose_option}"
+    command = "\"#{cruise_executable}\" build #{project_name}#{verbose_option}"
     Platform.create_child_process(project_name, command)
   end
   
