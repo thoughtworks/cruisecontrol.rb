@@ -12,7 +12,6 @@ class PollingScheduler
      begin
         @project.build_if_necessary or check_build_request_until_next_polling
         clean_last_build_loop_error
-# TODO looks like throwing isn't necessary anymore, can simply return :reload_project 
         throw :reload_project if @project.config_modified?
       rescue => e
         log_error(e) unless (same_error_as_before(e) and last_logged_less_than_an_hour_ago)

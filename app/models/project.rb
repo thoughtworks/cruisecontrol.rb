@@ -268,7 +268,9 @@ class Project
   end
 
   def build(revisions = nil)
+    # TODO: the line below is not very readable, to put it mildly, a nd probably is doing a wrong thing
     new_revisions rescue return
+
     notify(:build_initiated)
     if revisions.nil?
       revisions = new_revisions
