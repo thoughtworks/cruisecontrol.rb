@@ -125,10 +125,11 @@ class BuildTest < Test::Unit::TestCase
         :stderr => expected_build_log,
         :escape_quotes => false
       }
-  
-      build.expects(:execute).with(build.rake, expected_redirect_options).raises(CommandLine::ExecutionError)
+
+      error = RuntimeError.new
+      build.expects(:execute).with(build.rake, expected_redirect_options).raises(error)
       Time.stubs(:now).returns(Time.at(1))
-      BuildStatus.any_instance.expects(:'fail!').with(0)  
+      BuildStatus.any_instance.expects(:'fail!').with(0, error)  
       build.run
     end
   end
@@ -202,6 +203,7 @@ class BuildTest < Test::Unit::TestCase
   end
   
   def test_build_should_fail_if_project_config_is_invalid
+    Time.stubs(:now).returns(Time.at(0))
     with_sandbox_project do |sandbox, project|
       expected_build_directory = File.join(sandbox.root, 'build-123')
       project.stubs(:config_file_content).returns("cool project settings")
@@ -216,6 +218,7 @@ class BuildTest < Test::Unit::TestCase
   end  
     
   def test_should_pass_error_to_build_status_if_config_file_is_invalid
+    Time.stubs(:now).returns(Time.at(0))
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => "build-1/build.log"
       project.stubs(:error_message).returns("fail message")

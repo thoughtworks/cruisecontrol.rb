@@ -14,19 +14,18 @@ class Build
 
   def run
     build_log = artifact 'build.log'
-
     File.open(artifact('cruise_config.rb'), 'w') {|f| f << @project.config_file_content }
-    raise ConfigError.new(@project.error_message) unless @project.config_valid?
-    
-    time = Time.now
 
-    in_clean_environment_on_local_copy do
-      execute self.command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
-    end
-    build_status.succeed!((Time.now - time).ceil)    
-  rescue => e
-    if File.exists?(project.local_checkout + "/trunk")
-      msg = <<EOF
+    start = Time.now
+    begin
+      raise ConfigError.new(@project.error_message) unless @project.config_valid?
+      in_clean_environment_on_local_copy do
+        execute self.command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
+      end
+      build_status.succeed!(seconds_since(start))
+    rescue => e
+      if File.exists?(project.local_checkout + "/trunk")
+        msg = <<EOF
 
 WARNING:
 Directory #{project.local_checkout}/trunk exists.
@@ -36,16 +35,12 @@ Try to remove this project, then re-add it with correct APP_ROOT, e.g.
 rm -rf #{project.path}
 ./cruise add #{project.name} svn://my.svn.com/#{project.name}/trunk
 EOF
-      File.open(build_log, 'a'){|f| f << msg }
-    end
+        File.open(build_log, 'a'){|f| f << msg }
+      end
 
-    File.open(build_log, 'a'){|f| f << e.message }
-    CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
-    time_escaped = (Time.now - (time || Time.now)).ceil
-    if e.is_a? ConfigError
-      build_status.fail!(time_escaped, e.message)
-    else
-      build_status.fail!(time_escaped)
+      File.open(build_log, 'a'){|f| f << e.message }
+      CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
+      build_status.fail!(seconds_since(start), e)
     end
   end
   
@@ -162,6 +157,10 @@ EOF
 
   def elapsed_time_in_progress
     build_status.elapsed_time_in_progress
+  end
+
+  def seconds_since(start)
+    (Time.now - start).ceil
   end
 
 end
