@@ -6,12 +6,7 @@ Capistrano.configuration(:must_exist).load do
     update_code
     after_update_code
     symlink
-    
-    daemon = File.open(File.dirname(__FILE__) + "/../../daemon/cruise"){|f| f.read }
-    daemon_path = "#{release_path}/daemon/cruise"
-    put daemon, daemon_path
-    run "chmod +x #{daemon_path}"
-    
+        
     start_cc_rb
   end
 
@@ -30,7 +25,10 @@ Capistrano.configuration(:must_exist).load do
     run <<-CMD
       rm -rf #{release_path}/projects &&
       mkdir -p #{shared_path}/projects &&
-      ln -nfs #{shared_path}/projects #{release_path}/projects
+      ln -nfs #{shared_path}/projects #{release_path}/projects &&
+      rm -rf #{release_path}/daemon &&
+      mkdir -p #{shared_path}/daemon &&
+      ln -nfs #{shared_path}/daemon #{release_path}/daemon
     CMD
   end
 
