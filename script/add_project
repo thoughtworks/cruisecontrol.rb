@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
-ENV["RAILS_ENV"] = 'production'
+
+RAILS_ENV = 'add_project'
+
 require File.dirname(__FILE__) + '/../config/boot'
 require 'optparse'
 

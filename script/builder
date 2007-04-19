@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 RAILS_ENV = 'builder'
-CCRB_THIS_PROCESS_IS_BUILDER = true
 
 require File.dirname(__FILE__) + '/../config/boot'
 require 'optparse'
