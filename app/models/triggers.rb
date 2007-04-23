@@ -30,10 +30,7 @@ class SuccessfulBuildTrigger
   private
   
   def last_successful(builds)
-    builds.reverse.each do |build|
-      return build if build.successful?
-    end
-    return nil
+    builds.reverse.find(&:successful?)
   end
 end
 

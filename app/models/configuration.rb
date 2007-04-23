@@ -13,11 +13,11 @@ class Configuration
   class << self
     # published configuration options (mentioned in config/site_config.rb.example)
     attr_accessor :default_polling_interval, :disable_build_now, :email_from,
-                  :dashboard_refresh_interval
+                  :dashboard_refresh_interval, :projects_directory
     attr_reader :dashboard_url
 
     # non-published configuration options (obscure stuff, mostly useful for http://cruisecontrolrb.thoughtworks.com)
-    attr_accessor :sleep_after_build_loop_error, :projects_directory, :default_page, :build_request_checking_interval
+    attr_accessor :sleep_after_build_loop_error, :default_page, :build_request_checking_interval
 
     def dashboard_url=(value)
       @dashboard_url = remove_trailing_slash(value)

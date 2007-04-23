@@ -1,6 +1,8 @@
 # site_config.rb contains examples of various configuration options for the local installation
 # of CruiseControl.rb.
 
+# YOU MUST RESTART YOUR CRUISE CONTROL SERVER FOR ANY CHANGES MADE HERE TO TAKE EFFECT!!!
+
 # EMAIL NOTIFICATION
 # ------------------
 
