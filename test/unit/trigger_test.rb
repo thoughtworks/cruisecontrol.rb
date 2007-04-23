@@ -19,7 +19,7 @@ class TriggerTest < Test::Unit::TestCase
     in_total_sandbox do |sandbox|
       Configuration.stubs(:projects_directory).returns(sandbox.root)
       one, two = sandbox.new_project('one'), sandbox.new_project('two')
-      trigger = successful_build_of(:two)
+      trigger = SuccessfulBuildTrigger.new(:two)
 
       create_build one, 1
       create_build two, 1
@@ -44,7 +44,7 @@ class TriggerTest < Test::Unit::TestCase
     with_sandbox_project do |sandbox, project|
       project.expects(:new_revisions).returns(5)
 
-      trigger = change_in_source_control
+      trigger = ChangeInSourceControlTrigger.new
 
       assert_equal 5, trigger.get_revisions_to_build(project)
     end
@@ -64,8 +64,8 @@ class TriggerTest < Test::Unit::TestCase
     p.triggered_by 'CruiseControl-Fast'
     assert_equal SuccessfulBuildTrigger.new('CruiseControl-Fast'), p.trigger
     
-    p.triggered_by successful_build_of('ccrb')
-    assert_equal SuccessfulBuildTrigger.new('ccrb'), p.trigger
+    p.triggered_by :ccrb
+    assert_equal SuccessfulBuildTrigger.new(:ccrb), p.trigger
   end
    
   private

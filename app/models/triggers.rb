@@ -9,7 +9,7 @@ class SuccessfulBuildTrigger
   attr_accessor :triggering_project_name
   
   def initialize(triggering_project_name)
-    @triggering_project_name = triggering_project_name
+    @triggering_project_name = triggering_project_name.to_s
   end
   
   def get_revisions_to_build(project)
@@ -39,17 +39,6 @@ class SvnExternalTrigger < ChangeInSourceControlTrigger
     if svn_external_changed
       super
     end
-  end
-end
-
-# this is probably a hack, how better to do this?
-class Object
-  def successful_build_of(project_name)
-    SuccessfulBuildTrigger.new(project_name.to_s)
-  end
-  
-  def change_in_source_control
-    ChangeInSourceControlTrigger.new
   end
 end
 
