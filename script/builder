@@ -65,39 +65,37 @@ end
 project = nil
 
 begin
-  begin
+  project = load_project(project_path)
+
+  # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else
+  # blow up saying that something else is already locking it
+  ProjectBlocker.block(project)
+
+  write_to_log_and_console "Builder for project '#{project.name}' started"
+  puts "Logging to: #{File.expand_path(CRUISE_OPTIONS[:log_file_name])}"
+
+  while (true) do
+    catch(:reload_project) do
+      project.scheduler.run
+    end
     project = load_project(project_path)
-
-    # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else
-    # blow up saying that something else is already locking it
-    ProjectBlocker.block(project)
-
-    write_to_log_and_console "Builder for project '#{project.name}' started"
-    puts "Logging to: #{File.expand_path(CRUISE_OPTIONS[:log_file_name])}"
-
-	  while (true) do
-      catch(:reload_project) do
-        project.scheduler.run
-      end
-      project = load_project(project_path)
-      # this will cause the next call to scheduler to run the build immediately
-      project.request_build rescue nil
-    end
-  rescue Interrupt
-    # this is okay, we're just control-c'ing the app
-  rescue Exception => e
-    begin 
-      CruiseControl::Log.fatal(e)
-          
-      rescue => logging_error
-        STDERR.puts e.message
-        STDERR.puts e.backtrace
-        STDERR.puts "Attempt to log the above error failed with this:"
-        STDERR.puts logging_error.message
-        STDERR.puts logging_error.backtrace
-    end
-    CRUISE_OPTIONS[:verbose] ? raise : exit(1)
-  ensure
-    cleanup(project)
+    # this will cause the next call to scheduler to run the build immediately
+    project.request_build rescue nil
   end
+rescue Interrupt
+  # this is okay, we're just control-c'ing the app
+rescue Exception => e
+  begin
+    CruiseControl::Log.fatal(e)
+  rescue => logging_error
+    STDERR.puts e.message
+    STDERR.puts e.backtrace
+    STDERR.puts "Attempt to log the above error failed with this:"
+    STDERR.puts logging_error.message
+    STDERR.puts logging_error.backtrace
+  end
+  CRUISE_OPTIONS[:verbose] ? raise : exit(1)
+ensure
+  cleanup(project)
 end
+
