@@ -242,6 +242,25 @@ To remove your_project from CruiseControl.rb, kill its builder process and then 
 directory.
 
 
+h1. Build Chaining & Triggers
+
+CC.rb can use triggers to tell it when and what to build.  So, in your cruise_config.rb file, you could have
+
+<pre><code>
+  project.triggered_by SuccessfulBuildTrigger.new('My Project-Fast')
+</code></pre>
+
+or in short hand
+
+<pre><code>
+  project.triggered_by 'My Project-Fast'
+</code></pre>
+
+Why would you want one build to trigger another?  Say you have a project with a very long build.  It may make sense to break it into a fast and a slow build, and only run the slow build when the fast one passes.  We could also imagine a situation where one project depends on another, and you want the depending project to build whenever the independent project has a successful build.
+
+In the future we expect to also support SVN external triggers.  However, the infrastructure is there for you to build your own.
+
+
 h1. Troubleshooting and support
 
 Beware, at the time of this writing, CC.rb is quite young and may have some heinous bugs (although we do have several 

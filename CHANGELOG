@@ -1,4 +1,5 @@
 TRUNK
+  - build chaining implemented w/ triggers
   - recognized NetBSD as a platform
   - [bugfix] no longer passing in 'production' as RAILS_ENV to rake cruise
 
