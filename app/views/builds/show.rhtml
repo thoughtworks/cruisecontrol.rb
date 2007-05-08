@@ -9,6 +9,7 @@
     <%= link_to_unless !next_build, 'next >', :project => @project, :build => next_build %>
     <%= link_to_unless !next_build, 'latest >>', :project => @project.name %>
   </div>
+  
   <% @project.last_builds(30).each do |build| %>
     <div class="build-link<%= ' selected' if @build.label == build.label %>">
       <%= link_to_build(@project, build) %>
@@ -44,6 +45,7 @@
   <h1>
     <%= h @project.name %> build <%= h @build.label %>
     <% if @build.failed? %><span class="error">FAILED</span><% end %>
+    <% if @build.incomplete? %> (INCOMPLETE)<% end %>    
   </h1>
   <div class="build_time">
      <%= display_build_time %>
@@ -72,7 +74,7 @@
     </div>
   <% end %>
 
-  <div class="section_closed">
+  <div class="<%= @build.incomplete? ? 'section_open' : 'section_closed' %>">
     <div class="section_header" onclick="toggle_section(this.parentNode)">Build Log</div>
     <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div></div>
   </div>

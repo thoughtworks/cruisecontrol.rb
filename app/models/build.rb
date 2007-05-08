@@ -140,6 +140,9 @@ EOF
   end
 
   def in_clean_environment_on_local_copy(&block)
+    old_rails_env = ENV['RAILS_ENV']
+    ENV['RAILS_ENV'] = nil
+
     # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
     ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
     # CC_RAKE_TASK communicates to cc:build which task to build (if self.rake_task is not set, cc:build will try to be
@@ -148,6 +151,8 @@ EOF
     Dir.chdir(project.local_checkout) do
       block.call
     end
+  ensure
+    ENV['RAILS_ENV'] = old_rails_env
   end
 
   def to_param

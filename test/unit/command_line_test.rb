@@ -25,7 +25,8 @@ class CommandLineTest < Test::Unit::TestCase
 
   def test_should_only_write_command_to_stdout_when_block_specified
     in_total_sandbox do
-      CommandLine.execute("echo hello", {:dir => @dir, :stdout => @stdout, :stderr => @stderr}) do |io|
+      CommandLine.execute("echo hello", {:dir => @dir}) do |io|
+        
         assert_equal("hello", io.read.strip)
       end
       assert_match(/.* echo hello\s*\[output captured and therefore not logged\]/n, File.read(@stdout).strip)

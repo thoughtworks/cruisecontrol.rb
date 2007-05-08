@@ -1,5 +1,6 @@
 TRUNK
   - recognized NetBSD as a platform
+  - [bugfix] no longer passing in 'production' as RAILS_ENV to rake cruise
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.1.0

@@ -196,12 +196,11 @@ class BuildTest < Test::Unit::TestCase
       sandbox.new :file => "build_status.failure"
       sandbox.new :file => "changeset.log"
 
-      
       build = Build.new(project, 1)
       assert_equal(%w(coverage foo foo.txt), build.additional_artifacts.sort)
     end
   end
-  
+
   def test_build_should_fail_if_project_config_is_invalid
     Time.stubs(:now).returns(Time.at(0))
     with_sandbox_project do |sandbox, project|
@@ -215,8 +214,8 @@ class BuildTest < Test::Unit::TestCase
       log_message = File.open("build-123-failed.in0s/build.log"){|f| f.read }
       assert_equal "some project config error", log_message
     end
-  end  
-    
+  end
+
   def test_should_pass_error_to_build_status_if_config_file_is_invalid
     Time.stubs(:now).returns(Time.at(0))
     with_sandbox_project do |sandbox, project|
@@ -251,6 +250,21 @@ class BuildTest < Test::Unit::TestCase
       
       Configuration.expects(:dashboard_url).returns(nil)
       assert_raise(RuntimeError) { build.url }
-    end   
+    end
+  end
+  
+  def test_in_clean_environment_on_local_copy_should_not_pass_current_rails_env_to_block
+    ENV['RAILS_ENV'] = 'craziness'
+    with_sandbox_project do |sandbox, project|
+      build = Build.new(project, 1)
+    
+      build.in_clean_environment_on_local_copy do
+        assert_equal nil, ENV['RAILS_ENV']
+      end
+      
+      assert_equal 'craziness', ENV['RAILS_ENV']
+    end    
+  ensure
+    ENV['RAILS_ENV'] = 'test'
   end
 end
