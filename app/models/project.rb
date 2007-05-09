@@ -279,7 +279,7 @@ class Project
     build = Build.new(self, create_build_label(last_revision.number))
     log_changeset(build.artifacts_directory, revisions)
     if always_do_clean_checkout
-      @source_control.clean_checkout(self.path, last_revision)
+      @source_control.clean_checkout(local_checkout, last_revision)
     else
       @source_control.update(self, last_revision)
     end

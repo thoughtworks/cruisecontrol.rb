@@ -481,7 +481,7 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.always_do_clean_checkout = true
       @project.path = sandbox.root
-      @svn.expects(:clean_checkout).with(@project.path, new_revision(5))
+      @svn.expects(:clean_checkout).with(@project.path + "/work", new_revision(5))
 
       @project.build([new_revision(5)])
     end
@@ -530,7 +530,6 @@ class ProjectTest < Test::Unit::TestCase
     build.stubs(:last).returns(nil)
     build.stubs(:label).returns(label)
     build
-  end
-  
+  end  
 end
 
