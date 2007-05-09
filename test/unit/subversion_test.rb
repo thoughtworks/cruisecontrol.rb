@@ -150,6 +150,20 @@ class SubversionTest < Test::Unit::TestCase
       Subversion.new(:url => 'http://foo.com/svn/project', :lollipop => 'http://foo.com/svn/project')
     end
   end
+  
+  def test_clean_checkout
+    in_sandbox do
+      @sandbox.new :file => 'project/something.rb'
+      dir = @sandbox.root + "/project"
+
+      svn = Subversion.new(:url => 'http://foo.com/svn/project')
+      svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project #{dir} --revision 5")
+
+      svn.clean_checkout(dir, Revision.new(5))
+      
+      assert !File.directory?(dir)
+    end    
+  end
 
   def numbers(revisions)
     revisions.map { |r|

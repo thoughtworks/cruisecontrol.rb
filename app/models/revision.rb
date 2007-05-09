@@ -5,7 +5,7 @@ class Revision
     <<-EOL
 Revision #{number} committed by #{committed_by} on #{time.strftime('%Y-%m-%d %H:%M:%S') if time}
 #{message}
-#{changeset.collect { |entry| entry.to_s }.join("\n")}
+#{changeset ? changeset.collect { |entry| entry.to_s }.join("\n") : nil}
     EOL
   end
 

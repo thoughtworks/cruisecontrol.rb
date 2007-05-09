@@ -476,6 +476,37 @@ class ProjectTest < Test::Unit::TestCase
       assert_equal 3, @project.last_builds(5).length
     end
   end
+
+  def test_should_do_clean_checkout_if_flag_is_set
+    in_sandbox do |sandbox|
+      @project.always_do_clean_checkout = true
+      @project.path = sandbox.root
+      @svn.expects(:clean_checkout).with(@project.path, new_revision(5))
+
+      @project.build([new_revision(5)])
+    end
+  end
+  
+  def test_build_when_no_revision_yet
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      @svn.stubs(:latest_revision).returns(nil)
+
+      assert_nil @project.build
+    end
+  end
+  
+  def test_build_should_still_build_even_when_no_changes_were_made
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      @project.stubs(:builds).returns [stub_build(1), stub_build(2)]
+      @svn.stubs(:revisions_since).returns([])
+      @svn.stubs(:latest_revision).returns(new_revision(2))
+      @svn.expects(:update)
+
+      assert @project.build
+    end
+  end
   
   private
   
@@ -484,6 +515,7 @@ class ProjectTest < Test::Unit::TestCase
     build.stubs(:label).returns(label)
     build.stubs(:artifacts_directory).returns("project1/build_#{label}")
     build.stubs(:run)
+    build.stubs(:successful?).returns(true)
     build
   end
 

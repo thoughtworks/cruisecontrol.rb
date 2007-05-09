@@ -144,18 +144,13 @@ class BuilderIntegrationTest < Test::Unit::TestCase
   end
 
   def test_builder_should_be_transparent_to_RAILS_ENV
-    ENV['RAILS_ENV'] = 'foo'
+    with_project('project_with_cruise_and_default_tasks') do |project, sandbox|
+      project.build_command = 'rake cruise RAILS_ENV=foo'
+      build = project.build
+      build_log = File.read("#{build.artifacts_directory}/build.log")
 
-    begin
-      with_project('project_with_cruise_and_default_tasks') do |project, sandbox|
-        build = project.build
-        build_log = File.read("#{build.artifacts_directory}/build.log")
-
-        expected_output = "RAILS_ENV=\"foo\"\ncruise invoked\n"
-        assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
-      end
-    ensure
-      ENV.delete('RAILS_ENV')
+      expected_output = "RAILS_ENV=\"foo\"\ncruise invoked\n"
+      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
   end
 

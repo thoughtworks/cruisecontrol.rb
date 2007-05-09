@@ -25,7 +25,7 @@ class CommandLineTest < Test::Unit::TestCase
 
   def test_should_only_write_command_to_stdout_when_block_specified
     in_total_sandbox do
-      CommandLine.execute("echo hello", {:dir => @dir}) do |io|
+      CommandLine.execute("echo hello", {:dir => @dir, :stdout => @stdout, :stderr => @stderr}) do |io|
         
         assert_equal("hello", io.read.strip)
       end

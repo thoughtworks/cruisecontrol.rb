@@ -26,7 +26,7 @@ class Project
 
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
   attr_writer :local_checkout 
-  attr_accessor :source_control, :scheduler
+  attr_accessor :source_control, :scheduler, :always_do_clean_checkout
 
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
@@ -225,9 +225,7 @@ class Project
 
   def new_revisions
     if builds.empty?
-      latest_revision = @source_control.latest_revision(self)
-      raise "No commit found in the repository." if latest_revision.nil?
-      [@source_control.latest_revision(self)]
+      [@source_control.latest_revision(self)].compact
     else 
       @source_control.revisions_since(self, builds.last.label.to_i)
     end
@@ -268,20 +266,23 @@ class Project
   end
 
   def build(revisions = nil)
-    # TODO: the line below is not very readable, to put it mildly, and probably is doing a wrong thing
-    new_revisions rescue return
+    revisions = new_revisions if revisions.nil?
+    revisions = [@source_control.latest_revision(self)].compact if revisions.empty? # we always want to build in this method
+    return if revisions.empty?                                                      # this will only happen in the case that there are no revision yet
+
+#      revisions = [@source_control.latest_revision(self)] if revisions.empty? 
 
     notify(:build_initiated)
-    if revisions.nil?
-      revisions = new_revisions
-      revisions = [@source_control.latest_revision(self)] if revisions.empty? 
-    end
     previous_build = last_build    
     last_revision = revisions.last
     
     build = Build.new(self, create_build_label(last_revision.number))
     log_changeset(build.artifacts_directory, revisions)
-    @source_control.update(self, last_revision)
+    if always_do_clean_checkout
+      @source_control.clean_checkout(self.path, last_revision)
+    else
+      @source_control.update(self, last_revision)
+    end
 
     if config_tracker.config_modified?
       build.abort

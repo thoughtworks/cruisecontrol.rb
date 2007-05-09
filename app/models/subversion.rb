@@ -10,6 +10,11 @@ class Subversion
           options.delete(:url), options.delete(:username), options.delete(:password), options.delete(:interactive)
     raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
   end
+  
+  def clean_checkout(target_directory, revision = nil)
+    FileUtils.rm_rf(target_directory)
+    checkout(target_directory, revision)
+  end
 
   def checkout(target_directory, revision = nil)
     @url or raise 'URL not specified'
