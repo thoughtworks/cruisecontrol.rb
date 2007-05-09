@@ -58,6 +58,8 @@ class BuildsController < ApplicationController
       'image/jpeg'
     when /\.png$/
       'image/png'
+    when /\.zip$/
+      'application/zip'
     else
       'text/plain'
     end

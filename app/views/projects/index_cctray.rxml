@@ -11,6 +11,7 @@ xml.Projects do
     :lastBuildLabel => (project.last_complete_build ? project.last_complete_build.label : 'Unknown'),
     :lastBuildTime => (project.last_complete_build ? format_time(project.last_complete_build.time, :round_trip_local) : '1970-01-01T00:00:00Z'),
     :nextBuildTime => '1970-01-01T00:00:00Z',
-    :projectWebUrl => cc_url)
+    :projectWebUrl => cc_url,
+    :webUrl => "#{cc_url}projects/#{project.name}")
   end
 end
