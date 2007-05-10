@@ -164,6 +164,18 @@ class SubversionTest < Test::Unit::TestCase
       assert !File.directory?(dir)
     end    
   end
+  
+  def test_output_of_subversion_to_io_stream
+    in_sandbox do
+      svn = Subversion.new(:url => 'url')
+      svn.expects(:svn).returns('echo hello world')
+
+      io = StringIO.new
+      svn.clean_checkout('.', Revision.new(5), io)
+      
+      assert_equal "hello world\n", io.string
+    end    
+  end
 
   def numbers(revisions)
     revisions.map { |r|

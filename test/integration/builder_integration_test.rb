@@ -38,10 +38,10 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
   def test_build_if_necessary
     with_project('passing_project', :revision => 2) do |project, sandbox|
-      sandbox.new :file=> 'passing_project/cruise_config.rb'
+      sandbox.new :file=> 'passing_project/cruise_config.rb', :with_contents => ' '
       sandbox.new :file=> 'passing_project/build-2/build_status.success'
       
-      project.config_tracker.update_timestamps
+      project.config_tracker.update_contents
 
       assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
        result = project.build_if_necessary
@@ -225,7 +225,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
   def with_project(project_name, options = {}, &block)
     in_sandbox do |sandbox|
       svn = Subversion.new :url => "#{fixture_repository_url}/#{project_name}"
-      svn.checkout "#{sandbox.root}/#{project_name}/work", options[:revision]
+      svn.checkout "#{sandbox.root}/#{project_name}/work", options[:revision], StringIO.new
       
       project = Project.new(project_name)
       project.path = "#{sandbox.root}/#{project_name}"

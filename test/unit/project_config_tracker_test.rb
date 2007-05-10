@@ -24,14 +24,14 @@ class ProjectConfigTrackerTest < Test::Unit::TestCase
   end
 
   def test_config_modifications_should_return_true_if_central_config_file_is_modified
-    @tracker.central_mtime = 1.second.ago
-    @sandbox.new :file => 'work/cruise_config.rb'
+    @tracker.central_contents = 'bar'
+    @sandbox.new :file => 'work/cruise_config.rb', :with_contents => 'foo'
     assert @tracker.config_modified?
   end
 
   def test_config_modifications_should_return_true_if_local_config_file_is_modified
-    @tracker.local_mtime = 1.second.ago
-    @sandbox.new :file => 'cruise_config.rb'
+    @tracker.local_contents = 'bar'
+    @sandbox.new :file => 'cruise_config.rb', :with_contents => 'foo'
     assert @tracker.config_modified?
   end
 
@@ -43,22 +43,21 @@ class ProjectConfigTrackerTest < Test::Unit::TestCase
 
     assert @tracker.config_modified?
 
-    @tracker.update_timestamps
+    @tracker.update_contents
     assert_false @tracker.config_modified?
   end
 
   def test_config_modifications_should_return_true_if_local_config_was_deleted    
     @sandbox.new :file => 'cruise_config.rb'
-    @tracker.update_timestamps
+    @tracker.update_contents
     @sandbox.remove :file => 'cruise_config.rb'
     assert @tracker.config_modified?
   end
 
   def test_config_modifications_should_return_true_if_central_config_was_deleted
     @sandbox.new :file => 'work/cruise_config.rb'
-    @tracker.update_timestamps
+    @tracker.update_contents
     @sandbox.remove :file => 'work/cruise_config.rb'    
     assert @tracker.config_modified?
   end
-
 end

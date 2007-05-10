@@ -26,7 +26,7 @@ class Project
 
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
   attr_writer :local_checkout 
-  attr_accessor :source_control, :scheduler, :always_do_clean_checkout
+  attr_accessor :source_control, :scheduler, :do_clean_checkout
 
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
@@ -264,13 +264,24 @@ class Project
       build
     end
   end
+  
+  def update_project_to_revision(build, revision)
+    if do_clean_checkout
+      File.open(build.artifact('source_control.log'), 'w') do |f| 
+        start = Time.now
+        f << "checking out build #{build.label}, this could take a while...\n"
+        @source_control.clean_checkout(local_checkout, revision, f)
+        f << "\ntook #{Time.now - start} seconds"
+      end
+    else
+      @source_control.update(self, revision)
+    end
+  end
 
   def build(revisions = nil)
     revisions = new_revisions if revisions.nil?
     revisions = [@source_control.latest_revision(self)].compact if revisions.empty? # we always want to build in this method
     return if revisions.empty?                                                      # this will only happen in the case that there are no revision yet
-
-#      revisions = [@source_control.latest_revision(self)] if revisions.empty? 
 
     notify(:build_initiated)
     previous_build = last_build    
@@ -278,11 +289,7 @@ class Project
     
     build = Build.new(self, create_build_label(last_revision.number))
     log_changeset(build.artifacts_directory, revisions)
-    if always_do_clean_checkout
-      @source_control.clean_checkout(local_checkout, last_revision)
-    else
-      @source_control.update(self, last_revision)
-    end
+    update_project_to_revision(build, last_revision)
 
     if config_tracker.config_modified?
       build.abort

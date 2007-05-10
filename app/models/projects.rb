@@ -19,7 +19,6 @@ class Projects
       project.path = dir
       project
     end
-
   end
   
   def initialize(dir = Configuration.projects_directory)

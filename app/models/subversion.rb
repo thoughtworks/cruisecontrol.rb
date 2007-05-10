@@ -11,12 +11,12 @@ class Subversion
     raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
   end
   
-  def clean_checkout(target_directory, revision = nil)
+  def clean_checkout(target_directory, revision = nil, stdout = $stdout)
     FileUtils.rm_rf(target_directory)
-    checkout(target_directory, revision)
+    checkout(target_directory, revision, stdout)
   end
 
-  def checkout(target_directory, revision = nil)
+  def checkout(target_directory, revision = nil, stdout = $stdout)
     @url or raise 'URL not specified'
 
     options = "#{@url} #{target_directory}"
@@ -25,17 +25,24 @@ class Subversion
     options << " --revision #{revision_number(revision)}" if revision
 
     # need to read from command output, because otherwise tests break
-    execute(svn(:co, options)) { |io| io.readlines }
+    execute(svn(:co, options)) do |io| 
+      begin
+        while line = io.gets
+          stdout.puts line
+        end
+      rescue EOFError
+      end
+    end
   end
 
   def latest_revision(project)
     last_locally_known_revision = info(project).last_changed_revision
-    svn_output = execute_in_local_copy(project, svn(:log, "--revision HEAD:#{last_locally_known_revision} --verbose --xml"))
+    svn_output = execute_in_local_copy(project, log('HEAD', last_locally_known_revision))
     SubversionLogParser.new.parse_log(svn_output).first
   end
 
   def revisions_since(project, revision_number)
-    svn_output = execute_in_local_copy(project, svn(:log, "--revision HEAD:#{revision_number} --verbose --xml"))
+    svn_output = execute_in_local_copy(project, log('HEAD', revision_number))
     new_revisions = SubversionLogParser.new.parse_log(svn_output).reverse
     new_revisions.delete_if { |r| r.number == revision_number }
     new_revisions
@@ -48,6 +55,10 @@ class Subversion
   end
   
   private
+  
+  def log(from, to)
+    svn(:log, "--revision #{from}:#{to} --verbose --xml")
+  end
   
   def info(project)
     svn_output = execute_in_local_copy(project, svn(:info, "--xml"))

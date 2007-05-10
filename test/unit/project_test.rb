@@ -479,9 +479,9 @@ class ProjectTest < Test::Unit::TestCase
 
   def test_should_do_clean_checkout_if_flag_is_set
     in_sandbox do |sandbox|
-      @project.always_do_clean_checkout = true
+      @project.do_clean_checkout = true
       @project.path = sandbox.root
-      @svn.expects(:clean_checkout).with(@project.path + "/work", new_revision(5))
+      @svn.expects(:clean_checkout).with{|path, rev| path == @project.path + "/work" && rev == new_revision(5) }
 
       @project.build([new_revision(5)])
     end
