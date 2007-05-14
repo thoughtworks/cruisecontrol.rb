@@ -4,6 +4,9 @@ Questions
 removing new_revisions rescue return from project, why was it there
 adding always do clean checkout to project, is it the right place?
 
+we should be transparent to ENV[RAILS_ENV]
+
+
 Bugs
 ----
 If you create a symlink in installed -> a directory in available plugins, the documentation can't read the directory

@@ -278,10 +278,9 @@ class Project
     end
   end
 
-  def build(revisions = nil)
-    revisions = new_revisions if revisions.nil?
+  def build(revisions = new_revisions)
     revisions = [@source_control.latest_revision(self)].compact if revisions.empty? # we always want to build in this method
-    return if revisions.empty?                                                      # this will only happen in the case that there are no revision yet
+    return if revisions.empty?                                                      # this will only happen in the case that there are no revisions yet
 
     notify(:build_initiated)
     previous_build = last_build    

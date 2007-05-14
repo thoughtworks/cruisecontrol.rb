@@ -8,7 +8,10 @@ class BuildsController < ApplicationController
     render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
 
     @build = (params[:build] ? @project.find_build(params[:build]) : @project.last_build)
-    render :action => (@build ? 'show' : 'no_builds_yet') 
+    
+    render :action => 'no_builds_yet' and return if @build.nil?
+      
+    @autorefresh = @build.incomplete?
   end
 
   def drop_down

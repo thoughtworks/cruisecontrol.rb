@@ -226,6 +226,23 @@ class BuildsControllerTest < Test::Unit::TestCase
     end    
   end
 
+  def test_should_autorefresh_incomplete_builds
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :directory => 'build-1-success'
+      sandbox.new :directory => 'build-2'
+    
+      Projects.stubs(:find).with(project.name).returns(project)
+
+      assert project.last_build.incomplete?
+      
+      get :show, :project => project.name, :build => '1'
+      assert !assigns(:autorefresh)
+      
+      get :show, :project => project.name, :build => '2'
+      assert assigns(:autorefresh)
+    end    
+  end
+  
   def assert_type(file, type)
     @sandbox.new :file => "build-1/#{file}", :with_content => 'lemon'
 
@@ -237,5 +254,4 @@ class BuildsControllerTest < Test::Unit::TestCase
     assert_equal 'lemon', @response.body
     assert_equal type, @response.headers['Content-Type']
   end
-
 end

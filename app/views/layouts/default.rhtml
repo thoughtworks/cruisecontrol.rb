@@ -6,6 +6,9 @@
   <title>CruiseControl.rb<%= @title ? " - " + @title : '' %></title>
   <%= stylesheet_link_tag 'cruisecontrol', :media => 'all' %>
 
+  <% if @autorefresh %>
+    <meta http-equiv="refresh" content="5">
+  <% end %>
   <% if @rss_feeds -%>
     <% @rss_feeds.sort.each do |title, url| -%>
       <%= auto_discovery_link_tag :rss, url, {:title => title} %>
