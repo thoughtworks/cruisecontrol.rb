@@ -118,18 +118,22 @@ a.never_built, a.never_built:visited {
   min-height: 9.2em;
 }  
 
-.build_success, .build_never_built, .build_incomplete {
-  background-image: url(/images/gray_gradient.png);
+.build_success, .build_never_built, .build_incomplete, .build_failed {
   background-position: bottom;
   background-repeat: repeat-x;
   margin-left: -2.5em;
 }
 
+.build_never_built, .build_incomplete {
+  background-image: url(/images/gray_gradient.png);
+}
+
+.build_success {
+  background-image: url(/images/gray_gradient.png);
+}
+
 .build_failed {
   background-image: url(/images/red_gradient.png);
-  background-position: bottom;
-  background-repeat: repeat-x;
-  margin-left: -2.5em;
 }
 
 .project table.project_pane {
