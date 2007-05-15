@@ -57,7 +57,7 @@ class Subversion
   private
   
   def log(from, to)
-    svn(:log, "--revision #{from}:#{to} --verbose --xml")
+    svn(:log, "--revision #{from}:#{to} --verbose --xml #{@url}")
   end
   
   def info(project)

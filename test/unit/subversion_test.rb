@@ -59,7 +59,7 @@ class SubversionTest < Test::Unit::TestCase
     svn = Subversion.new
 
     svn.expects(:info).with(dummy_project).returns(Subversion::Info.new(10, 10))
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:10 --verbose --xml", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:10 --verbose --xml ", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
 
     revision = svn.latest_revision(dummy_project)
 
@@ -69,7 +69,7 @@ class SubversionTest < Test::Unit::TestCase
   def test_revisions_since_should_reverse_the_log_entries_and_skip_the_one_corresponding_to_current_revision
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:15 --verbose --xml", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:15 --verbose --xml ", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
 
     revisions = svn.revisions_since(dummy_project, 15)
 
@@ -79,7 +79,7 @@ class SubversionTest < Test::Unit::TestCase
   def test_revisions_since_should_return_all_revisions_when_curreent_revision_is_not_in_the_log_output
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose --xml", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose --xml ", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
 
     revisions = svn.revisions_since(dummy_project, 14)
 
@@ -89,7 +89,7 @@ class SubversionTest < Test::Unit::TestCase
   def test_revisions_since_should_return_an_empty_array_for_empty_log_output
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose --xml", {:stderr => './svn.err'}).yields(StringIO.new(EMPTY_LOG))
+    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose --xml ", {:stderr => './svn.err'}).yields(StringIO.new(EMPTY_LOG))
 
     revisions = svn.revisions_since(dummy_project, 14)
 
