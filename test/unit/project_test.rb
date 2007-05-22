@@ -1,6 +1,7 @@
 require 'date'
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 require 'email_notifier'
+require 'fileutils'
 
 class ProjectTest < Test::Unit::TestCase
   include FileSandbox
@@ -479,7 +480,7 @@ class ProjectTest < Test::Unit::TestCase
 
   def test_should_do_clean_checkout_if_flag_is_set
     in_sandbox do |sandbox|
-      @project.do_clean_checkout = true
+      @project.do_clean_checkout :always
       @project.path = sandbox.root
       @svn.expects(:clean_checkout).with{|path, rev| path == @project.path + "/work" && rev == new_revision(5) }
 
@@ -505,6 +506,44 @@ class ProjectTest < Test::Unit::TestCase
       @svn.expects(:update)
 
       assert @project.build
+    end
+  end
+
+  def test_do_clean_checkout_every_x_hours
+    now = Time.now
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+
+      @project.do_clean_checkout :every => 1.hour
+    
+      assert @project.do_clean_checkout?
+      assert !@project.do_clean_checkout?
+      assert !@project.do_clean_checkout?
+    
+      Time.stubs(:now).returns(now + 2.hours)
+      assert @project.do_clean_checkout?
+
+      @project.do_clean_checkout :every => 2.days
+      assert !@project.do_clean_checkout?
+    
+      Time.stubs(:now).returns(now + 2.hours)
+      assert !@project.do_clean_checkout?
+
+      Time.stubs(:now).returns(now + 2.days)
+      assert @project.do_clean_checkout?
+    end
+  end
+
+  def test_do_clean_checkout_always
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+
+      assert !@project.do_clean_checkout?, "by default should be off"
+      
+      @project.do_clean_checkout
+      
+      assert @project.do_clean_checkout?
+      assert @project.do_clean_checkout?
     end
   end
   

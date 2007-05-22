@@ -26,7 +26,7 @@ class Project
 
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
   attr_writer :local_checkout 
-  attr_accessor :source_control, :scheduler, :do_clean_checkout
+  attr_accessor :source_control, :scheduler
 
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
@@ -266,7 +266,7 @@ class Project
   end
   
   def update_project_to_revision(build, revision)
-    if do_clean_checkout
+    if do_clean_checkout?
       File.open(build.artifact('source_control.log'), 'w') do |f| 
         start = Time.now
         f << "checking out build #{build.label}, this could take a while...\n"
@@ -361,6 +361,36 @@ class Project
   def to_param
     self.name
   end
+  
+  # possible values for this is :never, :always, :every => 1.hour, :every => 2.days, etc
+  def do_clean_checkout(how_often = :always)
+    unless how_often == :always || how_often == :never || (how_often[:every].is_a?(Integer))
+      raise "expected :never, :always, :every => 1.hour, :every => 2.days, etc"
+    end
+    @clean_checkout_when = how_often
+  end
+  
+  def do_clean_checkout?
+    case @clean_checkout_when
+    when :always: true
+    when nil, :never: false
+    else
+      timestamp_filename = File.join(self.path, 'last_clean_checkout_timestamp')
+      unless File.exist?(timestamp_filename)
+        FileUtils.touch(timestamp_filename)
+        return true
+      end
+    
+      time_since_last_clean_checkout = Time.now - File.new(timestamp_filename).mtime
+      if time_since_last_clean_checkout > @clean_checkout_when[:every]
+        FileUtils.touch(timestamp_filename)
+        true
+      else
+        false
+      end
+    end
+  end
+  
   
   private
   

@@ -1,11 +1,6 @@
 Questions
 ---------
 
-removing new_revisions rescue return from project, why was it there
-adding always do clean checkout to project, is it the right place?
-
-we should be transparent to ENV[RAILS_ENV]
-
 
 Bugs
 ----
@@ -30,8 +25,6 @@ To finish the RSS story:
    * Figure out why Firefox 1.5 goes nuts on Rolf's PC when you try to open a feed in it.
 
 Committed_by and comments on the dashboard need to be limited to a certain number of characters.
-
-Currently, we preserve newlines (looks nicer), but it may cause complications if there are too many newlines.
 
 Comments on the dashboard need tooltips to display the full message.
 
@@ -65,31 +58,6 @@ Concerns
 ? Look at handling of timezones when parsing/displaying revision time. Especially, SubversionLogParser.
   It may prove an interesting story (hopefully, not).
 
-? Need VERY careful consideration about what to do with exceptions within the main build loop, 
-  especially, all steps of Project#build_revision. Target audience here is the "build monkey" and the 
-  design objective here is "easy troubleshooting".
-    * this exception kills the builder :
-        svn: Can't connect to host 'rubyforge.org': A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.
-        D:/src/lipid/lib/builder/lib/subversion_log_parser.rb:25:in `readline': end of file reached (EOFError)
-                from D:/src/lipid/lib/builder/lib/subversion_log_parser.rb:25:in `parse_log'
-                from D:/src/lipid/lib/builder/lib/subversion.rb:51:in `new_revisions'
-                from D:/src/lipid/lib/builder/lib/command_line.rb:88:in `e'
-                from D:/src/lipid/lib/builder/lib/command_line.rb:86:in `e'
-                from D:/src/lipid/lib/builder/lib/command_line.rb:73:in `execute'
-                from D:/src/lipid/lib/builder/lib/command_line.rb:72:in `execute'
-                from D:/src/lipid/lib/builder/lib/subversion.rb:50:in `new_revisions'
-                from D:/src/lipid/lib/builder/lib/subversion.rb:46:in `new_revisions'
-                from D:/src/lipid/lib/builder/lib/project.rb:26:in `new_revisions'
-                from D:/src/lipid/lib/builder/lib/project.rb:18:in `build_new_checkin'
-                from D:/src/lipid/lib/builder/lib/project.rb:17:in `build_new_checkin'
-                from D:/src/lipid/lib/builder/lib/schedule.rb:9:in `run'
-                from D:/src/lipid/lib/builder/lib/runner.rb:51
-                from d:/dev/ruby/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:27:in `require'
-                from script/builder:2
-                
-? Builder should do something about local changes in the checked out copy of the project. Options are: ignore them (worst), 
-  write a warning, or overwrite these changes during 'svn update'
-  
 ? Parser doesn't handle gracefully a situation when local copy is ahead of the repository (perhaps, after
   the repository was restored from a backup)
     C:/projects/lipid/builds/passing_project/work averkhov$ svn log -r HEAD:BASE
@@ -97,6 +65,3 @@ Concerns
     ./subversion_log_parser.rb:7:in `readline': end of file reached (EOFError)
             from ./subversion_log_parser.rb:7:in `parse'
             ...
-
-? we need to present times in a very readable manner in the timezone of one's browser
-  * 10:30 AM today, 1:30 PM yesterday, 3:00 AM 5 days ago, 5:30 PM May 3, 2006, etc
