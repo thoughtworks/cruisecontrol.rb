@@ -529,7 +529,7 @@ class ProjectTest < Test::Unit::TestCase
       Time.stubs(:now).returns(now + 2.hours)
       assert !@project.do_clean_checkout?
 
-      Time.stubs(:now).returns(now + 2.days + 1.minute)
+      Time.stubs(:now).returns(now + 4.days)
       assert @project.do_clean_checkout?
     end
   end
