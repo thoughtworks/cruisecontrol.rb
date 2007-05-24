@@ -510,28 +510,44 @@ class ProjectTest < Test::Unit::TestCase
   end
 
   def test_do_clean_checkout_every_x_hours
-    now = Time.now
     in_sandbox do |sandbox|
       @project.path = sandbox.root
+      marker = sandbox.root + '/last_clean_checkout_timestamp'
+      
+      now = Time.now
+      FileUtils.stubs(:touch).with(marker).returns(proc do
+        File.open(marker, 'w') {|f| f<< ''}
+        File.utime(now, now, marker)
+      end)
+      Time.stubs(:now).returns proc { now }
+      
 
       @project.do_clean_checkout :every => 1.hour
     
       assert @project.do_clean_checkout?
       assert !@project.do_clean_checkout?
       assert !@project.do_clean_checkout?
-    
-      Time.stubs(:now).returns(now + 2.hours)
+      
+      now += 59.minutes
+      assert !@project.do_clean_checkout?
+      
+      now += 2.minutes
       assert @project.do_clean_checkout?
+      assert !@project.do_clean_checkout?
 
       @project.do_clean_checkout :every => 2.days
-      assert !@project.do_clean_checkout?
-    
-      Time.stubs(:now).returns(now + 2.hours)
+      now += 1.day + 23.hours
       assert !@project.do_clean_checkout?
 
-      Time.stubs(:now).returns(now + 4.days)
+      now += 2.hours
       assert @project.do_clean_checkout?
     end
+  end
+  
+  def increment_time_by(seconds)
+    now = Time.now
+    Time.stubs(:now).returns(now + seconds)
+    File.stubs(:mtime).returns(now + seconds)
   end
 
   def test_do_clean_checkout_always
