@@ -4,7 +4,7 @@ module Platform
   def family
     target_os = Config::CONFIG["target_os"] or raise 'Cannot determine operating system'
     case target_os
-    when /linux/ then 'linux'
+    when /linux/, /Linux/ then 'linux'
     when /32/ then 'mswin32'
     when /darwin/ then 'powerpc-darwin'
     when /cyg/ then 'cygwin'
@@ -26,13 +26,16 @@ module Platform
   module_function :prompt
 
   def create_child_process(project_name, command)
-    Thread.new { system(command) } unless Kernel.respond_to?(:fork)
-    begin
-      pid = fork || exec(command)
-      pid_file = File.join(RAILS_ROOT, 'tmp', 'pids', 'builders', "#{project_name}.pid")
-      FileUtils.mkdir_p(File.dirname(pid_file))
-      File.open(pid_file, "w") {|f| f.write pid }
-    rescue NotImplementedError   # Kernel.fork exists but not implemented in Windows
+    if Kernel.respond_to?(:fork)
+      begin
+        pid = fork || exec(command)
+        pid_file = File.join(RAILS_ROOT, 'tmp', 'pids', 'builders', "#{project_name}.pid")
+        FileUtils.mkdir_p(File.dirname(pid_file))
+        File.open(pid_file, "w") {|f| f.write pid }
+      rescue NotImplementedError   # Kernel.fork exists but not implemented in Windows
+        Thread.new { system(command) }
+      end
+    else
       Thread.new { system(command) }
     end
   end
