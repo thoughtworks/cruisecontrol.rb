@@ -58,7 +58,7 @@ h1. Installation
 Follow these directions or watch our "5 minute install":/documentation/screencasts screencast.
 
 
-1. "Download":/documentation/download and unpack CruiseControl.rb
+1. "Download":http://rubyforge.org/frs/?group_id=2918 and unpack CruiseControl.rb
 
   p(def). (below, we will refer to the place where you unpack it as [cruise])
 
