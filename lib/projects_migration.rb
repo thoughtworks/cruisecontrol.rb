@@ -5,10 +5,11 @@ class ProjectsMigration
     @projects_directory = projects_directory
   end
 
-  def migrate_data_if_needed()
+  def migrate_data_if_needed
     migration_scripts.each do |script|
       script_version = script.to_i
       if script_version > current_data_version
+        puts "Executing migration script #{script}. This may take some time..."
         execute "ruby #{File.join(migrate_scripts_directory, script)} #{@projects_directory}"
         File.open(data_version_file, 'w') { |f| f.write(script_version) }
       end

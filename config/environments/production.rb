@@ -22,5 +22,5 @@ config.action_controller.perform_caching             = true
 # look like.
 require 'site_config' if File.exists?("#{RAILS_ROOT}/config/site_config.rb")
 
-# Start builders after config initialization if we are running a web server here
-config.after_initialize { BuilderStarter.start_builders } unless defined? CCRB_THIS_PROCESS_IS_BUILDER
+ProjectsMigration.new.migrate_data_if_needed
+config.after_initialize { BuilderStarter.start_builders }
