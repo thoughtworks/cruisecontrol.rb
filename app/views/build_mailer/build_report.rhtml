@@ -1,7 +1,18 @@
-<% begin -%>
+<% if Configuration.dashboard_url -%>
 <%= @message %>
+
+CHANGES
+-------
+<%= @build.changeset %>
+
+<% unless @log_parser.failures_and_errors.empty? -%>
+TEST FAILURES AND ERRORS
+-----------------------
+<%= @log_parser.failures_and_errors %>
+
+<% end -%>
 See <%= "#{@build.url}" %> for details.
-<% rescue -%>
+<% else -%>
 <%= @message %>
 
   Note: if you set Configuration.dashboard_url in config/site_config.rb, you'd see a link to the build page here.

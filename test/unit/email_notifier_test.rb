@@ -45,7 +45,8 @@ class EmailNotifierTest < Test::Unit::TestCase
   end
 
   def test_send_email_with_fixed_build
-    @build.expects(:output).returns(BUILD_LOG)
+    Configuration.stubs(:dashboard_url).returns(nil)
+    @build.expects(:output).at_least_once.returns(BUILD_LOG)
 
     @notifier.build_fixed(@build, @previous_build)
 
@@ -102,20 +103,19 @@ class EmailNotifierTest < Test::Unit::TestCase
   end
 
   def test_notification_mail_should_provide_build_url
-    build_url = "http://www.my.com/path/to/failing/build"
-    failing_build.expects(:url).returns(build_url)
+    Configuration.stubs(:dashboard_url).returns("http://www.my.com")
     @notifier.emails = ['foo@happy.com']
     @notifier.build_finished(failing_build)
     
     mail = ActionMailer::Base.deliveries[0]
-    assert_match /#{build_url}/, mail.body
+    assert_match /http:\/\/www.my.com\/builds\/myproj\/5/, mail.body
   end
 
-  def test_notification_mail_should_list_build_info_if_build_url_raise_exception
-    failing_build.expects(:url).raises("exception")
+  def test_notification_mail_should_list_build_info_if_dashboard_url_is_not_set
+    Configuration.stubs(:dashboard_url).returns(nil)
     @notifier.emails = ['foo@happy.com']
     @notifier.build_finished(failing_build)
-    
+
     mail = ActionMailer::Base.deliveries[0]
     assert_match /Note: if you set Configuration\.dashboard_url in config\/site_config\.rb/, mail.body
   end

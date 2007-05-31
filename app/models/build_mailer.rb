@@ -2,7 +2,7 @@ class BuildMailer < ActionMailer::Base
 
   def build_report(build, recipients, from, subject, message, sent_at = Time.now)
     @subject    = "[CruiseControl] #{subject}"
-    @body       = {:build => build, :message => message}
+    @body       = {:build => build, :message => message, :log_parser => LogParser.new(build.output)}
     @recipients = recipients
     @from       = from
     @sent_on    = sent_at
@@ -16,4 +16,5 @@ class BuildMailer < ActionMailer::Base
     @sent_on    = sent_at
     @headers    = {}
   end
+
 end

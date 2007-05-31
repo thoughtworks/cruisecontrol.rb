@@ -100,7 +100,7 @@ Message: NameError: uninitialized constant BuilderStatusTest::BuilderStatus
 
     EOL
     
-    assert_equal expected, get_test_failures_and_errors_if_any(log)
+    assert_equal expected, failures_and_errors_if_any(log)
   end
   
   BuildStub = Struct.new :label, :time, :state # failed, incomplete

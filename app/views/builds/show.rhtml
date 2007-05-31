@@ -60,7 +60,7 @@
     <div class="section_content"><%= format_changeset_log(@build.changeset) %></div>
   </div>
 
-  <% test_failures = get_test_failures_and_errors_if_any(@build.output) %>
+  <% test_failures = failures_and_errors_if_any(@build.output) %>
   <% if test_failures %>
     <div class="section_open">
       <div class="section_header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
