@@ -23,7 +23,7 @@ class BuildMailer < ActionMailer::Base
   def formatted_error(error)
     return "Name: #{error.test_name}\n" +
            "Type: #{error.type}\n" +
-           "Message: #{error.message('\n', "\n")}\n\n" +
+           "Message: #{error.message.gsub('\n', "\n")}\n\n" +
            error.stacktrace + "\n\n\n"
   end
 
