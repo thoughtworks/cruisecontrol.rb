@@ -2,8 +2,10 @@ class BuildMailer < ActionMailer::Base
 
   def build_report(build, recipients, from, subject, message, sent_at = Time.now)
     @subject    = "[CruiseControl] #{subject}"
-    @body       = {:build => build, :message => message, :log_parser => LogParser.new(build.output)}
-    @failures_and_errors = LogParser.new(build.output).failures_and_errors.map { |e| formatted_error(e) }  
+    @body       = {
+        :build => build,
+        :message => message,
+        :failures_and_errors => LogParser.new(build.output).failures_and_errors.map { |e| formatted_error(e) } }
     @recipients = recipients
     @from       = from
     @sent_on    = sent_at
@@ -12,7 +14,7 @@ class BuildMailer < ActionMailer::Base
 
   def test(recipients,  sent_at = Time.now)
     @subject    = 'Test CI E-mail'
-    @body       = {}
+    @body       = {:build => nil, :message => 'Hi, mom', :failures_and_errors => []}
     @recipients = recipients
     @sent_on    = sent_at
     @headers    = {}
