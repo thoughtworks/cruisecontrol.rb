@@ -7,9 +7,13 @@ class BuildsController < ApplicationController
     @project = Projects.find(params[:project])
     render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
 
-    @build = (params[:build] ? @project.find_build(params[:build]) : @project.last_build)
-    
-    render :action => 'no_builds_yet' and return if @build.nil?
+    if params[:build]
+      @build = @project.find_build(params[:build])
+      render :text => "Build #{params[:build].inspect} not found", :status => 404 and return if @build.nil? 
+    else
+      @build = @project.last_build
+      render :action => 'no_builds_yet' and return if @build.nil?
+    end
       
     @autorefresh = @build.incomplete?
   end

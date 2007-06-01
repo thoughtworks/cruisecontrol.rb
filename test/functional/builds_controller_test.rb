@@ -98,15 +98,15 @@ class BuildsControllerTest < Test::Unit::TestCase
     end
   end
 
-  def test_show_no_build
+  def test_show_unknown_build
     with_sandbox_project do |sandbox, project|
+      sandbox.new :file => "build-1/build_status.pingpong"
       Projects.expects(:find).with(project.name).returns(project)
 
-      get :show, :project => project.name
+      get :show, :project => project.name, :build => 2
 
-      assert_response :success
-      assert_template 'no_builds_yet'
-      assert_equal project, assigns(:project)
+      assert_response 404
+      assert_equal 'Build "2" not found', @response.body
     end
   end
 
