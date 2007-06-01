@@ -5,10 +5,10 @@ CHANGES
 -------
 <%= @build.changeset %>
 
-<% unless @log_parser.failures_and_errors.empty? -%>
+<% unless @failures_and_errors.empty? -%>
 TEST FAILURES AND ERRORS
 -----------------------
-<%= @log_parser.failures_and_errors.join %>
+<%= @failures_and_errors %>
 
 <% end -%>
 See <%= "#{@build.url}" %> for details.

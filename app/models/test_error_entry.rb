@@ -11,4 +11,5 @@ class TestErrorEntry
   def self.create_error(test_name, message, stacktrace)
     TestErrorEntry.new(ERROR_TYPE, test_name, message, stacktrace)
   end
+
 end

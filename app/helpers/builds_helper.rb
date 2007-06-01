@@ -53,14 +53,14 @@ module BuildsHelper
   end
   
   def format_test_error_output(test_error)
-    message = test_error.message.gsub(/\\n/, "\n");
-    
+    message = test_error.message.gsub('\n', "\n");
+
     "Name: #{test_error.test_name}\n" +
     "Type: #{test_error.type}\n" +
     "Message: #{h message}\n\n" +
     "<span class=\"error\">#{h test_error.stacktrace}</span>\n\n\n"
   end
-  
+
   def display_build_time
     if @build.incomplete?
       "building for #{format_seconds(@build.elapsed_time_in_progress, :general)}"
