@@ -20,11 +20,11 @@ class BuildMailer < ActionMailer::Base
     @headers    = {}
   end
 
-  def formatted_error
-    return "Name: #{test_error.test_name}\n" +
-           "Type: #{test_error.type}\n" +
-           "Message: #{test_error.message('\n', "\n")}\n\n" +
-           test_error.stacktrace + "\n\n\n"
+  def formatted_error(error)
+    return "Name: #{error.test_name}\n" +
+           "Type: #{error.type}\n" +
+           "Message: #{error.message('\n', "\n")}\n\n" +
+           error.stacktrace + "\n\n\n"
   end
 
 end
