@@ -53,7 +53,7 @@ module BuildsHelper
   end
   
   def format_test_error_output(test_error)
-    message = test_error.message.gsub('\n', "\n");
+    message = test_error.message
 
     "Name: #{test_error.test_name}\n" +
     "Type: #{test_error.type}\n" +
