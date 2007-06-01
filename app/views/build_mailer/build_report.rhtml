@@ -8,7 +8,7 @@ CHANGES
 <% unless @log_parser.failures_and_errors.empty? -%>
 TEST FAILURES AND ERRORS
 -----------------------
-<%= @log_parser.failures_and_errors %>
+<%= @log_parser.failures_and_errors.join %>
 
 <% end -%>
 See <%= "#{@build.url}" %> for details.

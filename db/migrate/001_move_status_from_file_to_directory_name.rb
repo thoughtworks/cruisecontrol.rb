@@ -6,5 +6,5 @@ Dir["projects/*/build-*"].reject{|path| path =~ /build-.*-.*in.*s/}.each do |dir
   next unless status_file
   status_info = File.basename(status_file).sub('build_status.', '')
   rm status_file
-  mv dir, "#{dir}_#{status_info}"
+  mv dir, "#{dir}-#{status_info}"
 end
