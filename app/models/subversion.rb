@@ -19,13 +19,13 @@ class Subversion
   def checkout(target_directory, revision = nil, stdout = $stdout)
     @url or raise 'URL not specified'
 
-    options = "#{@url} #{target_directory}"
-    options << " --username #{@username}" if username
-    options << " --password #{@password}" if password
-    options << " --revision #{revision_number(revision)}" if revision
+    options = [@url, target_directory]
+    options << "--username" << @username if @username
+    options << "--password" << @password if @password
+    options << "--revision" << revision_number(revision) if revision
 
     # need to read from command output, because otherwise tests break
-    execute(svn(:co, options)) do |io| 
+    execute(svn('co', options)) do |io| 
       begin
         while line = io.gets
           stdout.puts line
@@ -50,26 +50,26 @@ class Subversion
 
   def update(project, revision = nil)
     revision_number = revision ? revision_number(revision) : 'HEAD'
-    svn_output = execute_in_local_copy(project, svn(:update, "--revision #{revision_number}"))
+    svn_output = execute_in_local_copy(project, svn('update', "--revision", revision_number))
     SubversionLogParser.new.parse_update(svn_output)
   end
   
   private
   
   def log(from, to)
-    svn(:log, "--revision #{from}:#{to} --verbose --xml #{@url}")
+    svn('log', "--revision", "#{from}:#{to}", '--verbose', '--xml', @url)
   end
   
   def info(project)
-    svn_output = execute_in_local_copy(project, svn(:info, "--xml"))
+    svn_output = execute_in_local_copy(project, svn('info', "--xml"))
     SubversionLogParser.new.parse_info(svn_output)
   end
 
-  def svn(operation, options = nil)
-    command = "svn"
-    command << " --non-interactive" unless @interactive
-    command << " " << operation.to_s
-    command << " " << options if options
+  def svn(operation, *options)
+    command = ["svn"]
+    command << "--non-interactive" unless @interactive
+    command << operation
+    command += options.compact.flatten
     command
   end
 

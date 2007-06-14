@@ -20,7 +20,7 @@ class Build
     begin
       raise ConfigError.new(@project.error_message) unless @project.config_valid?
       in_clean_environment_on_local_copy do
-        execute self.command, :stdout => build_log, :stderr => build_log, :escape_quotes => false
+        execute self.command, :stdout => build_log, :stderr => build_log
       end
       build_status.succeed!(seconds_since(start))
     rescue => e

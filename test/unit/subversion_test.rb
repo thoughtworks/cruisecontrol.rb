@@ -50,7 +50,7 @@ class SubversionTest < Test::Unit::TestCase
     revision_number = 10
 
     svn = Subversion.new
-    svn.expects(:execute).with("svn --non-interactive update --revision #{revision_number}", {:stderr => './svn.err'}).returns("your mom")
+    svn.expects(:execute).with(["svn", "--non-interactive", "update", "--revision", revision_number], {:stderr => './svn.err'}).returns("your mom")
 
     svn.update(dummy_project, Revision.new(revision_number))
   end
@@ -59,7 +59,8 @@ class SubversionTest < Test::Unit::TestCase
     svn = Subversion.new
 
     svn.expects(:info).with(dummy_project).returns(Subversion::Info.new(10, 10))
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:10 --verbose --xml ", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:10", "--verbose", "--xml"],
+                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
 
     revision = svn.latest_revision(dummy_project)
 
@@ -69,7 +70,8 @@ class SubversionTest < Test::Unit::TestCase
   def test_revisions_since_should_reverse_the_log_entries_and_skip_the_one_corresponding_to_current_revision
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:15 --verbose --xml ", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:15", "--verbose", "--xml"],
+                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
 
     revisions = svn.revisions_since(dummy_project, 15)
 
@@ -79,7 +81,8 @@ class SubversionTest < Test::Unit::TestCase
   def test_revisions_since_should_return_all_revisions_when_curreent_revision_is_not_in_the_log_output
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose --xml ", {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
+    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:14", "--verbose", "--xml"],
+                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
 
     revisions = svn.revisions_since(dummy_project, 14)
 
@@ -89,7 +92,8 @@ class SubversionTest < Test::Unit::TestCase
   def test_revisions_since_should_return_an_empty_array_for_empty_log_output
     svn = Subversion.new
 
-    svn.expects(:execute).with("svn --non-interactive log --revision HEAD:14 --verbose --xml ", {:stderr => './svn.err'}).yields(StringIO.new(EMPTY_LOG))
+    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:14", "--verbose", "--xml"], 
+                               {:stderr => './svn.err'}).yields(StringIO.new(EMPTY_LOG))
 
     revisions = svn.revisions_since(dummy_project, 14)
 
@@ -98,7 +102,7 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_checkout_with_no_user_password
     svn = Subversion.new(:url => 'http://foo.com/svn/project')
-    svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project .")
+    svn.expects(:execute).with(["svn", "--non-interactive", "co", "http://foo.com/svn/project", "."])
 
     svn.checkout('.')
   end
@@ -122,21 +126,22 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_checkout_with_user_password
     svn = Subversion.new(:url => 'http://foo.com/svn/project', :username => 'jer', :password => "crap")
-    svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project . --username jer --password crap")
+    svn.expects(:execute).with(["svn", "--non-interactive", "co", "http://foo.com/svn/project", ".", "--username",
+                                "jer", "--password", "crap"])
 
     svn.checkout('.')
   end
 
   def test_checkout_with_revision
     svn = Subversion.new(:url => 'http://foo.com/svn/project')
-    svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project . --revision 5")
+    svn.expects(:execute).with(["svn", "--non-interactive", "co", "http://foo.com/svn/project", ".", "--revision", 5])
 
     svn.checkout('.', Revision.new(5))
   end
   
   def test_allowing_interaction
     svn = Subversion.new(:url => 'svn://foo.com/', :interactive => true)
-    svn.expects(:execute).with("svn co svn://foo.com/ .")
+    svn.expects(:execute).with(["svn", "co", "svn://foo.com/", "."])
     svn.checkout('.')
     svn.verify
   end
@@ -157,7 +162,7 @@ class SubversionTest < Test::Unit::TestCase
       dir = @sandbox.root + "/project"
 
       svn = Subversion.new(:url => 'http://foo.com/svn/project')
-      svn.expects(:execute).with("svn --non-interactive co http://foo.com/svn/project #{dir} --revision 5")
+      svn.expects(:execute).with(["svn", "--non-interactive", "co", "http://foo.com/svn/project", dir, "--revision", 5])
 
       svn.clean_checkout(dir, Revision.new(5))
       

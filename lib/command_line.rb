@@ -61,11 +61,9 @@ module CommandLine
     raise "Can't have newline in cmd" if cmd =~ /\n/
     options = {
         :dir => Dir.pwd,
-        :escape_quotes => true,
         :env => {},
         :mode => 'r',
-        :exitstatus => 0
-      }.merge(options)
+        :exitstatus => 0 }.merge(options)
 
     options[:stdout] = File.expand_path(options[:stdout]) if options[:stdout]
     options[:stderr] = File.expand_path(options[:stderr]) if options[:stderr]
@@ -110,23 +108,25 @@ module CommandLine
   module_function :e
 
   def full_cmd(cmd, options, &proc)
-    commands = cmd.split("&&").collect{|c| c.strip}
     stdout_opt, stderr_opt = redirects(options)
 
     capture_info_command = (block_given? && options[:stdout]) ?
         "echo [output captured and therefore not logged] >> #{options[:stdout]} && " :
-        ""
+        ''
 
-    full_cmd = commands.collect do |c|
-      escaped_command = options[:escape_quotes] ? c.gsub(/"/, QUOTE_REPLACEMENT).gsub(/</, LESS_THAN_REPLACEMENT) : c
-      stdout_prompt_command = options[:stdout] ? "echo #{Platform.prompt} #{escaped_command} >> #{options[:stdout]} && " : ""
-      stderr_prompt_command = options[:stderr] && options[:stderr] != options[:stdout] ?
-                                "echo #{Platform.prompt} #{escaped_command} >> #{options[:stderr]} && " :
-                                ""
-      redirected_command = block_given? ? "#{c} #{stderr_opt}" : "#{c} #{stdout_opt} #{stderr_opt}"
+    cmd = escape_and_concatenate(cmd) unless cmd.is_a? String
 
-      stdout_prompt_command + capture_info_command + stderr_prompt_command + redirected_command
-    end.join(" && ")
+    stdout_prompt_command = options[:stdout] ?
+                              "echo #{Platform.prompt} #{cmd} >> #{options[:stdout]} && " :
+                              ''
+
+    stderr_prompt_command = options[:stderr] && options[:stderr] != options[:stdout] ?
+                              "echo #{Platform.prompt} #{cmd} >> #{options[:stderr]} && " :
+                              ''
+
+    redirected_command = block_given? ? "#{cmd} #{stderr_opt}" : "#{cmd} #{stdout_opt} #{stderr_opt}"
+
+    stdout_prompt_command + capture_info_command + stderr_prompt_command + redirected_command
   end
   module_function :full_cmd
 
@@ -169,5 +169,21 @@ module CommandLine
     [stdout_opt, stderr_opt]
   end
   module_function :redirects
+  
+  def escape_and_concatenate(cmd)
+    cmd.map { |item| escape(item) }.join(' ')
+  end
+  module_function :escape_and_concatenate
 
+  def escape(item)
+    if Platform.family == 'mswin32'
+      raise 'not implemented yet'
+    else
+      escaped_characters = /"|'|<|>| |&|\||\(|\)|\\|\$|\*|\?|;/
+    end
+    
+    item.to_s.gsub(escaped_characters) { |match| "\\#{match}" }
+  end
+  module_function :escape
+  
 end

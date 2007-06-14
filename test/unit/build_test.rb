@@ -87,8 +87,7 @@ class BuildTest < Test::Unit::TestCase
       expected_build_log = File.join(expected_build_directory, 'build.log')
       expected_redirect_options = {
           :stdout => expected_build_log,
-          :stderr => expected_build_log,
-          :escape_quotes => false
+          :stderr => expected_build_log
         }
       Time.expects(:now).at_least(2).returns(Time.at(0), Time.at(3.2))
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
@@ -122,8 +121,7 @@ class BuildTest < Test::Unit::TestCase
       expected_build_log = File.join(expected_build_directory, 'build.log')
       expected_redirect_options = {
         :stdout => expected_build_log,
-        :stderr => expected_build_log,
-        :escape_quotes => false
+        :stderr => expected_build_log
       }
 
       error = RuntimeError.new
@@ -145,8 +143,7 @@ class BuildTest < Test::Unit::TestCase
       expected_build_log = File.join(expected_build_directory, 'build.log')
       expected_redirect_options = {
         :stdout => expected_build_log,
-        :stderr => expected_build_log,
-        :escape_quotes => false
+        :stderr => expected_build_log
       }
   
       build.expects(:execute).with(build.rake, expected_redirect_options).raises(CommandLine::ExecutionError)
