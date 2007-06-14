@@ -177,12 +177,13 @@ module CommandLine
 
   def escape(item)
     if Platform.family == 'mswin32'
-      raise 'not implemented yet'
+      escaped_characters = /\\|&|\||>|<|\^/
+      escape_symbol = '^'
     else
-      escaped_characters = /"|'|<|>| |&|\||\(|\)|\\|\$|\*|\?|;/
+      escaped_characters = /"|'|<|>| |&|\||\(|\)|\\|;/
+      escape_symbol = '\\'
     end
-    
-    item.to_s.gsub(escaped_characters) { |match| "\\#{match}" }
+    item.to_s.gsub(escaped_characters) { |match| "#{escape_symbol}#{match}" }
   end
   module_function :escape
   

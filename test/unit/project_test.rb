@@ -515,12 +515,7 @@ class ProjectTest < Test::Unit::TestCase
       marker = sandbox.root + '/last_clean_checkout_timestamp'
       
       now = Time.now
-      FileUtils.stubs(:touch).with(marker).returns(proc do
-        File.open(marker, 'w') {|f| f<< ''}
-        File.utime(now, now, marker)
-      end)
       Time.stubs(:now).returns proc { now }
-      
 
       @project.do_clean_checkout :every => 1.hour
     

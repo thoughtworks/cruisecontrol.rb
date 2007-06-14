@@ -4,10 +4,14 @@ require 'fileutils'
 class CommandLineTest < Test::Unit::TestCase
   include FileSandbox
 
+  def teardown
+    Platform.module_eval('@stubs_family = nil')
+  end
+
   def test_should_write_to_both_files_when_both_files_specified_and_no_block
     in_total_sandbox do
       CommandLine.execute("echo hello", {:dir => @dir, :stdout => @stdout, :stderr => @stderr})
-      assert_match(/.* echo hello\n.?hello/n, File.read(@stdout))
+      assert_match(/.* echo hello  \n.?hello /n, File.read(@stdout))
       assert_match(/.* echo hello/n, File.read(@stderr))
     end
   end
@@ -73,20 +77,32 @@ class CommandLineTest < Test::Unit::TestCase
   end
 
   def test_escape_and_concatenate
-    Platform.stubs(:family).returns("linux")
+    Platform.module_eval('@stubs_family = "linux"')
     assert_equal 'foo', CommandLine.escape_and_concatenate(['foo'])
     assert_equal 'foo bar', CommandLine.escape_and_concatenate(['foo', 'bar'])
     assert_equal 'foo b\\"ar', CommandLine.escape_and_concatenate(['foo', 'b"ar'])
     assert_equal 'foo b\\ \\ \\ ar', CommandLine.escape_and_concatenate(['foo', 'b   ar'])
-    assert_equal "foo b\\'\\&\\<\\>\\\\\\|\\$\\*\\?\\;ar", CommandLine.escape_and_concatenate(['foo', "b'&<>\\|$*?;ar"])
+    assert_equal "foo b\\'\\&\\<\\>\\\\\\|\\;ar", CommandLine.escape_and_concatenate(['foo', "b'&<>\\|;ar"])
+  end
+
+  def test_escape_and_concatenate_on_windows
+    Platform.module_eval('@stubs_family = "mswin32"')
+    assert_equal "foo bar ^\\ ^& ^| ^> ^< ^^ baz", CommandLine.escape_and_concatenate(['foo', "bar \\ & | > < ^ baz"])
+  end
+
+  def test_escape_and_concatenate_should_not_escape_variable_references_and_wildcards
+    Platform.module_eval('@stubs_family = "linux"')
+    assert_equal "foo $*?{}[]", CommandLine.escape_and_concatenate(['foo', "$*?{}[]"])
   end
 
   def test_full_cmd_should_not_escape_command_if_it_is_a_string
+    Platform.module_eval('@stubs_family = "linux"')
     assert_equal 'foo bar\ baz  ', CommandLine.full_cmd('foo bar\ baz', {})
   end
 
   def test_full_cmd_should_escape_command_if_it_is_an_array
-    assert_equal 'foo bar baz\\ \\?  ', CommandLine.full_cmd(['foo', 'bar', 'baz ?'], {})
+    Platform.module_eval('@stubs_family = "linux"')
+    assert_equal 'foo bar baz\\ \\>  ', CommandLine.full_cmd(['foo', 'bar', 'baz >'], {})
   end
 
   def test_escape_and_concatenate_accepts_non_strings

@@ -377,20 +377,27 @@ class Project
     else
       timestamp_filename = File.join(self.path, 'last_clean_checkout_timestamp')
       unless File.exist?(timestamp_filename)
-        FileUtils.touch(timestamp_filename)
+        save_timestamp(timestamp_filename)
         return true
       end
-    
-      time_since_last_clean_checkout = Time.now - File.new(timestamp_filename).mtime
+
+      time_since_last_clean_checkout = Time.now - load_timestamp(timestamp_filename)
       if time_since_last_clean_checkout > @clean_checkout_when[:every]
-        FileUtils.touch(timestamp_filename)
+        save_timestamp(timestamp_filename)
         true
       else
         false
       end
     end
   end
-  
+
+  def save_timestamp(file)
+    File.open(file, 'w') { |f| f.write Time.now.gmtime.strftime("%Y-%m-%d %H:%M:%SZ") }
+  end
+
+  def load_timestamp(file)
+    Time.parse(File.read(file))
+  end
   
   private
   
