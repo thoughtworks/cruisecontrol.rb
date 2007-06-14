@@ -11,7 +11,7 @@ class CommandLineTest < Test::Unit::TestCase
   def test_should_write_to_both_files_when_both_files_specified_and_no_block
     in_total_sandbox do
       CommandLine.execute("echo hello", {:dir => @dir, :stdout => @stdout, :stderr => @stderr})
-      assert_match(/.* echo hello  \n.?hello /n, File.read(@stdout))
+      assert_match(/.* echo hello *\n.?hello ?/n, File.read(@stdout))
       assert_match(/.* echo hello/n, File.read(@stderr))
     end
   end
