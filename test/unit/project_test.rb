@@ -515,7 +515,7 @@ class ProjectTest < Test::Unit::TestCase
       marker = sandbox.root + '/last_clean_checkout_timestamp'
       
       now = Time.now
-      Time.stubs(:now).returns proc { now }
+      Time.stubs(:now).returns(now)
 
       @project.do_clean_checkout :every => 1.hour
     
@@ -524,17 +524,21 @@ class ProjectTest < Test::Unit::TestCase
       assert !@project.do_clean_checkout?
       
       now += 59.minutes
+      Time.stubs(:now).returns(now)
       assert !@project.do_clean_checkout?
       
       now += 2.minutes
+      Time.stubs(:now).returns(now)
       assert @project.do_clean_checkout?
       assert !@project.do_clean_checkout?
 
       @project.do_clean_checkout :every => 2.days
       now += 1.day + 23.hours
+      Time.stubs(:now).returns(now)
       assert !@project.do_clean_checkout?
 
       now += 2.hours
+      Time.stubs(:now).returns(now)
       assert @project.do_clean_checkout?
     end
   end
