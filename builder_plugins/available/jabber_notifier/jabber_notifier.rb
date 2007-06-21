@@ -31,34 +31,43 @@ class JabberNotifier
     @client.respond_to?(:is_connected?) && @client.is_connected?
   end
 
-  def build_broken(broken_build, previous_build)
-    if @subscribers.empty?
-      CruiseControl::Log.debug("Jabber notifier: no subscribers registered, 'build broken' ignored")
-    else
-      CruiseControl::Log.debug("Jabber notifier: sending 'build fixed' notice")
-      notify("#{broken_build.project.name} Build #{broken_build.label} - BROKEN")
+  def build_finished(build)
+    if build.failed?
+      notify_of_build_outcome(build)
     end
   end
 
   def build_fixed(fixed_build, previous_build)
+    notify_of_build_outcome(fixed_build)
+  end
+
+  
+
+  def notify_of_build_outcome(build)
     if @subscribers.empty?
-      CruiseControl::Log.debug("Jabber notifier: no subscribers registered, 'build fixed' ignored")
+      CruiseControl::Log.debug("Jabber notifier: no subscribers registered")
     else
-      CruiseControl::Log.debug("Jabber notifier: sending 'build fixed' notice")
-      notify("#{fixed_build.project.name} Build #{fixed_build.label} - FIXED")
+      status = build.failed? ? "broken" : "fixed"
+      message = "#{build.project.name} Build #{build.label} - #{status.upcase}"
+      if Configuration.dashboard_url
+        message += ". See #{build.url}"
+      end
+      CruiseControl::Log.debug("Jabber notifier: sending 'build #{status}' notice")
+      notify(message)
     end
   end
 
   def notify(message)
     connect
     begin
+      CruiseControl::Log.debug("Jabber notifier: sending notice: '#{message}'")
       @subscribers.each do |subscriber|
         jid = Jabber::JID::new(subscriber)
         msg = Jabber::Message.new(jid)
         msg.type = :normal
         msg.body = message
         attempts = 0
-        CruiseControl::Log.debug("Jabber notifier: sending '#{message}' to #{subscriber}")
+        CruiseControl::Log.debug("Jabber notifier: sending to #{subscriber}")
         begin
           attempts += 1
           @client.send(msg)

@@ -116,7 +116,7 @@ EOF
     dashboard_url = Configuration.dashboard_url
     raise "Configuration.dashboard_url is not specified" if dashboard_url.nil? || dashboard_url.empty?
     dashboard_url + ActionController::Routing::Routes.generate(
-      :controller => 'builds', :action => 'show', :project => project, :build => to_param)
+        :controller => 'builds', :action => 'show', :project => project, :build => to_param)
   end
   
   def artifact(file_name)
