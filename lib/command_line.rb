@@ -179,11 +179,18 @@ module CommandLine
     if Platform.family == 'mswin32'
       escaped_characters = /\\|&|\||>|<|\^/
       escape_symbol = '^'
+      quote_argument = (item =~ /\s/) 
     else
       escaped_characters = /"|'|<|>| |&|\||\(|\)|\\|;/
       escape_symbol = '\\'
+      quote_argument_with_spaces = false
     end
-    item.to_s.gsub(escaped_characters) { |match| "#{escape_symbol}#{match}" }
+    escaped_value = item.to_s.gsub(escaped_characters) { |match| "#{escape_symbol}#{match}" }
+    if quote_argument
+      '"' + escaped_value + '"'
+    else
+      escaped_value
+    end
   end
   module_function :escape
   

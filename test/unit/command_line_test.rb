@@ -87,12 +87,20 @@ class CommandLineTest < Test::Unit::TestCase
 
   def test_escape_and_concatenate_on_windows
     Platform.module_eval('@stubs_family = "mswin32"')
-    assert_equal "foo bar ^\\ ^& ^| ^> ^< ^^ baz", CommandLine.escape_and_concatenate(['foo', "bar \\ & | > < ^ baz"])
+    assert_equal 'foo "bar ^\\ ^& ^| ^> ^< ^^ baz"', CommandLine.escape_and_concatenate(['foo', "bar \\ & | > < ^ baz"])
   end
 
   def test_escape_and_concatenate_should_not_escape_variable_references_and_wildcards
     Platform.module_eval('@stubs_family = "linux"')
     assert_equal "foo $*?{}[]", CommandLine.escape_and_concatenate(['foo', "$*?{}[]"])
+  end
+
+  def test_escape_and_concatenate_should_put_double_quotes_around_arguments_with_spaces_on_windows
+    Platform.module_eval('@stubs_family = "mswin32"')
+    assert_equal '"foo bar^\\tom"', CommandLine.escape_and_concatenate(['foo bar\\tom'])
+
+    Platform.module_eval('@stubs_family = "linux"')
+    assert_equal 'foo\ bar\\\\tom', CommandLine.escape_and_concatenate(['foo bar\\tom'])
   end
 
   def test_full_cmd_should_not_escape_command_if_it_is_a_string
