@@ -4,16 +4,20 @@ class ProjectsMigration
 
   def initialize(projects_directory = Configuration.projects_directory)
     @projects_directory = projects_directory
+    if File.exists? @projects_directory and not File.directory? @projects_directory
+      raise "#@projects_directory is not a directory"
+    else
+      mkdir_p @projects_directory
+    end
   end
 
   def migrate_data_if_needed
     migration_scripts.each do |script|
-      script_version = script.to_i
-      if script_version > current_data_version
-        puts "Executing migration script #{script}. This may take some time..."
+      if script_version(script) > current_data_version
+        CruiseControl::Log.info "Executing migration script #{script}. This may take some time..."
         clear_cached_pages
         execute "ruby #{File.join(migrate_scripts_directory, script)} #{@projects_directory}"
-        File.open(data_version_file, 'w') { |f| f.write(script_version) }
+        set_data_version(script_version(script))
       end
     end
   end
@@ -26,12 +30,21 @@ class ProjectsMigration
     File.join(RAILS_ROOT, 'db', 'migrate')
   end
 
+  def script_version(script_name)
+    raise "Migration script name #{script_name} doesn't start with three digits and underscore" unless script_name =~ /^\d\d\d_/
+    script_name.to_i
+  end
+
   def current_data_version
     File.exists?(data_version_file) ? File.read(data_version_file).to_i : 0
   end
 
   def data_version_file
     File.join(@projects_directory, 'data.version')
+  end
+
+  def set_data_version(version)
+    File.open(data_version_file, 'w') { |f| f.write(version) }
   end
 
   def clear_cached_pages

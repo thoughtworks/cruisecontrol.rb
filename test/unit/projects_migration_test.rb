@@ -52,6 +52,22 @@ class ProjectsMigrationTest < Test::Unit::TestCase
     assert_equal 2, @migration.current_data_version
   end
 
+  def test_should_create_projects_directory_if_it_doesnt_exist_and_run_all_migration_scripts
+    projects_dir = "#{@sandbox.root}/projects"
+    @migration = ProjectsMigration.new(projects_dir)
+    assert_false File.exists?("#{projects_dir}/data.version")
+
+    @migration.expects(:migration_scripts).returns(['001_foo.rb', '002_bar.rb', '003_baz.rb'])
+    @migration.expects(:execute).with("ruby #{expected_script_path('001_foo.rb')} #{projects_dir}")
+    @migration.expects(:execute).with("ruby #{expected_script_path('002_bar.rb')} #{projects_dir}")
+    @migration.expects(:execute).with("ruby #{expected_script_path('003_baz.rb')} #{projects_dir}")
+
+    @migration.migrate_data_if_needed
+
+    assert File.exists?("#{projects_dir}/data.version")
+    assert_equal '3', File.read("#{projects_dir}/data.version")
+  end
+
   def test_migration_scripts
     Dir.expects(:[]).with(expected_script_path('*.rb')).returns(['db/001_foo.rb', 'db/003_baz.rb', 'db/002_bar.rb'])
 
