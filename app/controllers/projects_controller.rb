@@ -26,6 +26,7 @@ class ProjectsController < ApplicationController
 
   def build
     render :text => 'Project not specified', :status => 404 and return unless params[:id]
+    render :text => 'Build requests are not allowed', :status => 403 and return if Configuration.disable_build_now
 
     @project = Projects.find(params[:id])
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project

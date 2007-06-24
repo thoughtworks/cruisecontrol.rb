@@ -211,10 +211,19 @@ class ProjectsControllerTest < Test::Unit::TestCase
   end
 
   def test_should_disable_build_now_button_if_configured_to_do_so
-    Configuration.stubs(:disable_build_now).returns(:true)
+    Configuration.stubs(:disable_build_now).returns(true)
     Projects.expects(:load_all).returns([create_project_stub('one', 'success')])
     get :index
     assert_tag :tag => "button", :attributes => {:onclick => /return false;/}
+  end
+
+  def test_should_refuse_build_if_build_now_is_disabled
+    Configuration.stubs(:disable_build_now).returns(true)
+
+    get :build, :id => 'one'
+    
+    assert_response 403
+    assert_equal 'Build requests are not allowed', @response.body
   end
 
   def stub_change_set_parser

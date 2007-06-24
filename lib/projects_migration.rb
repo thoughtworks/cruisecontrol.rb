@@ -18,6 +18,7 @@ class ProjectsMigration
         clear_cached_pages
         execute "ruby #{File.join(migrate_scripts_directory, script)} #{@projects_directory}"
         set_data_version(script_version(script))
+        CruiseControl::Log.info "Finished #{script}."
       end
     end
   end
