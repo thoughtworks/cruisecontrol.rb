@@ -404,8 +404,9 @@ class Project
   # sorts a array of builds in order of revision number and rebuild number 
   def order_by_label(builds)
     builds.sort_by do |build|
-      number_and_rebuild = build.label.split('.')
-      number_and_rebuild.map { |x| x.to_i }
+      number, rebuild = build.label.split('.')
+      # when a label only has build number, rebuild = nil, nil.to_i = 0, and this code still works
+      [number.to_i, rebuild.to_i]
     end
   end
     

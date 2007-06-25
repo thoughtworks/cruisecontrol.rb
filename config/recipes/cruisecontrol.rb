@@ -27,6 +27,8 @@ Capistrano.configuration(:must_exist).load do
   task :after_update_code do
     sudo "rm -rf #{release_path}/projects"
     sudo "mkdir -p #{shared_path}/projects"
+    sudo "chown deployer #{shared_path}/projects"
+    sudo "chgrp rails #{shared_path}/projects"
     sudo "ln -nfs #{shared_path}/projects #{release_path}/projects"
   end
 
