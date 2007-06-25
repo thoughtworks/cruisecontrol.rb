@@ -3,15 +3,15 @@
 load "#{File.dirname(__FILE__)}/lib/cruise_control/version.rb"
 
 def start
-  load File.dirname(__FILE__) + "/script/server"
+  load "./script/server"
 end
 
 def add
-  load File.dirname(__FILE__) + "/script/add_project"
+  load "./script/add_project"
 end
 
 def builder
-  load File.dirname(__FILE__) + "/script/builder"
+  load "./script/builder"
 end
 
 def version
@@ -63,7 +63,10 @@ end
 
 command = ARGV.shift
 if method_for_command(command)
-	self.send(method_for_command(command))
+  require 'fileutils'
+  FileUtils.cd(File.dirname(__FILE__)) do 
+    self.send(method_for_command(command))
+  end
 elsif command.nil?
   STDERR.puts "Type 'cruise --help' for usage."
   exit -1
