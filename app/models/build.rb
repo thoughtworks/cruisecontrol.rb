@@ -100,7 +100,7 @@ EOF
   end
 
   def artifacts_directory
-    @artifacts_directory = Dir["#{@project.path}/build-#{label}*"].first || File.join(@project.path, "build-#{label}")
+    @artifacts_directory = Dir["#{@project.path}/build-#{label}*"].sort.first || File.join(@project.path, "build-#{label}")
     unless File.exist? @artifacts_directory
       FileUtils.mkdir_p @artifacts_directory
       clear_cache
