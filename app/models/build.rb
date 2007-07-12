@@ -12,6 +12,10 @@ class Build
     BuildStatus.new(artifacts_directory)
   end
 
+  def latest?
+    label.to_s == project.last_build.label.to_s
+  end
+
   def run
     build_log = artifact 'build.log'
     File.open(artifact('cruise_config.rb'), 'w') {|f| f << @project.config_file_content }

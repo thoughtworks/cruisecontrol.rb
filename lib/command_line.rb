@@ -95,7 +95,7 @@ module CommandLine
       verify_exit_code(exit_status, cmd, full_cmd, options)
       return result
     rescue Errno::ENOENT => e
-      unless options[:stderr].nil?
+      if options[:stderr]
         File.open(options[:stderr], "a") {|io| io.write(e.message)}
       else
         STDERR.puts e.message

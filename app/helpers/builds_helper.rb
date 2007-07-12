@@ -63,7 +63,11 @@ module BuildsHelper
 
   def display_build_time
     if @build.incomplete?
-      "building for #{format_seconds(@build.elapsed_time_in_progress, :general)}"
+      if @build.latest?
+        "building for #{format_seconds(@build.elapsed_time_in_progress, :general)}"
+      else
+        "started at #{format_time(@build.time, :verbose)}, and never finished"
+      end
     else
       elapsed_time_text = elapsed_time(@build, :precise)
       build_time_text = format_time(@build.time, :verbose)

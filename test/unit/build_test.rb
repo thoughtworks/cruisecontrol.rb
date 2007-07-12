@@ -3,6 +3,19 @@ require File.dirname(__FILE__) + '/../test_helper'
 class BuildTest < Test::Unit::TestCase
   include FileSandbox
 
+  def test_build_should_know_if_it_is_the_latest
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :directory => "build-2"
+      build_old = Build.new(project, 2)
+
+      sandbox.new :directory => "build-3"
+      build_latest = Build.new(project, 3)
+
+      assert build_latest.latest?
+      assert_false build_old.latest?
+    end
+  end
+
   def test_initialize_should_load_status_file_and_build_log
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => "build-2-success.in9.235s/build.log", :with_content => "some content"
