@@ -13,9 +13,9 @@ class LogPublisherTest < Test::Unit::TestCase
       publisher = LogPublisher.new(project)
       publisher.build_finished(build)
       
-      assert file("/build-2/my.log").exists?
-      assert file("/build-2/your.log").exists?
-      assert !file(sandbox.root + "/work/log/your.log").exists?
+      assert SandboxFile.new("build-2/my.log").exists?
+      assert SandboxFile.new("build-2/your.log").exists?
+      assert_false SandboxFile.new(sandbox.root + "/work/log/your.log").exists?
     end
   end
   
@@ -30,10 +30,10 @@ class LogPublisherTest < Test::Unit::TestCase
       publisher = LogPublisher.new(project)
       publisher.globs = ['foo/bar.*', '*.txt']
       publisher.build_finished(build)
-      
-      assert !file("/build-2/my.log").exists?
-      assert file("/build-2/bar.log").exists?
-      assert file("/build-2/your.txt").exists?
+
+      assert_false SandboxFile.new("build-2/my.log").exists?
+      assert SandboxFile.new("build-2/bar.log").exists?
+      assert SandboxFile.new("build-2/your.txt").exists?
     end
   end
 end

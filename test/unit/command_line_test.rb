@@ -86,7 +86,12 @@ class CommandLineTest < Test::Unit::TestCase
   end
 
   def test_escape_and_concatenate_on_windows
-    Platform.module_eval('@stubs_family = "mswin32"')
+    Platform.stubs(:family).returns('mswin32')
+    assert_equal 'mswin32', Platform.family  
+    assert_equal 'mswin32', Platform.family
+    assert_equal 'mswin32', Platform.family
+    assert_equal 'mswin32', Platform.family
+#    Platform.module_eval('@stubs_family = "mswin32"')
     assert_equal 'foo "bar ^\\ ^& ^| ^> ^< ^^ baz"', CommandLine.escape_and_concatenate(['foo', "bar \\ & | > < ^ baz"])
   end
 

@@ -62,8 +62,8 @@ class ProjectsTest < Test::Unit::TestCase
 
       projects << @one
 
-      assert file('one/work').exists?
-      assert file('one/work/README').exists?
+      assert SandboxFile.new('one/work').exists?
+      assert SandboxFile.new('one/work/README').exists?
     end
   end
 
@@ -76,8 +76,8 @@ class ProjectsTest < Test::Unit::TestCase
         projects << @one
       end
 
-      assert !file('one/work').exists?
-      assert !file('one').exists?
+      assert_false SandboxFile.new('one/work').exists?
+      assert_false SandboxFile.new('one').exists?
     end
   end
 
