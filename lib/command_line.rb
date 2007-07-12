@@ -1,4 +1,3 @@
-require 'platform'
 require 'English'
 
 # borrowed (with modifications) from the RSCM project

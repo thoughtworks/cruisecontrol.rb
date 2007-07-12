@@ -2,9 +2,6 @@ require 'rbconfig'
 
 module Platform
   def family
-    # ToDo: Temporary work around until we can stub the method with Mocha
-    return @stubs_family if @stubs_family
-
     target_os = Config::CONFIG["target_os"] or raise 'Cannot determine operating system'
     case target_os
     when /linux/, /Linux/ then 'linux'

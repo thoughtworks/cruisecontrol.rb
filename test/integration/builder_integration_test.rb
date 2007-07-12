@@ -98,10 +98,10 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
       build_dir = Dir["failing_project/build-7-failed.*"][0]
       assert build_dir
-      assert_equal false, file("#{build_dir}/build_status.success").exists?
+      assert_false SandboxFile.new("#{build_dir}/build_status.success").exists?
 
-      assert file("#{build_dir}/changeset.log").exists?
-      assert file("#{build_dir}/build.log").exists?
+      assert SandboxFile.new("#{build_dir}/changeset.log").exists?
+      assert SandboxFile.new("#{build_dir}/build.log").exists?
     end
   end
 
