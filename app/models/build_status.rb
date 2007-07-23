@@ -80,8 +80,11 @@ class BuildStatus
   end
   
   def match_status(dir_name)
-    a = dir_name.split("-")
-    return a.last.split(".").first if  a.size > 2
-    return INCOMPLETE
+    status_and_time = File.basename(dir_name).split("-").last
+    if status_and_time.nil?
+      INCOMPLETE
+    else
+      status_and_time.split(".").first
+    end
   end
 end

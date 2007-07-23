@@ -117,6 +117,12 @@ class BuildStatusTest < Test::Unit::TestCase
     assert_equal 10, BuildStatus.new("build-1-incomplete").elapsed_time_in_progress
   end
   
+  def test_status_should_be_incomplete_when_full_path_contains_dashes
+    path_with_dashes = '/projects/cc-trunk/build-1-incomplete'
+    File.stubs(:exist?).with(path_with_dashes).returns(true)
+    assert BuildStatus.new(path_with_dashes).incomplete?
+  end
+
   private
 
   def assert_exception_when_parsing_elapsed_time(file_name)
