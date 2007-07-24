@@ -20,12 +20,12 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.path = sandbox.root
 
-      sandbox.new :file => "build-1-success/build_status.success"
-      sandbox.new :file => "build-10-success/build_status.success"
-      sandbox.new :file => "build-3-failure/build_status.failure"
-      sandbox.new :file => "build-5-success/build_status.success"
-      sandbox.new :file => "build-5.2-success/build_status.success"
-      sandbox.new :file => "build-5.12-success/build_status.success"
+      sandbox.new :directory => "build-1-success.in1s/"
+      sandbox.new :directory => "build-10-success.in1s/"
+      sandbox.new :directory => "build-3-failure.in1s/"
+      sandbox.new :directory => "build-5-success.in1s/"
+      sandbox.new :directory => "build-5.2-success.in1s/"
+      sandbox.new :directory => "build-5.12-success.in1s/"
 
       assert_equal("1 - success, 3 - failure, 5 - success, 5.2 - success, 5.12 - success, 10 - success",
                    @project.builds.collect {|b| "#{b.label} - #{b.status}"}.join(", "))
@@ -37,10 +37,17 @@ class ProjectTest < Test::Unit::TestCase
   def test_project_should_know_last_complete_build
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      sandbox.new :file => "build-1-success/build_status.success"
-      sandbox.new :file => "build-2-failure/build_status.failure"
-      sandbox.new :file => "build-3/build_status.incomplete"
-      assert_equal('2', @project.last_complete_build.label)
+      sandbox.new :directory => "build-1-success.in1s/"
+      sandbox.new :directory => "build-2-failure.in1s/"
+      sandbox.new :directory => "build-3/"
+      assert_equal '2', @project.last_complete_build.label
+    end
+  end
+
+  def test_last_complete_build_should_return_nil_when_there_are_no_complete_builds
+    in_sandbox do |sandbox|
+      sandbox.new :directory => "build-3/"
+      assert_nil @project.last_complete_build
     end
   end
 
@@ -436,9 +443,9 @@ class ProjectTest < Test::Unit::TestCase
   def test_should_be_able_to_get_previous_build
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      sandbox.new :file => "build-1/build_status.success"
-      sandbox.new :file => "build-2/build_status.failure"
-      sandbox.new :file => "build-3/build_status.incomplete"
+      sandbox.new :directory => "build-1-success/"
+      sandbox.new :directory => "build-2-failure/"
+      sandbox.new :directory => "build-3"
       
       build = @project.find_build('2')
       assert_equal('1', @project.previous_build(build).label)
@@ -451,9 +458,9 @@ class ProjectTest < Test::Unit::TestCase
   def test_should_be_able_to_get_next_build
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      sandbox.new :file => "build-1/build_status.success"
-      sandbox.new :file => "build-2/build_status.failure"
-      sandbox.new :file => "build-3/build_status.incomplete"
+      sandbox.new :directory => "build-1-success.in1s/"
+      sandbox.new :directory => "build-2-failure.in1s/"
+      sandbox.new :directory => "build-3/"
       
       build = @project.find_build('1')
       assert_equal('2', @project.next_build(build).label)
@@ -469,9 +476,9 @@ class ProjectTest < Test::Unit::TestCase
   def test_should_be_able_to_get_last_n_builds
     in_sandbox do |sandbox|
       @project.path = sandbox.root
-      sandbox.new :file => "build-1/build_status.success"
-      sandbox.new :file => "build-2/build_status.failure"
-      sandbox.new :file => "build-3/build_status.incomplete"
+      sandbox.new :directory => "build-1-success.in1s/"
+      sandbox.new :directory => "build-2-failure.in1s/"
+      sandbox.new :directory => "build-3/"
       
       assert_equal 2, @project.last_builds(2).length
       assert_equal 3, @project.last_builds(5).length
@@ -567,7 +574,7 @@ class ProjectTest < Test::Unit::TestCase
   def stub_build(label)
     build = Object.new
     build.stubs(:label).returns(label)
-    build.stubs(:artifacts_directory).returns("project1/build_#{label}")
+    build.stubs(:artifacts_directory).returns("project1/build-#{label}")
     build.stubs(:run)
     build.stubs(:successful?).returns(true)
     build

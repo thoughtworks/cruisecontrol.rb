@@ -92,8 +92,8 @@ class BuildStatusTest < Test::Unit::TestCase
     assert_equal 3, BuildStatus.new("build-1-success.in3s").elapsed_time
   end
 
-  def test_elapsed_time_should_return_blank_if_elapsed_time_not_availabe
-    assert_raises("Could not parse elapsed time.") do
+  def test_elapsed_time_should_raise_an_error_if_elapsed_time_not_availabe
+    assert_raises("Could not parse elapsed time") do
       BuildStatus.new("artifacts_directory").elapsed_time
     end
   end
@@ -126,7 +126,7 @@ class BuildStatusTest < Test::Unit::TestCase
   private
 
   def assert_exception_when_parsing_elapsed_time(file_name)
-    assert_raises("Could not parse elapsed time.") do
+    assert_raises("Could not parse elapsed time") do
       @status.match_elapsed_time(file_name)
     end  
   end  
