@@ -80,7 +80,7 @@ module CommandLine
 
     options[:env].each{|k,v| ENV[k]=v}
     begin
-      CruiseControl::Log.debug "#{Platform.prompt} #{cmd}" if options[:stdout].nil?
+      CruiseControl::Log.debug "#{Platform.prompt} #{format_for_printing(cmd)}" if options[:stdout].nil?
       result = IO.popen(full_cmd, options[:mode]) do |io|
         if proc
           proc.call(io)
@@ -192,5 +192,14 @@ module CommandLine
     end
   end
   module_function :escape
+
+  # command can be a string or an array
+  def format_for_printing(command)
+    if command.is_a? String
+      command
+    else
+      command.join(' ')
+    end
+  end
   
 end

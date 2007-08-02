@@ -4,6 +4,7 @@ TRUNK
   - some optimizations for dashboard / CCTray performance
   - data version of ./projects directory is stored, and necessary migrations are run automatically if cruise version
     number is bigger than data version
+  - setting CC_BUILD_LABEL environment variable before invoking the build
   - [bugfix] no longer passing in 'production' as RAILS_ENV to rake cruise
   - [bugfix] handle Subversion URLs with spaces; generally improved escaping of special characters
              on the command line
