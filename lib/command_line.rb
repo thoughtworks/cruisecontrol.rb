@@ -201,5 +201,6 @@ module CommandLine
       command.join(' ')
     end
   end
+  module_function :format_for_printing
   
 end

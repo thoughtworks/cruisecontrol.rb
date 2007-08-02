@@ -134,9 +134,9 @@ Message: NameError: uninitialized constant BuilderStatusTest::BuilderStatus
     with_sandbox_project do |sandbox, project|
       project.stubs(:builds).returns((1..10).to_a.map {|i| Build.new(project, i)})
       
-      assert_builds [10,9,8,7,6,5,4,3,2,1], builds_except_last(project, 0)
+      assert_builds %w(10 9 8 7 6 5 4 3 2 1), builds_except_last(project, 0)
       assert_builds [], builds_except_last(project, 10)
-      assert_builds [5,4,3,2,1], builds_except_last(project, 5)
+      assert_builds %w(5 4 3 2 1), builds_except_last(project, 5)
     end
   end
   

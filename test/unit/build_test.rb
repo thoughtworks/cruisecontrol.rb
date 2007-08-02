@@ -21,7 +21,7 @@ class BuildTest < Test::Unit::TestCase
       sandbox.new :file => "build-2-success.in9.235s/build.log", :with_content => "some content"
       build = Build.new(project, 2)
   
-      assert_equal 2, build.label
+      assert_equal '2', build.label
       assert_equal true, build.successful?
       assert_equal "some content", build.output
     end
@@ -32,7 +32,7 @@ class BuildTest < Test::Unit::TestCase
       sandbox.new :directory => "build-2-failed.in2s"
       build = Build.new(project, 2)
   
-      assert_equal 2, build.label
+      assert_equal '2', build.label
       assert_equal true, build.failed?
     end
   end

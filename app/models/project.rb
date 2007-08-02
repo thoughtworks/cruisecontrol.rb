@@ -181,7 +181,7 @@ class Project
 
   def find_build(label)
     # this could be optimized a lot
-    builds.find { |build| build.label.to_s == label }
+    builds.find { |build| build.label == label }
   end
     
   def last_complete_build_status
@@ -409,7 +409,7 @@ class Project
     
   def create_build_label(revision_number)
     revision_number = revision_number.to_s
-    build_labels = builds.map { |b| b.label.to_s }
+    build_labels = builds.map { |b| b.label }
     related_builds_pattern = Regexp.new("^#{Regexp.escape(revision_number)}(\\.\\d+)?$")
     related_builds = build_labels.select { |label| label =~ related_builds_pattern }
 
@@ -433,7 +433,7 @@ class Project
   
   def get_build_index(all_builds, build_label)
     result = 0;
-    all_builds.each_with_index {|build, index| result = index if build.label.to_s == build_label}
+    all_builds.each_with_index {|build, index| result = index if build.label == build_label}
     result 
   end
 end

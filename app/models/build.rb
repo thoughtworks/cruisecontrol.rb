@@ -5,7 +5,7 @@ class Build
   IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|changeset.log|cruise_config.rb|plugin_errors.log)$/
 
   def initialize(project, label)
-    @project, @label = project, label
+    @project, @label = project, label.to_s
   end
 
   def build_status
@@ -13,7 +13,7 @@ class Build
   end
 
   def latest?
-    label.to_s == project.last_build.label.to_s
+    label == project.last_build.label
   end
 
   def run
