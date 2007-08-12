@@ -145,7 +145,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
   def test_builder_should_be_transparent_to_RAILS_ENV
     with_project('project_with_cruise_and_default_tasks') do |project, sandbox|
-      project.build_command = 'rake cruise RAILS_ENV=foo'
+      project.build_command = "#{Config::CONFIG['RUBY_INSTALL_NAME']} -S rake cruise RAILS_ENV=foo"
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
 
