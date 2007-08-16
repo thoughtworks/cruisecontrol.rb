@@ -24,7 +24,7 @@ class SuccessfulBuildTrigger
     if last_successful_build.nil? || @triggered_project.find_build(last_successful_build.label)
       []
     else
-      [Revision.new(last_successful_build.label)]
+      [Revision.new(last_successful_build.label.to_i)]
     end
   end
   

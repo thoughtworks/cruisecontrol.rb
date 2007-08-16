@@ -20,13 +20,13 @@ class ChangesetLogParser
 
   def parse_revision(lines)
    number, committed_by, time = REVISION_PATTERN.match(lines.shift)[1..3]
-   revision = Revision.new(number.to_f, committed_by, DateTime.parse(time), '', [])
 
    comment_lines = []
    while (line = lines.shift) and line !~ CHANGESET_START_PATTERN
      comment_lines << line.strip
    end   
-   revision.message = comment_lines.join("\n")
+   revision = Revision.new(number.to_f, committed_by, DateTime.parse(time),
+                           comment_lines.join("\n"), [])
 
    begin
      match = CHANGESET_PATTERN.match(line)
