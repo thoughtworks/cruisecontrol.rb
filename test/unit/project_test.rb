@@ -568,7 +568,48 @@ class ProjectTest < Test::Unit::TestCase
       assert @project.do_clean_checkout?
     end
   end
-  
+
+
+  def test_new_project_should_have_source_control_triggers
+    project = Project.new('foo')
+    trigger_classes = project.triggered_by.map(&:class)
+    assert_equal [ChangeInSourceControlTrigger], trigger_classes
+  end
+
+
+  def test_project_triggered_by
+    project = Project.new('foo')
+
+    project.triggered_by = []
+    assert_equal [], project.triggered_by
+
+    project.triggered_by 1
+    assert_equal [1], project.triggered_by
+
+    project.triggered_by 2, 3
+    assert_equal [1, 2, 3], project.triggered_by
+  end
+
+  def test_project_triggered_by_should_convert_strings_and_symbols_to_successful_build_triggers
+    project = Project.new('foo')
+
+    project.triggered_by = ['foo', 123]
+    project.triggered_by :bar
+    project.triggered_by << :baz
+    assert_equal [SuccessfulBuildTrigger.new(project, 'foo'), 123, SuccessfulBuildTrigger.new(project, 'bar'),
+                  SuccessfulBuildTrigger.new(project, 'baz')],
+                  project.triggered_by
+  end
+
+  def test_revisions_to_build_should_merge_revisions_from_triggers
+    project = Project.new('foo')
+    stub_trigger_1 = Object.new
+    stub_trigger_2 = Object.new
+    project.triggered_by = [stub_trigger_1, stub_trigger_2]
+    stub_trigger_1.stubs(:revisions_to_build).returns([Revision.new(2)])
+    stub_trigger_2.stubs(:revisions_to_build).returns([Revision.new(1), Revision.new(3)])
+    assert_equal [Revision.new(1), Revision.new(2), Revision.new(3)], project.revisions_to_build
+  end
   private
   
   def stub_build(label)

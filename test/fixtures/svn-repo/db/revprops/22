@@ -1,0 +1,13 @@
+K 10
+svn:author
+V 8
+averkhov
+K 8
+svn:date
+V 27
+2007-08-16T00:52:34.250686Z
+K 7
+svn:log
+V 51
+dummy ActiveRecord, to avoid requiring the real one
+END

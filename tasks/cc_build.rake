@@ -8,7 +8,7 @@ module CruiseControl
   # This hack is needed because db:test:purge implementation for MySQL drops the test database, invalidating
   # the existing connection. A solution is to reconnect again.
   def self.reconnect
-    require 'active_record'
+    require 'active_record' unless defined? ActiveRecord
     configurations = ActiveRecord::Base.configurations
     if configurations and configurations.has_key?("test") and configurations["test"]["adapter"] == 'mysql'
       ActiveRecord::Base.establish_connection(:test)

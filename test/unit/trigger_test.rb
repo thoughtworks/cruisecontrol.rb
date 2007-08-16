@@ -19,58 +19,41 @@ class TriggerTest < Test::Unit::TestCase
     in_total_sandbox do |sandbox|
       Configuration.stubs(:projects_directory).returns(sandbox.root)
       one, two = sandbox.new_project('one'), sandbox.new_project('two')
-      trigger = SuccessfulBuildTrigger.new(:two)
+      trigger = SuccessfulBuildTrigger.new(one, :two)
 
       create_build one, 1
       create_build two, 1
-      assert_equal [], trigger.get_revisions_to_build(one)
+      assert_equal [], trigger.revisions_to_build
 
       create_build two, 2, :fail!
-      assert_equal [], trigger.get_revisions_to_build(one)
+      assert_equal [], trigger.revisions_to_build
       create_build two, 3
-      assert_equal [Revision.new('3')], trigger.get_revisions_to_build(one)
+      assert_equal [Revision.new('3')], trigger.revisions_to_build
       
       create_build one, 3, :fail!
-      assert_equal [], trigger.get_revisions_to_build(one)
+      assert_equal [], trigger.revisions_to_build
 
       create_build two, 4
       create_build two, 5
       create_build two, 6, :fail!
-      assert_equal [Revision.new('5')], trigger.get_revisions_to_build(one)      
+      assert_equal [Revision.new('5')], trigger.revisions_to_build
     end
   end
   
   def test_triggered_by__change_in_source_control
     with_sandbox_project do |sandbox, project|
-      project.expects(:new_revisions).returns(5)
+      project.expects(:new_revisions).returns([Revision.new('5')])
 
-      trigger = ChangeInSourceControlTrigger.new
+      trigger = ChangeInSourceControlTrigger.new(project)
 
-      assert_equal 5, trigger.get_revisions_to_build(project)
+      assert_equal [Revision.new('5')], trigger.revisions_to_build
     end
   end
-  
-  def test_triggered_by__change_in_svn_external
-  end
-  
-  def test_project_triggered_by
-    p = Project.new('foo')
-    def p.trigger
-      @trigger
-    end
-    
-    assert_equal ChangeInSourceControlTrigger, p.trigger.class
-    
-    p.triggered_by 'CruiseControl-Fast'
-    assert_equal SuccessfulBuildTrigger.new('CruiseControl-Fast'), p.trigger
-    
-    p.triggered_by :ccrb
-    assert_equal SuccessfulBuildTrigger.new(:ccrb), p.trigger
-  end
-   
+
   private
-  
+
   def create_build(project, label, state = :succeed!)
     project.create_build(label).build_status.send(state, 0)
   end
+
 end

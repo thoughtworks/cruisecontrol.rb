@@ -39,7 +39,7 @@ class Project
     @settings = ''
     @config_file_content = ''
     @error_message = ''
-    @trigger = ChangeInSourceControlTrigger.new
+    @triggers = [ChangeInSourceControlTrigger.new(self)]
     instantiate_plugins
   end
   
@@ -199,8 +199,7 @@ class Project
 
   def build_if_necessary
     begin
-      revisions = @trigger.get_revisions_to_build(self)
-      
+      revisions = revisions_to_build
       if revisions.empty?
         notify :no_new_revisions_detected
         return nil
@@ -218,6 +217,10 @@ class Project
     ensure
       notify(:sleeping) unless @build_loop_failed rescue nil
     end
+  end
+
+  def revisions_to_build
+    @triggers.collect(&:revisions_to_build).flatten.sort.uniq  
   end
 
   def new_revisions
@@ -395,7 +398,25 @@ class Project
   def load_timestamp(file)
     Time.parse(File.read(file))
   end
-  
+
+  def triggered_by(*new_triggers)
+    @triggers += new_triggers
+
+    @triggers.map! do |trigger|
+      if trigger.is_a?(String) || trigger.is_a?(Symbol)
+        SuccessfulBuildTrigger.new(self, trigger)
+      else
+        trigger
+      end
+    end
+    @triggers
+  end
+
+  def triggered_by=(triggers)
+    @triggers = [triggers].flatten
+  end
+
+
   private
   
   # sorts a array of builds in order of revision number and rebuild number 

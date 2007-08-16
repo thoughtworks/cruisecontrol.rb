@@ -137,7 +137,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
 
-      expected_output = "RAILS_ENV=test\ndb:migrate invoked\n[CruiseControl] Invoking Rake task \"default\"\ndefault invoked\n"
+      expected_output = "[CruiseControl] Invoking Rake task \"db:migrate\"\nRAILS_ENV=test\n[CruiseControl] Invoking Rake task \"default\"\n"
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
     
