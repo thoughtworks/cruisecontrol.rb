@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'triggers'
 
 class Project
   @@plugin_names = []

@@ -1,24 +1,14 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
-require 'project'
 
-class FileSandbox::Sandbox
-  def new_project(name)
-    new :directory => "#{name}/work"
-    Project.new(name)
-  end
-end
-
-class TriggerTest < Test::Unit::TestCase
+class SuccessfulBuildTriggerTest < Test::Unit::TestCase
   include FileSandbox
-  
-  # 1. fire build when successful build happens in other project
-  # 2. store last build # of last project...where? - could depend on multiple projects
-  # 3. update ourselves to other project version _iff_ in the same repo
-  # 4. otherwise update ourselves to head
-  def test_triggered_by__successful_build_of
+
+  def test_revisions_to_build
     in_total_sandbox do |sandbox|
       Configuration.stubs(:projects_directory).returns(sandbox.root)
-      one, two = sandbox.new_project('one'), sandbox.new_project('two')
+      one = create_project(sandbox, 'one')
+      two = create_project(sandbox, 'two')
+
       trigger = SuccessfulBuildTrigger.new(one, :two)
 
       create_build one, 1
@@ -29,7 +19,7 @@ class TriggerTest < Test::Unit::TestCase
       assert_equal [], trigger.revisions_to_build
       create_build two, 3
       assert_equal [Revision.new('3')], trigger.revisions_to_build
-      
+
       create_build one, 3, :fail!
       assert_equal [], trigger.revisions_to_build
 
@@ -39,21 +29,13 @@ class TriggerTest < Test::Unit::TestCase
       assert_equal [Revision.new('5')], trigger.revisions_to_build
     end
   end
-  
-  def test_triggered_by__change_in_source_control
-    with_sandbox_project do |sandbox, project|
-      project.expects(:new_revisions).returns([Revision.new('5')])
 
-      trigger = ChangeInSourceControlTrigger.new(project)
-
-      assert_equal [Revision.new('5')], trigger.revisions_to_build
-    end
-  end
-
-  def test_triggered_by__successful_rebuild_of_should_truncate_appended_build_label
+  def test_revisions_to_build_should_truncate_appended_build_label
     in_total_sandbox do |sandbox|
       Configuration.stubs(:projects_directory).returns(sandbox.root)
-      one, two = sandbox.new_project('one'), sandbox.new_project('two')
+      one = create_project(sandbox, 'one')
+      two = create_project(sandbox, 'two')
+
       trigger = SuccessfulBuildTrigger.new(one, :two)
 
       create_build one, 1
@@ -74,4 +56,10 @@ class TriggerTest < Test::Unit::TestCase
     project.create_build(label).build_status.send(state, 0)
   end
 
+  def create_project(sandbox, name)
+    sandbox.new :directory => "#{name}/work"
+    Project.new(name)
+  end
+
 end
+
