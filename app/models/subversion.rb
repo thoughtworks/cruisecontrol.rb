@@ -35,9 +35,13 @@ class Subversion
     end
   end
 
+  # TODO: change this to return an actual revision object, not a number
+  def last_locally_known_revision(project)
+    info(project).last_changed_revision
+  end
+
   def latest_revision(project)
-    last_locally_known_revision = info(project).last_changed_revision
-    svn_output = execute_in_local_copy(project, log('HEAD', last_locally_known_revision))
+    svn_output = execute_in_local_copy(project, log('HEAD', last_locally_known_revision(project)))
     SubversionLogParser.new.parse_log(svn_output).first
   end
 

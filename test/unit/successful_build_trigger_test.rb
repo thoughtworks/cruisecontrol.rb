@@ -3,50 +3,44 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 class SuccessfulBuildTriggerTest < Test::Unit::TestCase
   include FileSandbox
 
-  def test_revisions_to_build
+  def test_constructor_should_remember_last_successful_build_of_triggering_project
     in_total_sandbox do |sandbox|
       Configuration.stubs(:projects_directory).returns(sandbox.root)
-      one = create_project(sandbox, 'one')
-      two = create_project(sandbox, 'two')
+      triggered_project = create_project(sandbox, 'triggered_project')
+      triggering_project = create_project(sandbox, 'triggering_project')
 
-      trigger = SuccessfulBuildTrigger.new(one, :two)
+      trigger = SuccessfulBuildTrigger.new(triggered_project, triggering_project.name)
+      assert_nil trigger.last_successful_build
+      assert_equal 'triggering_project', trigger.triggering_project_name
 
-      create_build one, 1
-      create_build two, 1
-      assert_equal [], trigger.revisions_to_build
-
-      create_build two, 2, :fail!
-      assert_equal [], trigger.revisions_to_build
-      create_build two, 3
-      assert_equal [Revision.new('3')], trigger.revisions_to_build
-
-      create_build one, 3, :fail!
-      assert_equal [], trigger.revisions_to_build
-
-      create_build two, 4
-      create_build two, 5
-      create_build two, 6, :fail!
-      assert_equal [Revision.new('5')], trigger.revisions_to_build
+      create_build triggering_project, 1
+      trigger = SuccessfulBuildTrigger.new(triggered_project, triggering_project.name)
+      assert_equal "1", trigger.last_successful_build.label
     end
   end
 
-  def test_revisions_to_build_should_truncate_appended_build_label
+  def test_revisions_to_build
     in_total_sandbox do |sandbox|
       Configuration.stubs(:projects_directory).returns(sandbox.root)
-      one = create_project(sandbox, 'one')
-      two = create_project(sandbox, 'two')
+      triggered_project = create_project(sandbox, 'triggered_project')
+      triggering_project = create_project(sandbox, 'triggering_project')
 
-      trigger = SuccessfulBuildTrigger.new(one, :two)
-
-      create_build one, 1
-      create_build two, 1
+      trigger = SuccessfulBuildTrigger.new(triggered_project, triggering_project.name)
       assert_equal [], trigger.revisions_to_build
 
-      create_build two, 2, :fail!
+      create_build triggering_project, '1'
+      triggered_project.expects(:last_locally_known_revision).returns(Revision.new(100))
+      assert_equal [Revision.new("100")], trigger.revisions_to_build
+      assert_equal '1', trigger.last_successful_build.label 
+
       assert_equal [], trigger.revisions_to_build
-      create_build two, 3, :fail!
-      create_build two, 3.1
-      assert_equal [Revision.new('3')], trigger.revisions_to_build
+      assert_equal '1', trigger.last_successful_build.label
+
+      create_build triggering_project, '1.1'
+
+      triggered_project.expects(:last_locally_known_revision).returns(Revision.new(100))
+      assert_equal [Revision.new("100")], trigger.revisions_to_build
+      assert_equal '1.1', trigger.last_successful_build.label
     end
   end
 

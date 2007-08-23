@@ -1,6 +1,7 @@
 require 'fileutils'
 
 class Project
+  
   @@plugin_names = []
 
 
@@ -413,6 +414,11 @@ class Project
 
   def triggered_by=(triggers)
     @triggers = [triggers].flatten
+  end
+
+  def last_locally_known_revision
+    # TODO: make Subversion#info() create a real Revision instance, instead of just a number
+    Revision.new(@source_control.last_locally_known_revision(self))
   end
 
 
