@@ -1,4 +1,3 @@
-require "openssl"
 require "net/smtp"
 
 Net::SMTP.class_eval do
@@ -15,22 +14,15 @@ Net::SMTP.class_eval do
     check_response(critical { recv_response() })
     do_helo(helodomain)
 
-    raise 'openssl library not installed' unless defined?(OpenSSL)
-    starttls
-    ssl = OpenSSL::SSL::SSLSocket.new(sock)
-    ssl.sync_close = true
-    ssl.connect
-    @socket = Net::InternetMessageIO.new(ssl)
-    @socket.read_timeout = 60 #@read_timeout
-    @socket.debug_output = STDERR #@debug_output
-    do_helo(helodomain)
+
+    create_ssl_socket if starttls
 
     authenticate user, secret, authtype if user
     @started = true
   ensure
     unless @started
       # authentication failed, cancel connection.
-        @socket.close if not @started and @socket and not @socket.closed?
+      @socket.close if not @started and @socket and not @socket.closed?
       @socket = nil
     end
   end
@@ -53,7 +45,23 @@ Net::SMTP.class_eval do
   end
 
   def starttls
-    getok('STARTTLS')
+    begin
+      getok('STARTTLS')
+      true
+    rescue Net::SMTPSyntaxError
+      false
+    end
+  end
+
+  def create_ssl_socket
+    require "openssl"
+    ssl = OpenSSL::SSL::SSLSocket.new(sock)
+    ssl.sync_close = true
+    ssl.connect
+    @socket = Net::InternetMessageIO.new(ssl)
+    @socket.read_timeout = 60 #@read_timeout
+    @socket.debug_output = STDERR #@debug_output
+    do_helo(helodomain)
   end
 
   def quit
@@ -62,4 +70,5 @@ Net::SMTP.class_eval do
     rescue EOFError
     end
   end
+
 end

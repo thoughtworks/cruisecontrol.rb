@@ -57,6 +57,7 @@ end
 # Include your application configuration below
 
 require 'cruise_control/version'
+require 'smtp_tls'
 
 # custom MIME type for CCTray application
 Mime::Type.register "application/cctray", :cctray
