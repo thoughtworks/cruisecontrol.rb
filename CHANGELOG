@@ -8,6 +8,7 @@ TRUNK
   - [bugfix] no longer passing in 'production' as RAILS_ENV to rake cruise
   - [bugfix] handle Subversion URLs with spaces; generally improved escaping of special characters
              on the command line
+  - [bugfix] Email notifier works with non-TLS enabled SMTP servers
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.1.0
