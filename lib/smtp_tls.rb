@@ -6,8 +6,8 @@ Net::SMTP.class_eval do
     raise IOError, 'SMTP session already started' if @started
     check_auth_args user, secret, authtype if user or secret
 
-    sock = timeout(@open_timeout) { TCPSocket.open(@address, @port) }
-    @socket = Net::InternetMessageIO.new(sock)
+    socket = timeout(@open_timeout) { TCPSocket.open(@address, @port) }
+    @socket = Net::InternetMessageIO.new(socket)
     @socket.read_timeout = 60 #@read_timeout
     @socket.debug_output = STDERR #@debug_output
 
@@ -15,7 +15,7 @@ Net::SMTP.class_eval do
     do_helo(helodomain)
 
 
-    create_ssl_socket if starttls
+    create_ssl_socket(socket, helodomain) if starttls
 
     authenticate user, secret, authtype if user
     @started = true
@@ -48,14 +48,14 @@ Net::SMTP.class_eval do
     begin
       getok('STARTTLS')
       true
-    rescue Net::SMTPSyntaxError
+    rescue
       false
     end
   end
 
-  def create_ssl_socket
+  def create_ssl_socket(underlying_socket, helodomain)
     require "openssl"
-    ssl = OpenSSL::SSL::SSLSocket.new(sock)
+    ssl = OpenSSL::SSL::SSLSocket.new(underlying_socket)
     ssl.sync_close = true
     ssl.connect
     @socket = Net::InternetMessageIO.new(ssl)
