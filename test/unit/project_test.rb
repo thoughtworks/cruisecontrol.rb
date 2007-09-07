@@ -27,8 +27,8 @@ class ProjectTest < Test::Unit::TestCase
       sandbox.new :directory => "build-5.2-success.in1s/"
       sandbox.new :directory => "build-5.12-success.in1s/"
 
-      assert_equal("1 - success, 3 - failure, 5 - success, 5.2 - success, 5.12 - success, 10 - success",
-                   @project.builds.collect {|b| "#{b.label} - #{b.status}"}.join(", "))
+      assert_equal("1 - success - 1, 3 - failure - 3, 5 - success - 5, 5.2 - success - 5, 5.12 - success - 5, 10 - success - 10",
+                   @project.builds.collect {|b| "#{b.label} - #{b.status} - #{b.revision}"}.join(", "))
 
       assert_equal('10', @project.last_build.label)
     end

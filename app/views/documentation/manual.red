@@ -261,6 +261,28 @@ Why would you want one build to trigger another?  Say you have a project with a 
 In the future we expect to also support SVN external triggers.  However, the infrastructure is there for you to build your own.
 
 
+h1. Remote Builds
+
+CC.rb can run builds on remote servers.  This is done by sshing to the server in your build command.  For example:
+
+<pre><code>
+  project.build_command = 'ssh user@server ./run_remotely.sh $CC_BUILD_REVISION'
+</code></pre>
+
+run_remotely.sh might look something like:
+
+<pre><code>
+  #/bin/bash
+  svn up -r$1
+  rake test:integration
+</code></pre>
+
+Of course you will need to checkout the code on the remote server before running the first build.
+
+Note that CC.rb will still maintain a checkout of the code on the local server, use it to check for modifications and store build results locally.
+
+
+
 h1. Doing a Clean Checkout
 
 CC.rb supports clean checkouts, though they are not the default.  To enable them, you must specify the subversion url in the cruise_config.rb and specify when they should happen.  It should look something like :

@@ -82,6 +82,10 @@ EOF
   def incomplete?
     build_status.incomplete?
   end
+
+  def revision
+    label.split(".")[0]
+  end
   
   def changeset
     File.read(artifact('changeset.log')) rescue ''
@@ -149,8 +153,9 @@ EOF
 
     # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
     ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
-    # set OS variable CC_BUILD_LABEL so that custom build tasks can use it
+    # set OS variablea CC_BUILD_LABEL & CC_BUILD_REVISION so that custom build tasks can use them
     ENV['CC_BUILD_LABEL'] = self.label
+    ENV['CC_BUILD_REVISION'] = self.revision
     # CC_RAKE_TASK communicates to cc:build which task to build (if self.rake_task is not set, cc:build will try to be
     # smart about it)
     ENV['CC_RAKE_TASK'] = self.rake_task
