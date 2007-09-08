@@ -179,7 +179,7 @@ EOF
   end
 
   def seconds_since(start)
-    (Time.now - start).ceil
+    (Time.now - start).ceil.abs
   end
 
 end
