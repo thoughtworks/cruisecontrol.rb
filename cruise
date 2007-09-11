@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/binjjruby /env ruby
 
 load "#{File.dirname(__FILE__)}/lib/cruise_control/version.rb"
 
