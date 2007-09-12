@@ -17,9 +17,7 @@ class ProjectsTest < Test::Unit::TestCase
       projects = Projects.new(sandbox.root)
       projects.load_all
 
-      assert_equal("one", projects[0].name)
-
-      assert_equal("two", projects[1].name)
+      assert_equal %w(one two), projects.map(&:name)
     end
   end
 
@@ -45,14 +43,12 @@ class ProjectsTest < Test::Unit::TestCase
   def test_add
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
-      projects << @one
-      projects << @two
+      projects << @one << @two
 
       projects = Projects.new(sandbox.root)
       projects.load_all
 
-      assert_equal("one", projects[0].name)
-      assert_equal("two", projects[1].name)
+      assert_equal %w(one two), projects.map(&:name)
     end
   end
 
