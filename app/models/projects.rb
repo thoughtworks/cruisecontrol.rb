@@ -27,7 +27,7 @@ class Projects
   end
 
   def load_all
-    @list = Dir["#{@dir}/*"].find_all {|child| File.directory?(child)}.
+    @list = Dir["#{@dir}/*"].find_all {|child| File.directory?(child)}.sort.
                              collect  {|child| Projects.load_project(child)}
     self
   end
