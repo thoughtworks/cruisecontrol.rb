@@ -26,8 +26,11 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc 'Update symlink for projects directory'
     task :after_update_code do
+      sudo "chmod -R 775 #{release_path}/tmp"
+      sudo "chmod -R 775 #{release_path}/log"
       sudo "rm -rf #{release_path}/projects"
       sudo "mkdir -p #{shared_path}/projects"
+      sudo "chmod -R 775 #{shared_path}/projects"
       sudo "chown deployer #{shared_path}/projects"
       sudo "chgrp rails #{shared_path}/projects"
       sudo "ln -nfs #{shared_path}/projects #{release_path}/projects"
