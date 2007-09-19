@@ -109,17 +109,23 @@ class ProjectsControllerTest < Test::Unit::TestCase
         create_project_stub('one', 'success', [create_build_stub('10', 'success')]),
         create_project_stub('two')])
 
-    post :index, :format => 'cctray'
+    get :index, :format => 'cctray'
 
     assert_response :success
     assert_template 'index_cctray'
     assert_equal %w(one two), assigns(:projects).map { |p| p.name }
     
     xml = REXML::Document.new(@response.body)
-    assert_equal 'one', REXML::XPath.first(xml, '/Projects/Project[1]]').attributes['name']
-    assert_equal 'Success', REXML::XPath.first(xml, '/Projects/Project[1]]').attributes['lastBuildStatus']
-    assert_equal '10', REXML::XPath.first(xml, '/Projects/Project[1]').attributes['lastBuildLabel']
-    assert_equal 'Building', REXML::XPath.first(xml, '/Projects/Project[1]]').attributes['activity']
+
+    first_project = REXML::XPath.first(xml, '/Projects/Project[1]]')
+    second_project = REXML::XPath.first(xml, '/Projects/Project[2]]')  
+
+    assert_equal 'one', first_project.attributes['name']
+    assert_equal 'Success', first_project.attributes['lastBuildStatus']
+    assert_equal '10', first_project.attributes['lastBuildLabel']
+    assert_equal 'Building', first_project.attributes['activity']
+    assert_equal 'http://test.host/projects/one', first_project.attributes['webUrl']
+
     assert_equal 'two', REXML::XPath.first(xml, '/Projects/Project[2]]').attributes['name']
   end
 

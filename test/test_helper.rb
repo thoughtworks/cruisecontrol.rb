@@ -72,6 +72,7 @@ class Test::Unit::TestCase
     project.stubs(:builder_state_and_activity).returns('building')
     project.stubs(:last_build).returns(last_five_builds.last)
     project.stubs(:builder_error_message).returns('')
+    project.stubs(:to_param).returns(name)
     
     project.stubs(:last_complete_build).returns(nil)
     last_five_builds.reverse.each do |build|
