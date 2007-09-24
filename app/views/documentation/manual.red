@@ -169,43 +169,6 @@ subdirectory under that directory.
 The build page includes links to every file or subdirectory found in the build artifacts directory.
 
 
-h1. Build monitoring
-
-Let's admit it, the main duty of continuous integration tool is to annoy developers when the build is broken. 
-CruiseControl.rb is capable of delivering carefully measured doses of annoyance on demand, through a variety 
-of communication channels, including email, instant messaging, RSS feeds etc, etc.
-
-h2. Monitoring via email
-
-<%= render_plugin_doc 'installed/email_notifier.rb' %>
-
-
-h2. Monitoring with CCTray
-
-"CCTray":http://ccnet.sourceforge.net/CCNET/CCTray.html is a utility developed as part of CruiseControl.NET project
-that displays an icon in the bottom right corner of the screen. The icon changes its color to red when a build fails,
-and back to green when the build is fixed.
-
-CruiseControl.rb can be monitored by CCTray. To connect CCTray to CruiseControl.rb dashboard, start CCTray, right
-click on CCTray icon, select Settings..., click on Add button, click on Add Server button, select
-"Via CruiseControl.NET Dashboard" option and type http://<cruise_host>:3333 in the text box. Click OK, select
-your project, click OK again, close the Settings dialog. Voila, you are monitoring your build with CCTray.
-
-At the time of this writing, CC.rb was tested to work with CCTray 1.2.1
-<small>("download":http://downloads.sourceforge.net/ccnet/CruiseControl.NET-CCTray-1.2.1-Setup.exe?modtime=1170786355&big_mirror=0)</small>
-
-p(hint). Hint: CCTRay only works on a Windows desktop.
-
-
-h2. Monitoring by other means
-
-Dashboard has RSS feeds both for the entire site and each project individually. This is useful for watching the build status of projects that 
-you are not actively working on. 
-
-Version 1.1 also has plugins to get notifications via Jabber (instant messaging), and Growl. Read about these and other plugins in 
-"plugin documentation":/documentation/plugins. It's also quite easy to write your own notification plugin if needed.
-
-
 h1. Build scheduling
 
 By default, the builder polls Subversion every 10 seconds for new revisions. This can be changed by adding the
@@ -244,21 +207,31 @@ directory.
 
 h1. Build Chaining & Triggers
 
-CC.rb can use triggers to tell it when and what to build.  So, in your cruise_config.rb file, you could have
+CC.rb uses triggers to tell it when to build a project.  Every project by default has a ChangeInSourceControl trigger, that tells it to build when (surprise) it detects a change in a project's source control.
+
+However, you can add additional triggers or replace that trigger entirely.  For example, you can have one project's successful build trigger another project's build with our SuccessfulBuildTrigger.
 
 <pre><code>
-  project.triggered_by SuccessfulBuildTrigger.new('My Project-Fast')
+  project.triggered_by SuccessfulBuildTrigger.new(project, 'indie')
 </code></pre>
 
 or in short hand
 
 <pre><code>
-  project.triggered_by 'My Project-Fast'
+  project.triggered_by 'indie'
 </code></pre>
 
-Why would you want one build to trigger another?  Say you have a project with a very long build.  It may make sense to break it into a fast and a slow build, and only run the slow build when the fast one passes.  We could also imagine a situation where one project depends on another, and you want the depending project to build whenever the independent project has a successful build.
+Why would you want one build to trigger another?  In this instance, maybe our project depends on indie and we want to know if a change to indie breaks our project.
 
-In the future we expect to also support SVN external triggers.  However, the infrastructure is there for you to build your own.
+In these examples, *added* a SuccessfulBuildTrigger.  We could also *replace* the default trigger by writing
+
+<pre><code>
+  project.triggered_by = "fast_build"
+</code></pre>
+
+Why wouldn't we want our project to be triggered by a change to it's source code?  In this case, maybe we've separated our project into a fast and slow build.  We could use this to only trigger a slow build if the fast one passes.
+
+In the future we expect to also support svn:external triggers.  However, the infrastructure is there for you to build your own.
 
 
 h1. Remote Builds
@@ -302,12 +275,12 @@ Beware, at the time of this writing, CC.rb is quite young and may have some hein
 thousand users, including some happy ones).  Good news is that CC.rb is simple (much, much
 simpler than other CruiseControl incarnations). The dashboard is just a small Rails app, and the builder process is little
 more than a dumb, single-threaded endless loop. No queues, relational databases, remoting, WS* web services or other such things.
-Therefore, it's easy to debug. So, you are your own support hotline. Don't forget to send us patches, please!
+Therefore, it's easy to debug. So, you are your own support hotline.  We do have some "tips":troubleshooting to help you get started, though :). Don't forget to send us patches, please!
 
 OK, that was the pep talk. If you have an issue that you cannot fix on your own, subscribe to mail list
 cruisecontrolrb-users@rubyforge.org and ask for help.
 
-Should you require commercial support, training or consulting around this tool, ThoughtWorks can provide it to you.
+Should you require commercial support, training or consulting around this tool, "ThoughtWorks":http://thoughtworks.com/ can provide it to you.
 
 
 h1. Documentation that we haven't written yet
