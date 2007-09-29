@@ -27,5 +27,10 @@ We currently only support "Subversion":http://subversion.tigris.org/.  We are pl
 Perforce in the not too distant future.  After that, it depends on what people ask for (and what they 
 "contribute":/documentation/contributing)
 
+h2. Why does CC.rb report my build as passing even though it failed?
+
+Are you using ruby 1.8.6?  It contains a bug where the process exit code is reported as '0' instead of '1' and so CC.rb 
+doesn't know the build failed.  Downgrading to 1.8.5 or upgrading to 1.8.6 patchlevel 110+ solves the problem.
+
 
 Have other questions?  Ask us on our <%= link_to_users_mailing_list 'mailing list' %>.
