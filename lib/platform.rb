@@ -1,6 +1,7 @@
 require 'rbconfig'
 
 module Platform
+
   def family
     target_os = Config::CONFIG["target_os"] or raise 'Cannot determine operating system'
     case target_os
@@ -24,6 +25,11 @@ module Platform
     prompt = "#{dir.gsub(/\//, File::SEPARATOR)} #{user}$"
   end
   module_function :prompt
+
+  def interpreter
+    Config::CONFIG['ruby_install_name']
+  end
+  module_function :interpreter
 
   def create_child_process(project_name, command)
     if Kernel.respond_to?(:fork)

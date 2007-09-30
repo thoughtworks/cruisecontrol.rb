@@ -144,7 +144,7 @@ EOF
     # in_clean_environment__with_local_copy() changes current working directory. Replacing it with RAILS_ROOT doesn't
     # fail any tests, because in test environment (unlike production) RAILS_ROOT is already absolute. 
     # --nosearch flag here prevents CC.rb from building itself when a project has no Rakefile
-    %{#{Config::CONFIG['RUBY_INSTALL_NAME']} -e "require 'rubygems' rescue nil; require 'rake'; load '#{ABSOLUTE_RAILS_ROOT}/tasks/cc_build.rake'; ARGV << '--nosearch'#{CruiseControl::Log.verbose? ? " << '--trace'" : ""} << 'cc:build'; Rake.application.run"}
+    %{#{Platform.interpreter} -e "require 'rubygems' rescue nil; require 'rake'; load '#{ABSOLUTE_RAILS_ROOT}/tasks/cc_build.rake'; ARGV << '--nosearch'#{CruiseControl::Log.verbose? ? " << '--trace'" : ""} << 'cc:build'; Rake.application.run"}
   end
 
   def in_clean_environment_on_local_copy(&block)
