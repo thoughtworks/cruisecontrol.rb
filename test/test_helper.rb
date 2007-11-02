@@ -14,7 +14,9 @@ require 'action_controller/integration'
 require 'breakpoint'
 require 'mocha'
 require 'stubba'
-require "#{RAILS_ROOT}/vendor/file_sandbox/lib/file_sandbox"
+
+gem 'file_sandbox', '>= 0.3'
+require 'file_sandbox'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
