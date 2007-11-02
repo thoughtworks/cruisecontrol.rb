@@ -15,6 +15,23 @@ class BuildTest < Test::Unit::TestCase
       assert_false build_old.latest?
     end
   end
+  
+  def test_should_be_able_to_fail_a_build
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :directory => "build-1"
+      now = Time.now
+      Time.stubs(:now).returns(now)
+      
+      build = Build.new(project, 1)
+      
+      now += 10.seconds
+      Time.stubs(:now).returns(now)
+      build.fail!("I tripped")
+      
+      assert_equal true, build.failed?
+      assert_equal "I tripped", build.error
+    end
+  end
 
   def test_initialize_should_load_status_file_and_build_log
     with_sandbox_project do |sandbox, project|
@@ -94,6 +111,7 @@ class BuildTest < Test::Unit::TestCase
     with_sandbox_project do |sandbox, project|
       expected_build_directory = File.join(sandbox.root, 'build-123')
   
+      Time.expects(:now).at_least(2).returns(Time.at(0), Time.at(3.2))
       build = Build.new(project, 123)
   
       expected_command = build.rake
@@ -102,7 +120,6 @@ class BuildTest < Test::Unit::TestCase
           :stdout => expected_build_log,
           :stderr => expected_build_log
         }
-      Time.expects(:now).at_least(2).returns(Time.at(0), Time.at(3.2))
       build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
 
       BuildStatus.any_instance.expects(:'succeed!').with(4)
@@ -129,6 +146,7 @@ class BuildTest < Test::Unit::TestCase
     with_sandbox_project do |sandbox, project|
       expected_build_directory = File.join(sandbox.root, 'build-123')
   
+      Time.stubs(:now).returns(Time.at(1))
       build = Build.new(project, 123)
   
       expected_build_log = File.join(expected_build_directory, 'build.log')
@@ -137,10 +155,9 @@ class BuildTest < Test::Unit::TestCase
         :stderr => expected_build_log
       }
 
-      error = RuntimeError.new
+      error = RuntimeError.new("hello")
       build.expects(:execute).with(build.rake, expected_redirect_options).raises(error)
-      Time.stubs(:now).returns(Time.at(1))
-      BuildStatus.any_instance.expects(:'fail!').with(0, error)  
+      BuildStatus.any_instance.expects(:'fail!').with(0, "hello")  
       build.run
     end
   end
@@ -236,7 +253,7 @@ class BuildTest < Test::Unit::TestCase
       build = Build.new(project, 1)
       build.run
       assert_equal "fail message", File.open("build-1-failed.in0s/error.log"){|f|f.read}
-      assert_equal "config error", build.brief_error
+      assert_equal "fail message", build.brief_error
     end   
   end
     

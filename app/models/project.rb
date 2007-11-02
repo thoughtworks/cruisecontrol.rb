@@ -287,18 +287,25 @@ class Project
     last_revision = revisions.last
     
     build = Build.new(self, create_build_label(last_revision.number))
-    log_changeset(build.artifacts_directory, revisions)
-    update_project_to_revision(build, last_revision)
-
-    if config_tracker.config_modified?
-      build.abort
-      notify(:configuration_modified)
-      throw :reload_project
-    end
     
-    notify(:build_started, build)
-    build.run
-    notify(:build_finished, build)
+    begin
+      log_changeset(build.artifacts_directory, revisions)
+      update_project_to_revision(build, last_revision)
+
+      if config_tracker.config_modified?
+        build.abort
+        notify(:configuration_modified)
+        throw :reload_project
+      end
+    
+      notify(:build_started, build)
+      build.run
+      notify(:build_finished, build)
+    rescue 
+
+      build.fail!($!.to_s)
+      raise
+    end
 
     if previous_build
       if build.failed? and previous_build.successful?
@@ -308,7 +315,7 @@ class Project
       end
     end
 
-    build    
+    build
   end
 
   def notify(event, *event_parameters)

@@ -6,6 +6,7 @@ class Build
 
   def initialize(project, label)
     @project, @label = project, label.to_s
+    @start = Time.now
   end
 
   def build_status
@@ -16,17 +17,20 @@ class Build
     label == project.last_build.label
   end
 
+  def fail!(error)
+    build_status.fail!(seconds_since(@start), error)
+  end
+  
   def run
     build_log = artifact 'build.log'
     File.open(artifact('cruise_config.rb'), 'w') {|f| f << @project.config_file_content }
 
-    start = Time.now
     begin
       raise ConfigError.new(@project.error_message) unless @project.config_valid?
       in_clean_environment_on_local_copy do
         execute self.command, :stdout => build_log, :stderr => build_log
       end
-      build_status.succeed!(seconds_since(start))
+      build_status.succeed!(seconds_since(@start))
     rescue => e
       if File.exists?(project.local_checkout + "/trunk")
         msg = <<EOF
@@ -44,14 +48,14 @@ EOF
 
       File.open(build_log, 'a'){|f| f << e.message }
       CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
-      build_status.fail!(seconds_since(start), e)
+      fail!(e.message)
     end
   end
   
   def brief_error
     return nil unless build_status.error_message_file
     if File.size(build_status.error_message_file) > 0
-      return "config error"
+      return error
     end
     unless plugin_errors.empty?
       return "plugin error"
@@ -97,6 +101,10 @@ EOF
   
   def project_settings
     File.read(artifact('cruise_config.rb')) rescue ''
+  end
+
+  def error
+    File.read(build_status.error_message_file) rescue ''
   end
 
   def plugin_errors

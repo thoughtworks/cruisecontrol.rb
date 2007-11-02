@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'build_status'
 
 class BuildStatusTest < Test::Unit::TestCase
+  include FileSandbox
   
   def setup
     @status = BuildStatus.new('')
@@ -52,9 +53,12 @@ class BuildStatusTest < Test::Unit::TestCase
   end
 
   def test_fail_creates_file___failed__
-    Dir.stubs(:'[]').returns(['artifacts_directory/build_status.foo'])
-    FileUtils.expects(:mv).with("artifacts_directory", "artifacts_directory-failed.in3.5s")
-    BuildStatus.new("artifacts_directory").fail!(3.5)
+    in_sandbox do |sandbox|
+      sandbox.new :directory => 'artifacts_directory'
+      Dir.stubs(:'[]').returns(['artifacts_directory/build_status.foo'])
+      FileUtils.expects(:mv).with("artifacts_directory", "artifacts_directory-failed.in3.5s")
+      BuildStatus.new("artifacts_directory").fail!(3.5, "stuff")
+    end
   end
 
   def test_created_at_returns_creation_time_for_status_file

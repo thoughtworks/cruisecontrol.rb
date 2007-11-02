@@ -29,10 +29,7 @@ class BuildStatus
   end
   
   def fail!(elapsed_time, error=nil)
-    if error.is_a? ConfigError
-      error_message_file = File.join(@artifacts_directory, "error.log")
-      File.open(error_message_file, "w+"){|f| f.write error.message }
-    end
+    File.open(error_message_file, "w+"){|f| f.write error }
     FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{FAILED}.in#{elapsed_time}s"
   end
   
@@ -69,7 +66,7 @@ class BuildStatus
   end
   
   def error_message_file
-    Dir["#{@artifacts_directory}/error.log"].first
+    File.join(@artifacts_directory, "error.log")
   end
   
   private

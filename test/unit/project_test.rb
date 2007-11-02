@@ -126,6 +126,21 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
   
+  def test_build_should_fail_if_subversion_error
+    in_sandbox do
+      @project.path = sandbox.root
+
+      error = StandardError.new("something bad happened")
+      @project.expects(:update_project_to_revision).raises(error)
+
+      assert_raises(error) { @project.build([new_revision(5)]) }
+      
+      build = @project.builds.first
+      assert build.failed?
+      assert_equal "something bad happened", build.error
+    end
+  end
+  
   def test_build_should_generate_event_when_build_is_broken
     in_sandbox do |sandbox|
       @project.path = sandbox.root
@@ -610,6 +625,7 @@ class ProjectTest < Test::Unit::TestCase
     stub_trigger_2.stubs(:revisions_to_build).returns([Revision.new(1), Revision.new(3)])
     assert_equal [Revision.new(1), Revision.new(2), Revision.new(3)], project.revisions_to_build
   end
+  
   private
   
   def stub_build(label)
