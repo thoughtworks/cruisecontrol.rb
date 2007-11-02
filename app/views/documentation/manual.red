@@ -233,6 +233,14 @@ Why wouldn't we want our project to be triggered by a change to it's source code
 
 In the future we expect to also support svn:external triggers.  However, the infrastructure is there for you to build your own.
 
+h1. Environment Variables
+
+CC.rb gives you some information to use inside your build.  It does this in the form of environment variables.  Currently, the list of environment variable is :
+* CC_BUILD_REVISION - this is the revision number of the current build, it looks like "5" or "56236"
+* CC_BUILD_LABEL - usually this is the same as CC_BUILD_REVISION, but if there is more than one build of a particular revision, it will have a ".n" after it, so it might look like "323", "323.2", "4236.20", etc.
+* CC_BUILD_ARTIFACTS - this is the directory which the dashboard looks in.  Any files you copy into here will be available from the dashboard.
+
+From within your build, CC.rb 
 
 h1. Remote Builds
 
