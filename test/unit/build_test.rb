@@ -32,6 +32,13 @@ class BuildTest < Test::Unit::TestCase
       assert_equal "I tripped", build.error
     end
   end
+  
+  def test_dont_complain_if_there_is_no_error
+    with_sandbox_project do |sandbox, project|
+      sandbox.new :directory => "build-1"
+      Build.new(project, 1).brief_error
+    end
+  end
 
   def test_initialize_should_load_status_file_and_build_log
     with_sandbox_project do |sandbox, project|
@@ -181,6 +188,17 @@ class BuildTest < Test::Unit::TestCase
       
       log = SandboxFile.new(Dir["build-123-failed.in*s/build.log"].first).content
       assert_match /trunk exists/, log
+    end
+  end
+  
+  def test_brief_error_is_short_with_execution_error
+    with_sandbox_project do |sandbox, project|
+      build = Build.new(project, 123)
+
+      build.expects(:execute).raises(CommandLine::ExecutionError.new(*%w(a b c d e)))
+      build.run
+      
+      assert_equal "build failed", build.error
     end
   end
   

@@ -48,18 +48,14 @@ EOF
 
       File.open(build_log, 'a'){|f| f << e.message }
       CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
-      fail!(e.message)
+      error_message = e.is_a?(CommandLine::ExecutionError) ? "build failed" : e.message
+      fail!(error_message)
     end
   end
   
   def brief_error
-    return nil unless build_status.error_message_file
-    if File.size(build_status.error_message_file) > 0
-      return error
-    end
-    unless plugin_errors.empty?
-      return "plugin error"
-    end
+    return error unless error.blank?
+    return "plugin error" unless plugin_errors.empty?
     nil
   end
   
