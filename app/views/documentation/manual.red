@@ -223,10 +223,10 @@ or in short hand
 
 Why would you want one build to trigger another?  In this instance, maybe our project depends on indie and we want to know if a change to indie breaks our project.
 
-In these examples, *added* a SuccessfulBuildTrigger.  We could also *replace* the default trigger by writing
+These examples, *added* a SuccessfulBuildTrigger.  We could also *replace* the default trigger by writing
 
 <pre><code>
-  project.triggered_by = "fast_build"
+  project.triggered_by = [SuccessfulBuildTrigger.new(project, "fast_build")]
 </code></pre>
 
 Why wouldn't we want our project to be triggered by a change to it's source code?  In this case, maybe we've separated our project into a fast and slow build.  We could use this to only trigger a slow build if the fast one passes.
