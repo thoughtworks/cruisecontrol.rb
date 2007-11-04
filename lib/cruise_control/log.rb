@@ -27,8 +27,8 @@ module CruiseControl
       else
         message = "#{print_severity(method)} #{first_arg}"
       end
-      RAILS_DEFAULT_LOGGER.send(method, message, *args, &block)
-      backtrace.each { |line| RAILS_DEFAULT_LOGGER.send(method, line) } if backtrace
+      logger.send(method, message, *args, &block)
+      backtrace.each { |line| logger.send(method, line) } if backtrace
       is_error = (method == :error or method == :fatal)
       if @verbose or is_error and defined?(RAILS_ENV) and RAILS_ENV != 'test'  
         stream = is_error ? STDERR : STDOUT
@@ -43,6 +43,10 @@ module CruiseControl
       '[' + severity + ']' + ' ' * (5 - severity.length)
     end
     
+    private
+    
+    def self.logger
+      defined?(::RAILS_DEFAULT_LOGGER) ? ::RAILS_DEFAULT_LOGGER : Logger.new($stderr)
+    end
   end
-  
 end
