@@ -1,5 +1,7 @@
 @setlocal
-rm -rf /tmp/cruise
+@echo on
+rm *.zip
+rm -rf \tmp\cruise
 svn co svn://rubyforge.org/var/svn/cruisecontrolrb/trunk /tmp/cruise
 
 pushd .
@@ -7,4 +9,4 @@ cd \tmp\cruise
 rake package
 popd
 
-cp /tmp/cruise/pkg/*.zip .
+copy \tmp\cruise\pkg\*.zip .
