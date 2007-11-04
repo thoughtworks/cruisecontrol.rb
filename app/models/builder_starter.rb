@@ -24,7 +24,7 @@ class BuilderStarter
         if Platform.interpreter =~ /jruby/
           Platform.interpreter + ' ' + path_to_cruise
         elsif Platform.family == 'mswin32'
-          path_to_cruise('.cmd')
+          "ruby #{path_to_cruise}"
         else
           path_to_cruise
         end
