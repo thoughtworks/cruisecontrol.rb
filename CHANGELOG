@@ -1,4 +1,6 @@
 TRUNK
+------------------------------------------------------------------------------------------------------------------------
+* 1.2.0
   - build chaining implemented w/ triggers
   - recognized NetBSD as a platform
   - some optimizations for dashboard / CCTray performance

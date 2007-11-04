@@ -2,7 +2,7 @@ While creating a new release:
 
 # Did I run all the tests?
 # Did I carefully read README and CHANGELOG, then updated them for the release? 
-# Particularly, did I move contents fof the CHANGELOG trunk chapter to the (newly created) release chapter?
+# Particularly, did I move contents of the CHANGELOG trunk chapter to the (newly created) release chapter?
 # Did I change version number in lib/cruisecontrol/version.rb?
 # Did I tag the release, using correct naming convention for the tag?
 # Did I execute "svn export" from the tag (to get rid of .svn directories)?
