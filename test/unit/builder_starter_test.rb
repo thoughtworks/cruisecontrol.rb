@@ -23,7 +23,7 @@ class BuilderStarterTest < Test::Unit::TestCase
   def test_should_use_platform_specific_executable
     Platform.stubs(:family).returns("mswin32")
     Platform.stubs(:interpreter).returns("ruby")
-    Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise.cmd build #{@one.name}")
+    Platform.expects(:create_child_process).with(@one.name, "ruby #{RAILS_ROOT}/cruise build #{@one.name}")
     BuilderStarter.begin_builder(@one.name)
 
     Platform.stubs(:family).returns("linux")
@@ -50,7 +50,7 @@ class BuilderStarterTest < Test::Unit::TestCase
       Platform.stubs(:family).returns("mswin32")
       Platform.stubs(:interpreter).returns("ruby")
 
-      Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise.cmd build #{@one.name} --trace")
+      Platform.expects(:create_child_process).with(@one.name, "ruby #{RAILS_ROOT}/cruise build #{@one.name} --trace")
 
       BuilderStarter.begin_builder(@one.name)
 
@@ -68,8 +68,8 @@ class BuilderStarterTest < Test::Unit::TestCase
 
 
     Platform.stubs(:interpreter).returns("ruby")
-    CommandLine.expects(:escape).with("#{RAILS_ROOT}/cruise.cmd").returns('escaped_path.cmd')
-    Platform.expects(:create_child_process).with(@one.name, "escaped_path.cmd build #{@one.name}")
+    CommandLine.expects(:escape).with("#{RAILS_ROOT}/cruise").returns('escaped_path')
+    Platform.expects(:create_child_process).with(@one.name, "ruby escaped_path build #{@one.name}")
     BuilderStarter.begin_builder(@one.name)
 
     Platform.stubs(:interpreter).returns("jruby")

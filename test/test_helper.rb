@@ -15,6 +15,7 @@ require 'breakpoint'
 require 'mocha'
 require 'stubba'
 
+require 'rubygems'
 gem 'file_sandbox', '>= 0.3'
 require 'file_sandbox'
 
