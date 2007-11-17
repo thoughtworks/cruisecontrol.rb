@@ -21,6 +21,10 @@ Revision #{number} committed by #{committed_by} on #{time.strftime('%Y-%m-%d %H:
     @number <=> other.number
   end
 
+  def eql?(other)
+    @number == other.number
+  end
+
   def to_i
     @number
   end

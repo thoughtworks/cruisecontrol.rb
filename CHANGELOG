@@ -1,4 +1,5 @@
 TRUNK
+  - [patch] subversion external support
 ------------------------------------------------------------------------------------------------------------------------
 * 1.2.1
   - [bugfix] fixed some windows specific things to do with running a server

@@ -69,10 +69,9 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_revisions_since_should_reverse_the_log_entries_and_skip_the_one_corresponding_to_current_revision
     svn = Subversion.new
+    svn.check_externals = false
 
-    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:15", "--verbose", "--xml"],
-                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
-
+    svn.expects(:revisions_since_for_url).with(dummy_project, 15).returns([Revision.new(18), Revision.new(17), Revision.new(15)])
     revisions = svn.revisions_since(dummy_project, 15)
 
     assert_equal [17, 18], numbers(revisions)
@@ -80,10 +79,9 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_revisions_since_should_return_all_revisions_when_curreent_revision_is_not_in_the_log_output
     svn = Subversion.new
+    svn.check_externals = false
 
-    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:14", "--verbose", "--xml"],
-                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
-
+    svn.expects(:revisions_since_for_url).with(dummy_project, 14).returns([Revision.new(18), Revision.new(17), Revision.new(15)])
     revisions = svn.revisions_since(dummy_project, 14)
 
     assert_equal [15, 17, 18], numbers(revisions)
@@ -91,13 +89,51 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_revisions_since_should_return_an_empty_array_for_empty_log_output
     svn = Subversion.new
+    svn.check_externals = false
 
-    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:14", "--verbose", "--xml"], 
-                               {:stderr => './svn.err'}).yields(StringIO.new(EMPTY_LOG))
-
+    svn.expects(:revisions_since_for_url).with(dummy_project, 14).returns([])
     revisions = svn.revisions_since(dummy_project, 14)
 
     assert_equal [], numbers(revisions)
+  end
+
+  def test_revisions_since_should_support_check_externals_as_well_and_combine_all_revisions_together
+    svn = Subversion.new
+    svn.check_externals = true
+    svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
+    svn.expects(:revisions_since_for_url).with(dummy_project, 14).returns([Revision.new(18), Revision.new(17)])
+    svn.expects(:revisions_since_for_url).with(dummy_project, 14, "svn+ssh://a").returns([Revision.new(18), Revision.new(15)])
+    svn.expects(:revisions_since_for_url).with(dummy_project, 14, "svn+ssh://b").returns([])
+
+    revisions = svn.revisions_since(dummy_project, 14)
+    assert_equal [15, 17, 18], numbers(revisions)
+  end
+
+  def test_externals
+    svn = Subversion.new
+    svn.expects(:execute).with(["svn", "--non-interactive", "propget", "-R", "svn:externals"], {:stderr => './svn.err'}).returns("propget results")
+    parser = mock("parser")
+    SubversionPropgetParser.expects(:new).returns(parser)
+    parser.expects(:parse).returns("parse results")
+
+    assert_equal("parse results", svn.externals(dummy_project))
+  end
+
+  def test_revisions_since_for_url_should_work_without_url_argument
+    svn = Subversion.new
+
+    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:14", "--verbose", "--xml"],
+                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
+    revisions = svn.revisions_since_for_url(dummy_project, 14)
+    assert_equal [18, 17, 15], numbers(revisions)
+  end
+
+  def test_revisions_since_for_url_should_support_url_argument
+    svn = Subversion.new
+    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:14", "--verbose", "--xml", "svn+ssh://a"],
+                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
+    revisions = svn.revisions_since_for_url(dummy_project, 14, "svn+ssh://a")
+    assert_equal [18, 17, 15], numbers(revisions)
   end
 
   def test_checkout_with_no_user_password
