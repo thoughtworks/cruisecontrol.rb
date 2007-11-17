@@ -167,6 +167,17 @@ class SubversionTest < Test::Unit::TestCase
 
     svn.checkout('.')
   end
+  
+  def test_configure_subversion_not_to_check_externals
+    svn = Subversion.new(:check_externals => false)
+    assert_equal false, svn.check_externals
+
+    svn = Subversion.new(:check_externals => true)
+    assert_equal true, svn.check_externals
+    
+    svn.check_externals = false
+    assert_equal false, svn.check_externals
+  end
 
   def test_checkout_with_revision
     svn = Subversion.new(:url => 'http://foo.com/svn/project')

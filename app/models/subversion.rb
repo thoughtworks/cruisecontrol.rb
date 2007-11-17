@@ -6,9 +6,12 @@ class Subversion
   attr_accessor :url, :username, :password, :check_externals
 
   def initialize(options = {})
-    @url, @username, @password, @interactive =
-          options.delete(:url), options.delete(:username), options.delete(:password), options.delete(:interactive)
-    @check_externals = true
+    @url = options.delete(:url)
+    @username = options.delete(:username)
+    @password = options.delete(:password)
+    @interactive = options.delete(:interactive)
+    @check_externals = options.has_key?(:check_externals) ? options.delete(:check_externals) : true
+    
     raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
   end
   
