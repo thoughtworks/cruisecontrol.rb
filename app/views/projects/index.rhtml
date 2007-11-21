@@ -2,18 +2,9 @@
 <% @projects.each { |p| @rss_feeds["#{p.name} builds"] = project_url(:controller => 'projects', :action => 'show', :id => p, :format => 'rss')} -%>
 
 <div id="projects">
-  <% if @projects.length <= 5 %>
-    <% @projects.each do |project| -%>
-      <%= render :partial => 'project', :locals => {:project => project }%>
-    <% end -%>
-  <% else %>
-
-    <table>
-      <% @projects.each do |project| -%>
-        <%= render :partial => 'project', :locals => {:project => project }%>
-      <% end -%>
-    </table>
-  <% end %>
+  <% @projects.each do |project| -%>
+    <%= render :partial => 'project', :locals => {:project => project }%>
+  <% end -%>
 
   <%= render :partial => 'no_projects' if @projects.empty? %>
 </div>
