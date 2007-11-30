@@ -59,3 +59,6 @@
 # If you want to only allow one project to build at a time, uncomment this line
 # by default, cruise allows multiple projects to build at a time
 # Configuration.serialize_builds = true
+
+# Amount of time a project will wait to build before failing when build serialization is on
+# Configuration.serialized_build_timeout = 3.hours

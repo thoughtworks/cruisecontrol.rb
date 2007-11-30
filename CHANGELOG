@@ -1,4 +1,5 @@
 TRUNK
+  - builds can now be serialized - only one build runs at a time on a server
   - [patch] subversion external support
 ------------------------------------------------------------------------------------------------------------------------
 * 1.2.1

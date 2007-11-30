@@ -36,7 +36,7 @@ class Test::Unit::TestCase
       assert_equal(expected_error, e) if expected_error
       assert_equal(expected_class, e.class, "Unexpected error type raised") if expected_class
       assert_equal(expected_message, e.message, "Unexpected error message") if expected_message.is_a? String
-      assert_matched(expected_message, e.message, "Unexpected error message") if expected_message.is_a? Regexp
+      assert_match(expected_message, e.message, "Unexpected error message") if expected_message.is_a? Regexp
     end
   end
   

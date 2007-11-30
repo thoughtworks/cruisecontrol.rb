@@ -12,7 +12,9 @@ class FileLockTest < Test::Unit::TestCase
         
         assert File.file?(file_name)
         assert_equal false, File.open(file_name, 'w') { |f| f.flock(File::LOCK_EX | File::LOCK_NB) }
-        assert_raises("Already holding a lock on project 'rude'") { lock.lock }
+        assert_raises(FileLock::AlreadyLockedError, "Already holding a lock on project 'rude'") do
+          lock.lock
+        end
 
         lock.release
         
@@ -25,7 +27,9 @@ class FileLockTest < Test::Unit::TestCase
         begin
           assert_equal 0, lock_file.flock(File::LOCK_EX | File::LOCK_NB)
           
-          assert_raises(/^Another process holds a lock on '.\/my.lock'/) do
+          assert_raises(FileLock::LockUnavailableError, 
+                        "Another process holds a lock on project 'rude'.\n" +
+                        "Look for a process with a lock on file ./my.lock") do
             lock.lock
           end
         ensure
