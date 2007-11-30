@@ -277,8 +277,16 @@ class Project
       @source_control.update(self, revision)
     end
   end
-
+  
   def build(revisions = new_revisions)
+    if Configuration.serialize_builds
+      BuildSerializer.serialize { build_without_serialization(revisions) }
+    else
+      build_without_serialization(revisions)
+    end
+  end
+        
+  def build_without_serialization(revisions = new_revisions)
     revisions = [@source_control.latest_revision(self)].compact if revisions.empty? # we always want to build in this method
     return if revisions.empty?                                                      # this will only happen in the case that there are no revisions yet
 

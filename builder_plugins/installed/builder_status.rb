@@ -41,6 +41,10 @@ class BuilderStatus
   def sleeping
     set_status 'sleeping'
   end
+  
+  def queued
+    set_status 'queued'
+  end
 
   def polling_source_control
     set_status 'checking_for_modifications'

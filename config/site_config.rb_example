@@ -55,3 +55,7 @@
 # public web site (such as http://cruisecontrolrb.thoughtworks.com/projects - try clicking on Build Now button there
 # and see what happens):
 # Configuration.disable_build_now = true
+
+# If you want to only allow one project to build at a time, uncomment this line
+# by default, cruise allows multiple projects to build at a time
+# Configuration.serialize_builds = true

@@ -9,11 +9,12 @@ class Configuration
   @dashboard_url = nil
   @email_from = 'cruisecontrol@thoughtworks.com'
   @disable_build_now = false
+  @serialize_builds = false
 
   class << self
     # published configuration options (mentioned in config/site_config.rb.example)
     attr_accessor :default_polling_interval, :disable_build_now, :email_from,
-                  :dashboard_refresh_interval, :projects_directory
+                  :dashboard_refresh_interval, :projects_directory, :serialize_builds
     attr_reader :dashboard_url
 
     # non-published configuration options (obscure stuff, mostly useful for http://cruisecontrolrb.thoughtworks.com)

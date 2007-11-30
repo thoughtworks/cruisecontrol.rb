@@ -10,6 +10,13 @@ class BuilderStatusTest < Test::Unit::TestCase
     ProjectBlocker.stubs(:blocked?).returns(true)
   end
   
+  def test_build_queued
+    Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
+    FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
+    FileUtils.expects(:touch).with('project_root/builder_status.queued')
+    @builder_status.queued
+  end  
+ 
   def test_build_initiated_creates_file__building__
     Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
     FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])

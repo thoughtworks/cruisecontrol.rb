@@ -626,6 +626,15 @@ class ProjectTest < Test::Unit::TestCase
     assert_equal [Revision.new(1), Revision.new(2), Revision.new(3)], project.revisions_to_build
   end
   
+  def test_builds_are_serialized
+    Configuration.stubs(:serialize_builds).returns(true)
+    project = Project.new("test")
+    BuildSerializer.expects(:serialize).yields
+    project.expects(:build_without_serialization)
+
+    project.build []
+  end
+  
   private
   
   def stub_build(label)
