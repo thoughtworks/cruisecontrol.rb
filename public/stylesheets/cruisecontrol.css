@@ -199,7 +199,10 @@ a.never_built, a.never_built:visited {
   float: left;
 }
 
-.project .builder_control .builder_status_builder_down, .project .builder_control .builder_status_unknown, .project .builder_control .builder_status_svn_error {
+.project .builder_control .builder_status_builder_down, 
+.project .builder_control .builder_status_unknown, 
+.project .builder_control .builder_status_svn_error,
+.project .builder_control .builder_status_timed_out {
   font-weight: bold;
   padding-top: 5px;
   padding-left: 25px;
@@ -208,7 +211,9 @@ a.never_built, a.never_built:visited {
   background-repeat: no-repeat;
 }
 
-.project .builder_control .builder_status_building, .project .builder_control .builder_status_build_requested {
+.project .builder_control .builder_status_building, 
+.project .builder_control .builder_status_build_requested,
+.project .builder_control .builder_status_queued {
   font-weight: bold;
   padding-top: 5px;
   padding-left: 25px;

@@ -9,5 +9,7 @@
   <%= render :partial => 'no_projects' if @projects.empty? %>
 </div>
 
-<%= periodically_call_remote :url => { :action => 'index', :format => 'js'}, :method => 'get',
-                                       :frequency => Configuration.dashboard_refresh_interval %>
+<%= 
+  periodically_call_remote :url => { :action => 'index', :format => 'js'}, :method => 'get',
+                                       :frequency => Configuration.dashboard_refresh_interval
+%>

@@ -280,7 +280,7 @@ class Project
   
   def build(revisions = new_revisions)
     if Configuration.serialize_builds
-      BuildSerializer.serialize { build_without_serialization(revisions) }
+      BuildSerializer.serialize(self) { build_without_serialization(revisions) }
     else
       build_without_serialization(revisions)
     end

@@ -1,8 +1,12 @@
 class BuildSerializer
   include ActionView::Helpers::DateHelper
   
-  def self.serialize(&block)
-    BuildSerializer.new.serialize(&block)
+  def self.serialize(project, &block)
+    BuildSerializer.new(project).serialize(&block)
+  end
+  
+  def initialize(project)
+    @project = project
   end
   
   def serialize
@@ -11,6 +15,10 @@ class BuildSerializer
     begin
       lock.lock
     rescue FileLock::LockUnavailableError
+      unless @already_told
+        @project.notify(:queued) 
+        @already_told = true
+      end
       wait
       timeout or retry
     end
@@ -22,6 +30,7 @@ class BuildSerializer
   
   def timeout
     if Time.now - @start_time >= Configuration.serialized_build_timeout
+      @project.notify(:timed_out)
       raise "Timed out after waiting to build for #{distance_of_time_in_words(@start_time, Time.now)}"
     end
   end

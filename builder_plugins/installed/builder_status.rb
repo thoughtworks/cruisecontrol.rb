@@ -13,17 +13,12 @@ class BuilderStatus
     if builder_down?
       'builder_down'
     else
-      case _status = read_status
-      when 'checking_for_modifications', 'sleeping'
-        @project.build_requested? ? 'build_requested' : _status
-      else
-        _status
-      end
+      read_status
     end
   end
 
   def fatal?
-    status == 'svn_error'
+    %w(svn_error timed_out).include?(status)
   end
   
   def error_message
@@ -39,15 +34,23 @@ class BuilderStatus
   end
 
   def sleeping
-    set_status 'sleeping'
+    set_status 'sleeping' unless status == 'build_requested'
   end
   
   def queued
     set_status 'queued'
   end
+  
+  def timed_out
+    set_status 'timed_out'
+  end
+  
+  def build_requested
+    set_status 'build_requested'
+  end
 
   def polling_source_control
-    set_status 'checking_for_modifications'
+    set_status 'checking_for_modifications' unless status == 'build_requested'
   end
 
   def build_loop_failed(e)

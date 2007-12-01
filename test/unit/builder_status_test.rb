@@ -10,38 +10,44 @@ class BuilderStatusTest < Test::Unit::TestCase
     ProjectBlocker.stubs(:blocked?).returns(true)
   end
   
-  def test_build_queued
+  def should_set_status(status)
     Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
     FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
-    FileUtils.expects(:touch).with('project_root/builder_status.queued')
+    FileUtils.expects(:touch).with("project_root/builder_status.#{status}")
+  end
+  
+  def test_build_requested
+    should_set_status :build_requested
+    @builder_status.build_requested
+  end  
+ 
+  def test_queued
+    should_set_status :queued
     @builder_status.queued
   end  
  
+  def test_timed_out
+    should_set_status :timed_out
+    @builder_status.timed_out
+  end  
+ 
   def test_build_initiated_creates_file__building__
-    Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
-    FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
-    FileUtils.expects(:touch).with('project_root/builder_status.building')
+    should_set_status :building
     @builder_status.build_initiated
   end  
  
   def test_sleeping_creates_file__sleeping__
-    Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
-    FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
-    FileUtils.expects(:touch).with('project_root/builder_status.sleeping')
+    should_set_status :sleeping
     @builder_status.sleeping
   end
   
   def test_polling_source_control_creates_file__checking_for_modifications__
-    Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
-    FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
-    FileUtils.expects(:touch).with('project_root/builder_status.checking_for_modifications')
+    should_set_status :checking_for_modifications
     @builder_status.polling_source_control
   end
   
-  def test_build_loop_failed_creates_file__build_loop_failed__
-    Dir.stubs(:'[]').returns(['project_root/builder_status.foo'])
-    FileUtils.expects(:rm_f).with(['project_root/builder_status.foo'])
-    FileUtils.expects(:touch).with('project_root/builder_status.error')
+  def test_build_loop_failed_creates_file__error__
+    should_set_status :error
     @builder_status.build_loop_failed(nil)
   end
   
@@ -64,31 +70,16 @@ class BuilderStatusTest < Test::Unit::TestCase
     assert_equal 'builder_down', @builder_status.status
   end
 
-  def test_status_should_return_build_requested_if the_builder_is_sleeping_or_polling_and_there_is_a_build_requested
-    ProjectBlocker.expects(:blocked?).with(@project).returns(true)
-    @project.stubs(:build_requested?).returns(true)
-    Dir.expects(:'[]').with('project_root/builder_status.*').returns(
-        ['builder_status.sleeping'],
-        ['builder_status.checking_for_modifications'])
+  def test_shouldnt_sleep_after_a_build_requested
+    @builder_status.expects(:set_status).with('build_requested')
+    @builder_status.stubs(:status).returns('build_requested')
+    @builder_status.build_requested
 
-    assert_equal 'build_requested', @builder_status.status
-    assert_equal 'build_requested', @builder_status.status
-  end
+    @builder_status.sleeping
+    @builder_status.polling_source_control
 
-  def test_status_should_return_sleeping_if_the_builder_is_sleeping_and_there_is_no_build_requested
-    ProjectBlocker.expects(:blocked?).with(@project).returns(true)
-    @project.stubs(:build_requested?).returns(false)
-    Dir.stubs(:'[]').with('project_root/builder_status.*').returns(['builder_status.sleeping'])
-
-    assert_equal 'sleeping', @builder_status.status
-  end
-
-  def test_status_should_return_checking_for_modifications_if_the_builder_is_checking_and_there_is_no_build_requested
-    ProjectBlocker.expects(:blocked?).with(@project).returns(true)
-    @project.stubs(:build_requested?).returns(false)
-    Dir.stubs(:'[]').with('project_root/builder_status.*').returns(['builder_status.checking_for_modifications'])
-
-    assert_equal 'checking_for_modifications', @builder_status.status
+    @builder_status.expects(:set_status).with('sleeping')
+    @builder_status.build_finished(nil)
   end
   
   def test_build_loop_failed_should_set_status_according_exception_passed_in
@@ -115,8 +106,13 @@ class BuilderStatusTest < Test::Unit::TestCase
     end
   end
   
-  def test_should_know_fatal_status
+  def test_svn_error_should_be_fatal
     @builder_status.expects(:status).returns("svn_error")
+    assert @builder_status.fatal?
+  end
+  
+  def test_timeout_should_be_fatal
+    @builder_status.expects(:status).returns("timed_out")
     assert @builder_status.fatal?
   end
   

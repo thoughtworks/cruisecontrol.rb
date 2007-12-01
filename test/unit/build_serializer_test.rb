@@ -3,10 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 class BuildSerializerTest < Test::Unit::TestCase
   def setup
     @project = Object.new
-    @project.stubs(:name).returns("foo")
-    @project.stubs(:path).returns(".")
-    
-    @serializer = BuildSerializer.new
+    @serializer = BuildSerializer.new(@project)
   end
   
   def test_serialize_when_lock_is_available
@@ -47,6 +44,7 @@ class BuildSerializerTest < Test::Unit::TestCase
 
     FileLock.expects(:new).returns(lock)
     
+    @project.expects(:notify).with(:queued).once
     @serializer.stubs(:wait)
     @serializer.serialize do
       assert lock.locked?
@@ -65,6 +63,8 @@ class BuildSerializerTest < Test::Unit::TestCase
     end
     lock.stubs(:lock).raises(FileLock::LockUnavailableError, "not obtained")
     
+    @project.expects(:notify).with(:queued).once
+    @project.expects(:notify).with(:timed_out).once
     FileLock.expects(:new).returns(lock)
     assert_raises "Timed out after waiting to build for about 1 hour" do
       @serializer.serialize do
