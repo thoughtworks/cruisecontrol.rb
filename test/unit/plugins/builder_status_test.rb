@@ -1,7 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
 
 class BuilderStatusTest < Test::Unit::TestCase
-  
   def setup
     @project = Project.new('project')
     @project.path = 'project_root'

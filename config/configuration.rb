@@ -1,5 +1,4 @@
 class Configuration
-
   @default_page = {:controller => 'projects', :action => 'index'}
   @projects_directory = File.expand_path(File.join(RAILS_ROOT, 'projects'))
   @default_polling_interval = 20.seconds

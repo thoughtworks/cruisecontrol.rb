@@ -1,8 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
-require 'project_logger'
+require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
 
-class ProjectLoggerTest < Test::Unit::TestCase
-  
+class ProjectLoggerTest < Test::Unit::TestCase  
   def setup
     @logger = ProjectLogger.new(nil)
     @mock_build = Object.new

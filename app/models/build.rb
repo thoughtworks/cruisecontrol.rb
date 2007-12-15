@@ -59,9 +59,11 @@ EOF
     nil
   end
   
-  def abort
+  def destroy
     FileUtils.rm_rf artifacts_directory
   end
+  
+  alias abort destroy
 
   def additional_artifacts
     Dir.entries(artifacts_directory).find_all {|artifact| !(artifact =~ IGNORE_ARTIFACTS) }

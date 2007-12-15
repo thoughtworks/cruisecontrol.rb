@@ -4,7 +4,6 @@
 # (this plugin is built in and needs no customization)
 #
 class BuilderStatus
-  
   def initialize(project)
     @project = project
   end

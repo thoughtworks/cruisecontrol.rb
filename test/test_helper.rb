@@ -15,7 +15,9 @@ require 'breakpoint'
 require 'mocha'
 require 'stubba'
 
+$LOAD_PATH << File.dirname(__FILE__)
 require 'file_sandbox'
+require 'build_factory'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true

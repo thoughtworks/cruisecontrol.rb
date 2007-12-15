@@ -8,6 +8,7 @@ end
 
 class BuildsControllerTest < Test::Unit::TestCase
   include FileSandbox
+  include BuildFactory
 
   def setup
     @controller = BuildsController.new
@@ -17,8 +18,7 @@ class BuildsControllerTest < Test::Unit::TestCase
 
   def test_show
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-24/build_status.success"
-      sandbox.new :file => "build-25/build_status.success"
+      create_builds 24, 25
 
       Projects.expects(:find).with(project.name).returns(project)
 
@@ -33,9 +33,7 @@ class BuildsControllerTest < Test::Unit::TestCase
 
   def test_show_specific_build
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-23/build_status.pingpong"
-      sandbox.new :file => "build-24/build_status.pingpong"
-      sandbox.new :file => "build-25/build_status.pingpong"
+      create_builds 23, 24, 25
 
       Projects.expects(:find).with(project.name).returns(project)
 
@@ -62,7 +60,7 @@ class BuildsControllerTest < Test::Unit::TestCase
 
   def test_show_only_30_builds
     with_sandbox_project do |sandbox, project|
-      (1..50).each{|i| sandbox.new :file => "build-#{i}/build_status.pingpong"}
+      create_builds *(1..50)
       Projects.stubs(:find).with(project.name).returns(project)
       
       get :show, :project => project.name
@@ -73,7 +71,7 @@ class BuildsControllerTest < Test::Unit::TestCase
   
   def test_drop_down_list_for_older_builds
     with_sandbox_project do |sandbox, project|
-      (1..50).each{|i| sandbox.new :file => "build-#{i}-pingpong/something"}
+      create_builds *(1..50)
       Projects.stubs(:find).with(project.name).returns(project)
 
       get :drop_down, :format => 'js', :project => project.name
@@ -100,7 +98,7 @@ class BuildsControllerTest < Test::Unit::TestCase
 
   def test_show_unknown_build
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => "build-1/build_status.pingpong"
+      create_build 1
       Projects.expects(:find).with(project.name).returns(project)
 
       get :show, :project => project.name, :build => 2
@@ -127,7 +125,7 @@ class BuildsControllerTest < Test::Unit::TestCase
 
   def test_artifact_as_html
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => 'build-1/build_status.pingpong'
+      create_build 1
       sandbox.new :file => 'build-1/rcov/index.html', :with_contents => 'apple pie'
 
       Projects.expects(:find).with(project.name).returns(project)
@@ -143,7 +141,7 @@ class BuildsControllerTest < Test::Unit::TestCase
   def test_artifact_gets_right_mime_types
     with_sandbox_project do |sandbox, project|
       @sandbox, @project = sandbox, project
-      sandbox.new :file => 'build-1/build_status.pingpong'
+      create_build 1
 
       assert_type 'foo.jpg',  'image/jpeg'
       assert_type 'foo.jpeg', 'image/jpeg'
@@ -160,7 +158,7 @@ class BuildsControllerTest < Test::Unit::TestCase
   
   def test_artifact_does_not_exist
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => 'build-1/build_status.pingpong'
+      create_build 1
 
       Projects.expects(:find).with(project.name).returns(project)
 
@@ -171,7 +169,7 @@ class BuildsControllerTest < Test::Unit::TestCase
   
   def test_artifact_is_directory
     with_sandbox_project do |sandbox, project|
-      sandbox.new :file => 'build-1/build_status.pingpong'
+      create_build 1
       sandbox.new :file => 'build-1/foo/index.html'
 
       Projects.expects(:find).with(project.name).returns(project)
