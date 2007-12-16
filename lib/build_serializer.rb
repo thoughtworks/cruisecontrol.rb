@@ -11,7 +11,7 @@ class BuildSerializer
   
   def serialize
     @start_time = Time.now
-    lock = FileLock.new(Configuration.projects_directory + "/build_serialization.lock")
+    lock = FileLock.new(CRUISE_DATA_ROOT + "/projects/build_serialization.lock")
     begin
       lock.lock
     rescue FileLock::LockUnavailableError

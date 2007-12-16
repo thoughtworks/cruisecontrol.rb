@@ -1,6 +1,0 @@
-require 'xmpp4r/muc/x/muc'
-require 'xmpp4r/muc/x/mucuserinvite'
-require 'xmpp4r/muc/x/mucuseritem'
-require 'xmpp4r/muc/helper/mucbrowser'
-require 'xmpp4r/muc/helper/mucclient'
-require 'xmpp4r/muc/helper/simplemucclient'

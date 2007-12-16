@@ -1,9 +1,7 @@
 require 'fileutils'
 
 class Project
-  
   @@plugin_names = []
-
 
   def self.plugin(plugin_name)
     @@plugin_names << plugin_name unless RAILS_ENV == 'test' or @@plugin_names.include? plugin_name
@@ -31,7 +29,7 @@ class Project
   def initialize(name, source_control = Subversion.new)
     @name, @source_control = name, source_control
 
-    @path = File.join(Configuration.projects_directory, @name)
+    @path = File.join(CRUISE_DATA_ROOT, 'projects', @name)
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @plugins_by_name = {}
@@ -498,7 +496,7 @@ def plugin_loader.load_plugin(plugin_path)
 end
 
 def plugin_loader.load_all
-  plugins = Dir[File.join(RAILS_ROOT, 'builder_plugins', 'installed', '*')]
+  plugins = Dir[RAILS_ROOT + "/lib/builder_plugins/*"] + Dir[CRUISE_DATA_ROOT + "/builder_plugins/*"]
 
   plugins.each do |plugin|
     if File.file?(plugin)

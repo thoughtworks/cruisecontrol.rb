@@ -1,5 +1,12 @@
 # this module will create builds for testing
 module BuildFactory
+  def create_project(name)
+    @sandbox.new :directory => "#{name}/work"
+    project = Project.new(name)
+    project.path = name
+    project
+  end
+
   def create_build(label, status = :success)
     @sandbox.new :file => "build-#{label}/build_status.#{status}"
   end

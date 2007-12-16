@@ -1,1 +1,11 @@
-/* if you'd like to style cruise, you can move this file to site.css and it will be included */
+/* if you'd like to add custom styles to cruise, add them here */
+/* the following will make successful builds green */
+/*
+a.success, a.success:visited {
+  color: #0A0;
+}
+
+.build_success {
+  background-image: url(/images/green_gradient.png);
+}
+*/

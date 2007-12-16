@@ -9,7 +9,7 @@ class BuildSerializerTest < Test::Unit::TestCase
   def test_serialize_when_lock_is_available
     lock = AvailableLock.new
     FileLock.expects(:new).
-             with(Configuration.projects_directory + "/build_serialization.lock").
+             with(CRUISE_DATA_ROOT + "/projects/build_serialization.lock").
              returns(lock)
     
     block_yielded = false

@@ -11,6 +11,7 @@ RAILS_GEM_VERSION = '1.2.3' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 ABSOLUTE_RAILS_ROOT = File.expand_path(RAILS_ROOT) unless defined? ABSOLUTE_RAILS_ROOT
+CRUISE_DATA_ROOT = ENV["CRUISE_DATA_ROOT"] || File.expand_path("~/.cruise")
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here
@@ -44,7 +45,8 @@ Rails::Initializer.run do |config|
   # config.plugins = %W( exception_notification ssl_requirement )
 
   # Add additional load paths for your own custom dirs
-  config.load_paths << "#{RAILS_ROOT}/builder_plugins/installed"
+  config.load_paths << "#{CRUISE_DATA_ROOT}/builder_plugins"
+  config.load_paths << "#{RAILS_ROOT}/lib/builder_plugins"
 
   # Use the database for sessions instead of the file system
   # (create the session table with 'rake db:sessions:create')

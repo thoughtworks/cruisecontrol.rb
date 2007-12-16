@@ -4,12 +4,12 @@ class Projects
 
   class << self
     def load_all
-      Projects.new(Configuration.projects_directory).load_all
+      Projects.new.load_all
     end
 
     def find(project_name)
       # TODO: sanitize project_name to prevent a query injection attack here
-      path = File.join(Configuration.projects_directory, project_name)
+      path = File.join(CRUISE_DATA_ROOT, 'projects', project_name)
       return nil unless File.directory?(path)
       load_project(path)
     end
@@ -21,7 +21,7 @@ class Projects
     end
   end
   
-  def initialize(dir = Configuration.projects_directory)
+  def initialize(dir = CRUISE_DATA_ROOT + "/projects")
     @dir = dir
     @list = []
   end

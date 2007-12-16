@@ -5,15 +5,15 @@ class ProjectsMigrationTest < Test::Unit::TestCase
 
   def setup
     setup_sandbox
-    @migration = ProjectsMigration.new(@sandbox.root)
+    @migration = ProjectsMigration.new(sandbox.root)
   end
 
   def teardown
     teardown_sandbox
   end
-
+  
   def test_migrate_data_if_needed
-    @sandbox.new :file => 'data.version', :with_content => '2'
+    sandbox.new :file => 'data.version', :with_content => '2'
     @migration.expects(:migration_scripts).returns(['001_foo.rb', '002_bar.rb', '003_baz.rb'])
     @migration.expects(:execute).with("ruby #{expected_script_path('003_baz.rb')} #{@sandbox.root}")
 
@@ -21,7 +21,7 @@ class ProjectsMigrationTest < Test::Unit::TestCase
   end
 
   def test_migrate_data_if_needed_doesnt_do_anything_when_not_needed
-    @sandbox.new :file => 'data.version', :with_content => '3'
+    sandbox.new :file => 'data.version', :with_content => '3'
 
     @migration.expects(:migration_scripts).returns(['001_foo.rb', '002_bar.rb', '003_baz.rb'])
     @migration.expects(:execute).never
@@ -38,7 +38,7 @@ class ProjectsMigrationTest < Test::Unit::TestCase
   end
 
   def test_migrate_data_if_needed_should_stop_when_a_script_fails
-    @sandbox.new :file => 'data.version', :with_content => '1'
+    sandbox.new :file => 'data.version', :with_content => '1'
 
     @migration.expects(:migration_scripts).returns(['001_foo.rb', '002_bar.rb', '003_baz.rb'])
 
@@ -52,7 +52,7 @@ class ProjectsMigrationTest < Test::Unit::TestCase
     assert_equal 2, @migration.current_data_version
   end
 
-  def test_should_create_projects_directory_if_it_doesnt_exist_and_run_all_migration_scripts
+  def test_should_create_cruise_data_directory_if_it_doesnt_exist_and_run_all_migration_scripts
     projects_dir = "#{@sandbox.root}/projects"
     @migration = ProjectsMigration.new(projects_dir)
     assert_false File.exists?("#{projects_dir}/data.version")

@@ -2,12 +2,12 @@ class ProjectsMigration
   include CommandLine
   include FileUtils
 
-  def initialize(projects_directory = Configuration.projects_directory)
-    @projects_directory = projects_directory
-    if File.exists? @projects_directory and not File.directory? @projects_directory
-      raise "#@projects_directory is not a directory"
+  def initialize(data_dir = CRUISE_DATA_ROOT)
+    @data_dir = data_dir
+    if File.exists? data_dir and not File.directory? data_dir
+      raise "#{data_dir} is not a directory"
     else
-      mkdir_p @projects_directory
+      mkdir_p data_dir
     end
   end
 
@@ -16,7 +16,7 @@ class ProjectsMigration
       if script_version(script) > current_data_version
         CruiseControl::Log.info "Executing migration script #{script}. This may take some time..."
         clear_cached_pages
-        execute "ruby #{File.join(migrate_scripts_directory, script)} #{@projects_directory}"
+        execute "ruby #{File.join(migrate_scripts_directory, script)} #{@data_dir}"
         set_data_version(script_version(script))
         CruiseControl::Log.info "Finished #{script}."
       end
@@ -37,11 +37,21 @@ class ProjectsMigration
   end
 
   def current_data_version
-    File.exists?(data_version_file) ? File.read(data_version_file).to_i : 0
+    if File.exists?(data_version_file)
+      File.read(data_version_file).to_i 
+    elsif File.exists?(old_data_version_file)
+      File.read(old_data_version_file).to_i
+    else
+      0
+    end
   end
 
   def data_version_file
-    File.join(@projects_directory, 'data.version')
+    File.join(@data_dir, 'data.version')
+  end
+  
+  def old_data_version_file
+    File.join(RAILS_ROOT, 'projects', 'data.version')
   end
 
   def set_data_version(version)

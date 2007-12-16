@@ -1,6 +1,6 @@
 class SuccessfulBuildTrigger
   attr_accessor :triggered_project
-    attr_reader :last_successful_build
+  attr_reader :last_successful_build
 
   def initialize(triggered_project, triggering_project_name)
     self.triggered_project = triggered_project

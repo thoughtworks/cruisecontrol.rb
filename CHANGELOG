@@ -1,6 +1,8 @@
 TRUNK
   - builds can now be serialized - only one build runs at a time on a server
   - build requested status now stays on dashboard until a build starts
+  - option to auto delete more than N builds
+  - moved cruise data into ~/.cruise by default
   - [patch] subversion external support
 ------------------------------------------------------------------------------------------------------------------------
 * 1.2.1
