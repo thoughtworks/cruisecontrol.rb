@@ -11,7 +11,7 @@ RAILS_GEM_VERSION = '1.2.3' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 ABSOLUTE_RAILS_ROOT = File.expand_path(RAILS_ROOT) unless defined? ABSOLUTE_RAILS_ROOT
-CRUISE_DATA_ROOT = ENV["CRUISE_DATA_ROOT"] || File.expand_path("~/.cruise")
+CRUISE_DATA_ROOT = ENV["CRUISE_DATA_ROOT"] || ENV["HOME"] ? File.expand_path("~/.cruise") : File.expand_path(".cruise")
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here
