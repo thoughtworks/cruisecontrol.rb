@@ -1,18 +1,25 @@
 <h1>Plugins</h1>
 
-<% [:installed, :available].each do |type| %>
-  <div class="plugin_list">
-    <h3><%= Inflector.humanize(type) %> Plugins</h3>
-    
-    <ul>
-    <% Dir["#{RAILS_ROOT}/builder_plugins/#{type}/*"].each do |plugin| %>
+<div class="plugin_list">
+  <h3>Installed Plugins</h3>
+  
+  <ul>
+    <% Dir["#{CRUISE_DATA_ROOT}/builder_plugins/*"].each do |plugin| %>
       <% name = File.basename(plugin) %>
-      <li><%= link_to Inflector.titleize(name.sub(/\.rb$/, '')), :action => 'plugins', :type => type, :name => name %></li>
+      <li>
+        <%= link_to Inflector.titleize(name.sub(/\.rb$/, '')), :action => 'plugins', :type => 'installed', :name => name %> 
+      </li>
     <% end %>
-    </ul>
-  </div>
-<% end %>
 
+    <% Dir["#{RAILS_ROOT}/lib/builder_plugins/*"].each do |plugin| %>
+      <% name = File.basename(plugin) %>
+      <li>
+        <%= link_to Inflector.titleize(name.sub(/\.rb$/, '')), :action => 'plugins', :type => 'builtin', :name => name %> 
+        (built in)
+      </li>
+    <% end %>
+  </ul>
+</div>
 
 <div id="plugin_documentation">
   <% if @file %>

@@ -4,6 +4,7 @@ TRUNK
   - option to auto delete more than N builds
   - moved cruise data into ~/.cruise by default
   - [patch] subversion external support
+
 ------------------------------------------------------------------------------------------------------------------------
 * 1.2.1
   - [bugfix] fixed some windows specific things to do with running a server

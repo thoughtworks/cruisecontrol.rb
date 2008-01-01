@@ -1,5 +1,25 @@
 # Don't change this file. Configuration is done in config/environment.rb and config/environments/*.rb
 
+def find_home
+  ['HOME', 'USERPROFILE'].each do |homekey|
+    return ENV[homekey] if ENV[homekey]
+  end
+  if ENV['HOMEDRIVE'] && ENV['HOMEPATH']
+    return "#{ENV['HOMEDRIVE']}:#{ENV['HOMEPATH']}"
+  end
+  begin
+    File.expand_path("~")
+  rescue StandardError => ex
+    if File::ALT_SEPARATOR
+      "C:/"
+    else
+      "/"
+    end
+  end
+end
+
+CRUISE_DATA_ROOT = File.join(find_home, ".cruise") unless defined? CRUISE_DATA_ROOT
+
 unless defined?(RAILS_ROOT)
   root_path = File.join(File.dirname(__FILE__), '..')
 
