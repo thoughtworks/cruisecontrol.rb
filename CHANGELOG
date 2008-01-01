@@ -3,6 +3,7 @@ TRUNK
   - build requested status now stays on dashboard until a build starts
   - option to auto delete more than N builds
   - moved cruise data into ~/.cruise by default
+  - plugins can now be installed w/ script/cruise_plugin script
   - [patch] subversion external support
 
 ------------------------------------------------------------------------------------------------------------------------
