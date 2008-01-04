@@ -60,14 +60,13 @@ begin
     puts "   http://subversion.tigris.org/faq.html#ssh-auth-cache"
     puts
   end
-  
+
 rescue => e
+  STDERR.puts "FAILED: #{e.message}"
   if trace
-    raise
-  else
-    STDERR.puts "FAILED: #{e.message}"
-    exit -1
+    STDERR.puts e.backtrace.map { |line| "    #{line}" }
   end
+  exit -1
 end
 
 puts "Project '#{project_name}' added."

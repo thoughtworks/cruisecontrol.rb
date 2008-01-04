@@ -99,7 +99,7 @@ module CommandLine
         File.open(options[:stderr], "a") {|io| io.write(e.message)}
       else
         STDERR.puts e.message
-        STDERR.puts e.backtrace.join("\n")
+        STDERR.puts e.backtrace.map { |line| "    #{line}" }
       end
       raise ExecutionError.new(cmd, full_cmd, options[:dir], nil, e.message)
     end

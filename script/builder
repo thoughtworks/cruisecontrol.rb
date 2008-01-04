@@ -89,7 +89,7 @@ rescue Exception => e
     CruiseControl::Log.fatal(e)
   rescue => logging_error
     STDERR.puts e.message
-    STDERR.puts e.backtrace
+    STDERR.puts e.backtrace.map { |line| "    #{line}" }
     STDERR.puts "Attempt to log the above error failed with this:"
     STDERR.puts logging_error.message
     STDERR.puts logging_error.backtrace
