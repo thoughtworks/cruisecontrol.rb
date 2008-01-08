@@ -4,7 +4,8 @@ TRUNK
   - option to auto delete more than N builds
   - moved cruise data into ~/.cruise by default
   - plugins can now be installed w/ script/cruise_plugin script
-  - [patch] subversion external support
+  - [patch] subversion external support - nathan wilmes
+  - [patch] relative url support - neal clark
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.2.1

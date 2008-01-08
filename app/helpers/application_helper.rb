@@ -70,7 +70,15 @@ module ApplicationHelper
   end
   
   def build_link(text, project, build)
-    link_to text, build_url(:project => project.name, :build => build.label), :class => build.status
+    link_to text, build_path(:project => project.name, :build => build.label), :class => build.status
+  end
+  
+  def url_path(url)
+    if url.is_a?(Hash)
+      url_for(url.merge(:only_path => true))
+    else
+      url.match(/\/\/.+?(\/.+)/)[1]
+    end
   end
         
   private 

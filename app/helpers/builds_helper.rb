@@ -39,7 +39,7 @@ module BuildsHelper
     settings = settings.strip
     if settings.empty?
       "This project has no custom configuration. Maybe it doesn't need it.<br/>" +
-      "Otherwise, #{link_to('the manual', document_url('manual'))} can tell you how."
+      "Otherwise, #{link_to('the manual', document_path('manual'))} can tell you how."
     else
       h(settings)
     end

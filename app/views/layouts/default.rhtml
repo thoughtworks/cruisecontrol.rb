@@ -13,7 +13,7 @@
   <% end %>
   <% if @rss_feeds -%>
     <% @rss_feeds.sort.each do |title, url| -%>
-      <%= auto_discovery_link_tag :rss, url, {:title => title} %>
+      <%= auto_discovery_link_tag :rss, url_path(url), {:title => title} %>
     <% end -%>
   <% end -%>
   <%= javascript_include_tag :defaults %>

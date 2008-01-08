@@ -84,7 +84,7 @@
   <% unless @build.additional_artifacts.empty? %>
     <div class="section_open">
       <div class="section_header" onclick="toggle_section(this.parentNode)">Custom Build Artifacts</div>
-      <div class="section_content"><% @build.additional_artifacts.each do |artifact| %><div class="artifact"><%= link_to artifact, build_artifact_url(:project => @project.name, :build => @build.label, :path => artifact) %></div><% end %></div>
+      <div class="section_content"><% @build.additional_artifacts.each do |artifact| %><div class="artifact"><%= link_to artifact, build_artifact_path(:project => @project.name, :build => @build.label, :path => artifact) %></div><% end %></div>
     </div>
   <% end %>
   
