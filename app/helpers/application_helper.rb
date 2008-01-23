@@ -48,7 +48,7 @@ module ApplicationHelper
     
   def display_builder_state(state)
     case state
-    when 'building', 'builder_down', 'build_requested', 'svn_error', 'queued', 'timed_out'
+    when 'building', 'builder_down', 'build_requested', 'svn_error', 'queued', 'timed_out', 'error'
       "<div class=\"builder_status_#{state}\">#{state.gsub('_', ' ')}</div>"
     when 'sleeping', 'checking_for_modifications'
       ''
