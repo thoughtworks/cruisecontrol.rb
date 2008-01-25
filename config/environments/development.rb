@@ -23,3 +23,5 @@ config.action_mailer.raise_delivery_errors = false
 CruiseControl::Log.verbose = true
 
 require 'configuration'
+
+config.after_initialize { require RAILS_ROOT + '/config/dashboard_initialize' }
