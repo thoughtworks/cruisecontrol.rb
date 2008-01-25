@@ -21,5 +21,7 @@ require 'configuration'
 
 ProjectsMigration.new.migrate_data_if_needed
 
-config.after_initialize { require RAILS_ROOT + '/config/dashboard_initialize' }
-config.after_initialize { BuilderStarter.start_builders }
+config.after_initialize do
+  require RAILS_ROOT + '/config/dashboard_initialize' 
+  BuilderStarter.start_builders 
+end

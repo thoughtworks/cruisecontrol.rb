@@ -4,6 +4,8 @@
 # look like.
 require CRUISE_DATA_ROOT + '/site_config' if File.exists?(CRUISE_DATA_ROOT + "/site_config.rb")
 
+
+puts "I'm READING STUFF!!!!!!!!!!!!!!"
 site_css = CRUISE_DATA_ROOT + "/site.css"
 if File.exists?(site_css)
   File.open(RAILS_ROOT + "/public/stylesheets/site.css", "w") do |f|
