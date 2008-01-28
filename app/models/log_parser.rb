@@ -10,7 +10,7 @@ class LogParser
   end
   
   def errors
-    test_errors = Array.new
+    test_errors = []
     
     @log.gsub(FIND_TEST_ERROR_REGEX) do |match|
       test_errors << TestErrorEntry.create_error($1, $2, $3)
@@ -20,7 +20,7 @@ class LogParser
   end
 
   def failures
-    testFailures = Array.new
+    test_failures = []
 
     @log.gsub(TEST_FAILURE_BLOCK_REGEX) do |text|
       content = $1
@@ -30,13 +30,13 @@ class LogParser
         message = content.match(MESSAGE_REGEX)[1]
         stack_trace = content.match(STACK_TRACE_REGEX)[1]
 
-        testFailures << TestErrorEntry.create_failure(test_name, message, stack_trace)
+        test_failures << TestErrorEntry.create_failure(test_name, message, stack_trace)
       rescue
         # Do Nothing, Pattern does not match
       end
     end
 
-    testFailures
+    test_failures
   end
 
   def failures_and_errors

@@ -63,7 +63,11 @@ class BuildTest < Test::Unit::TestCase
 
   def test_output_grabs_log_file_when_file_exists
     with_sandbox_project do |sandbox, project|
-      File.expects(:'read').with("#{project.path}/build-1/build.log").returns(['line 1', 'line 2'])
+      build_log = "#{project.path}/build-1/build.log"
+      File.expects(:file?).with(build_log).returns(true)
+      File.expects(:readable?).with(build_log).returns(true)
+      File.expects(:size).with(build_log).returns(14)
+      File.expects(:read).with(build_log).returns(['line 1', 'line 2'])
       assert_equal ['line 1', 'line 2'], Build.new(project, 1).output
     end
   end
@@ -83,7 +87,7 @@ class BuildTest < Test::Unit::TestCase
   
   def test_output_gives_empty_string_when_file_does_not_exist
     with_sandbox_project do |sandbox, project|
-      File.expects(:'read').with("#{project.path}/build-1/build.log").raises(StandardError)
+      File.expects(:file?).with("#{project.path}/build-1/build.log").returns(true)
       assert_equal "", Build.new(project, 1).output
     end
   end
@@ -198,7 +202,7 @@ class BuildTest < Test::Unit::TestCase
       build.expects(:execute).raises(CommandLine::ExecutionError.new(*%w(a b c d e)))
       build.run
       
-      assert_equal "build failed", build.error
+      assert_equal "", build.error
     end
   end
   

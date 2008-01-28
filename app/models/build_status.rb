@@ -28,8 +28,8 @@ class BuildStatus
     FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{SUCCESS}.in#{elapsed_time}s"
   end
   
-  def fail!(elapsed_time, error=nil)
-    File.open(error_message_file, "w+"){|f| f.write error }
+  def fail!(elapsed_time, error = nil)
+    File.open(error_message_file, "w+") { |f| f.write error } unless error.nil?
     FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{FAILED}.in#{elapsed_time}s"
   end
   

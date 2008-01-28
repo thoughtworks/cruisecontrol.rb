@@ -17,7 +17,7 @@ class Build
     label == project.last_build.label
   end
 
-  def fail!(error)
+  def fail!(error = nil)
     build_status.fail!(seconds_since(@start), error)
   end
   
@@ -48,8 +48,11 @@ EOF
 
       File.open(build_log, 'a'){|f| f << e.message }
       CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
-      error_message = e.is_a?(CommandLine::ExecutionError) ? "build failed" : e.message
-      fail!(error_message)
+      if e.is_a?(CommandLine::ExecutionError) # i.e., the build returned a non-zero status code
+        fail!
+      else
+        fail!(e.message)
+      end
     end
   end
   
@@ -90,23 +93,23 @@ EOF
   end
   
   def changeset
-    File.read(artifact('changeset.log')) rescue ''
+    @changeset ||= contents_for_display(artifact('changeset.log'))
   end
 
   def output
-    File.read(artifact('build.log')) rescue ''
+    @output ||= contents_for_display(artifact('build.log'))
   end
   
   def project_settings
-    File.read(artifact('cruise_config.rb')) rescue ''
+    @project_settings ||= contents_for_display(artifact('cruise_config.rb'))
   end
 
   def error
-    File.read(build_status.error_message_file) rescue ''
+    @project_settings ||= contents_for_display(build_status.error_message_file)
   end
 
   def plugin_errors
-    File.read(artifact('plugin_errors.log')) rescue ''
+    @plugin_errors ||= contents_for_display(artifact('plugin_errors.log'))
   end
 
   def time
@@ -135,6 +138,15 @@ EOF
   
   def artifact(file_name)
     File.join(artifacts_directory, file_name)
+  end
+
+  def contents_for_display(file)
+    return '' unless File.file?(file) && File.readable?(file)
+    if File.size(file) < 100 * 1024
+      File.read(file)
+    else
+      "#{file} is over 100 kbytes - too big to display in the dashboard"
+    end
   end
 
   def command
