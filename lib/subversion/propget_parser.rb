@@ -9,7 +9,7 @@ class Subversion::PropgetParser
         line = split[1]
       end
       split = line.split(" ")
-      directories["#{current_dir}/#{split[0]}"] = split[1] unless split[0].blank?
+      directories["#{current_dir}/#{split[0]}"] = split.last unless split[0].blank? || split.length > 2
     end
     directories
   end
