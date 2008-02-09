@@ -54,7 +54,7 @@ class Projects
   def checkout_local_copy(project)
     work_dir = File.join(project.path, 'work')
     FileUtils.mkdir_p work_dir
-    project.source_control.checkout work_dir
+    project.source_control.checkout
   end
 
   def write_config_example(project)

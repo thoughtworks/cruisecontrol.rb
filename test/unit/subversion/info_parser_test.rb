@@ -1,8 +1,8 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/../../test_helper'
 require 'revision'
 require 'changeset_entry'
 
-class SubversionInfoParserTest < Test::Unit::TestCase
+class Subversion::InfoParserTest < Test::Unit::TestCase
 
 INFO_XML_OUTPUT = <<-EOF
 <?xml version="1.0" encoding="utf-8"?>
@@ -148,7 +148,7 @@ EOF
   end
 
   def parse_info(svn_output)
-    SubversionInfoParser.new.parse(svn_output)
+    Subversion::InfoParser.new.parse(svn_output)
   end
 
   def assert_info_equal(expected_fields, info)

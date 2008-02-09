@@ -26,22 +26,20 @@ class SuccessfulBuildTriggerTest < Test::Unit::TestCase
     assert_equal "1", trigger.last_successful_build.label
   end
 
-  def test_revisions_to_build
+  def test_build_necessary
     trigger = SuccessfulBuildTrigger.new(@triggered_project, @triggering_project.name)
-    assert_equal [], trigger.revisions_to_build
+    assert !trigger.build_necessary?(reasons = [])
 
     create_build @triggering_project, '1'
-    @triggered_project.expects(:last_locally_known_revision).returns(Revision.new(100))
-    assert_equal [Revision.new("100")], trigger.revisions_to_build
+    assert trigger.build_necessary?(reasons = [])
     assert_equal '1', trigger.last_successful_build.label 
 
-    assert_equal [], trigger.revisions_to_build
+    assert !trigger.build_necessary?(reasons = [])
     assert_equal '1', trigger.last_successful_build.label
 
     create_build @triggering_project, '1.1'
 
-    @triggered_project.expects(:last_locally_known_revision).returns(Revision.new(100))
-    assert_equal [Revision.new("100")], trigger.revisions_to_build
+    assert trigger.build_necessary?(reasons = [])
     assert_equal '1.1', trigger.last_successful_build.label
   end
 

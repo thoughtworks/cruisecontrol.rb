@@ -101,14 +101,28 @@ class Test::Unit::TestCase
   
   class FakeSourceControl
     attr_reader :username
+    attr_accessor :path
     
-    def initialize(username)
+    def initialize(username = nil)
       @username = username
     end
     
-    def checkout(dir)
-      File.open("#{dir}/README", "w") {|f| f << "some text"}
+    def checkout
+      File.open("#{path}/README", "w") {|f| f << "some text"}
     end
     
-  end  
+    def up_to_date?(reasons)
+      true
+    end
+    
+    def latest_revision
+      nil
+    end
+  end
+end
+
+class File
+  def inspect
+    "File(#{path})"
+  end
 end

@@ -1,4 +1,4 @@
-class SubversionPropgetParser
+class Subversion::PropgetParser
   def parse(lines)
     directories = {}
     current_dir = nil

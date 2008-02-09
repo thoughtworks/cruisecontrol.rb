@@ -33,11 +33,24 @@ class SubversionTest < Test::Unit::TestCase
   EOF
 
   def test_options
-    svn = Subversion.new(:url => "file://foo", :username => "bob", :password => 'cha')
+    svn = Subversion.new(:url => "file://foo", 
+                         :username => "bob", 
+                         :password => 'cha', 
+                         :path => "bob",
+                         :error_log => "bob/svn.err")
 
     assert_equal("file://foo", svn.url)
     assert_equal("bob", svn.username)
     assert_equal("cha", svn.password)
+    assert_equal("bob", svn.path)
+    assert_equal("bob/svn.err", svn.error_log)
+  end
+  
+  def test_error_log_should_default_to_above_path
+    assert_equal("bob/../svn.err", Subversion.new(:path => "bob").error_log)
+    assert_equal("./../svn.err", Subversion.new.error_log)
+
+    assert_equal(".", Subversion.new.path)
   end
 
   def test_only_except_known_options
@@ -49,123 +62,57 @@ class SubversionTest < Test::Unit::TestCase
   def test_update_with_revision_number
     revision_number = 10
 
-    svn = Subversion.new
-    svn.expects(:execute).with(["svn", "--non-interactive", "update", "--revision", revision_number], {:stderr => './svn.err'}).returns("your mom")
+    svn = new_subversion
+    svn.expects(:svn).with("update", "--revision", revision_number).returns("your mom")
 
-    svn.update(dummy_project, Revision.new(revision_number))
+    svn.update(Revision.new(revision_number))
   end
 
   def test_latest_revision
-    svn = Subversion.new
+    svn = new_subversion
+    svn.expects(:svn).with("log", "--revision", "HEAD:1", "--limit", "1", "--verbose", "--xml").returns(LOG_ENTRY.split("\n"))
 
-    svn.expects(:info).with(dummy_project).returns(Subversion::Info.new(10, 10))
-    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:10", "--verbose", "--xml"],
-                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
-
-    revision = svn.latest_revision(dummy_project)
+    revision = svn.latest_revision
 
     assert_equal 18, revision.number
   end
 
-  def test_revisions_since_should_reverse_the_log_entries_and_skip_the_one_corresponding_to_current_revision
-    svn = Subversion.new
-    svn.check_externals = false
-
-    svn.expects(:revisions_since_for_url).with(dummy_project, 15).returns([Revision.new(18), Revision.new(17), Revision.new(15)])
-    revisions = svn.revisions_since(dummy_project, 15)
-
-    assert_equal [17, 18], numbers(revisions)
-  end
-
-  def test_revisions_since_should_return_all_revisions_when_curreent_revision_is_not_in_the_log_output
-    svn = Subversion.new
-    svn.check_externals = false
-
-    svn.expects(:revisions_since_for_url).with(dummy_project, 14).returns([Revision.new(18), Revision.new(17), Revision.new(15)])
-    revisions = svn.revisions_since(dummy_project, 14)
-
-    assert_equal [15, 17, 18], numbers(revisions)
-  end
-
-  def test_revisions_since_should_return_an_empty_array_for_empty_log_output
-    svn = Subversion.new
-    svn.check_externals = false
-
-    svn.expects(:revisions_since_for_url).with(dummy_project, 14).returns([])
-    revisions = svn.revisions_since(dummy_project, 14)
-
-    assert_equal [], numbers(revisions)
-  end
-
-  def test_revisions_since_should_support_check_externals_as_well_and_combine_all_revisions_together
-    svn = Subversion.new
-    svn.check_externals = true
-    svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
-    svn.expects(:revisions_since_for_url).with(dummy_project, 14).returns([Revision.new(18), Revision.new(17)])
-    svn.expects(:revisions_since_for_url).with(dummy_project, 14, "svn+ssh://a").returns([Revision.new(18), Revision.new(15)])
-    svn.expects(:revisions_since_for_url).with(dummy_project, 14, "svn+ssh://b").returns([])
-
-    revisions = svn.revisions_since(dummy_project, 14)
-    assert_equal [15, 17, 18], numbers(revisions)
-  end
-
   def test_externals
-    svn = Subversion.new
-    svn.expects(:execute).with(["svn", "--non-interactive", "propget", "-R", "svn:externals"], {:stderr => './svn.err'}).returns("propget results")
+    svn = new_subversion
+    svn.expects(:svn).with("propget", "-R", "svn:externals").returns("propget results")
     parser = mock("parser")
-    SubversionPropgetParser.expects(:new).returns(parser)
+    Subversion::PropgetParser.expects(:new).returns(parser)
     parser.expects(:parse).returns("parse results")
 
-    assert_equal("parse results", svn.externals(dummy_project))
-  end
-
-  def test_revisions_since_for_url_should_work_without_url_argument
-    svn = Subversion.new
-
-    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:14", "--verbose", "--xml"],
-                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
-    revisions = svn.revisions_since_for_url(dummy_project, 14)
-    assert_equal [18, 17, 15], numbers(revisions)
-  end
-
-  def test_revisions_since_for_url_should_support_url_argument
-    svn = Subversion.new
-    svn.expects(:execute).with(["svn", "--non-interactive", "log", "--revision", "HEAD:14", "--verbose", "--xml", "svn+ssh://a"],
-                               {:stderr => './svn.err'}).yields(StringIO.new(LOG_ENTRY))
-    revisions = svn.revisions_since_for_url(dummy_project, 14, "svn+ssh://a")
-    assert_equal [18, 17, 15], numbers(revisions)
+    assert_equal("parse results", svn.externals)
   end
 
   def test_checkout_with_no_user_password
-    svn = Subversion.new(:url => 'http://foo.com/svn/project')
-    svn.expects(:execute).with(["svn", "--non-interactive", "co", "http://foo.com/svn/project", "."])
+    svn = new_subversion(:url => 'http://foo.com/svn/project')
+    svn.expects(:svn).with("co", "http://foo.com/svn/project", ".")
 
-    svn.checkout('.')
+    svn.checkout
   end
 
   def test_should_write_error_info_to_log_when_svn_server_not_available
     in_sandbox do |sandbox|
       sandbox.new :file => "project/work/empty", :with_content => ""
-      project = Object.new
-      project.stubs(:local_checkout).returns("#{sandbox.root}/project/work")
-      project.stubs(:path).returns("#{sandbox.root}/project")
-      svn = Subversion.new
+      svn = new_subversion(:path => "project/work", :error_log => "project/svn.err")
       begin
-        svn.revisions_since(project, 1)
+        svn.up_to_date?
         flunk
       rescue BuilderError => e
         assert_match /not a working copy/, e.message
       end
-      
     end
   end
 
   def test_checkout_with_user_password
-    svn = Subversion.new(:url => 'http://foo.com/svn/project', :username => 'jer', :password => "crap")
-    svn.expects(:execute).with(["svn", "--non-interactive", "co", "http://foo.com/svn/project", ".", "--username",
-                                "jer", "--password", "crap"])
+    svn = new_subversion(:url => 'http://foo.com/svn/project', :username => 'jer', :password => "crap")
+    svn.expects(:svn).with("co", "http://foo.com/svn/project", ".", "--username",
+                                "jer", "--password", "crap")
 
-    svn.checkout('.')
+    svn.checkout
   end
   
   def test_configure_subversion_not_to_check_externals
@@ -181,16 +128,15 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_checkout_with_revision
     svn = Subversion.new(:url => 'http://foo.com/svn/project')
-    svn.expects(:execute).with(["svn", "--non-interactive", "co", "http://foo.com/svn/project", ".", "--revision", 5])
+    svn.expects(:svn).with("co", "http://foo.com/svn/project", ".", "--revision", 5)
 
-    svn.checkout('.', Revision.new(5))
+    svn.checkout(Revision.new(5))
   end
   
   def test_allowing_interaction
-    svn = Subversion.new(:url => 'svn://foo.com/', :interactive => true)
-    svn.expects(:execute).with(["svn", "co", "svn://foo.com/", "."])
-    svn.checkout('.')
-    svn.verify
+    svn = new_subversion(:url => 'svn://foo.com/', :interactive => true)
+    svn.expects(:svn).with("co", "svn://foo.com/", ".")
+    svn.checkout
   end
 
   def test_checkout_requires_url
@@ -206,27 +152,94 @@ class SubversionTest < Test::Unit::TestCase
   def test_clean_checkout
     in_sandbox do
       @sandbox.new :file => 'project/something.rb'
-      dir = @sandbox.root + "/project"
-
-      svn = Subversion.new(:url => 'http://foo.com/svn/project')
-      svn.expects(:execute).with(["svn", "--non-interactive", "co", "http://foo.com/svn/project", dir, "--revision", 5])
-
-      svn.clean_checkout(dir, Revision.new(5))
+      assert File.directory?("project")
       
-      assert !File.directory?(dir)
+      svn = Subversion.new(:url => 'http://foo.com/svn/project', :path => "project")
+      svn.expects(:svn).with("co", "http://foo.com/svn/project", "project", "--revision", 5)
+
+      svn.clean_checkout(Revision.new(5))
+      
+      assert !File.directory?("project")
     end    
   end
   
   def test_output_of_subversion_to_io_stream
     in_sandbox do
       svn = Subversion.new(:url => 'url')
-      svn.expects(:svn).returns('echo hello world')
+      def svn.svn(*args, &block)
+        execute_in_local_copy 'echo hello world', &block
+      end
 
       io = StringIO.new
-      svn.clean_checkout('.', Revision.new(5), io)
+      svn.clean_checkout(Revision.new(5), io)
       
       assert_equal "hello world\n", io.string
     end    
+  end
+  
+  def test_up_to_date_should_deal_with_different_revisions
+    svn = new_subversion
+    svn.expects(:last_locally_known_revision).returns(Revision.new(1))
+    svn.expects(:latest_revision).returns(Revision.new(4))
+    svn.expects(:revisions_since).with(1).returns([Revision.new(2), Revision.new(4)])
+    assert !svn.up_to_date?(reasons = [])
+    assert_equal ["New revision 4 detected",
+                  [Revision.new(2), Revision.new(4)]], reasons
+  end
+    
+  def test_up_to_date_should_deal_with_same_revisions
+    svn = new_subversion
+    svn.expects(:last_locally_known_revision).returns(Revision.new(1))
+    svn.expects(:latest_revision).returns(Revision.new(1))
+    
+    assert svn.up_to_date?(reasons = [])
+    assert_equal [], reasons
+  end
+    
+  def test_up_to_date_should_check_externals_and_return_false
+    in_sandbox do
+      sandbox.new :directory => "a"
+      sandbox.new :directory => "b"
+
+      svn = new_subversion
+      a_svn = Object.new
+      b_svn = new_subversion
+      Subversion.expects(:new).with(:path => "a", :url => "svn+ssh://a").returns(a_svn)
+      Subversion.expects(:new).with(:path => "b", :url => "svn+ssh://b").returns(b_svn)
+
+      svn.check_externals = true
+      svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
+      svn.expects(:latest_revision).returns(Revision.new(14))
+      a_svn.expects(:up_to_date?).returns(true)
+      b_svn.expects(:last_locally_known_revision).returns(Revision.new(20))
+      b_svn.expects(:latest_revision).returns(Revision.new(30))
+      b_svn.expects(:revisions_since).with(20).returns([Revision.new(24)])
+
+      assert !svn.up_to_date?(reasons = [], 14)
+      assert_equal ["New revision 30 detected in external 'b'", [Revision.new(24)]], reasons
+    end
+  end
+
+  def test_up_to_date_should_check_externals_and_return_true
+    in_sandbox do
+      sandbox.new :directory => "a"
+      sandbox.new :directory => "b"
+
+      svn = new_subversion
+      a_svn = Object.new
+      b_svn = Object.new
+      Subversion.expects(:new).with(:path => "a", :url => "svn+ssh://a").returns(a_svn)
+      Subversion.expects(:new).with(:path => "b", :url => "svn+ssh://b").returns(b_svn)
+
+      svn.check_externals = true
+      svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
+      svn.expects(:latest_revision).returns(Revision.new(14))
+      a_svn.expects(:up_to_date?).returns(true)
+      b_svn.expects(:up_to_date?).returns(true)
+
+      assert svn.up_to_date?(reasons = [], 14)
+      assert_equal [], reasons
+    end
   end
 
   def numbers(revisions)
@@ -235,9 +248,7 @@ class SubversionTest < Test::Unit::TestCase
     }
   end
 
-  DummyProject = Struct.new :local_checkout, :path
-  def dummy_project
-    DummyProject.new('.', '.')
+  def new_subversion(options = {})
+    Subversion.new({:path => '.', :error_log => "./svn.err"}.merge(options))
   end
-
 end

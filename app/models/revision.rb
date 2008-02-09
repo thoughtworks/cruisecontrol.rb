@@ -28,4 +28,8 @@ Revision #{number} committed by #{committed_by} on #{time.strftime('%Y-%m-%d %H:
   def to_i
     @number
   end
+  
+  def inspect
+    "Revision(#{number})"
+  end
 end

@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
 class BuilderStatusTest < Test::Unit::TestCase
   def setup
     @project = Project.new('project')
-    @project.path = 'project_root'
+    @project.stubs(:path).returns('project_root')
     @builder_status = BuilderStatus.new(@project)
     @mock_build = Object.new
     ProjectBlocker.stubs(:blocked?).returns(true)

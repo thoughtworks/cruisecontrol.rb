@@ -13,4 +13,8 @@ class ProjectTest < Test::Unit::TestCase
     assert small == another_small 
     assert small != large
   end
+  
+  def test_revision_can_be_used_with_uniq
+    
+  end
 end

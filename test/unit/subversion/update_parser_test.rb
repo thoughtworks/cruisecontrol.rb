@@ -1,8 +1,8 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/../../test_helper'
 require 'revision'
 require 'changeset_entry'
 
-class SubversionUpdateParserTest < Test::Unit::TestCase
+class Subversion::UpdateParserTest < Test::Unit::TestCase
 
 UPDATE_OUTPUT = <<EOF
 A    failing_project
@@ -31,6 +31,6 @@ EOF
   end
 
   def parse_update(log_entry)
-    SubversionUpdateParser.new.parse(log_entry.split("\n"))
+    Subversion::UpdateParser.new.parse(log_entry.split("\n"))
   end
 end

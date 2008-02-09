@@ -8,15 +8,16 @@ class SuccessfulBuildTrigger
     @last_successful_build = last_successful(@triggering_project.builds)
   end
 
-  def revisions_to_build
+  def build_necessary?(reasons)
     new_last_successful_build = last_successful(@triggering_project.builds)
 
     if new_last_successful_build.nil? ||
        @last_successful_build && (@last_successful_build.label == new_last_successful_build.label)
-      []
+      false
     else
-      @last_successful_build = new_last_successful_build           
-      [@triggered_project.last_locally_known_revision]
+      @last_successful_build = new_last_successful_build
+      reasons << "Triggered by project #{@triggering_project_name}'s build #{@last_successful_build.label}"
+      true
     end
   end
 

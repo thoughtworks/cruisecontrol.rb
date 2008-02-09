@@ -1,7 +1,7 @@
 require 'date'
 require 'xml_simple'
 
-class SubversionLogParser
+class Subversion::LogParser
 
   def parse(lines)
     return [] if lines.empty?

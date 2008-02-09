@@ -35,7 +35,7 @@ module ProjectsHelper
 
   def revisions_in_build(build)    
     changeset = build.changeset
-    ChangesetLogParser.new.parse_log changeset.split("\n")
+    Subversion::ChangesetLogParser.new.parse_log changeset.split("\n")
   end
 
   # Re-map our project statuses to match the project statuses recognized

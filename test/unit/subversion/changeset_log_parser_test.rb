@@ -1,8 +1,8 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/../../test_helper'
 require 'revision'
 require 'changeset_entry'
 
-class ChangesetLogParserTest < Test::Unit::TestCase
+class Subversion::ChangesetLogParserTest < Test::Unit::TestCase
 
 LOG_WITH_SINGLE_REVISION = <<EOF
 Revision 204.1 committed by leonard0 on 2007-02-12 15:32:55
@@ -47,7 +47,7 @@ EOF
                                     'Detect when X occurs and trigger Y to happen.',
                                     [ChangesetEntry.new('M', '/trunk/app/models/project.rb'),
                                      ChangesetEntry.new('M', '/trunk/test/unit/project_test.rb')])]
-    assert_equal expected_result, ChangesetLogParser.new.parse_log(LOG_WITH_SINGLE_REVISION.split("\n"))
+    assert_equal expected_result, Subversion::ChangesetLogParser.new.parse_log(LOG_WITH_SINGLE_REVISION.split("\n"))
   end
   
   def test_can_parse_LOG_WITH_MULTIPLE_REVISIONS
@@ -61,7 +61,7 @@ EOF
                                      ChangesetEntry.new('M', '/trunk/app/models/projects.rb'),
                                      ChangesetEntry.new('M', '/trunk/app/views/projects/index.rhtml')])]
                                                                           
-    assert_equal expected_result, ChangesetLogParser.new.parse_log(LOG_WITH_MULTIPLE_REVISIONS.split("\n"))
+    assert_equal expected_result, Subversion::ChangesetLogParser.new.parse_log(LOG_WITH_MULTIPLE_REVISIONS.split("\n"))
   end
   
   def test_can_parse_LOG_WITH_NO_COMMENT
@@ -69,7 +69,7 @@ EOF
                                     '',
                                     [ChangesetEntry.new('M', '/trunk/app/models/project.rb'),
                                      ChangesetEntry.new('M', '/trunk/test/unit/project_test.rb')])]
-    assert_equal expected_result, ChangesetLogParser.new.parse_log(LOG_WITH_NO_COMMENT.split("\n"))  
+    assert_equal expected_result, Subversion::ChangesetLogParser.new.parse_log(LOG_WITH_NO_COMMENT.split("\n"))  
   end
   
   def test_can_parse_LOG_WITH_MULTIPLE_LINED_COMMENT
@@ -77,6 +77,6 @@ EOF
                                     "\nLine one\n\nLine two\n",
                                     [ChangesetEntry.new('M', '/trunk/app/foo.rb'),
                                      ChangesetEntry.new('M', '/trunk/tests/foo_test.rb')])]
-    assert_equal expected_result, ChangesetLogParser.new.parse_log(LOG_WITH_MULTIPLE_LINED_COMMENT.split("\n"))  
+    assert_equal expected_result, Subversion::ChangesetLogParser.new.parse_log(LOG_WITH_MULTIPLE_LINED_COMMENT.split("\n"))  
   end  
 end

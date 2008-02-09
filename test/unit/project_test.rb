@@ -1,5 +1,6 @@
-require 'date'
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'date'
+require 'ostruct'
 require 'email_notifier'
 require 'fileutils'
 
@@ -7,7 +8,7 @@ class ProjectTest < Test::Unit::TestCase
   include FileSandbox
 
   def setup
-    @svn = Object.new
+    @svn = FakeSourceControl.new
     @project = Project.new("lemmings")
     @project.source_control = @svn
   end
@@ -70,7 +71,7 @@ class ProjectTest < Test::Unit::TestCase
       @project.stubs(:builds).returns([])
       @project.stubs(:config_modified?).returns(false)
       @svn.stubs(:latest_revision).returns(revision)
-      @svn.expects(:update).with(@project, revision)
+      @svn.expects(:update).with(revision)
 
       build.expects(:run)
 
@@ -85,11 +86,14 @@ class ProjectTest < Test::Unit::TestCase
       revision = new_revision(5)
       build = new_mock_build('5')
       build.stubs(:artifacts_directory).returns(sandbox.root)
+      build.stubs(:successful?).returns(false)
+      build.stubs(:failed?).returns(false)
 
-      @project.stubs(:builds).returns([])
+      @project.stubs(:builds).returns([OpenStruct.new(:successful? => false, :failed? => false)])
       @project.stubs(:config_modified?).returns(false)
+      @svn.stubs(:up_to_date?).with{|reasons| reasons << [revision]}.returns(false)
       @svn.stubs(:latest_revision).returns(revision)
-      @svn.expects(:update).with(@project, revision)
+      @svn.expects(:update).with(revision)
 
       build.expects(:run)
 
@@ -118,8 +122,6 @@ class ProjectTest < Test::Unit::TestCase
 
       # event expectations
       listener = Object.new
-
-      listener.expects(:polling_source_control)
       listener.expects(:build_loop_failed).with(error)
       @project.add_plugin listener
       assert_raises(error) { @project.build_if_necessary }
@@ -133,7 +135,7 @@ class ProjectTest < Test::Unit::TestCase
       error = StandardError.new("something bad happened")
       @project.expects(:update_project_to_revision).raises(error)
 
-      assert_raises(error) { @project.build([new_revision(5)]) }
+      assert_raises(error) { @project.build(new_revision(5)) }
       
       build = @project.builds.first
       assert build.failed?
@@ -168,7 +170,7 @@ class ProjectTest < Test::Unit::TestCase
       listener.expects(:build_broken)
       @project.add_plugin listener
 
-      @project.build([new_revision(2)])
+      @project.build(new_revision(2))
     end
 
   end
@@ -196,7 +198,7 @@ class ProjectTest < Test::Unit::TestCase
       listener.expects(:configuration_modified)
       @project.add_plugin listener
 
-      assert_throws(:reload_project) { @project.build([revision]) }
+      assert_throws(:reload_project) { @project.build(revision) }
     end
   end
 
@@ -259,7 +261,7 @@ class ProjectTest < Test::Unit::TestCase
       listener.expects(:build_fixed)
       @project.add_plugin listener
 
-      @project.build([new_revision(2)])
+      @project.build(new_revision(2))
     end
 
   end
@@ -274,8 +276,9 @@ class ProjectTest < Test::Unit::TestCase
       build = new_mock_build('2')
       @project.stubs(:last_build).returns(nil)
       build.stubs(:artifacts_directory).returns(sandbox.root)      
-      @svn.stubs(:revisions_since).with(@project, 1).returns([revision])
-      @svn.expects(:update).with(@project, revision)
+      @svn.stubs(:up_to_date?).with([]).returns(false)
+      @svn.expects(:update).with(revision)
+      @svn.expects(:latest_revision).returns(revision)
 
       build.expects(:run)
 
@@ -400,10 +403,10 @@ class ProjectTest < Test::Unit::TestCase
     project.stubs(:new_revisions).returns(nil)
          
     Build.expects(:new).with(project, '20.2').returns(new_build) 
-    project.build([new_revision(20)])
+    project.build(new_revision(20))
 
     Build.expects(:new).with(project, '2').returns(new_build)
-    project.build([new_revision(2)])
+    project.build(new_revision(2))
   end
   
   def test_should_load_configuration_from_work_directory_and_then_root_directory
@@ -504,9 +507,9 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.do_clean_checkout :always
       @project.path = sandbox.root
-      @svn.expects(:clean_checkout).with{|path, rev| path == @project.path + "/work" && rev == new_revision(5) }
+      @svn.expects(:clean_checkout).with(Revision.new(5), anything)
 
-      @project.build([new_revision(5)])
+      @project.build(new_revision(5))
     end
   end
   
@@ -616,16 +619,6 @@ class ProjectTest < Test::Unit::TestCase
                   project.triggered_by
   end
 
-  def test_revisions_to_build_should_merge_revisions_from_triggers
-    project = Project.new('foo')
-    stub_trigger_1 = Object.new
-    stub_trigger_2 = Object.new
-    project.triggered_by = [stub_trigger_1, stub_trigger_2]
-    stub_trigger_1.stubs(:revisions_to_build).returns([Revision.new(2)])
-    stub_trigger_2.stubs(:revisions_to_build).returns([Revision.new(1), Revision.new(3)])
-    assert_equal [Revision.new(1), Revision.new(2), Revision.new(3)], project.revisions_to_build
-  end
-  
   def test_builds_are_serialized
     Configuration.stubs(:serialize_builds).returns(true)
     project = Project.new("test")
@@ -633,6 +626,12 @@ class ProjectTest < Test::Unit::TestCase
     project.expects(:build_without_serialization)
 
     project.build []
+  end
+  
+  def test_keep_scm_and_path_in_sync
+    assert_equal(@project.path + "/work", @svn.path)
+    @project.path = "foo"
+    assert_equal(File.expand_path("foo/work"), @svn.path)
   end
   
   private

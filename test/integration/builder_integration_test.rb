@@ -12,27 +12,30 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
   def test_new_revisions
     with_project('passing_project', :revision => 2) do |project, sandbox|
-      expected_revisions = [
-          Revision.new(3, 'averkhov', DateTime.parse('2007-01-11T21:01:43.441137Z'),
-                       'another revision',
-                       [ChangesetEntry.new('M', '/passing_project/revision_label.txt')]),
-          Revision.new(4, 'averkhov', DateTime.parse('2007-01-11T21:02:03.471105Z'),
-                       'and one more revision, for good measure',
-                       [ChangesetEntry.new('M', '/passing_project/revision_label.txt')]),
-          Revision.new(7, 'averkhov', DateTime.parse('2007-01-13T01:05:26.919332Z'),
-                       'Making both revision labels up to date',
-                       [ChangesetEntry.new('M', '/passing_project/revision_label.txt'),
-                        ChangesetEntry.new('M', '/failing_project/revision_label.txt')])
-          ]
-      actual = Subversion.new.revisions_since(project, 2)
-      
-      assert_equal expected_revisions, actual
+      expected_reasons = 
+"New revision 7 detected
+Revision 7 committed by averkhov on 2007-01-13 01:05:26
+Making both revision labels up to date
+  M /passing_project/revision_label.txt
+  M /failing_project/revision_label.txt
+
+Revision 4 committed by averkhov on 2007-01-11 21:02:03
+and one more revision, for good measure
+  M /passing_project/revision_label.txt
+
+Revision 3 committed by averkhov on 2007-01-11 21:01:43
+another revision
+  M /passing_project/revision_label.txt
+"
+      assert_equal false, project.source_control.up_to_date?(reasons = [], 3)
+      assert_equal expected_reasons, reasons.join("\n")
     end
   end
 
   def test_new_revisions_should_return_an_empty_array_for_uptodate_local_copy
     with_project 'passing_project' do |project, sandbox|
-      assert_equal [],  Subversion.new.revisions_since(project, 7)
+      assert_equal true, project.source_control.up_to_date?(reasons = [], 7)
+      assert_equal "", reasons.join("\n")
     end
   end
 
@@ -44,7 +47,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       project.config_tracker.update_contents
 
       assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
-       result = project.build_if_necessary
+      result = project.build_if_necessary
 
       assert result.is_a?(Build)
 
@@ -224,11 +227,12 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
   def with_project(project_name, options = {}, &block)
     in_sandbox do |sandbox|
-      svn = Subversion.new :url => "#{fixture_repository_url}/#{project_name}"
-      svn.checkout "#{sandbox.root}/#{project_name}/work", options[:revision], StringIO.new
+      svn = Subversion.new :url => "#{fixture_repository_url}/#{project_name}", 
+                           :path => "#{project_name}/work"
+      svn.checkout options[:revision], StringIO.new
       
       project = Project.new(project_name)
-      project.path = "#{sandbox.root}/#{project_name}"
+      project.path = "#{project_name}"
 
       block.call(project, sandbox)
     end

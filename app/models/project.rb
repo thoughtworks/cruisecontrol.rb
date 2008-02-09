@@ -26,10 +26,10 @@ class Project
   attr_writer :local_checkout 
   attr_accessor :source_control, :scheduler
 
-  def initialize(name, source_control = Subversion.new)
-    @name, @source_control = name, source_control
-
+  def initialize(name, scm = Subversion.new)
+    @name = name
     @path = File.join(CRUISE_DATA_ROOT, 'projects', @name)
+    self.source_control = scm
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @plugins_by_name = {}
@@ -39,6 +39,11 @@ class Project
     @error_message = ''
     @triggers = [ChangeInSourceControlTrigger.new(self)]
     instantiate_plugins
+  end
+  
+  def source_control=(value)
+    value.path = local_checkout
+    @source_control = value
   end
   
   def load_and_remember(file)
@@ -58,7 +63,7 @@ class Project
         if retried_after_update
           raise
         else
-          @source_control.update(self)
+          @source_control.update
           retried_after_update = true
           retry
         end
@@ -73,8 +78,11 @@ class Project
   end
 
   def path=(value)
+    value = File.expand_path(value)
     @config_tracker = ProjectConfigTracker.new(value)
     @path = value
+    @source_control.path = local_checkout
+    @path
   end
 
   def instantiate_plugins
@@ -197,14 +205,11 @@ class Project
 
   def build_if_necessary
     begin
-      revisions = revisions_to_build
-      if revisions.empty?
-        notify :no_new_revisions_detected
-        return nil
-      else
+      if build_necessary?(reasons = [])
         remove_build_requested_flag_file if build_requested?
-        notify(:new_revisions_detected, revisions)
-        return build(revisions)
+        return build(source_control.latest_revision, reasons)
+      else
+        return nil
       end
     rescue => e
       unless e.message.include? "No commit found in the repository."
@@ -217,15 +222,13 @@ class Project
     end
   end
 
-  def revisions_to_build
-    @triggers.collect(&:revisions_to_build).flatten.sort.uniq  
-  end
-
-  def new_revisions
+  #todo - test
+  def build_necessary?(reasons)
     if builds.empty?
-      [@source_control.latest_revision(self)].compact
+      reasons << "This is the first build"
+      true
     else 
-      @source_control.revisions_since(self, builds.last.label.to_i)
+      @triggers.any? {|t| t.build_necessary?(reasons) }
     end
   end
   
@@ -268,35 +271,33 @@ class Project
       File.open(build.artifact('source_control.log'), 'w') do |f| 
         start = Time.now
         f << "checking out build #{build.label}, this could take a while...\n"
-        @source_control.clean_checkout(local_checkout, revision, f)
+        @source_control.clean_checkout(revision, f)
         f << "\ntook #{Time.now - start} seconds"
       end
     else
-      @source_control.update(self, revision)
+      @source_control.update(revision)
     end
   end
   
-  def build(revisions = new_revisions)
+  def build(revision = source_control.latest_revision, reasons = [])
     if Configuration.serialize_builds
-      BuildSerializer.serialize(self) { build_without_serialization(revisions) }
+      BuildSerializer.serialize(self) { build_without_serialization(revision, reasons) }
     else
-      build_without_serialization(revisions)
+      build_without_serialization(revision, reasons)
     end
   end
         
-  def build_without_serialization(revisions = new_revisions)
-    revisions = [@source_control.latest_revision(self)].compact if revisions.empty? # we always want to build in this method
-    return if revisions.empty?                                                      # this will only happen in the case that there are no revisions yet
+  def build_without_serialization(revision, reasons)
+    return if revision.nil? # this will only happen in the case that there are no revisions yet
 
     notify(:build_initiated)
     previous_build = last_build    
-    last_revision = revisions.last
     
-    build = Build.new(self, create_build_label(last_revision.number))
+    build = Build.new(self, create_build_label(revision.number))
     
     begin
-      log_changeset(build.artifacts_directory, revisions)
-      update_project_to_revision(build, last_revision)
+      log_changeset(build.artifacts_directory, reasons)
+      update_project_to_revision(build, revision)
 
       if config_tracker.config_modified?
         build.abort
@@ -308,7 +309,6 @@ class Project
       build.run
       notify(:build_finished, build)
     rescue 
-
       build.fail!($!.to_s)
       raise
     end
@@ -357,9 +357,9 @@ class Project
     end
   end
   
-  def log_changeset(artifacts_directory, revisions)
+  def log_changeset(artifacts_directory, reasons)
     File.open(File.join(artifacts_directory, 'changeset.log'), 'w') do |f|
-      revisions.each { |rev| f << rev.to_s << "\n" }
+      reasons.each { |reason| f << reason.to_s << "\n" }
     end
   end
 
@@ -428,12 +428,6 @@ class Project
   def triggered_by=(triggers)
     @triggers = [triggers].flatten
   end
-
-  def last_locally_known_revision
-    # TODO: make Subversion#info() create a real Revision instance, instead of just a number
-    Revision.new(@source_control.last_locally_known_revision(self))
-  end
-
 
   private
   

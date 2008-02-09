@@ -1,8 +1,8 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/../../test_helper'
 require 'revision'
 require 'changeset_entry'
 
-class SubversionLogParserTest < Test::Unit::TestCase
+class Subversion::LogParserTest < Test::Unit::TestCase
 SIMPLE_LOG_ENTRY = <<EOF
 <?xml version="1.0"?>
 <log>
@@ -117,7 +117,7 @@ versioning
   end
 
   def parse_log(log_entry)
-    SubversionLogParser.new.parse(log_entry.split("\n"))
+    Subversion::LogParser.new.parse(log_entry.split("\n"))
   end
 
 end

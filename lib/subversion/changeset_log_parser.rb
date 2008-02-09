@@ -1,5 +1,4 @@
-class ChangesetLogParser
-
+class Subversion::ChangesetLogParser
   def parse_log(lines)
     return [] if lines.empty?
     revisions = []

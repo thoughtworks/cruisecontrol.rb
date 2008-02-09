@@ -1,4 +1,4 @@
-class SubversionUpdateParser
+class Subversion::UpdateParser
 
   UPDATE_PATTERN = /^(...)  (\S.*)$/
   def parse(lines)

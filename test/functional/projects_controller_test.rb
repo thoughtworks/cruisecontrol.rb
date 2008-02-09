@@ -2,7 +2,6 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'projects_controller'
 require 'rexml/document'
 require 'rexml/xpath'
-require 'changeset_log_parser'
 # Re-raise errors caught by the controller.
 class ProjectsController
   def rescue_action(e) raise end
@@ -234,7 +233,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
 
   def stub_change_set_parser
     mock = Object.new
-    ChangesetLogParser.stubs(:new).returns(mock)
+    Subversion::ChangesetLogParser.stubs(:new).returns(mock)
     mock.expects(:parse_log).returns([])
   end
 
