@@ -4,6 +4,7 @@ Todo
 externals
 - docs
 - changesets
+- what if external dir doesn't exist yet
 
 Questions
 ---------

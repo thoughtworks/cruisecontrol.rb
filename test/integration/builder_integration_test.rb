@@ -3,6 +3,16 @@ require File.dirname(__FILE__) + '/../test_helper'
 class BuilderIntegrationTest < Test::Unit::TestCase
   include FileSandbox
 
+  def test_subversion_log_should_work_if_it_has_either_existing_path_or_url
+    with_project 'passing_project' do |project, sandbox|
+      svn = project.source_control
+      
+      Subversion.new(:path => svn.path).latest_revision
+      Subversion.new(:path => 'foo', :url => fixture_repository_url).latest_revision
+      assert_raises { Subversion.new(:path => 'foo').latest_revision }
+    end
+  end
+  
   def test_checkout
     # with_project calls svn.checkout
     with_project 'passing_project' do |project, sandbox|

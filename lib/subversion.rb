@@ -43,7 +43,7 @@ class Subversion
     options << "--revision" << revision_number(revision) if revision
 
     # need to read from command output, because otherwise tests break
-    svn('co', *options) do |io| 
+    svn('co', options) do |io| 
       begin
         while line = io.gets
           stdout.puts line
@@ -54,11 +54,12 @@ class Subversion
   end
 
   def last_locally_known_revision
+    return Revision.new(-1) unless File.exist?(path)
     Revision.new(info.last_changed_revision)
   end
 
   def latest_revision
-    svn_output = svn 'log', '--revision', 'HEAD:1', '--limit', '1', '--verbose', '--xml'
+    svn_output = log "HEAD", "1", ['--limit', '1']
     Subversion::LogParser.new.parse(svn_output).first
   end
   
@@ -83,12 +84,12 @@ class Subversion
 
   def update(revision = nil)
     revision_number = revision ? revision_number(revision) : 'HEAD'
-    svn_output = svn('update', "--revision", revision_number)
+    svn_output = svn('update', ["--revision", revision_number])
     Subversion::UpdateParser.new.parse(svn_output)
   end
 
   def externals
-    svn_output = svn('propget', '-R', 'svn:externals')
+    svn_output = svn('propget', ['-R', 'svn:externals'])
     Subversion::PropgetParser.new.parse(svn_output)
   end
   
@@ -100,50 +101,58 @@ class Subversion
     log_parser.parse(svn_output)
   end
 
-  def log(from, to, url = @url)
-    svn('log', "--revision", "#{from}:#{to}", '--verbose', '--xml', url)
+  def log(from, to, arguments = [])
+    svn('log', arguments + ["--revision", "#{from}:#{to}", '--verbose', '--xml', url], :execute_locally => url.blank?)
   end
   
   def info
-    svn_output = svn('info', "--xml")
+    svn_output = svn('info', ["--xml"])
     Subversion::InfoParser.new.parse(svn_output)
   end
 
-  def svn(operation, *options, &block)
+  def svn(operation, arguments, options = {}, &block)
     command = ["svn"]
     command << "--non-interactive" unless @interactive
     command << operation
-    command += options.compact
+    command += arguments.compact
     command
     
-    execute_in_local_copy(command, &block)
+    execute_in_local_copy(command, options, &block)
   end
 
   def revision_number(revision)
     revision.respond_to?(:number) ? revision.number : revision.to_i
   end
 
-  def execute_in_local_copy(command, &block)
+  def execute_in_local_copy(command, options, &block)
     if block_given?
       execute(command, &block)
     else
       error_log = File.expand_path(self.error_log)
-      Dir.chdir(path) do
-        FileUtils.rm_f(error_log)
-        FileUtils.touch(error_log)
-        execute(command, :stderr => error_log) do |io| 
-          result = io.readlines 
-          begin 
-            error_message = File.open(error_log){|f|f.read}.strip.split("\n")[1] || ""
-          rescue
-            error_message = ""
-          ensure
-            FileUtils.rm_f(error_log)
-          end
-          raise BuilderError.new(error_message, "svn_error") unless error_message.empty?
-          return result
+      if options[:execute_locally] != false
+        Dir.chdir(path) do
+          execute_with_error_log(command, error_log)
         end
+      else
+        execute_with_error_log(command, error_log)
       end
+    end
+  end
+  
+  def execute_with_error_log(command, error_log)
+    FileUtils.rm_f(error_log)
+    FileUtils.touch(error_log)
+    execute(command, :stderr => error_log) do |io| 
+      result = io.readlines 
+      begin 
+        error_message = File.open(error_log){|f|f.read}.strip.split("\n")[1] || ""
+      rescue
+        error_message = ""
+      ensure
+        FileUtils.rm_f(error_log)
+      end
+      raise BuilderError.new(error_message, "svn_error") unless error_message.empty?
+      return result
     end
   end
   

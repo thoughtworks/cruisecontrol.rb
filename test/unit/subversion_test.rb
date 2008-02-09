@@ -63,14 +63,14 @@ class SubversionTest < Test::Unit::TestCase
     revision_number = 10
 
     svn = new_subversion
-    svn.expects(:svn).with("update", "--revision", revision_number).returns("your mom")
+    svn.expects(:svn).with("update", ["--revision", revision_number]).returns("your mom")
 
     svn.update(Revision.new(revision_number))
   end
 
   def test_latest_revision
     svn = new_subversion
-    svn.expects(:svn).with("log", "--revision", "HEAD:1", "--limit", "1", "--verbose", "--xml").returns(LOG_ENTRY.split("\n"))
+    svn.expects(:log).with("HEAD", "1", ["--limit", "1"]).returns(LOG_ENTRY.split("\n"))
 
     revision = svn.latest_revision
 
@@ -79,7 +79,7 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_externals
     svn = new_subversion
-    svn.expects(:svn).with("propget", "-R", "svn:externals").returns("propget results")
+    svn.expects(:svn).with("propget", ["-R", "svn:externals"]).returns("propget results")
     parser = mock("parser")
     Subversion::PropgetParser.expects(:new).returns(parser)
     parser.expects(:parse).returns("parse results")
@@ -89,7 +89,7 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_checkout_with_no_user_password
     svn = new_subversion(:url => 'http://foo.com/svn/project')
-    svn.expects(:svn).with("co", "http://foo.com/svn/project", ".")
+    svn.expects(:svn).with("co", ["http://foo.com/svn/project", "."])
 
     svn.checkout
   end
@@ -109,8 +109,8 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_checkout_with_user_password
     svn = new_subversion(:url => 'http://foo.com/svn/project', :username => 'jer', :password => "crap")
-    svn.expects(:svn).with("co", "http://foo.com/svn/project", ".", "--username",
-                                "jer", "--password", "crap")
+    svn.expects(:svn).with("co", ["http://foo.com/svn/project", ".", "--username",
+                                "jer", "--password", "crap"])
 
     svn.checkout
   end
@@ -128,14 +128,14 @@ class SubversionTest < Test::Unit::TestCase
 
   def test_checkout_with_revision
     svn = Subversion.new(:url => 'http://foo.com/svn/project')
-    svn.expects(:svn).with("co", "http://foo.com/svn/project", ".", "--revision", 5)
+    svn.expects(:svn).with("co", ["http://foo.com/svn/project", ".", "--revision", 5])
 
     svn.checkout(Revision.new(5))
   end
   
   def test_allowing_interaction
     svn = new_subversion(:url => 'svn://foo.com/', :interactive => true)
-    svn.expects(:svn).with("co", "svn://foo.com/", ".")
+    svn.expects(:svn).with("co", ["svn://foo.com/", "."])
     svn.checkout
   end
 
@@ -155,7 +155,7 @@ class SubversionTest < Test::Unit::TestCase
       assert File.directory?("project")
       
       svn = Subversion.new(:url => 'http://foo.com/svn/project', :path => "project")
-      svn.expects(:svn).with("co", "http://foo.com/svn/project", "project", "--revision", 5)
+      svn.expects(:svn).with("co", ["http://foo.com/svn/project", "project", "--revision", 5])
 
       svn.clean_checkout(Revision.new(5))
       
@@ -167,7 +167,7 @@ class SubversionTest < Test::Unit::TestCase
     in_sandbox do
       svn = Subversion.new(:url => 'url')
       def svn.svn(*args, &block)
-        execute_in_local_copy 'echo hello world', &block
+        execute_in_local_copy 'echo hello world', [], &block
       end
 
       io = StringIO.new
@@ -186,7 +186,13 @@ class SubversionTest < Test::Unit::TestCase
     assert_equal ["New revision 4 detected",
                   [Revision.new(2), Revision.new(4)]], reasons
   end
+  
+  def test_last_locally_known_revision_should_return_zero_if_path_doesnt_exist
+    svn = new_subversion :path => "foo"
     
+    assert_equal -1, svn.last_locally_known_revision.number
+  end
+  
   def test_up_to_date_should_deal_with_same_revisions
     svn = new_subversion
     svn.expects(:last_locally_known_revision).returns(Revision.new(1))
