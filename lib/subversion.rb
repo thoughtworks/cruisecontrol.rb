@@ -54,7 +54,7 @@ class Subversion
   end
 
   def last_locally_known_revision
-    return Revision.new(-1) unless File.exist?(path)
+    return Revision.new(0) unless File.exist?(path)
     Revision.new(info.last_changed_revision)
   end
 

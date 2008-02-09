@@ -190,7 +190,7 @@ class SubversionTest < Test::Unit::TestCase
   def test_last_locally_known_revision_should_return_zero_if_path_doesnt_exist
     svn = new_subversion :path => "foo"
     
-    assert_equal -1, svn.last_locally_known_revision.number
+    assert_equal 0, svn.last_locally_known_revision.number
   end
   
   def test_up_to_date_should_deal_with_same_revisions
