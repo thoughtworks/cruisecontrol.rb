@@ -65,3 +65,7 @@ Mime::Type.register "application/cctray", :cctray
 # get rid of cached pages between runs
 FileUtils.rm_rf RAILS_ROOT + "/public/builds"
 FileUtils.rm_rf RAILS_ROOT + "/public/documentation"
+
+# Local configuration, for example, details of the SMTP server for email notification, should be 
+# written in ~/.cruise/site_config.rb. See ~/.cruise/site_config.rb_example for an example of what this file may 
+# look like.
