@@ -19,6 +19,7 @@ def find_home
 end
 
 CRUISE_DATA_ROOT = File.join(find_home, ".cruise") unless defined? CRUISE_DATA_ROOT
+puts "cruise data root = '#{CRUISE_DATA_ROOT}'"
 
 unless defined?(RAILS_ROOT)
   root_path = File.join(File.dirname(__FILE__), '..')
