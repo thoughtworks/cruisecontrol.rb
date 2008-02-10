@@ -179,6 +179,7 @@ a.never_built, a.never_built:visited {
 }
 .project .build_button {
   background-image:url(/images/button.png);
+  cursor: pointer;
 }
 
 .project .build_button_disabled {
