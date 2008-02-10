@@ -145,7 +145,8 @@ EOF
     if File.size(file) < 100 * 1024
       File.read(file)
     else
-      "#{file} is over 100 kbytes - too big to display in the dashboard"
+      contents = File.read(file, 100 * 1024)
+      "#{file} is over 100 kbytes - too big to display in the dashboard, output is truncated\n\n\n#{contents}"
     end
   end
 
