@@ -1,0 +1,72 @@
+PLAIN
+K 13
+svn:externals
+V 74
+external_path    svn://rubyforge.org/var/svn/cruisecontrolrb/trunk/daemon
+
+END
+ENDREP
+id: 3f.0.r28/116
+type: dir
+pred: 3f.0.r27/603
+count: 2
+text: 27 506 84 84 24364e45a9960b4487db460924d6eaee
+props: 28 0 103 0 04274211ca517f72c31a9ed6e8811978
+cpath: /project_with_externals
+copyroot: 0 /
+
+PLAIN
+K 15
+failing_project
+V 14
+dir 1.1.r7/379
+K 3
+foo
+V 18
+dir 9.0.r11/104870
+K 15
+passing_project
+V 14
+dir 1.0.r7/832
+K 27
+project_with_central_config
+V 16
+dir 3d.0.r20/338
+K 37
+project_with_cruise_and_default_tasks
+V 15
+dir 7.0.r10/386
+K 29
+project_with_custom_rake_task
+V 16
+dir 2t.0.r13/364
+K 23
+project_with_db_migrate
+V 15
+dir 5.0.r25/343
+K 38
+project_with_db_test_purge_and_migrate
+V 16
+dir 2v.0.r21/597
+K 22
+project_with_externals
+V 16
+dir 3f.0.r28/116
+K 57
+project_with_no_migration_scripts_but_database_yml_exists
+V 17
+dir 37.0.r15/2601
+END
+ENDREP
+id: 0.0.r28/879
+type: dir
+pred: 0.0.r27/1313
+count: 28
+text: 28 320 546 546 50a69a59bbeb70c0498c77512c8d5c66
+cpath: /
+copyroot: 0 /
+
+3f.0.t27-1 modify false true /project_with_externals
+
+
+879 1012

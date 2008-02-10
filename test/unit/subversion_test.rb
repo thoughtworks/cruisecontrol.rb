@@ -210,8 +210,8 @@ class SubversionTest < Test::Unit::TestCase
       svn = new_subversion
       a_svn = Object.new
       b_svn = new_subversion
-      Subversion.expects(:new).with(:path => "a", :url => "svn+ssh://a").returns(a_svn)
-      Subversion.expects(:new).with(:path => "b", :url => "svn+ssh://b").returns(b_svn)
+      Subversion.expects(:new).with(:path => "./a", :url => "svn+ssh://a").returns(a_svn)
+      Subversion.expects(:new).with(:path => "./b", :url => "svn+ssh://b").returns(b_svn)
 
       svn.check_externals = true
       svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
@@ -220,6 +220,7 @@ class SubversionTest < Test::Unit::TestCase
       b_svn.expects(:last_locally_known_revision).returns(Revision.new(20))
       b_svn.expects(:latest_revision).returns(Revision.new(30))
       b_svn.expects(:revisions_since).with(20).returns([Revision.new(24)])
+      b_svn.expects(:externals).returns({})
 
       assert !svn.up_to_date?(reasons = [], 14)
       assert_equal ["New revision 30 detected in external 'b'", [Revision.new(24)]], reasons
@@ -234,8 +235,8 @@ class SubversionTest < Test::Unit::TestCase
       svn = new_subversion
       a_svn = Object.new
       b_svn = Object.new
-      Subversion.expects(:new).with(:path => "a", :url => "svn+ssh://a").returns(a_svn)
-      Subversion.expects(:new).with(:path => "b", :url => "svn+ssh://b").returns(b_svn)
+      Subversion.expects(:new).with(:path => "./a", :url => "svn+ssh://a").returns(a_svn)
+      Subversion.expects(:new).with(:path => "./b", :url => "svn+ssh://b").returns(b_svn)
 
       svn.check_externals = true
       svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})

@@ -2,50 +2,11 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class BuilderIntegrationTest < Test::Unit::TestCase
   include FileSandbox
-
-  def test_subversion_log_should_work_if_it_has_either_existing_path_or_url
-    with_project 'passing_project' do |project, sandbox|
-      svn = project.source_control
-      
-      Subversion.new(:path => svn.path).latest_revision
-      Subversion.new(:path => 'foo', :url => fixture_repository_url).latest_revision
-      assert_raises { Subversion.new(:path => 'foo').latest_revision }
-    end
-  end
   
   def test_checkout
     # with_project calls svn.checkout
     with_project 'passing_project' do |project, sandbox|
       assert File.exists?("passing_project/work/passing_test.rb")
-    end
-  end
-
-  def test_new_revisions
-    with_project('passing_project', :revision => 2) do |project, sandbox|
-      expected_reasons = 
-"New revision 7 detected
-Revision 7 committed by averkhov on 2007-01-13 01:05:26
-Making both revision labels up to date
-  M /passing_project/revision_label.txt
-  M /failing_project/revision_label.txt
-
-Revision 4 committed by averkhov on 2007-01-11 21:02:03
-and one more revision, for good measure
-  M /passing_project/revision_label.txt
-
-Revision 3 committed by averkhov on 2007-01-11 21:01:43
-another revision
-  M /passing_project/revision_label.txt
-"
-      assert_equal false, project.source_control.up_to_date?(reasons = [], 3)
-      assert_equal expected_reasons, reasons.join("\n")
-    end
-  end
-
-  def test_new_revisions_should_return_an_empty_array_for_uptodate_local_copy
-    with_project 'passing_project' do |project, sandbox|
-      assert_equal true, project.source_control.up_to_date?(reasons = [], 7)
-      assert_equal "", reasons.join("\n")
     end
   end
 

@@ -64,22 +64,24 @@ class Subversion
   end
   
   def up_to_date?(reasons = [], revision_number = last_locally_known_revision.number)
+    result = true
+    
     latest_revision = self.latest_revision()
     if latest_revision != Revision.new(revision_number)
       reasons << "New revision #{latest_revision.number} detected"
       reasons << revisions_since(revision_number)
-      return false
+      result = false
     end
     
     if @check_externals
-      externals.each do |path, url|
-        ext_logger = ExternalReasons.new(path, reasons)
-        ext_svn = Subversion.new(:path => path, :url => url)
-        return false unless ext_svn.up_to_date?(ext_logger)
+      externals.each do |ext_path, ext_url|
+        ext_logger = ExternalReasons.new(ext_path, reasons)
+        ext_svn = Subversion.new(:path => File.join(self.path, ext_path), :url => ext_url)
+        result = false unless ext_svn.up_to_date?(ext_logger)
       end
     end
     
-    return true
+    return result
   end
 
   def update(revision = nil)
@@ -89,6 +91,8 @@ class Subversion
   end
 
   def externals
+    return {} unless File.exist?(path)
+    
     svn_output = svn('propget', ['-R', 'svn:externals'])
     Subversion::PropgetParser.new.parse(svn_output)
   end
