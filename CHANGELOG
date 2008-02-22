@@ -1,5 +1,5 @@
 TRUNK
-  - builds can now be serialized - only one build runs at a time on a server
+  - builds can now be serialized - with a config option set, CC.rb will only run one build at a time
   - build requested status now stays on dashboard until a build starts
   - option to auto delete more than N builds
   - moved cruise data into ~/.cruise by default
