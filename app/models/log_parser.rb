@@ -1,9 +1,11 @@
 class LogParser
-  FIND_TEST_ERROR_REGEX = /^\s+\d+\) Error:\n(.*):\n(.*)\n([\s\S]*?)\n\n/
+
+  TEST_ERROR_REGEX = /^\s+\d+\) Error:\n(.*):\n(.*)\n([\s\S]*?)\n\n/
+  TEST_FAILURE_REGEX = /^\s+\d+\) Failure:\n([\S\s]*?)\n\n/
+
   TEST_NAME_REGEX = /\S+/
   MESSAGE_REGEX = /\]\:\n([\s\S]+)/
   STACK_TRACE_REGEX = /\[([\s\S]*?)\]\:/
-  TEST_FAILURE_BLOCK_REGEX = /^\s+\d+\) Failure:\n([\S\s]*?)\n\n/
 
   def initialize(log)
     @log = log
@@ -12,9 +14,9 @@ class LogParser
   def errors
     test_errors = []
     
-    @log.gsub(FIND_TEST_ERROR_REGEX) do |match|
+    @log.scan(TEST_ERROR_REGEX) do |match|
       test_errors << TestErrorEntry.create_error($1, $2, $3)
-    end    
+    end
   
     return test_errors
   end
@@ -22,7 +24,7 @@ class LogParser
   def failures
     test_failures = []
 
-    @log.gsub(TEST_FAILURE_BLOCK_REGEX) do |text|
+    @log.scan(TEST_FAILURE_REGEX) do |text|
       content = $1
 
       begin
@@ -40,7 +42,7 @@ class LogParser
   end
 
   def failures_and_errors
-      failures + errors
+    failures + errors
   end
 
 end
