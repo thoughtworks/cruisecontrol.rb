@@ -2,10 +2,20 @@ Capistrano::Configuration.instance(:must_exist).load do
   namespace :deploy do
 
     desc 'deploy CC.rb'
-    task :ccrb do
+    task :default do
       stop_ccrb
 
       update_code
+      after_update_code
+      symlink
+
+      start_ccrb
+    end
+
+    task :rollback do
+      stop_ccrb
+
+      rollback_code
       after_update_code
       symlink
 
