@@ -1,4 +1,5 @@
 Capistrano::Configuration.instance(:must_exist).load do
+
   namespace :deploy do
 
     desc 'deploy CC.rb'
@@ -16,7 +17,6 @@ Capistrano::Configuration.instance(:must_exist).load do
       stop_ccrb
 
       rollback_code
-      after_update_code
       symlink
 
       start_ccrb
@@ -38,7 +38,6 @@ Capistrano::Configuration.instance(:must_exist).load do
     task :after_update_code do
       sudo "chmod -R 775 #{release_path}/tmp"
       sudo "chmod -R 775 #{release_path}/log"
-      sudo "rm -rf #{release_path}/projects"
       sudo "mkdir -p #{shared_path}/projects"
       sudo "chmod -R 775 #{shared_path}/projects"
       sudo "chown deployer:rails #{shared_path}/projects"
