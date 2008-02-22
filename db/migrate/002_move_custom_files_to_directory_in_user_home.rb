@@ -4,7 +4,7 @@ include FileUtils
 DATA_ROOT = ARGV[0]
 RAILS_ROOT = File.expand_path(".")
 
-if File.exists? 'projects'
+if File.directory? 'projects'
   mv 'projects', DATA_ROOT + '/projects'
 else
   mkdir_p DATA_ROOT + '/projects'

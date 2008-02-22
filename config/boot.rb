@@ -30,9 +30,8 @@ unless defined?(RAILS_ROOT)
 end
 
 unless defined? CRUISE_DATA_ROOT
-  old_projects_path = File.join(RAILS_ROOT, 'projects')
-  if File.directory?(old_projects_path)
-    CRUISE_DATA_ROOT = old_projects_path
+  if ENV['CRUISE_DATA_ROOT']
+    CRUISE_DATA_ROOT = ENV['CRUISE_DATA_ROOT']
   else
     CRUISE_DATA_ROOT = File.join(find_home, ".cruise")
   end
