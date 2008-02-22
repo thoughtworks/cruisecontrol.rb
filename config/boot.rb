@@ -18,9 +18,6 @@ def find_home
   end
 end
 
-CRUISE_DATA_ROOT = File.join(find_home, ".cruise") unless defined? CRUISE_DATA_ROOT
-puts "cruise data root = '#{CRUISE_DATA_ROOT}'"
-
 unless defined?(RAILS_ROOT)
   root_path = File.join(File.dirname(__FILE__), '..')
 
@@ -30,6 +27,16 @@ unless defined?(RAILS_ROOT)
   end
 
   RAILS_ROOT = root_path
+end
+
+unless defined? CRUISE_DATA_ROOT
+  old_projects_path = File.join(RAILS_ROOT, 'projects')
+  if File.directory?(old_projects_path)
+    CRUISE_DATA_ROOT = old_projects_path
+  else
+    CRUISE_DATA_ROOT = File.join(find_home, ".cruise")
+  end
+  puts "cruise data root = '#{CRUISE_DATA_ROOT}'"
 end
 
 unless defined?(Rails::Initializer)
