@@ -6,16 +6,16 @@ Net::SMTP.class_eval do
     raise IOError, 'SMTP session already started' if @started
     check_auth_args user, secret, authtype if user or secret
 
-    socket = timeout(@open_timeout) { TCPSocket.open(@address, @port) }
-    @socket = Net::InternetMessageIO.new(socket)
-    @socket.read_timeout = 60 #@read_timeout
-    @socket.debug_output = STDERR #@debug_output
+    open_conversation(helodomain)
 
-    check_response(critical { recv_response() })
-    do_helo(helodomain)
-
-
-    create_ssl_socket(socket, helodomain) if starttls
+    if starttls
+      create_ssl_socket(socket, helodomain)
+    else
+      # some SMTP servers that don't support TLS drop the socket after rejecting
+      # STARTTLS command, so reopen the conversation
+      @socket.close
+      open_conversation(helodomain)
+    end
 
     authenticate user, secret, authtype if user
     @started = true
@@ -53,14 +53,24 @@ Net::SMTP.class_eval do
     end
   end
 
-  def create_ssl_socket(underlying_socket, helodomain)
+  def create_ssl_socket(helodomain)
     require "openssl"
-    ssl = OpenSSL::SSL::SSLSocket.new(underlying_socket)
+    ssl = OpenSSL::SSL::SSLSocket.new(@tcp_socket)
     ssl.sync_close = true
     ssl.connect
     @socket = Net::InternetMessageIO.new(ssl)
     @socket.read_timeout = 60 #@read_timeout
     @socket.debug_output = STDERR #@debug_output
+    do_helo(helodomain)
+  end
+
+  def open_conversation(helodomain)
+    @tcp_socket = timeout(@open_timeout) { TCPSocket.open(@address, @port) }
+    @socket = Net::InternetMessageIO.new(@tcp_socket)
+    @socket.read_timeout = 60 #@read_timeout
+    @socket.debug_output = STDERR #@debug_output
+
+    check_response(critical { recv_response() })
     do_helo(helodomain)
   end
 
