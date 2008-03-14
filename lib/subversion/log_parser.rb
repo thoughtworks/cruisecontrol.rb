@@ -2,7 +2,6 @@ require 'date'
 require 'xml_simple'
 
 class Subversion::LogParser
-
   def parse(lines)
     return [] if lines.empty?
     entries = XmlSimple.xml_in(lines.join, 'ForceArray' => ['logentry','path'])['logentry'] || []

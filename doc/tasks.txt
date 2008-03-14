@@ -2,9 +2,14 @@ Todo
 ----
 
 externals
-- docs
-- changesets
-- what if external dir doesn't exist yet
+- 1
+  - use revision to see if something has been changed
+- 2
+  - 
+- 3
+  - optimize external handling
+  - only use 1 level 
+  - optimize if in same repos
 
 Questions
 ---------

@@ -55,7 +55,7 @@ class Subversion
 
   def last_locally_known_revision
     return Revision.new(0) unless File.exist?(path)
-    Revision.new(info.last_changed_revision)
+    Revision.new(info.revision)
   end
 
   def latest_revision
@@ -76,7 +76,9 @@ class Subversion
     if @check_externals
       externals.each do |ext_path, ext_url|
         ext_logger = ExternalReasons.new(ext_path, reasons)
-        ext_svn = Subversion.new(:path => File.join(self.path, ext_path), :url => ext_url)
+        ext_svn = Subversion.new(:path => File.join(self.path, ext_path), 
+                                 :url => ext_url, 
+                                 :check_externals => false)
         result = false unless ext_svn.up_to_date?(ext_logger)
       end
     end
