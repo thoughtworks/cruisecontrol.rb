@@ -9,7 +9,7 @@ Net::SMTP.class_eval do
     open_conversation(helodomain)
 
     if starttls
-      create_ssl_socket(socket, helodomain)
+      create_ssl_socket(@socket, helodomain)
     else
       # some SMTP servers that don't support TLS drop the socket after rejecting
       # STARTTLS command, so reopen the conversation
