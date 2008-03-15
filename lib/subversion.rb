@@ -67,7 +67,7 @@ class Subversion
     result = true
     
     latest_revision = self.latest_revision()
-    if latest_revision != Revision.new(revision_number)
+    if latest_revision > Revision.new(revision_number)
       reasons << "New revision #{latest_revision.number} detected"
       reasons << revisions_since(revision_number)
       result = false
@@ -104,7 +104,7 @@ class Subversion
   def revisions_since(revision_number)
     svn_output = log('HEAD', revision_number)
     log_parser = Subversion::LogParser.new
-    log_parser.parse(svn_output)
+    log_parser.parse(svn_output)[0..-2] # cut out the revision that was asked for
   end
 
   def log(from, to, arguments = [])
@@ -112,7 +112,7 @@ class Subversion
   end
   
   def info
-    svn_output = svn('info', ["--xml"])
+    svn_output = svn('info', ["--xml"])    
     Subversion::InfoParser.new.parse(svn_output)
   end
 

@@ -37,10 +37,6 @@ Making both revision labels up to date
 Revision 4 committed by averkhov on 2007-01-11 21:02:03
 and one more revision, for good measure
   M /passing_project/revision_label.txt
-
-Revision 3 committed by averkhov on 2007-01-11 21:01:43
-another revision
-  M /passing_project/revision_label.txt
 "
     assert_false @svn.up_to_date?(reasons = [], 3)
     assert_equal expected_reasons, reasons.join("\n")

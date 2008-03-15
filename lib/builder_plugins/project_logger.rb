@@ -30,7 +30,11 @@ class ProjectLogger
   end
   
   def new_revisions_detected(new_revisions)
-    CruiseControl::Log.event("New revision #{new_revisions.last.number} detected")
+    if new_revisions.last.nil?
+      CruiseControl::Log.event("Changes detected")
+    else
+      CruiseControl::Log.event("New revision #{new_revisions.last.number} detected")
+    end
   end
 
   def build_loop_failed(error)

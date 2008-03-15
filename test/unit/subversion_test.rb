@@ -210,8 +210,8 @@ class SubversionTest < Test::Unit::TestCase
       svn = new_subversion
       a_svn = Object.new
       b_svn = new_subversion
-      Subversion.expects(:new).with(:path => "./a", :url => "svn+ssh://a").returns(a_svn)
-      Subversion.expects(:new).with(:path => "./b", :url => "svn+ssh://b").returns(b_svn)
+      Subversion.expects(:new).with(:path => "./a", :url => "svn+ssh://a", :check_externals => false).returns(a_svn)
+      Subversion.expects(:new).with(:path => "./b", :url => "svn+ssh://b", :check_externals => false).returns(b_svn)
 
       svn.check_externals = true
       svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
@@ -235,8 +235,8 @@ class SubversionTest < Test::Unit::TestCase
       svn = new_subversion
       a_svn = Object.new
       b_svn = Object.new
-      Subversion.expects(:new).with(:path => "./a", :url => "svn+ssh://a").returns(a_svn)
-      Subversion.expects(:new).with(:path => "./b", :url => "svn+ssh://b").returns(b_svn)
+      Subversion.expects(:new).with(:path => "./a", :url => "svn+ssh://a", :check_externals => false).returns(a_svn)
+      Subversion.expects(:new).with(:path => "./b", :url => "svn+ssh://b", :check_externals => false).returns(b_svn)
 
       svn.check_externals = true
       svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})

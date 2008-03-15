@@ -17,7 +17,11 @@ class MinimalConsoleLogger
   end
   
   def new_revisions_detected(new_revisions)
-    puts "New revision #{new_revisions.last.number} detected"
+    if new_revisions.last.nil?
+      puts "Changes detected"
+    else
+      puts "New revision #{new_revisions.last.number} detected"
+    end
   end
 
   def build_loop_failed(error)
