@@ -104,7 +104,8 @@ class Subversion
   def revisions_since(revision_number)
     svn_output = log('HEAD', revision_number)
     log_parser = Subversion::LogParser.new
-    log_parser.parse(svn_output)[0..-2] # cut out the revision that was asked for
+    revisions = log_parser.parse(svn_output)
+    revisions.reject {|revision| revision.number == revision_number} # cut out the revision that was asked for
   end
 
   def log(from, to, arguments = [])
