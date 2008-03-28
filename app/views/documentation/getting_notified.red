@@ -27,7 +27,11 @@ h2. CCMenu (on OSX)
 
 "CCMenu":http://ccmenu.sourceforge.net/ displays the project status of CruiseControl continuous integration servers as an item in the Mac OS X menu bar. Or in other words, CCMenu is to OS X what CCTray is to Windows.
 
-CCMenu has explicit support for CC.rb built in, and it's quite easy to add projects and even force builds on them.
+CCMenu has explicit support for CC.rb built in, and it's quite easy to add projects and even force builds on them.   
+
+Keep in mind, when adding a project, the server name is something like http://localhost:3333/.  And it should look something like
+
+!/images/documentation/ccmenu.png!
 
 h2. Monitoring by other means
 
