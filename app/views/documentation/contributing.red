@@ -13,11 +13,11 @@ You can help in four different ways:
 
 h2. <a name="report">Report bugs</a>
 
-CruiseControl.rb uses a public "JIRA bug tracker":http://jira.public.thoughtworks.org/browse/CCRB to keep track of bugs,
+CruiseControl.rb uses a public "bug tracker":http://cruisecontrolrb.lighthouseapp.com to keep track of bugs,
 patches, ideas and development stories.
 
 Before you can submit a bug, you need to
-"create a JIRA account":http://jira.public.thoughtworks.org/secure/Signup!default.jspa for yourself. This way we protect
+"create a Lighthouse account":http://cruisecontrolrb.lighthouseapp.com/users/new for yourself. This way we protect
 the tracker against spam and make sure that we can get in touch with you if we have questions (or answers).
 
 Please try to be as specific as possible about the symptoms and likely root causes of the problem, include
@@ -36,7 +36,7 @@ an open-source project started this way, and ended up as a truckload of half-hea
 intention whatsoever to fall into that trap.
 
 This is why CruiseControl is trying to satisfy the basic needs of its primary audience (which is small to medium size
-Ruby or Rails projects), while providing enough opportunity for extending and hacking the tool without affecting the
+Ruby projects), while providing enough opportunity for extending and hacking the tool without affecting the
 sweet simplicity of the core codebase.
 
 Ruby, of course, is an interpreted language with open classes that lets you do anything you want.
@@ -63,10 +63,10 @@ write a listener for those events.
 <code>Project#notify()</code>
 method.</p>
 
-For an example of a working plugin, look at builder_plugins/installed/email_notifier.rb or
-builder_plugins/available/jabber_notifier. Note that a plugin can be implemented as a single file, or a
+For an example of a working plugin, look at <em>[cruise]</em>/lib/builder_plugins/email_notifier.rb or
+<em>[cruise]</em>/lib/builder_plugins/jabber_notifier. Note that a plugin can be implemented as a single file, or a
 directory (containing init.rb). Either way, the file or directory name should match the class name of the listener
-class, and the plugin should be placed in builder_plugins/installed directory.
+class, and the plugin should be placed in <em>[cruise]</em>/lib/builder_plugins directory.
 
 It would be good to have more documentation here, as well as some guarantees about published API for plugins, but it's
 too early to make such commitments. Let's build some great plugins, and see what kind of API evolves in the process.
@@ -96,13 +96,13 @@ h2. <a name="patches">Submit patches</a>
 We absolutely love receiving bug reports. Who doesn't, after all? But what can make us really happy is a bug
 report coming with a patch that fixes the bug and adds unit tests to prevent it from ever happening again.
 Contributing a well packaged patch that is accepted into the codebase places your name for posterity in
-CruiseControl.rb Eternal Hall of Fame, aka the Contributors section of README.
+CruiseControl.rb Eternal Hall of Fame, aka the CHANGELOG.
 
 <em>Official Standard Procedure for the Submission of Patches</em> is hereby defined as follows:
 
-1. Check out the latest source from Subversion repository:<br/>
+1. Check out the latest source from the git repository:<br/>
 
-<pre><code>    svn co svn://rubyforge.org/var/svn/cruisecontrolrb</code></pre>
+<pre><code>    git clone git://rubyforge.org/cruisecontrolrb.git</code></pre>
 
 2. Run the build, make sure that it passes: <code>rake</code>
 
@@ -113,11 +113,13 @@ CruiseControl.rb Eternal Hall of Fame, aka the Contributors section of README.
 p(hint). Besides, your tests should not leave any by-products in the file system. If you need to create a file in your
          test, use <code>in_sandbox()</code> or <code>with_sandbox_project()</code> test helpers.
 
-5. Check that Subversion is fully aware of files you added/deleted/renamed : <code>svn stat</code>
+5. Commit changes into your local git repository.
 
-6. Create a patch: <code>svn diff > patch_to_fix_global_warming.diff</code>
+5. Check that Git is fully aware of files you added/deleted/renamed, using <code>git stat</code>
 
-7. Login to JIRA
+6. Create a patch with <code>git-format-patch</code>
+
+7. Login to "Lighthouse":http://cruisecontrolrb.lighthouseapp.com
 
 8. Create a new issue, prefix the summary with the word [PATCH].
 

@@ -3,7 +3,6 @@
 h2. Source code
 
 * "Check out":http://rubyforge.org/scm/?group_id=2918
-* "Browse the trunk":http://rubyforge.org/viewvc/trunk/?root=cruisecontrolrb
 
 h2. Maillists
 
@@ -12,11 +11,11 @@ h2. Maillists
 
 h2. Bugs and patches
 
-* "Browse bug tracker":http://jira.public.thoughtworks.org/browse/CCRB
+* "Browse bug tracker":http://cruisecontrolrb.lighthouseapp.com
 
 <small><em>
 Note: to submit a bug or a patch to our bug tracker, you need to
-"create a JIRA account":http://jira.public.thoughtworks.org/secure/Signup!default.jspa  
+"create a LightHouse account":http://cruisecontrolrb.lighthouseapp.com/users/new  
 </em></small>
 
 </div>

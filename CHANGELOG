@@ -4,8 +4,8 @@
   - option to auto delete more than N builds
   - [experimental] plugins can be installed w/ script/cruise_plugin script
   - [bugfix] build requested status now stays on dashboard until a build starts
-  - [patch] subversion external support - nathan wilmes
-  - [patch] relative url support - neal clark
+  - [patch] subversion external support - Nathan Wilmes
+  - [patch] relative url support - Neal Clark
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.2.1
