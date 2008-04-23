@@ -1,6 +1,5 @@
 module DocumentationHelper
   def render_plugin_doc(file)
-    # file = File.join(RAILS_ROOT, 'builder_plugins', file)
     if File.directory?(file)
       if File.exists?(file + '/README')
         render :inline => markup(File.read(file + '/README')), :layout => true

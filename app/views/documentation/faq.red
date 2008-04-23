@@ -24,7 +24,7 @@ for detail.
 h2. What source control systems do you support?
 
 We currently only support "Subversion":http://subversion.tigris.org/.  We are planning on adding support for
-Perforce in the not too distant future.  After that, it depends on what people ask for (and what they 
+some other version control systems in near future.  It depends on what people ask for (and what they
 "contribute":/documentation/contributing)
 
 h2. Why does CC.rb report my build as passing even though it failed?

@@ -132,7 +132,7 @@ h2. <a name="documentation">Improve documentation</a>
 Believe it or not, but we value contributions to end user documentation as much as (if not more than) we value patches.
 
 Documentation for CruiseControl.rb is included in the release package, as files under
-the [cruise]/app/views/documentation directory. When you connect to CruiseControl.rb dashboard running on your computer
+the <em>[cruise]</em>/app/views/documentation directory. When you connect to CruiseControl.rb dashboard running on your computer
 and click the Documentation link in the top right corner, its the content of those files that you see.
 
 Packaging documentation with release makes sure that you are always looking at documentation for the same version

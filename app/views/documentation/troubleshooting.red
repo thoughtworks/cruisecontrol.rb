@@ -34,7 +34,7 @@ do the right thing explicitly. It will save your time.
 
 h2. Look at the logs
 
-Dashboard and builders keep their own logs in [cruise]/log directory. If you are not receiving email notifications,
+Dashboard and builders keep their own logs in <em>[cruise]</em>/log directory. If you are not receiving email notifications,
 builder crashes on startup, or CruiseControl.rb fails to detect or build new revisions, an explanation can usually be found
 in the builder log.
 

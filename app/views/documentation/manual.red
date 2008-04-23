@@ -5,28 +5,28 @@ for "plugins":/documentation/plugins or just "contact us":/documentation/contact
 
 h1. Files and folders
 
-If CC.rb is unpacked into [cruise] directory , then:
+If CC.rb is unpacked into <em>[cruise]</em> directory then:
 
-* [cruise]/projects/ is the projects directory.
+* $HOME/.cruise (%USERPROFILE%\.cruise on Windows) is where all the data goes. CC.rb documentation refers to this
+  directory as <em>[cruise&nbsp;data]</em>.
 
-* [cruise]/projects/your_project/ is a directory for the project called "your_project".
+* <em>[cruise&nbsp;data]</em>/projects/your_project/ is a directory for the project called "your_project".
 
-* [cruise]/projects/your_project/work/ is a local copy of your_project's source code. Builder keeps it up to date
+* <em>[cruise&nbsp;data]</em>/projects/your_project/work/ is a local copy of your_project's source code. Builder keeps it up to date
   with the source control repository and runs builds against it.
 
-* [cruise]/projects/your_project/build-123/ contains build status file, list of changed files,
+* <em>[cruise&nbsp;data]</em>/projects/your_project/build-123/ contains build status file, list of changed files,
   and other "build artifacts" created while building revision 123.
 
-* [cruise]/projects/your_project/cruise_config.rb is builder configuration for your_project.
+* <em>[cruise&nbsp;data]</em>/projects/your_project/cruise_config.rb is builder configuration for your_project.
 
-* [cruise]/config/site_config.rb is the file where you can make centralized changes to the configuration of dashboard
+* <em>[cruise&nbsp;data]</em>/config/site_config.rb is the file where you can make centralized changes to the configuration of dashboard
   and all builders.
-
 
 h1. Site configuration
 
-CruiseControl.rb package includes a file called [cruise]/config/site_config.rb.example. By copying it to
-[cruise]/config/site_config.rb, and uncommenting some lines you can change a number of parameters not related to
+CruiseControl.rb package includes a file called <em>[cruise]</em>/config/site_config.rb.example. By copying it to
+<em>[cruise]</em>/config/site_config.rb, and uncommenting some lines you can change a number of parameters not related to
 a specific project. In normal life, your only reason to do it would be configuring SMTP connection, for sending
 email notices. See the section on "Build monitoring via email" below. 
 
@@ -40,14 +40,14 @@ when the build is broken? The default answer is "nobody", and it may be good eno
 "CCTray":http://ccnet.sourceforge.net/CCNET/CCTray.html or have an LCD panel displaying the dashboard on the wall of
 your office to monitor the build status.
 
-What if it's not good enough? To make the builder aware of all these other things that you want it to do, you will
+But what if it's not good enough? To make the builder aware of all these other things that you want it to do, you will
 have to write them down in a project configuration file.
 
 Rolling your eyes already? Hold on, this is not J2EE deployment descriptors we are talking about. No two pages of
 hand-crafted angled brackets just to get started here. A typical project configuration is about 3 to 5 lines of very
-simple Ruby. Yes, the configuration language of CC.rb is Ruby.
+simple Ruby. And yes, the configuration language of CC.rb is Ruby.
 
-As you add a project, a configuration file is created for you in [cruise]/projects/your_project/ directory. It's named
+As you add a project, a configuration file is created for you in <em>[cruise&nbsp;data]</em>/projects/your_project/ directory. It's named
 cruise_config.rb and almost everything in it is initially commented out. In fact, you can delete it and this will not
 change anything. There are two lines not commented out:
 
@@ -57,14 +57,14 @@ end
 
 Every cruise_config.rb must have these two lines. All your other configuration goes between them.
 
-You can move cruise_config.rb to [cruise]/projects/your_project/work/ directory. In other words, check it into
+You can move cruise_config.rb to <em>[cruise&nbsp;data]</em>/projects/your_project/work/ directory. In other words, check it into
 Subversion, in the root directory of your project. Storing your CruiseControl.rb configuration in your project's version control
 is usually a smart thing to do.
 
-It is also possible to have two cruise_config.rb files for a project, one in the [cruise]/projects/your_project/
+It is also possible to have two cruise_config.rb files for a project, one in the <em>[cruise&nbsp;data]</em>/projects/your_project/
 directory, and the other in version control. CruiseControl.rb loads both files, but settings from cruise_config.rb in
-[cruise]/projects/your_project/ override those stored in version control. This can be useful when you want to see the
-effect of some configuration settings without checking them in, or have some local settings for this installation.
+<em>[cruise&nbsp;data]</em>/projects/your_project/ override those stored in version control. This can be useful when you want to see the
+effect of some configuration settings without checking them in, or have some location-dependent settings.
 
 p(hint). Hint: configuration examples below include lines that look like '...' This represents other
          configuration statements that may be in cruise_config.rb. You are not meant to copy-paste those dots into
@@ -83,7 +83,7 @@ logical statements, and generally do whatever makes sense. For example, consider
 end
 </code></pre>
 
-p(hint). Use code like above to source-control configuration of multiple CruiseControl.rb projects building the same codebase.
+p(hint). Hint: Use code like above to source-control configuration of multiple CruiseControl.rb projects building the same codebase.
 
 h1. What will it build by default?
 
@@ -145,7 +145,7 @@ end
 </code></pre>
 
 If <code>project.build_command</code> is set, CC.rb will change current working directory to
-[cruise]/projects/your_project/work/, invoke specified command and look at the exit code to determine whether the
+<em>[cruise&nbsp;data]</em>/projects/your_project/work/, invoke specified command and look at the exit code to determine whether the
 build passed or failed.
 
 p(hint). You cannot specify both <code>rake_task</code> and <code>build_command</code> attributes in cruise_config.rb.
@@ -196,16 +196,16 @@ After initializing everything, and loading the project (this step includes evalu
 builder invokes project.scheduler.run. A builder must be able to detect when its configuraton has changed, or when a 
 build is requested by user (pressing the Build Now button), so a custom scheduler needs to know how to recognize that situation.
 
-Look at [cruise]/app/models/polling_scheduler.rb to understand how a scheduler interacts with a project.
+Look at <em>[cruise]</em>/app/models/polling_scheduler.rb to understand how a scheduler interacts with a project.
 
 
 h1. Deleting a project
 
-To remove your_project from CruiseControl.rb, kill its builder process and then delete the [cruise]/projects/your_project/
+To remove your_project from CruiseControl.rb, kill its builder process and then delete the <em>[cruise&nbsp;data]</em>/projects/your_project/
 directory.
 
 
-h1. Build Chaining & Triggers
+h1. Build chaining & triggers
 
 CC.rb uses triggers to tell it when to build a project.  Every project by default has a ChangeInSourceControl trigger, that tells it to build when (surprise) it detects a change in a project's source control.
 
@@ -233,16 +233,14 @@ Why wouldn't we want our project to be triggered by a change to it's source code
 
 In the future we expect to also support svn:external triggers.  However, the infrastructure is there for you to build your own.
 
-h1. Environment Variables
+h1. Environment variables
 
 CC.rb gives you some information to use inside your build.  It does this in the form of environment variables.  Currently, the list of environment variable is :
 * CC_BUILD_REVISION - this is the revision number of the current build, it looks like "5" or "56236"
 * CC_BUILD_LABEL - usually this is the same as CC_BUILD_REVISION, but if there is more than one build of a particular revision, it will have a ".n" after it, so it might look like "323", "323.2", "4236.20", etc.
 * CC_BUILD_ARTIFACTS - this is the directory which the dashboard looks in.  Any files you copy into here will be available from the dashboard.
 
-From within your build, CC.rb 
-
-h1. Remote Builds
+h1. Remote builds
 
 CC.rb can run builds on remote servers.  This is done by sshing to the server in your build command.  For example:
 
@@ -264,7 +262,7 @@ Note that CC.rb will still maintain a checkout of the code on the local server, 
 
 
 
-h1. Doing a Clean Checkout
+h1. Doing a clean checkout
 
 CC.rb supports clean checkouts, though they are not the default.  To enable them, you must specify the subversion url in the cruise_config.rb and specify when they should happen.  It should look something like :
 

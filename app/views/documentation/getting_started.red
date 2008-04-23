@@ -49,7 +49,7 @@ h1. Prerequisites
 
 h1. Assumptions and limitations
 
-* CruiseControl.rb currently only works with Subversion.
+* CruiseControl.rb currently only works with Subversion. We will be adding Mercurial and Git support in a near future.
 * Dashboard and all builders need to run on the same computer.
 
 
@@ -60,22 +60,26 @@ Follow these directions or watch our "5 minute install":/documentation/screencas
 
 1. "Download":http://rubyforge.org/frs/?group_id=2918 and unpack CruiseControl.rb
 
-  p(def). (below, we will refer to the place where you unpack it as [cruise])
+  p(def). Below, we will refer to the place where you unpack it as <em>[cruise]</em>
 
-2. From [cruise], run <code>./cruise add your_project --url [URL of your_project Subversion trunk]</code>.
+2. From <em>[cruise]</em>, run <code>./cruise add your_project --url [URL of your_project Subversion trunk]</code>.
 
   <p class="def hint">Optionally, you can specify username and password by adding <code> --username [your_user] --password 
     [your_password]</code> to the command</p>
 
 
-  p(def). This creates a directory for your_project's builds at [cruise]/projects/your_project/, and 
-    checks out your_project from subversion URL specified to [cruise]/projects/your_project/work/.
+  p(def). This creates a <code>$HOME/.cruise</code> directory (<code>%USERPROFILE%\.cruise</code>
+    if you are on Windows), and that is where CruiseControl.rb keeps its data, and then checks out your_project
+    from the subversion URL you provided to <code>$HOME/.cruise/projects/your_project/work/</code>.  
 
-  p(def hint). Hint: Rakefile of your_project should be in [cruise]/projects/your_project/work/ directory, not anywhere under
+  p(def). Documentation refers to $HOME/.cruise/ as <em>[cruise&nbsp;data]</em>.
+
+  p(def hint). Hint: Rakefile of your_project should be in <em>[cruise&nbsp;data]</em>/projects/your_project/work/ directory, not anywhere under
     it. A common mistake is to specify in <code>--url</code> option the root of project's SVN repository instead of the trunk.
-    Rakefile then ends up in [cruise]/projects/your_project/work/trunk/ and CruiseControl.rb does not see it there.
+    Rakefile then ends up in <em>[cruise&nbsp;data]</em>/projects/your_project/work/trunk/ and CruiseControl.rb does not see it there.
 
-3. From [cruise], run <code>./cruise start</code>.
+
+3. From <em>[cruise]</em>, run <code>./cruise start</code>.
 
   p(def hint). Hint: This starts CruiseControl.rb dashboard and builder(s). By default, the dashboard is bound to port 3333, 
     if you want to run your server on a different port, just type <code>./cruise start -p [port]</code>
@@ -87,7 +91,7 @@ Follow these directions or watch our "5 minute install":/documentation/screencas
     by clicking on the project name and looking at the build log for the last build.  If it's failing or otherwise misbehaving, go 
     on to step 5.
    
-5. Go to [cruise]/projects/your_project/work/ and make the build pass.
+5. Go to <em>[cruise&nbsp;data]</em>/projects/your_project/work/ and make the build pass.
 
   p(def). For a regular Rails app, this involves creating a test database, editing database.yml to connect to that 
     database, performing <code>rake RAILS_ENV=test db:migrate</code>, running <code>rake test</code> and making 
@@ -95,7 +99,7 @@ Follow these directions or watch our "5 minute install":/documentation/screencas
 
 6. Press the "build now" button on the "Dashboard":http://localhost:3333 to rebuild your project
 
-  p(def). This should build your_project and place build outputs into [cruise]/projects/your_project/build-[revision-number]/
+  p(def). This should build your_project and place build outputs into <em>[cruise&nbsp;data]</em>/projects/your_project/build-[revision-number]/
 
   p(def hint). Hint: Monitor log/your_project_builder.log for any signs of trouble. Try to check in a change to
     your_project and see if the builder can detect and build it.  Check your_project status in the dashboard.

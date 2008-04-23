@@ -7,8 +7,8 @@ up-to-date development database to work. On a continuous build server there is u
 
 Therefore, CC.rb uses the following logic to determine what to build:
 
-1. First, CC.rb loads all *.rake files from [cruise]/tasks/, and then the Rakefile of your_project.
-   Then it invokes <code>cc:build</code> task (defined in [cruise]/tasks/cc_build.rake). This task looks at all other
+1. First, CC.rb loads all *.rake files from <em>[cruise]</em>/tasks/, and then the Rakefile of your_project.
+   Then it invokes <code>cc:build</code> task (defined in <em>[cruise]</em>/tasks/cc_build.rake). This task looks at all other
    Rake tasks (defined in your_project), and decides what to do.
 
 2. If there is <code>cruise</code> target, it simply invokes that target.

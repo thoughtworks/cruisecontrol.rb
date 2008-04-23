@@ -1,10 +1,10 @@
 h1. Source Control
 
-Cruise Control currently ships with only Subversion support.
+Cruise Control currently ships with only Subversion support. Mercurial and Git support is planned for the next release.
 
 h1. Configuring Subversion
 
-If you want to configure subversion, you can do it in your cruise_config.rb file.  
+If you want to configure Subversion, you can do it in your cruise_config.rb file.  
 
 <pre><code>Project.configure do |project|
   project.source_control = Subversion.new
@@ -12,13 +12,13 @@ end</code></pre>
 
 Since Subversion is the default, you shouldn't have to specify this.  However, you might want to in order to change the default settings.
 
-By default cruise checks externals for changes.  If you don't want it to, you can turn it off like
+By default cruise checks externals for changes.  If you don't want it to, you can turn it off like this:
 
 <pre><code>Project.configure do |project|
   project.source_control = Subversion.new :check_externals => false
 end</code></pre>
 
-h1. Adding Other Source Controls
+h1. Adding other source controls
 
 p(hint). We have NOT actually tested this.  However, we've thought a lot about it, hopefully enough to give you a good place to start.
 
@@ -41,7 +41,8 @@ and in that project directory, create a cruise_config.rb file that has something
 
 <pre><code>
 Project.configure do |project|
-  project.source_control = Perforce.new(:user => 'cruise', :password => 'something cute')
+  project.source_control =
+      Perforce.new(:user => 'cruise', :password => 'something cute')
 end
 </code></pre>
 

@@ -2,13 +2,13 @@ h2. What is a plugin?
 
 CruiseControl.rb uses plugins to extend it's core.  Click on one of the above plugins to see the docs about that plugin.
 
-h2. Installing / Uninstalling a Plugin
+h2. Installing / uninstalling a plugin
 
-All installed plugins are found in the [cruise]/builder_plugins/installed/ directory.
+All installed plugins are found in the <em>[cruise]</em>/builder_plugins/installed/ directory.
 To install a plugin, all you need to do is move it into this directory and restart the cruise.  To uninstall, simply
 delete it.
 
-For your convenience, additional plugins are distributed in [cruise]/builder_plugins/available, you should see them
+For your convenience, additional plugins are distributed in <em>[cruise]</em>/builder_plugins/available, you should see them
 in the list at the top of this page.
 
 h2. Writing a plugin
@@ -36,7 +36,8 @@ class MinimalConsoleLogger
 
   def build_loop_failed(error)
     puts "Build loop failed"
-    puts "#{error.class}: #{error.message}"...
+    puts "#{error.class}: #{error.message}"
+    ...
   end
 end
 

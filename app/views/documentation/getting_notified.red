@@ -4,7 +4,7 @@ Let's admit it, the main duty of continuous integration tool is to -annoy- notif
 
 h2. E-mail
 
-<%= render_plugin_doc 'installed/email_notifier.rb' %>
+<%= render_plugin_doc 'lib/builder_plugins/email_notifier.rb' %>
 
 h2. CCTray (on windows)
 
