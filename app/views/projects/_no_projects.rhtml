@@ -1,7 +1,11 @@
 <div id="no_projects_help" class="help">
   <div style="font-size: 2em; font-weight: bold;">Welcome to CruiseControl.rb!</div>
   <div style="padding: 1em;">
-    <p>There are no projects in the projects directory yet.</p>
+    <p>
+      There are no projects in the projects directory
+      <small>[<%= h File.join(CRUISE_DATA_ROOT, 'projects') %>]</small> 
+      yet.
+    </p>
     <p>
       To add a project, open command line in the directory where you unpacked this tool, and type:
     </p>

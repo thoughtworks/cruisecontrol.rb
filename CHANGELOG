@@ -1,9 +1,9 @@
-TRUNK
+* 1.3.0
+  - cruise data (build results, etc) is stored in $HOME/.cruise/ by default
   - builds can now be serialized - with a config option set, CC.rb will only run one build at a time
-  - build requested status now stays on dashboard until a build starts
   - option to auto delete more than N builds
-  - moved cruise data into ~/.cruise by default
-  - plugins can now be installed w/ script/cruise_plugin script
+  - [experimental] plugins can be installed w/ script/cruise_plugin script
+  - [bugfix] build requested status now stays on dashboard until a build starts
   - [patch] subversion external support - nathan wilmes
   - [patch] relative url support - neal clark
 
