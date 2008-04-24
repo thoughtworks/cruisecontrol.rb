@@ -3,7 +3,7 @@ require 'stringio'
 
 class SubversionTest < Test::Unit::TestCase
   include FileSandbox
-  
+
   def teardown
     FileUtils.rm_f "./svn.err"
   end
@@ -33,9 +33,9 @@ class SubversionTest < Test::Unit::TestCase
   EOF
 
   def test_options
-    svn = Subversion.new(:url => "file://foo", 
-                         :username => "bob", 
-                         :password => 'cha', 
+    svn = Subversion.new(:url => "file://foo",
+                         :username => "bob",
+                         :password => 'cha',
                          :path => "bob",
                          :error_log => "bob/svn.err")
 
@@ -45,7 +45,7 @@ class SubversionTest < Test::Unit::TestCase
     assert_equal("bob", svn.path)
     assert_equal("bob/svn.err", svn.error_log)
   end
-  
+
   def test_error_log_should_default_to_above_path
     assert_equal("bob/../svn.err", Subversion.new(:path => "bob").error_log)
     assert_equal("./../svn.err", Subversion.new.error_log)
@@ -114,14 +114,14 @@ class SubversionTest < Test::Unit::TestCase
 
     svn.checkout
   end
-  
+
   def test_configure_subversion_not_to_check_externals
     svn = Subversion.new(:check_externals => false)
     assert_equal false, svn.check_externals
 
     svn = Subversion.new(:check_externals => true)
     assert_equal true, svn.check_externals
-    
+
     svn.check_externals = false
     assert_equal false, svn.check_externals
   end
@@ -132,7 +132,7 @@ class SubversionTest < Test::Unit::TestCase
 
     svn.checkout(Revision.new(5))
   end
-  
+
   def test_allowing_interaction
     svn = new_subversion(:url => 'svn://foo.com/', :interactive => true)
     svn.expects(:svn).with("co", ["svn://foo.com/", "."])
@@ -148,21 +148,21 @@ class SubversionTest < Test::Unit::TestCase
       Subversion.new(:url => 'http://foo.com/svn/project', :lollipop => 'http://foo.com/svn/project')
     end
   end
-  
+
   def test_clean_checkout
     in_sandbox do
       @sandbox.new :file => 'project/something.rb'
       assert File.directory?("project")
-      
+
       svn = Subversion.new(:url => 'http://foo.com/svn/project', :path => "project")
       svn.expects(:svn).with("co", ["http://foo.com/svn/project", "project", "--revision", 5])
 
       svn.clean_checkout(Revision.new(5))
-      
+
       assert !File.directory?("project")
-    end    
+    end
   end
-  
+
   def test_output_of_subversion_to_io_stream
     in_sandbox do
       svn = Subversion.new(:url => 'url')
@@ -172,36 +172,42 @@ class SubversionTest < Test::Unit::TestCase
 
       io = StringIO.new
       svn.clean_checkout(Revision.new(5), io)
-      
+
       assert_equal "hello world\n", io.string
-    end    
+    end
   end
-  
+
   def test_up_to_date_should_deal_with_different_revisions
-    svn = new_subversion
-    svn.expects(:last_locally_known_revision).returns(Revision.new(1))
-    svn.expects(:latest_revision).returns(Revision.new(4))
-    svn.expects(:revisions_since).with(1).returns([Revision.new(2), Revision.new(4)])
-    assert !svn.up_to_date?(reasons = [])
-    assert_equal ["New revision 4 detected",
-                  [Revision.new(2), Revision.new(4)]], reasons
+    in_sandbox do
+      svn = new_subversion
+      svn.expects(:last_locally_known_revision).returns(Revision.new(1))
+      svn.expects(:latest_revision).returns(Revision.new(4))
+      svn.expects(:revisions_since).with(1).returns([Revision.new(2), Revision.new(4)])
+      svn.expects(:externals).returns([])
+      assert !svn.up_to_date?(reasons = [])
+      assert_equal ["New revision 4 detected",
+                    [Revision.new(2), Revision.new(4)]], reasons
+    end
   end
-  
+
   def test_last_locally_known_revision_should_return_zero_if_path_doesnt_exist
     svn = new_subversion :path => "foo"
-    
+
     assert_equal 0, svn.last_locally_known_revision.number
   end
-  
+
   def test_up_to_date_should_deal_with_same_revisions
-    svn = new_subversion
-    svn.expects(:last_locally_known_revision).returns(Revision.new(1))
-    svn.expects(:latest_revision).returns(Revision.new(1))
-    
-    assert svn.up_to_date?(reasons = [])
-    assert_equal [], reasons
+    in_sandbox do
+      svn = new_subversion
+      svn.expects(:last_locally_known_revision).returns(Revision.new(1))
+      svn.expects(:latest_revision).returns(Revision.new(1))
+      svn.expects(:externals).returns([])
+
+      assert svn.up_to_date?(reasons = [])
+      assert_equal [], reasons
+    end
   end
-    
+
   def test_up_to_date_should_check_externals_and_return_false
     in_sandbox do
       sandbox.new :directory => "a"
