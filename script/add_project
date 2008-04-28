@@ -10,13 +10,17 @@ trace = false
 scm_options = {:interactive => true}
 
 ARGV.options do |opts|
-  opts.banner = "usage: cruise add <project-name> --url <URL> [subversion options]"
+  opts.banner = "usage: cruise add <project-name> --url <URL> [subversion options] [source control options] "
 
   opts.separator ""
 
   opts.on("-u", "--url url", String,
-          "The subversion url for the project (eg. svn://rubyforge.org/var/svn/cruisecontrolrb)") do |v|
+          "The source control repository url for the project (eg. svn://rubyforge.org/var/svn/cruisecontrolrb)") do |v|
     scm_options[:url] = v
+  end
+  opts.on("-s source_control", "--source-control source_control", String,
+          "Specify the source control manager to use (default: subversion)") do |v|
+    scm_options[:source_control] = v
   end
   opts.on("--username username", String, "Specify a username for source control") { |v| scm_options[:username] = v }
   opts.on("--password password", String, "Specify a password for source control") { |v| scm_options[:password] = v }
@@ -47,10 +51,28 @@ end
 puts "Adding project '#{project_name}' (this may take a while)..."
 
 begin 
-	require RAILS_ROOT + "/config/environment"
-	
-	source_control = Subversion.new(scm_options)
-	project = Project.new(project_name, source_control)
+
+  require RAILS_ROOT + "/config/environment"
+
+  if scm_options[:source_control].nil?
+    source_control_class = Subversion
+  else
+    source_control_class_name = scm_options[:source_control].to_s.camelize
+    begin
+      source_control_class = source_control_class_name.constantize
+    rescue => e
+      raise "#{scm_options[:source_control].inspect} is not a valid --source-control value [#{e.message}]"
+    end
+
+    unless source_control_class.ancestors.include?(AbstractSourceControlAdapter)
+      raise "#{scm_options[:source_control].inspect} is not a valid --source-control value [#{source_control_class_name} is not a subclass of AbstractSourceControlAdapter]"
+    end
+  end
+
+  scm_options.delete(:source_control)
+
+  source_control = source_control_class.new(scm_options)
+  project = Project.new(project_name, source_control)
 	projects = Projects.load_all
 	projects << project
 	

@@ -1,4 +1,4 @@
-class Subversion
+class Subversion < AbstractSourceControlAdapter
 end
 
 require 'builder_error'
@@ -8,7 +8,7 @@ require 'subversion/log_parser'
 require 'subversion/propget_parser'
 require 'subversion/update_parser'
 
-class Subversion
+class Subversion < AbstractSourceControlAdapter
   include CommandLine
 
   attr_accessor :url, :path, :username, :password, :check_externals
