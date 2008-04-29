@@ -58,8 +58,7 @@ class Project
       retried_after_update = false
       begin
         load_and_remember config_tracker.central_config_file
-      # TODO shouldn't it be "rescue Exception => e"?
-      rescue
+      rescue Exception 
         if retried_after_update
           raise
         else
