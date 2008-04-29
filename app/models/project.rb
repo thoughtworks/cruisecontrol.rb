@@ -500,8 +500,8 @@ def plugin_loader.load_all
         # a file without .rb extension, ignore
       end
     elsif File.directory?(plugin)
-      # ignore Subversion directory (although it should be considered hidden by Dir[], but just in case)
-      next if plugin[-4..-1] == '.svn'
+      # ignore hidden directories (they should be considered hidden by Dir[], but just in case)
+      next if File.basename(plugin)[0, 1] == '.'
       init_path = File.join(plugin, 'init.rb')
       if File.file?(init_path)
         load_plugin(init_path)
