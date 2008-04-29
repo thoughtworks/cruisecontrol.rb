@@ -11,7 +11,7 @@ module SourceControl
             revision = parse_revision(lines)
             revisions << revision
           end
-        rescue
+        rescue => e
           # Do nothing, the changeset is malformed.
         end
         revisions

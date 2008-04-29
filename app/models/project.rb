@@ -23,13 +23,11 @@ class Project
   end
 
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
-  attr_writer :local_checkout 
   attr_accessor :source_control, :scheduler
 
-  def initialize(name, scm = SourceControl::Subversion.new)
+  def initialize(name, scm = nil)
     @name = name
     @path = File.join(CRUISE_DATA_ROOT, 'projects', @name)
-    self.source_control = scm
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @plugins_by_name = {}
@@ -38,6 +36,7 @@ class Project
     @config_file_content = ''
     @error_message = ''
     @triggers = [ChangeInSourceControlTrigger.new(self)]
+    self.source_control = scm || SourceControl.detect(path)
     instantiate_plugins
   end
   
@@ -126,7 +125,7 @@ class Project
   end
 
   def local_checkout
-    @local_checkout or File.join(@path, 'work')
+    File.join(@path, 'work')
   end
 
   def builds

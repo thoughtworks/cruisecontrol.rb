@@ -5,5 +5,9 @@ module SourceControl
       raise NotImplementedError
     end
 
+    def detect(project_name)
+      SourceControl::Subversion.new
+    end
+
   end
 end
