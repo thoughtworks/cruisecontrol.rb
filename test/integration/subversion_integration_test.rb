@@ -19,8 +19,8 @@ class SubversionIntegrationTest < Test::Unit::TestCase
   def test_subversion_log_should_work_if_it_has_either_existing_path_or_url
     checkout 'passing_project'
 
-    Subversion.new(:path => 'passing_project').latest_revision
-    Subversion.new(:path => 'foo', :url => fixture_repository_url).latest_revision
+    SourceControl::Subversion.new(:path => 'passing_project').latest_revision
+    SourceControl::Subversion.new(:path => 'foo', :url => fixture_repository_url).latest_revision
     assert_raises { Subversion.new(:path => 'foo').latest_revision }
   end
   
@@ -88,6 +88,6 @@ and one more revision, for good measure
   end
   
   def svn_for(path)
-    Subversion.new :url => File.join(fixture_repository_url, path), :path => path
+    SourceControl::Subversion.new :url => File.join(fixture_repository_url, path), :path => path
   end
 end

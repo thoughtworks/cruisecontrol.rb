@@ -1,8 +1,9 @@
-require File.dirname(__FILE__) + '/../../test_helper'
+require File.dirname(__FILE__) + '/../../../test_helper'
 require 'revision'
 require 'changeset_entry'
 
-class Subversion::InfoParserTest < Test::Unit::TestCase
+module SourceControl
+  class Subversion::InfoParserTest < Test::Unit::TestCase
 
 INFO_XML_OUTPUT = <<-EOF
 <?xml version="1.0" encoding="utf-8"?>
@@ -114,46 +115,48 @@ INFO_XML_OUTPUT_WITH_CONFLICT = <<-EOF
 </entry>
 </info>
 EOF
+  
+    def test_should_parse_INFO_XML_OUTPUT
+      expected_result = {:revision => 328,
+                         :last_changed_revision => 328,
+                         :last_changed_author => 'stellsmi'}
 
-  def test_should_parse_INFO_XML_OUTPUT
-    expected_result = {:revision => 328,
-                       :last_changed_revision => 328,
-                       :last_changed_author => 'stellsmi'}
-
-    assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT)
-  end
-
-  def test_should_parse_INFO_XML_OUTPUT_WITH_WORKING_COPY
-    expected_result = {:revision => 328,
-                       :last_changed_revision => 328,
-                       :last_changed_author => 'stellsmi'}
-
-    assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT_WITH_WORKING_COPY)
-  end
-
-  def test_should_parse_INFO_XML_OUTPUT_WITH_LOCK
-    expected_result = {:revision => 328,
-                       :last_changed_revision => 328,
-                       :last_changed_author => 'stellsmi'}
-
-    assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT_WITH_LOCK)
-  end
-
-  def test_should_parse_INFO_XML_OUTPUT_WITH_CONFLICT
-    expected_result = {:revision => 328,
-                       :last_changed_revision => 328,
-                       :last_changed_author => 'stellsmi'}
-
-    assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT_WITH_CONFLICT)
-  end
-
-  def parse_info(svn_output)
-    Subversion::InfoParser.new.parse(svn_output)
-  end
-
-  def assert_info_equal(expected_fields, info)
-    expected_fields.each do |name, value|
-      assert_equal value, info.send(name), "comparing #{name}"
+      assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT)
     end
+
+    def test_should_parse_INFO_XML_OUTPUT_WITH_WORKING_COPY
+      expected_result = {:revision => 328,
+                         :last_changed_revision => 328,
+                         :last_changed_author => 'stellsmi'}
+
+      assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT_WITH_WORKING_COPY)
+    end
+
+    def test_should_parse_INFO_XML_OUTPUT_WITH_LOCK
+      expected_result = {:revision => 328,
+                         :last_changed_revision => 328,
+                         :last_changed_author => 'stellsmi'}
+
+      assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT_WITH_LOCK)
+    end
+
+    def test_should_parse_INFO_XML_OUTPUT_WITH_CONFLICT
+      expected_result = {:revision => 328,
+                         :last_changed_revision => 328,
+                         :last_changed_author => 'stellsmi'}
+
+      assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT_WITH_CONFLICT)
+    end
+
+    def parse_info(svn_output)
+      Subversion::InfoParser.new.parse(svn_output)
+    end
+
+    def assert_info_equal(expected_fields, info)
+      expected_fields.each do |name, value|
+        assert_equal value, info.send(name), "comparing #{name}"
+      end
+    end
+
   end
 end

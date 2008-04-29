@@ -46,7 +46,7 @@ module BuildsHelper
   end
   
   def failures_and_errors_if_any(log)
-    errors = LogParser.new(log).failures_and_errors
+    errors = BuildLogParser.new(log).failures_and_errors
     return nil if errors.empty?
     
     link_to_code(errors.collect{|error| format_test_error_output(error)}.join)

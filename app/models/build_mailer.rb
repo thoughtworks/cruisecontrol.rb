@@ -5,7 +5,7 @@ class BuildMailer < ActionMailer::Base
     @body       = {
         :build => build,
         :message => message,
-        :failures_and_errors => LogParser.new(build.output).failures_and_errors.map { |e| formatted_error(e) } }
+        :failures_and_errors => BuildLogParser.new(build.output).failures_and_errors.map { |e| formatted_error(e) } }
     @recipients = recipients
     @from       = from
     @sent_on    = sent_at

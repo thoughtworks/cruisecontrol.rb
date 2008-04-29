@@ -26,7 +26,7 @@ class Project
   attr_writer :local_checkout 
   attr_accessor :source_control, :scheduler
 
-  def initialize(name, scm = Subversion.new)
+  def initialize(name, scm = SourceControl::Subversion.new)
     @name = name
     @path = File.join(CRUISE_DATA_ROOT, 'projects', @name)
     self.source_control = scm

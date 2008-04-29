@@ -106,7 +106,7 @@ class ProjectsTest < Test::Unit::TestCase
       new_project = Projects.load_project(sandbox.root + '/myproject')
 
       assert_equal("myproject", new_project.name)
-      assert_equal(Subversion, new_project.source_control.class)
+      assert_equal(SourceControl::Subversion, new_project.source_control.class)
       assert_equal(sandbox.root + "/myproject", new_project.path)
     end
   end

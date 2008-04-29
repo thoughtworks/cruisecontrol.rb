@@ -233,7 +233,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
 
   def stub_change_set_parser
     mock = Object.new
-    Subversion::ChangesetLogParser.stubs(:new).returns(mock)
+    SourceControl::Subversion::ChangesetLogParser.stubs(:new).returns(mock)
     mock.expects(:parse_log).returns([])
   end
 
