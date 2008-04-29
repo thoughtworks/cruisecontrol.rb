@@ -16,6 +16,7 @@ module SourceControl
     attr_accessor :url, :path, :username, :password, :check_externals
 
     def initialize(options = {})
+      options = options.dup
       @url = options.delete(:url)
       @path = options.delete(:path) || "."
       @username = options.delete(:username)
