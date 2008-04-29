@@ -2,15 +2,20 @@
 
 RAILS_ENV = 'add_project'
 
-require File.dirname(__FILE__) + '/../config/boot'
 require 'optparse'
 
-project_name = ARGV.shift
-trace = false
 scm_options = {:interactive => true}
+trace = false
+
+if ARGV.first and ARGV.first !~ /^-/
+  project_name = ARGV.shift
+  if ARGV.first and ARGV.first !~ /^-/
+    scm_options[:url] = ARGV.shift 
+  end
+end
 
 ARGV.options do |opts|
-  opts.banner = "usage: cruise add <project-name> --url <URL> [subversion options] [source control options] "
+  opts.banner = "usage: cruise add <project-name> --url <source control URL> [source control options]"
 
   opts.separator ""
 
@@ -28,8 +33,7 @@ ARGV.options do |opts|
 
   opts.separator ""
 
-  opts.on("-h", "--help",
-          "Show this help message.") { puts opts; exit 1 }
+  opts.on("-h", "--help", "Show this help message.") { puts opts; exit }
 
   args = opts.parse!
 
@@ -52,12 +56,19 @@ puts "Adding project '#{project_name}' (this may take a while)..."
 
 begin 
 
+  require File.dirname(__FILE__) + '/../config/boot'
   require RAILS_ROOT + "/config/environment"
 
   if scm_options[:source_control].nil?
-    source_control_class = Subversion
+    source_control_class =
+      case scm_options[:url]
+      when /^git:/ then Git
+      when /^svn:/, /^svn\+ssh:/ then Subversion
+      else Subversion
+      end
   else
     source_control_class_name = scm_options[:source_control].to_s.camelize
+
     begin
       source_control_class = source_control_class_name.constantize
     rescue => e
@@ -65,7 +76,8 @@ begin
     end
 
     unless source_control_class.ancestors.include?(AbstractSourceControlAdapter)
-      raise "#{scm_options[:source_control].inspect} is not a valid --source-control value [#{source_control_class_name} is not a subclass of AbstractSourceControlAdapter]"
+      raise "#{scm_options[:source_control].inspect} is not a valid --source-control value " +
+            "[#{source_control_class_name} is not a subclass of AbstractSourceControlAdapter]"
     end
   end
 
@@ -88,7 +100,7 @@ rescue => e
   if trace
     STDERR.puts e.backtrace.map { |line| "    #{line}" }
   end
-  exit -1
+  exit(-1)
 end
 
 puts "Project '#{project_name}' added."
