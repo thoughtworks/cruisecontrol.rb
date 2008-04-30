@@ -17,7 +17,7 @@ class BuilderStatus
   end
 
   def fatal?
-    %w(svn_error timed_out).include?(status)
+    %w(source_control_error timed_out).include?(status)
   end
   
   def error_message

@@ -105,8 +105,8 @@ class BuilderStatusTest < Test::Unit::TestCase
     end
   end
   
-  def test_svn_error_should_be_fatal
-    @builder_status.expects(:status).returns("svn_error")
+  def test_source_control_error_should_be_fatal
+    @builder_status.expects(:status).returns("source_control_error")
     assert @builder_status.fatal?
   end
   

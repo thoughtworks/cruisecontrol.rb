@@ -79,3 +79,4 @@ Concerns
     ./subversion_log_parser.rb:7:in `readline': end of file reached (EOFError)
             from ./subversion_log_parser.rb:7:in `parse'
             ...
+

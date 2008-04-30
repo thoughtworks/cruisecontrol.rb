@@ -1,4 +1,5 @@
 module SourceControl
+
   class << self
 
     def create(scm_options)
@@ -11,8 +12,8 @@ module SourceControl
         source_control_class =
           case scm_options[:url]
           when /^git:/ then Git
-          when /^svn:/, /^svn\+ssh:/ then Subversion
-          else Subversion
+          when /^svn:/, /^svn\+ssh:/ then SourceControl::Subversion
+          else SourceControl::Subversion
           end
       else
         scm_type = "subversion" if scm_type == "svn"
