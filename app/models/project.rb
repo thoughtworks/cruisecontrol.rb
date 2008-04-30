@@ -40,9 +40,9 @@ class Project
     instantiate_plugins
   end
   
-  def source_control=(value)
-    value.path = local_checkout
-    @source_control = value
+  def source_control=(scm_adapter)
+    scm_adapter.path = local_checkout
+    @source_control = scm_adapter
   end
   
   def load_and_remember(file)

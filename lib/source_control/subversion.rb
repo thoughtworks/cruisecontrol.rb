@@ -13,7 +13,7 @@ module SourceControl
   class Subversion < AbstractAdapter
     include CommandLine
 
-    attr_accessor :url, :path, :username, :password, :check_externals
+    attr_accessor :url, :username, :password, :check_externals
 
     def initialize(options = {})
       options = options.dup
@@ -38,7 +38,7 @@ module SourceControl
     end
 
     def checkout(revision = nil, stdout = $stdout)
-      @url or raise 'URL not specified'
+      raise 'URL not specified' unless @url
 
       options = [@url, path]
       options << "--username" << @username if @username
