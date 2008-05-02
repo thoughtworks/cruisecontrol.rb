@@ -14,7 +14,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
     with_project('passing_project', :revision => 2) do |project, sandbox|
       sandbox.new :file=> 'passing_project/cruise_config.rb', :with_contents => ' '
       sandbox.new :file=> 'passing_project/build-2/build_status.success'
-      
+
       project.config_tracker.update_contents
 
       assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
@@ -23,7 +23,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       assert result.is_a?(Build)
 
       assert_equal true, result.successful?
-      
+
       build_dir = Dir["#{sandbox.root}/passing_project/build-7-success.*"][0]
       assert build_dir
       assert File.exists?("#{build_dir}/changeset.log")
@@ -82,21 +82,21 @@ class BuilderIntegrationTest < Test::Unit::TestCase
   def test_build_if_necessary_should_return_nil_when_no_changes_were_made
     with_project 'passing_project' do |project, sandbox|
       sandbox.new :file=> 'passing_project/cruise_config.rb'
-      sandbox.new :file=>'passing_project/build-7/build_status.success'     
-      result = project.build_if_necessary      
+      sandbox.new :file=>'passing_project/build-7/build_status.success'
+      result = project.build_if_necessary
       assert_nil result
       # test existence and contents of log files
     end
   end
-      
+
   def test_build_should_still_build_even_when_no_changes_were_made
     with_project('passing_project', :revision => 7) do |project, sandbox|
       status_file_path = 'passing_project/build-7/build_status.success'
-      sandbox.new :file=> status_file_path  
-      
-      new_status_file_path = 'passing_project/build-7.1/build_status.success.*'    
+      sandbox.new :file=> status_file_path
+
+      new_status_file_path = 'passing_project/build-7.1/build_status.success.*'
       new_status_file_full_path = "#{sandbox.root}/#{new_status_file_path}"
-    
+
       result = project.build
       assert result.is_a?(Build)
 
@@ -104,8 +104,8 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
       assert Dir["passing_project/build-7.1-success.*"][0]
      end
-  end  
-    
+  end
+
   def test_builder_should_set_RAILS_ENV_to_test_and_invoke_db_migrate_and_test_instead_of_if_these_tasks_are_defined
     with_project('project_with_db_migrate') do |project, sandbox|
       build = project.build
@@ -114,7 +114,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       expected_output = "[CruiseControl] Invoking Rake task \"db:migrate\"\nRAILS_ENV=test\n[CruiseControl] Invoking Rake task \"default\"\n"
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
-    
+
   end
 
   def test_builder_should_be_transparent_to_RAILS_ENV
@@ -134,11 +134,11 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
-      
+
       expected_output = "Vasya_was_here"
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
-    
+
   end
 
   def test_custom_rake_task
@@ -147,11 +147,11 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
-      
+
       expected_output = "my_build invoked\n"
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
-    
+
   end
 
   def test_multiple_custom_rake_tasks
@@ -160,11 +160,11 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
-      
+
       expected_output = "my_build invoked\n[CruiseControl] Invoking Rake task \"my_deploy\"\nmy_deploy invoked\n"
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
-    
+
   end
 
   def test_should_reconnect_to_database_after_db_test_purge_in_cc_build
@@ -174,22 +174,22 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       expected_output = "db-test-purge\nESTABLISH_CONNECTION\n[CruiseControl] Invoking Rake task \"db:migrate\"\ndb-migrate\n"
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
-    
+
   end
-  
+
   def test_should_break_build_if_no_migration_scripts_but_database_yml_exists
     with_project 'project_with_no_migration_scripts_but_database_yml_exists' do |project, sandbox|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
-      assert !build_log.include?("db-test-purge") 
-      assert !build_log.include?("db-migrate")       
-      error_message = "No migration scripts found in db/migrate/ but database.yml exists, " + 
+      assert !build_log.include?("db-test-purge")
+      assert !build_log.include?("db-migrate")
+      error_message = "No migration scripts found in db/migrate/ but database.yml exists, " +
                       "CruiseControl won't be able to build the latest test database. Build aborted."
-      assert build_log.include?(error_message), 
+      assert build_log.include?(error_message),
           "#{error_message.inspect} not found in build log:\n#{build_log}"
     end
   end
-  
+
   def fixture_repository_url
     repository_path = File.expand_path("#{RAILS_ROOT}/test/fixtures/svn-repo")
     urlified_path = repository_path.sub(/^[a-zA-Z]:/, '').gsub('\\', '/')
@@ -201,7 +201,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       svn = SourceControl::Subversion.new :repository => "#{fixture_repository_url}/#{project_name}", 
                            :path => "#{project_name}/work"
       svn.checkout options[:revision], StringIO.new
-      
+
       project = Project.new(project_name)
       project.path = "#{project_name}"
 

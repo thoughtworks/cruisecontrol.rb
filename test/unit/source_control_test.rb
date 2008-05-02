@@ -96,4 +96,47 @@ class SourceControlTest < Test::Unit::TestCase
       assert_equal :foo, SourceControl.create(:repository => "git://my_repo", :source_control => 'svn')
     end
   end
+
+  def test_detect_should_identify_git_repository_by_presence_of_dotgit_directory
+    in_sandbox do
+      File.expects(:directory?).with(File.join('./Proj1/work', '.git')).returns(true)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.svn')).returns(false)
+      SourceControl::Git.expects(:new).with(:path => './Proj1/work').returns(:git_instance)
+
+      assert_equal :git_instance, SourceControl.detect('./Proj1/work')
+    end
+  end
+
+  def test_detect_should_identify_subversion_repository_by_presence_of_dotsvn_directory
+    in_sandbox do
+      File.expects(:directory?).with(File.join('./Proj1/work', '.git')).returns(false)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.svn')).returns(true)
+      SourceControl::Subversion.expects(:new).with(:path => './Proj1/work').returns(:svn_instance)
+
+      assert_equal :svn_instance, SourceControl.detect('./Proj1/work')
+    end
+  end
+
+  def test_detect_should_blow_up_if_there_is_neither_subversion_nor_git
+    in_sandbox do
+      File.expects(:directory?).with(File.join('./Proj1/work', '.git')).returns(false)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.svn')).returns(false)
+
+      assert_raises RuntimeError, "Could not detect the type of source control in ./Proj1/work" do
+        SourceControl.detect('./Proj1/work')
+      end
+    end
+  end
+
+  def test_detect_should_blow_up_if_there_is_both_subversion_and_git
+    in_sandbox do
+      File.expects(:directory?).with(File.join('./Proj1/work', '.git')).returns(true)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.svn')).returns(true)
+
+      assert_raises RuntimeError, "More than one type of source control was detected in ./Proj1/work" do
+        SourceControl.detect('./Proj1/work')
+      end
+    end
+  end
+
 end

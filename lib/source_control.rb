@@ -35,8 +35,16 @@ module SourceControl
       source_control_class.new(scm_options)
     end
 
-    def detect(project_name)
-      SourceControl::Subversion.new
+    def detect(path)
+      git = File.directory?(File.join(path, '.git'))
+      svn = File.directory?(File.join(path, '.svn'))
+
+      case [git, svn]
+      when [true, false] then SourceControl::Git.new(:path => path)
+      when [false, true] then SourceControl::Subversion.new(:path => path)
+      when [true, true] then raise "More than one type of source control was detected in #{path}"
+      when [false, false] then raise "Could not detect the type of source control in #{path}"
+      end
     end
 
   end

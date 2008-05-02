@@ -36,7 +36,7 @@ class Project
     @config_file_content = ''
     @error_message = ''
     @triggers = [ChangeInSourceControlTrigger.new(self)]
-    self.source_control = scm || SourceControl.detect(path)
+    @source_control = scm if scm
     instantiate_plugins
   end
   
@@ -44,7 +44,11 @@ class Project
     scm_adapter.path = local_checkout
     @source_control = scm_adapter
   end
-  
+
+  def source_control
+    @source_control || self.source_control = SourceControl.detect(local_checkout)
+  end
+
   def load_and_remember(file)
     return unless File.file?(file)
     @settings << File.read(file) << "\n"
@@ -61,7 +65,7 @@ class Project
         if retried_after_update
           raise
         else
-          @source_control.update
+          source_control.update
           retried_after_update = true
           retry
         end
@@ -79,7 +83,7 @@ class Project
     value = File.expand_path(value)
     @config_tracker = ProjectConfigTracker.new(value)
     @path = value
-    @source_control.path = local_checkout
+    @source_control.path = local_checkout if @source_control
     @path
   end
 
@@ -269,11 +273,11 @@ class Project
       File.open(build.artifact('source_control.log'), 'w') do |f| 
         start = Time.now
         f << "checking out build #{build.label}, this could take a while...\n"
-        @source_control.clean_checkout(revision, f)
+        source_control.clean_checkout(revision, f)
         f << "\ntook #{Time.now - start} seconds"
       end
     else
-      @source_control.update(revision)
+      source_control.update(revision)
     end
   end
   

@@ -58,7 +58,7 @@ class Test::Unit::TestCase
   
   def with_sandbox_project(&block)
     in_total_sandbox do |sandbox|
-      FileUtils.mkdir_p("#{sandbox.root}/work")
+      FileUtils.mkdir_p("#{sandbox.root}/work/.svn")
       
       project = Project.new('my_project')
       project.path = sandbox.root

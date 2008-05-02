@@ -101,6 +101,7 @@ class ProjectsTest < Test::Unit::TestCase
 
   def test_load_project_with_no_config
     in_sandbox do |sandbox|
+      sandbox.new :directory => "myproject/work/.svn"
       sandbox.new :directory => "myproject/builds-1"
 
       new_project = Projects.load_project(sandbox.root + '/myproject')
