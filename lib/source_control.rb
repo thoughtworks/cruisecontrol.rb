@@ -3,14 +3,14 @@ module SourceControl
   class << self
 
     def create(scm_options)
-      raise ArgumentError, "options should include URL" unless scm_options[:url] 
+      raise ArgumentError, "options should include repository" unless scm_options[:repository] 
 
       scm_options = scm_options.dup
       scm_type = scm_options.delete(:source_control)
 
       if scm_type.nil?
         source_control_class =
-          case scm_options[:url]
+          case scm_options[:repository]
           when /^git:/ then Git
           when /^svn:/, /^svn\+ssh:/ then SourceControl::Subversion
           else SourceControl::Subversion
