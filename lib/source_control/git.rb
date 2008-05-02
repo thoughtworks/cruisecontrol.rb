@@ -26,16 +26,14 @@ module SourceControl
       raise "#{path} is not empty, cannot clone a project into it" unless (Dir.entries(path) - ['.', '..']).empty?
 
       FileUtils.rm_rf(path)
-      git('clone', [@repository, path], :execute_locally => false)
-
-#      do |io|
-#        begin
-#          while line = io.gets
-#            stdout.puts line
-#          end
-#        rescue EOFError
-#        end
-#      end
+      git('clone', [@repository, path], :execute_locally => false) do |io|
+        begin
+          while line = io.gets
+            stdout.puts line
+          end
+        rescue EOFError
+        end
+      end
     end
 
     protected

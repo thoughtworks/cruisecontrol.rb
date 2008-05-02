@@ -5,6 +5,14 @@ module SourceControl
     
     attr_accessor :path
 
+    def checkout(stdout = $stdout)
+      raise NotImplementedError, "checkout() not implemented by #{self.class}"
+    end
+
+    def latest_revision()
+      raise NotImplementedError, "latest_revision() not implemented by #{self.class}"
+    end
+
     def error_log
       @error_log ? @error_log : File.join(@path, "..", "source_control.err")
     end
