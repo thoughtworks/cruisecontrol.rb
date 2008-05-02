@@ -10,7 +10,7 @@ trace = false
 if ARGV.first and ARGV.first !~ /^-/
   project_name = ARGV.shift
   if ARGV.first and ARGV.first !~ /^-/
-    scm_options[:url] = ARGV.shift 
+    scm_options[:repository] = ARGV.shift
   end
 end
 
@@ -19,10 +19,11 @@ ARGV.options do |opts|
 
   opts.separator ""
 
-  opts.on("-u", "--url url", String,
-          "The source control repository url for the project (eg. svn://rubyforge.org/var/svn/cruisecontrolrb)") do |v|
-    scm_options[:url] = v
+  opts.on("-r", "--repository repository", String,
+          "Location of the source control repository for the project (eg. svn://rubyforge.org/var/svn/cruisecontrolrb)") do |v|
+    scm_options[:repository] = v
   end
+
   opts.on("-s source_control", "--source-control source_control", String,
           "Specify the source control manager to use (default: subversion)") do |v|
     scm_options[:source_control] = v
@@ -33,12 +34,19 @@ ARGV.options do |opts|
 
   opts.separator ""
 
+  opts.on("-u", "--url url", String,
+          "[deprecated, use -r|--repository instead] URL of the source control repository") do |v|
+    scm_options[:repository] = v
+  end
+
+  opts.separator ""
+
   opts.on("-h", "--help", "Show this help message.") { puts opts; exit }
 
   args = opts.parse!
 
-  unless project_name and scm_options[:url]
-    STDERR.puts "Project name and url are mandatory"
+  unless project_name and scm_options[:repository]
+    STDERR.puts "Project name and repository location are mandatory"
     STDERR.puts
     puts opts
     exit(-1)
@@ -65,7 +73,7 @@ begin
 	projects = Projects.load_all
 	projects << project
 	
-	if source_control.url =~ /^svn\+ssh\:\/\//
+	if source_control.repository =~ /^svn\+ssh\:\/\//
     puts "IMPORTANT!!! - It looks like you are connecting to your repository with an svn+ssh connection.  " +
          "For cruise to build this project, you need to have set up authentication caching for ssh, see this article"
     puts "   http://subversion.tigris.org/faq.html#ssh-auth-cache"

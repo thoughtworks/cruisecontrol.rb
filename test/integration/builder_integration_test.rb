@@ -198,7 +198,7 @@ class BuilderIntegrationTest < Test::Unit::TestCase
 
   def with_project(project_name, options = {}, &block)
     in_sandbox do |sandbox|
-      svn = SourceControl::Subversion.new :url => "#{fixture_repository_url}/#{project_name}", 
+      svn = SourceControl::Subversion.new :repository => "#{fixture_repository_url}/#{project_name}", 
                            :path => "#{project_name}/work"
       svn.checkout options[:revision], StringIO.new
       

@@ -12,13 +12,13 @@ module SourceControl
 
   class Subversion < AbstractAdapter
 
-    attr_accessor :url, :username, :password, :check_externals
+    attr_accessor :repository, :username, :password, :check_externals
 
     def initialize(options = {})
       options = options.dup
       @path = options.delete(:path) || "."
       @error_log = options.delete(:error_log)
-      @url = options.delete(:url)
+      @repository = options.delete(:repository)
       @username = options.delete(:username)
       @password = options.delete(:password)
       @interactive = options.delete(:interactive)
@@ -33,9 +33,9 @@ module SourceControl
     end
 
     def checkout(revision = nil, stdout = $stdout)
-      raise 'URL not specified' unless @url
+      raise 'Repository location is not specified' unless @repository
 
-      options = [@url, path]
+      options = [@repository, path]
       options << "--username" << @username if @username
       options << "--password" << @password if @password
       options << "--revision" << revision_number(revision) if revision
@@ -75,7 +75,7 @@ module SourceControl
         externals.each do |ext_path, ext_url|
           ext_logger = ExternalReasons.new(ext_path, reasons)
           ext_svn = Subversion.new(:path => File.join(self.path, ext_path),
-                                   :url => ext_url,
+                                   :repository => ext_url,
                                    :check_externals => false)
           result = false unless ext_svn.up_to_date?(ext_logger)
         end
@@ -107,7 +107,8 @@ module SourceControl
     end
 
     def log(from, to, arguments = [])
-      svn('log', arguments + ["--revision", "#{from}:#{to}", '--verbose', '--xml', url], :execute_locally => url.blank?)
+      svn('log', arguments + ["--revision", "#{from}:#{to}", '--verbose', '--xml', @repository],
+          :execute_locally => @repository.blank?)
     end
 
     def info

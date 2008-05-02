@@ -55,5 +55,5 @@ class ProjectsController < ApplicationController
       render_not_found
     end
   end
-  
+
 end

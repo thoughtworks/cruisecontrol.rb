@@ -35,13 +35,13 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   EOF
 
   def test_options
-    svn = Subversion.new(:url => "file://foo",
+    svn = Subversion.new(:repository => "file://foo",
                          :username => "bob",
                          :password => 'cha',
                          :path => "bob",
                          :error_log => "bob/source_control.err")
 
-    assert_equal("file://foo", svn.url)
+    assert_equal("file://foo", svn.repository)
     assert_equal("bob", svn.username)
     assert_equal("cha", svn.password)
     assert_equal("bob", svn.path)
@@ -90,7 +90,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   end
 
   def test_checkout_with_no_user_password
-    svn = new_subversion(:url => 'http://foo.com/svn/project')
+    svn = new_subversion(:repository => 'http://foo.com/svn/project')
     svn.expects(:svn).with("co", ["http://foo.com/svn/project", "."])
 
     svn.checkout
@@ -110,7 +110,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   end
 
   def test_checkout_with_user_password
-    svn = new_subversion(:url => 'http://foo.com/svn/project', :username => 'jer', :password => "crap")
+    svn = new_subversion(:repository => 'http://foo.com/svn/project', :username => 'jer', :password => "crap")
     svn.expects(:svn).with("co", ["http://foo.com/svn/project", ".", "--username",
                                 "jer", "--password", "crap"])
 
@@ -129,25 +129,25 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   end
 
   def test_checkout_with_revision
-    svn = Subversion.new(:url => 'http://foo.com/svn/project')
+    svn = Subversion.new(:repository => 'http://foo.com/svn/project')
     svn.expects(:svn).with("co", ["http://foo.com/svn/project", ".", "--revision", 5])
 
     svn.checkout(Revision.new(5))
   end
 
   def test_allowing_interaction
-    svn = new_subversion(:url => 'svn://foo.com/', :interactive => true)
+    svn = new_subversion(:repository => 'svn://foo.com/', :interactive => true)
     svn.expects(:svn).with("co", ["svn://foo.com/", "."])
     svn.checkout
   end
 
-  def test_checkout_requires_url
-    assert_raises('URL not specified') { Subversion.new.checkout('.') }
+  def test_checkout_requires_repository_location
+    assert_raises('Repository location is not specified') { Subversion.new.checkout('.') }
   end
 
   def test_new_does_not_allow_random_params
     assert_raises("don't know how to handle 'lollipop'") do
-      Subversion.new(:url => 'http://foo.com/svn/project', :lollipop => 'http://foo.com/svn/project')
+      Subversion.new(:repository => 'http://foo.com/svn/project', :lollipop => 'http://foo.com/svn/project')
     end
   end
 
@@ -156,7 +156,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
       @sandbox.new :file => 'project/something.rb'
       assert File.directory?("project")
 
-      svn = Subversion.new(:url => 'http://foo.com/svn/project', :path => "project")
+      svn = Subversion.new(:repository => 'http://foo.com/svn/project', :path => "project")
       svn.expects(:svn).with("co", ["http://foo.com/svn/project", "project", "--revision", 5])
 
       svn.clean_checkout(Revision.new(5))
@@ -167,7 +167,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
 
   def test_output_of_subversion_to_io_stream
     in_sandbox do
-      svn = Subversion.new(:url => 'url')
+      svn = Subversion.new(:repository => 'url')
       def svn.svn(*args, &block)
         execute_in_local_copy 'echo hello world', [], &block
       end
@@ -218,8 +218,8 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
       svn = new_subversion
       a_svn = Object.new
       b_svn = new_subversion
-      Subversion.expects(:new).with(:path => "./a", :url => "svn+ssh://a", :check_externals => false).returns(a_svn)
-      Subversion.expects(:new).with(:path => "./b", :url => "svn+ssh://b", :check_externals => false).returns(b_svn)
+      Subversion.expects(:new).with(:path => "./a", :repository => "svn+ssh://a", :check_externals => false).returns(a_svn)
+      Subversion.expects(:new).with(:path => "./b", :repository => "svn+ssh://b", :check_externals => false).returns(b_svn)
 
       svn.check_externals = true
       svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
@@ -243,8 +243,8 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
       svn = new_subversion
       a_svn = Object.new
       b_svn = Object.new
-      Subversion.expects(:new).with(:path => "./a", :url => "svn+ssh://a", :check_externals => false).returns(a_svn)
-      Subversion.expects(:new).with(:path => "./b", :url => "svn+ssh://b", :check_externals => false).returns(b_svn)
+      Subversion.expects(:new).with(:path => "./a", :repository => "svn+ssh://a", :check_externals => false).returns(a_svn)
+      Subversion.expects(:new).with(:path => "./b", :repository => "svn+ssh://b", :check_externals => false).returns(b_svn)
 
       svn.check_externals = true
       svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
