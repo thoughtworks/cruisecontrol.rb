@@ -12,12 +12,12 @@ module CommandLine
     def initialize(cmd, full_cmd, dir, exitstatus, stderr)
       @cmd, @full_cmd, @dir, @exitstatus, @stderr = cmd, full_cmd, dir, exitstatus, stderr
     end
+
     def to_s
       "\ndir : #{@dir}\n" +
-      "command : #{@cmd}\n" +
-      "executed command : #{@full_cmd}\n" +
+      "command : #{@full_cmd}\n" +
       "exitstatus: #{@exitstatus}\n" +
-      "STDERR TAIL START\n#{@stderr}\nSTDERR TAIL END\n"
+      (@stderr ? "STDERR TAIL START\n#{@stderr}\nSTDERR TAIL END\n" : '')
     end
   end
 
@@ -91,7 +91,7 @@ module CommandLine
         end
       end
       exit_status = $CHILD_STATUS
-      raise "$CHILD_STATUS is nil " unless exit_status
+      raise "$CHILD_STATUS is nil" unless exit_status
       verify_exit_code(exit_status, cmd, full_cmd, options)
       return result
     rescue Errno::ENOENT => e
@@ -131,17 +131,21 @@ module CommandLine
 
   def verify_exit_code(exit_status, cmd, full_cmd, options)
     if exit_status.exitstatus != options[:exitstatus]
-      if options[:stderr] && File.exist?(options[:stderr])
-        File.open(options[:stderr]) do |errio|
-          begin
-            errio.seek(-1200, IO::SEEK_END)
-          rescue Errno::EINVAL
-            # ignore - it just means we didn't have 400 bytes.
+      if options[:stderr]
+        if File.exist?(options[:stderr])
+          File.open(options[:stderr]) do |errio|
+            begin
+              errio.seek(-1200, IO::SEEK_END)
+            rescue Errno::EINVAL
+              # ignore - it just means we didn't have 400 bytes.
+            end
+            error_message = errio.read
           end
-          error_message = errio.read
+        else
+          error_message = "#{options[:stderr]} doesn't exist"
         end
       else
-        error_message = "#{options[:stderr]} doesn't exist"
+        error_message = nil
       end
       raise ExecutionError.new(cmd, full_cmd, options[:dir] || Dir.pwd, exit_status.exitstatus, error_message)
     end

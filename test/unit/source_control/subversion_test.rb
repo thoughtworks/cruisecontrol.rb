@@ -7,7 +7,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   include SourceControl
 
   def teardown
-    FileUtils.rm_f "./svn.err"
+    FileUtils.rm_f "./source_control.err"
   end
 
   LOG_ENTRY = <<-EOF
@@ -39,18 +39,18 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
                          :username => "bob",
                          :password => 'cha',
                          :path => "bob",
-                         :error_log => "bob/svn.err")
+                         :error_log => "bob/source_control.err")
 
     assert_equal("file://foo", svn.url)
     assert_equal("bob", svn.username)
     assert_equal("cha", svn.password)
     assert_equal("bob", svn.path)
-    assert_equal("bob/svn.err", svn.error_log)
+    assert_equal("bob/source_control.err", svn.error_log)
   end
 
   def test_error_log_should_default_to_above_path
-    assert_equal("bob/../svn.err", Subversion.new(:path => "bob").error_log)
-    assert_equal("./../svn.err", Subversion.new.error_log)
+    assert_equal("bob/../source_control.err", Subversion.new(:path => "bob").error_log)
+    assert_equal("./../source_control.err", Subversion.new.error_log)
 
     assert_equal(".", Subversion.new.path)
   end
@@ -99,7 +99,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   def test_should_write_error_info_to_log_when_svn_server_not_available
     in_sandbox do |sandbox|
       sandbox.new :file => "project/work/empty", :with_content => ""
-      svn = new_subversion(:path => "project/work", :error_log => "project/svn.err")
+      svn = new_subversion(:path => "project/work", :error_log => "project/source_control.err")
       begin
         svn.up_to_date?
         flunk
@@ -264,7 +264,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   end
 
   def new_subversion(options = {})
-    Subversion.new({:path => '.', :error_log => "./svn.err"}.merge(options))
+    Subversion.new({:path => '.', :error_log => "./source_control.err"}.merge(options))
   end
 
 end

@@ -1,7 +1,13 @@
 module SourceControl
   class AbstractAdapter
 
+    include CommandLine
+    
     attr_accessor :path
+
+    def error_log
+      @error_log ? @error_log : File.join(@path, "..", "source_control.err")
+    end
 
     def execute_in_local_copy(command, options, &block)
       if block_given?

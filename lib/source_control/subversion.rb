@@ -11,25 +11,20 @@ module SourceControl
   require 'source_control/subversion/update_parser'
 
   class Subversion < AbstractAdapter
-    include CommandLine
 
     attr_accessor :url, :username, :password, :check_externals
 
     def initialize(options = {})
       options = options.dup
-      @url = options.delete(:url)
       @path = options.delete(:path) || "."
+      @error_log = options.delete(:error_log)
+      @url = options.delete(:url)
       @username = options.delete(:username)
       @password = options.delete(:password)
       @interactive = options.delete(:interactive)
-      @error_log = options.delete(:error_log)
       @check_externals = options.has_key?(:check_externals) ? options.delete(:check_externals) : true
 
       raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
-    end
-
-    def error_log
-      @error_log ? @error_log : File.join(@path, "..", "svn.err")
     end
 
     def clean_checkout(revision = nil, stdout = $stdout)
