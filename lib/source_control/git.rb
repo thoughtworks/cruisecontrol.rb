@@ -22,10 +22,10 @@ module SourceControl
 #      options << "--password" << @password if @password
 #      options << "--revision" << revision_number(revision) if revision
 
-      # need to read from command output, because otherwise tests break
       raise "#{path} is not empty, cannot clone a project into it" unless (Dir.entries(path) - ['.', '..']).empty?
-
       FileUtils.rm_rf(path)
+
+      # need to read from command output, because otherwise tests break
       git('clone', [@repository, path], :execute_locally => false) do |io|
         begin
           while line = io.gets
@@ -36,6 +36,11 @@ module SourceControl
       end
     end
 
+    def latest_revision
+      git_output = git('log', ['-1', '--pretty=raw'])
+      Git::LogParser.new.parse(git_output).first
+    end
+    
     protected
 
     def git(operation, arguments, options = {}, &block)

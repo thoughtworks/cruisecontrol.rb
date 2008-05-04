@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'revision'
 
 class ProjectsHelperTest < Test::Unit::TestCase
   include ProjectsHelper
@@ -60,8 +59,9 @@ class ProjectsHelperTest < Test::Unit::TestCase
   private
 
   def create_revision(number, committed_by, comment)
-    Revision.new(number, committed_by, DateTime.new(2007, 01, 12, 18, 05, 26, Rational(-7, 24)),
-                 comment, [ChangesetEntry.new('M', '/app/foo.txt')])  
+    SourceControl::Subversion::Revision.new(
+        number, committed_by, DateTime.new(2007, 01, 12, 18, 05, 26, Rational(-7, 24)),
+        comment, [ChangesetEntry.new('M', '/app/foo.txt')])  
   end
   
   def h(text)

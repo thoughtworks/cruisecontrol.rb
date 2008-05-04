@@ -28,7 +28,19 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
-  def new_git(options)
+  def test_latest_revision_should_call_git_log_and_send_it_to_parser
+    in_sandbox do
+      git = new_git
+      git.expects(:git).with("log", ["-1", '--pretty=raw']).returns('')
+      stub_parser = Object.new
+      stub_parser.stubs(:parse).returns([:foo])
+      Git::LogParser.expects(:new).returns(stub_parser)
+
+      assert_equal :foo, git.latest_revision
+    end
+  end
+
+  def new_git(options = {})
     Git.new({:path => "."}.merge(options))
   end
 

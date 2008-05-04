@@ -67,7 +67,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
     svn = new_subversion
     svn.expects(:svn).with("update", ["--revision", revision_number]).returns("your mom")
 
-    svn.update(Revision.new(revision_number))
+    svn.update(Subversion::Revision.new(revision_number))
   end
 
   def test_latest_revision
@@ -132,7 +132,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
     svn = Subversion.new(:repository => 'http://foo.com/svn/project')
     svn.expects(:svn).with("co", ["http://foo.com/svn/project", ".", "--revision", 5])
 
-    svn.checkout(Revision.new(5))
+    svn.checkout(Subversion::Revision.new(5))
   end
 
   def test_allowing_interaction
@@ -159,7 +159,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
       svn = Subversion.new(:repository => 'http://foo.com/svn/project', :path => "project")
       svn.expects(:svn).with("co", ["http://foo.com/svn/project", "project", "--revision", 5])
 
-      svn.clean_checkout(Revision.new(5))
+      svn.clean_checkout(Subversion::Revision.new(5))
 
       assert !File.directory?("project")
     end
@@ -173,7 +173,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
       end
 
       io = StringIO.new
-      svn.clean_checkout(Revision.new(5), io)
+      svn.clean_checkout(Subversion::Revision.new(5), io)
 
       assert_equal "hello world\n", io.string
     end
@@ -182,13 +182,13 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   def test_up_to_date_should_deal_with_different_revisions
     in_sandbox do
       svn = new_subversion
-      svn.expects(:last_locally_known_revision).returns(Revision.new(1))
-      svn.expects(:latest_revision).returns(Revision.new(4))
-      svn.expects(:revisions_since).with(1).returns([Revision.new(2), Revision.new(4)])
+      svn.expects(:last_locally_known_revision).returns(Subversion::Revision.new(1))
+      svn.expects(:latest_revision).returns(Subversion::Revision.new(4))
+      svn.expects(:revisions_since).with(1).returns([Subversion::Revision.new(2), Subversion::Revision.new(4)])
       svn.expects(:externals).returns([])
       assert !svn.up_to_date?(reasons = [])
       assert_equal ["New revision 4 detected",
-                    [Revision.new(2), Revision.new(4)]], reasons
+                    [Subversion::Revision.new(2), Subversion::Revision.new(4)]], reasons
     end
   end
 
@@ -201,8 +201,8 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   def test_up_to_date_should_deal_with_same_revisions
     in_sandbox do
       svn = new_subversion
-      svn.expects(:last_locally_known_revision).returns(Revision.new(1))
-      svn.expects(:latest_revision).returns(Revision.new(1))
+      svn.expects(:last_locally_known_revision).returns(Subversion::Revision.new(1))
+      svn.expects(:latest_revision).returns(Subversion::Revision.new(1))
       svn.expects(:externals).returns([])
 
       assert svn.up_to_date?(reasons = [])
@@ -223,15 +223,15 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
 
       svn.check_externals = true
       svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
-      svn.expects(:latest_revision).returns(Revision.new(14))
+      svn.expects(:latest_revision).returns(Subversion::Revision.new(14))
       a_svn.expects(:up_to_date?).returns(true)
-      b_svn.expects(:last_locally_known_revision).returns(Revision.new(20))
-      b_svn.expects(:latest_revision).returns(Revision.new(30))
-      b_svn.expects(:revisions_since).with(20).returns([Revision.new(24)])
+      b_svn.expects(:last_locally_known_revision).returns(Subversion::Revision.new(20))
+      b_svn.expects(:latest_revision).returns(Subversion::Revision.new(30))
+      b_svn.expects(:revisions_since).with(20).returns([Subversion::Revision.new(24)])
       b_svn.expects(:externals).returns({})
 
       assert !svn.up_to_date?(reasons = [], 14)
-      assert_equal ["New revision 30 detected in external 'b'", [Revision.new(24)]], reasons
+      assert_equal ["New revision 30 detected in external 'b'", [Subversion::Revision.new(24)]], reasons
     end
   end
 
@@ -248,7 +248,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
 
       svn.check_externals = true
       svn.expects(:externals).returns({"a" => "svn+ssh://a", "b" => "svn+ssh://b"})
-      svn.expects(:latest_revision).returns(Revision.new(14))
+      svn.expects(:latest_revision).returns(Subversion::Revision.new(14))
       a_svn.expects(:up_to_date?).returns(true)
       b_svn.expects(:up_to_date?).returns(true)
 

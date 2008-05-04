@@ -9,7 +9,7 @@ module SourceControl
       raise NotImplementedError, "checkout() not implemented by #{self.class}"
     end
 
-    def latest_revision()
+    def latest_revision
       raise NotImplementedError, "latest_revision() not implemented by #{self.class}"
     end
 

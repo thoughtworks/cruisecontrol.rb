@@ -1,6 +1,4 @@
 require File.dirname(__FILE__) + '/../../../test_helper'
-require 'revision'
-require 'changeset_entry'
 
 module SourceControl
   class Subversion::LogParserTest < Test::Unit::TestCase
@@ -64,14 +62,14 @@ LOG_ENTRY_WITH_MULTIPLE_ENTRIES = <<EOF
 EOF
 
     def test_can_parse_LOG_WITH_NO_OPTIONAL_VALUES
-      expected_result = [Revision.new(359, nil, nil, nil, [])]
+      expected_result = [Subversion::Revision.new(359, nil, nil, nil, [])]
 
       assert_equal expected_result, parse_log("<log><logentry revision='359'/></log>")
     end
 
     def test_can_parse_SIMPLE_LOG_ENTRY
-      expected_result = [Revision.new(359, 'aslak', DateTime.parse('2006-05-22T13:23:29.000005Z'), 'versioning',
-                                      [ChangesetEntry.new('A', '/trunk/foo.txt')])]
+      expected_result = [Subversion::Revision.new(359, 'aslak', DateTime.parse('2006-05-22T13:23:29.000005Z'),
+                         'versioning', [ChangesetEntry.new('A', '/trunk/foo.txt')])]
       actual = parse_log(SIMPLE_LOG_ENTRY)
 
       assert_equal expected_result, actual
@@ -79,7 +77,7 @@ EOF
     end
 
     def test_can_parse_LOG_WITH_NO_MESSAGE
-      expected = [Revision.new(1, nil, nil, nil, [])]
+      expected = [Subversion::Revision.new(1, nil, nil, nil, [])]
       actual = parse_log(LOG_WITH_NO_MESSAGE)
 
       assert_equal expected, actual
@@ -87,17 +85,17 @@ EOF
     end
 
     def test_can_parse_LOG_ENTRY_WITH_ANONYMOUS_AUTHOR
-      expected_result = [Revision.new(127, '(no author)', DateTime.parse('2006-05-22T13:23:29.000005Z'), 'categories added',
-                                      [ChangesetEntry.new('A', '/trunk/foo.txt')])]
+      expected_result = [Subversion::Revision.new(127, '(no author)', DateTime.parse('2006-05-22T13:23:29.000005Z'),
+                           'categories added', [ChangesetEntry.new('A', '/trunk/foo.txt')])]
       assert_equal expected_result, parse_log(LOG_ENTRY_WITH_ANONYMOUS_AUTHOR)
     end
 
 
     def test_can_parse_LOG_ENTRY_WITH_MULTIPLE_ENTRIES
       expected = [
-        Revision.new(359, 'aslak', DateTime.parse('2006-05-22T13:23:29.000005Z'), 'versioning',
+        Subversion::Revision.new(359, 'aslak', DateTime.parse('2006-05-22T13:23:29.000005Z'), 'versioning',
                      [ChangesetEntry.new('A', '/trunk/foo.txt'), ChangesetEntry.new('D', '/trunk/bar.exe')]),
-        Revision.new(358, 'joe',   DateTime.parse('2006-05-22T13:20:05.471105Z'),
+        Subversion::Revision.new(358, 'joe',   DateTime.parse('2006-05-22T13:20:05.471105Z'),
                      "Added Rakefile for packaging of svn ruby bindings (swig) in prebuilt gems for different platforms",
                      [ChangesetEntry.new('A', '/trunk/bar.exe')])
       ]

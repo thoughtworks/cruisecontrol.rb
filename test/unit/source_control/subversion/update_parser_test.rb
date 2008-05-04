@@ -1,6 +1,4 @@
 require File.dirname(__FILE__) + '/../../../test_helper'
-require 'revision'
-require 'changeset_entry'
 
 module SourceControl
   class Subversion::UpdateParserTest < Test::Unit::TestCase

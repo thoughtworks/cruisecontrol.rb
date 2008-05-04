@@ -1,6 +1,4 @@
 require File.dirname(__FILE__) + '/../../../test_helper'
-require 'revision'
-require 'changeset_entry'
 
 class SourceControl::Subversion::ChangesetLogParserTest < Test::Unit::TestCase
 
@@ -45,7 +43,7 @@ Line two
 EOF
 
   def test_can_parse_LOG_WITH_SINGLE_REVISION
-    expected_result = [Revision.new(204.1, 'leonard0', DateTime.parse('2007-02-12 15:32:55'),
+    expected_result = [new_revision(204.1, 'leonard0', DateTime.parse('2007-02-12 15:32:55'),
                                     'Detect when X occurs and trigger Y to happen.',
                                     [ChangesetEntry.new('M', '/trunk/app/models/project.rb'),
                                      ChangesetEntry.new('M', '/trunk/test/unit/project_test.rb')])]
@@ -53,11 +51,11 @@ EOF
   end
 
   def test_can_parse_LOG_WITH_MULTIPLE_REVISIONS
-    expected_result = [Revision.new(189, 'joepoon', DateTime.parse('2007-02-11 02:24:27'),
+    expected_result = [new_revision(189, 'joepoon', DateTime.parse('2007-02-11 02:24:27'),
                                     'Checking in code comment.',
                                     [ChangesetEntry.new('A', '/trunk/app/models/build_status.rb'),
                                      ChangesetEntry.new('M', '/trunk/test/unit/status_test.rb')]),
-                       Revision.new(190, 'alexeyv', DateTime.parse('2007-02-11 15:34:43'),
+                       new_revision(190, 'alexeyv', DateTime.parse('2007-02-11 15:34:43'),
                                     'Radical refactoring.',
                                     [ChangesetEntry.new('M', '/trunk/app/controllers/projects_controller.rb'),
                                      ChangesetEntry.new('M', '/trunk/app/models/projects.rb'),
@@ -67,7 +65,7 @@ EOF
   end
 
   def test_can_parse_LOG_WITH_NO_COMMENT
-    expected_result = [Revision.new(204.1, 'leonard0', DateTime.parse('2007-02-12 15:32:55'),
+    expected_result = [new_revision(204.1, 'leonard0', DateTime.parse('2007-02-12 15:32:55'),
                                     '',
                                     [ChangesetEntry.new('M', '/trunk/app/models/project.rb'),
                                      ChangesetEntry.new('M', '/trunk/test/unit/project_test.rb')])]
@@ -75,10 +73,15 @@ EOF
   end
 
   def test_can_parse_LOG_WITH_MULTIPLE_LINED_COMMENT
-    expected_result = [Revision.new(42, 'ninja', DateTime.parse('2007-02-12 02:32:55'),
+    expected_result = [new_revision(42, 'ninja', DateTime.parse('2007-02-12 02:32:55'),
                                     "\nLine one\n\nLine two\n",
                                     [ChangesetEntry.new('M', '/trunk/app/foo.rb'),
                                      ChangesetEntry.new('M', '/trunk/tests/foo_test.rb')])]
     assert_equal expected_result, Subversion::ChangesetLogParser.new.parse_log(LOG_WITH_MULTIPLE_LINED_COMMENT.split("\n"))
   end
+
+  def new_revision(*args)
+    SourceControl::Subversion::Revision.new(*args)
+  end
+
 end

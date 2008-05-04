@@ -6,6 +6,7 @@ require 'fileutils'
 
 class ProjectTest < Test::Unit::TestCase
   include FileSandbox
+  include SourceControl
 
   def setup
     @svn = FakeSourceControl.new
@@ -507,7 +508,7 @@ class ProjectTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       @project.do_clean_checkout :always
       @project.path = sandbox.root
-      @svn.expects(:clean_checkout).with(Revision.new(5), anything)
+      @svn.expects(:clean_checkout).with(Subversion::Revision.new(5), anything)
 
       @project.build(new_revision(5))
     end
@@ -646,7 +647,7 @@ class ProjectTest < Test::Unit::TestCase
   end
 
   def new_revision(number)
-    Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
+    SourceControl::Subversion::Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
   end
 
   def new_mock_build(label)
