@@ -24,7 +24,7 @@ Revision #{number} committed by #{committed_by} on #{time.strftime('%Y-%m-%d %H:
         @number <=> other.number
       end
 
-      def eql?(other)
+      def ==(other)
         @number == other.number
       end
 
@@ -33,7 +33,7 @@ Revision #{number} committed by #{committed_by} on #{time.strftime('%Y-%m-%d %H:
       end
 
       def inspect
-        "Revision(#{number})"
+        "Subversion::Revision(#{number})"
       end
     end
 

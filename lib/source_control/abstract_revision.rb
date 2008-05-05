@@ -1,8 +1,6 @@
 module SourceControl
   class AbstractRevision
 
-    include Comparable
-
     def number
       raise NotImplementedError, "number() not implemented by #{self.class}"
     end
@@ -16,9 +14,11 @@ module SourceControl
       raise NotImplementedError, "time() not implemented by #{self.class}"
     end
 
-    def <=>(other)
-      raise NotImplementedError, "<=>() not implemented by #{self.class}"
+    def ==(other)
+      raise NotImplementedError, "time() not implemented by #{self.class}"
     end
+
+    alias :eql? :==
 
   end
 end
