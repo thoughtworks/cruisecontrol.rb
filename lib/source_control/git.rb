@@ -13,20 +13,14 @@ module SourceControl
       raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
     end
 
-    def checkout(stdout = $stdout)
+    def checkout(revision = nil, stdout = $stdout)
       raise 'Repository location is not specified' unless @repository
-
-# TODO: which of these do we need for Git?
-#      options = []
-#      options << "--username" << @username if @username
-#      options << "--password" << @password if @password
-#      options << "--revision" << revision_number(revision) if revision
 
       raise "#{path} is not empty, cannot clone a project into it" unless (Dir.entries(path) - ['.', '..']).empty?
       FileUtils.rm_rf(path)
 
       # need to read from command output, because otherwise tests break
-      git('clone', [@repository, path], :execute_locally => false) do |io|
+      git('clone', [@repository, path], :execute_in_current_directory => false) do |io|
         begin
           while line = io.gets
             stdout.puts line
@@ -34,14 +28,43 @@ module SourceControl
         rescue EOFError
         end
       end
+
+      if revision
+        git("reset", revision.number)
+      end
     end
 
     def latest_revision
-      git_output = git('log', ['-1', '--pretty=raw'])
+      load_new_changesets_from_origin
+      git_output = git('log', ['-1', '--pretty=raw', 'origin/master'])
       Git::LogParser.new.parse(git_output).first
     end
-    
+
+    def update
+      git("reset", ["--hard", "origin/master"])
+    end
+
+    def up_to_date?(reasons = [])
+      _new_revisions = new_revisions
+      if _new_revisions.empty?
+        return false
+      else
+        reasons << _new_revisions
+        return true
+      end
+    end
+
     protected
+
+    def load_new_changesets_from_origin
+      git("remote", ["update"])
+    end
+
+    def new_revisions
+      load_new_changesets_from_origin
+      git_output = git('log', ['--pretty=raw', 'HEAD..origin/master'])
+      Git::LogParser.new.parse(git_output)
+    end
 
     def git(operation, arguments, options = {}, &block)
       command = ["git"]

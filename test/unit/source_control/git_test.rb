@@ -14,7 +14,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
   def test_checkout_should_perform_git_clone
     in_sandbox do
       git = new_git(:repository => "git:/my_repo")
-      git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_locally => false)
+      git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_current_directory => false)
       git.checkout
     end
   end

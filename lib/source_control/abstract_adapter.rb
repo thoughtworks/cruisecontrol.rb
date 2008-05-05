@@ -5,12 +5,25 @@ module SourceControl
     
     attr_accessor :path
 
-    def checkout(stdout = $stdout)
+    def checkout(revision = nil, stdout = $stdout)
       raise NotImplementedError, "checkout() not implemented by #{self.class}"
     end
 
     def latest_revision
       raise NotImplementedError, "latest_revision() not implemented by #{self.class}"
+    end
+
+    def up_to_date?(reasons = [])
+      raise NotImplementedError, "up_to_date?() not implemented by #{self.class}"
+    end
+
+    def update(revision = nil)
+      raise NotImplementedError, "update() not implemented by #{self.class}"
+    end
+
+    def clean_checkout(revision = nil, stdout = $stdout)
+      FileUtils.rm_rf(path)
+      checkout(revision, stdout)
     end
 
     def error_log
@@ -22,7 +35,7 @@ module SourceControl
         execute(command, &block)
       else
         error_log = File.expand_path(self.error_log)
-        if options[:execute_locally] != false
+        if options[:execute_in_current_directory] != false
           Dir.chdir(path) do
             execute_with_error_log(command, error_log)
           end

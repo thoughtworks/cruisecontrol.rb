@@ -4,12 +4,13 @@ module SourceControl
 
       include Comparable
 
-      def initiailize
+      attr_reader :number, :committed_by, :time 
+
+      def initiailize(number, committed_by, time)
+        @number, @committed_by, @time = number, committed_by, time
       end
 
-
       def <=>(other)
-#        raise("Comparing a revision to #{other.class} is not supported") unless other.is_a? Revision
         0
       end
 

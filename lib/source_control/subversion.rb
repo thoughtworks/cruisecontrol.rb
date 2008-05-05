@@ -27,11 +27,6 @@ module SourceControl
       raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
     end
 
-    def clean_checkout(revision = nil, stdout = $stdout)
-      FileUtils.rm_rf(path)
-      checkout(revision, stdout)
-    end
-
     def checkout(revision = nil, stdout = $stdout)
       raise 'Repository location is not specified' unless @repository
 
@@ -64,7 +59,7 @@ module SourceControl
     def up_to_date?(reasons = [], revision_number = last_locally_known_revision.number)
       result = true
 
-      latest_revision = self.latest_revision()
+      latest_revision = self.latest_revision
       if latest_revision > Revision.new(revision_number)
         reasons << "New revision #{latest_revision.number} detected"
         reasons << revisions_since(revision_number)
@@ -108,7 +103,7 @@ module SourceControl
 
     def log(from, to, arguments = [])
       svn('log', arguments + ["--revision", "#{from}:#{to}", '--verbose', '--xml', @repository],
-          :execute_locally => @repository.blank?)
+          :execute_in_current_directory => @repository.blank?)
     end
 
     def info
