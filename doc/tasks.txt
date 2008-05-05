@@ -80,3 +80,5 @@ Concerns
             from ./subversion_log_parser.rb:7:in `parse'
             ...
 
+
+Implement Git#clean_checkout(revision) as "git clean -d <revision.number>"  

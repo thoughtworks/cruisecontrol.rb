@@ -30,7 +30,7 @@ module SourceControl
       end
 
       if revision
-        git("reset", revision.number)
+        git("reset", ['--hard', revision.number])
       end
     end
 

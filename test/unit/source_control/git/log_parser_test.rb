@@ -14,7 +14,7 @@ committer Alexey Verkhovsky <alexey.verkhovsky@gmail.com> 1209921867 -0600
 EOF
 
     def test_parse_should_work
-      expected_revision = Git::Revision.new
+      expected_revision = Git::Revision.new('87a24d3447605e9b07c4ffcf408f14a48d558cfd', 'You', Time.at(0))
       revisions = Git::LogParser.new.parse(SIMPLE_LOG_ENTRY)
       assert_equal [expected_revision], revisions
     end

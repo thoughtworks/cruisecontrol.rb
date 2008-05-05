@@ -6,7 +6,7 @@ module SourceControl
 
       attr_reader :number, :committed_by, :time 
 
-      def initiailize(number, committed_by, time)
+      def initialize(number, committed_by, time)
         @number, @committed_by, @time = number, committed_by, time
       end
 

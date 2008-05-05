@@ -3,7 +3,7 @@ module SourceControl
     class LogParser
 
       def parse(log)
-        return [Git::Revision.new]
+        return [Git::Revision.new(nil, nil, nil)]
       end
 
     end
