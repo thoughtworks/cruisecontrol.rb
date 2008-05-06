@@ -99,25 +99,31 @@ class Test::Unit::TestCase
     build
   end
   
-  class FakeSourceControl
-    attr_reader :username
-    attr_accessor :path
-    
-    def initialize(username = nil)
-      @username = username
-    end
-    
-    def checkout
-      File.open("#{path}/README", "w") {|f| f << "some text"}
-    end
-    
-    def up_to_date?(reasons)
-      true
-    end
-    
-    def latest_revision
-      nil
-    end
+end
+
+class FakeSourceControl < SourceControl::AbstractAdapter
+  attr_reader :username
+  attr_accessor :path
+
+  def initialize(username = nil)
+    @username = username
+    @path = "/some/fake/path"
+  end
+
+  def checkout
+    File.open("#{path}/README", "w") {|f| f << "some text"}
+  end
+
+  def up_to_date?(reasons)
+    true
+  end
+
+  def creates_ordered_build_labels?
+    true
+  end
+
+  def latest_revision
+    nil
   end
 end
 

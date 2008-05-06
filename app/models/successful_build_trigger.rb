@@ -5,20 +5,22 @@ class SuccessfulBuildTrigger
   def initialize(triggered_project, triggering_project_name)
     self.triggered_project = triggered_project
     self.triggering_project_name = triggering_project_name
-    @last_successful_build = last_successful(@triggering_project.builds)
   end
 
   def build_necessary?(reasons)
     new_last_successful_build = last_successful(@triggering_project.builds)
 
-    if new_last_successful_build.nil? ||
-       @last_successful_build && (@last_successful_build.label == new_last_successful_build.label)
+    if new_last_successful_build.nil? || still_the_same_build?(new_last_successful_build)
       false
     else
       @last_successful_build = new_last_successful_build
       reasons << "Triggered by project #{@triggering_project_name}'s build #{@last_successful_build.label}"
       true
     end
+  end
+
+  def last_successful_build
+    @last_successful_build ||= (last_successful(@triggering_project.builds) || :none)
   end
 
   def ==(other)
@@ -36,6 +38,12 @@ class SuccessfulBuildTrigger
   end
 
   private
+
+  def still_the_same_build?(new_build)
+    @last_successful_build &&
+        @last_successful_build != :none &&
+        @last_successful_build.label == new_build.label
+  end
 
   def last_successful(builds)
     builds.reverse.find(&:successful?)

@@ -36,7 +36,7 @@ class Project
     @config_file_content = ''
     @error_message = ''
     @triggers = [ChangeInSourceControlTrigger.new(self)]
-    @source_control = scm if scm
+    self.source_control = scm if scm
     instantiate_plugins
   end
   

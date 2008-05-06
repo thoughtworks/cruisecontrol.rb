@@ -83,7 +83,8 @@ module ApplicationHelper
         
   private 
   def build_label(build)
-    label = build.label
+    label = build.label.to_s
+    # TODO decide on either abbreviating Git commit ids (long hex strings) or generating our own build labels; write some unit tests for this method once done
     label = label[0..5] + '…' + label[-5..-1] unless label.length <= 10
     "#{label} (#{format_time(build.time, :human)})"
   end    

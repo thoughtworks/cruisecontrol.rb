@@ -18,7 +18,7 @@ class SuccessfulBuildTriggerTest < Test::Unit::TestCase
   
   def test_constructor_should_remember_last_successful_build_of_triggering_project
     trigger = SuccessfulBuildTrigger.new(@triggered_project, @triggering_project.name)
-    assert_nil trigger.last_successful_build
+    assert_equal :none, trigger.last_successful_build
     assert_equal 'triggering_project', trigger.triggering_project_name
 
     create_build @triggering_project, 1

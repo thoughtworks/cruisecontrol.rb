@@ -18,8 +18,8 @@ class SourceControl::GitTest < Test::Unit::TestCase
   def test_update
     in_sandbox do
       git = new_git
-      git.expects(:git).with("reset", ["--hard", "origin/master"])
-      git.update
+      git.expects(:git).with("reset", ["--hard", '5460c9ea8872745629918986df7238871f4135ae'])
+      git.update(Git::Revision.new('5460c9ea8872745629918986df7238871f4135ae', "me", Time.at(0)))
     end
   end
 
@@ -80,7 +80,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     in_sandbox do
       git = new_git
       git.expects(:git).with("log", ["-1", '--pretty=raw', 'origin/master']).returns('')
-      git.expects(:git).with('remote', ['update'])
+      git.expects(:git).with('fetch', ['origin'])
       stub_parser = Object.new
       stub_parser.stubs(:parse).returns([:foo])
       Git::LogParser.expects(:new).returns(stub_parser)

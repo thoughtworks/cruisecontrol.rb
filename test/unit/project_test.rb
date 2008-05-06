@@ -10,8 +10,7 @@ class ProjectTest < Test::Unit::TestCase
 
   def setup
     @svn = FakeSourceControl.new
-    @project = Project.new("lemmings")
-    @project.source_control = @svn
+    @project = Project.new("lemmings", @svn)
   end
 
   def test_default_scheduler
@@ -610,7 +609,7 @@ class ProjectTest < Test::Unit::TestCase
   end
 
   def test_project_triggered_by_should_convert_strings_and_symbols_to_successful_build_triggers
-    project = Project.new('foo')
+    project = Project.new('foo', FakeSourceControl.new)
 
     project.triggered_by = ['foo', 123]
     project.triggered_by :bar
