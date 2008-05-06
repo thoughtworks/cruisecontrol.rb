@@ -57,7 +57,7 @@ module SourceControl
     protected
 
     def load_new_changesets_from_origin
-      git("remote", ["update"])
+      git("fetch", ["origin"])
     end
 
     def new_revisions
