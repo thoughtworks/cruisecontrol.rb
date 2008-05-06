@@ -242,7 +242,7 @@ module Dependencies #:nodoc:
     qualified_name = qualified_name_for from_mod, const_name
     path_suffix = qualified_name.underscore
     name_error = NameError.new("uninitialized constant #{qualified_name}")
-    
+
     file_path = search_for_file(path_suffix)
     if file_path && ! loaded.include?(File.expand_path(file_path)) # We found a matching file to load
       require_or_load file_path
@@ -259,6 +259,7 @@ module Dependencies #:nodoc:
       begin
         return parent.const_missing(const_name)
       rescue NameError => e
+
         raise unless e.missing_name? qualified_name_for(parent, const_name)
         raise name_error
       end

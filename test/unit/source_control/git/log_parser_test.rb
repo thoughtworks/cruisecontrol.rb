@@ -18,7 +18,7 @@ EOF
                               'e51d66aa4f708fff1c87eb9afc9c48eaa8d5ffce',
                               'Alexey Verkhovsky <alexey.verkhovsky@gmail.com>',
                               Time.at(1209921867))
-      revisions = Git::LogParser.new.parse(SIMPLE_LOG_ENTRY)
+      revisions = Git::LogParser.new.parse(SIMPLE_LOG_ENTRY.split("\n"))
       assert_equal [expected_revision], revisions
 
       assert_equal expected_revision.number, revisions.first.number

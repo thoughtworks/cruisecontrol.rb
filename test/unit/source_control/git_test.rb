@@ -49,7 +49,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
       mock_parser.expects(:parse).with("\n").returns([])
       Git::LogParser.expects(:new).returns(mock_parser)
 
-      assert_true git.up_to_date?
+      assert git.up_to_date?
     end
   end
 

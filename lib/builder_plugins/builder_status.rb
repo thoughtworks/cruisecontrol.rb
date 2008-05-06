@@ -3,6 +3,8 @@
 #
 # (this plugin is built in and needs no customization)
 #
+require 'builder_error'
+
 class BuilderStatus
   def initialize(project)
     @project = project

@@ -5,7 +5,7 @@ module SourceControl
       def parse(log)
         @result = []
 
-        log.each_line do |line|
+        log.each do |line|
           line.chomp!
           line == "" ? next : process_line(line)
         end
