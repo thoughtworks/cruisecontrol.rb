@@ -21,6 +21,10 @@ module SourceControl
       raise NotImplementedError, "update() not implemented by #{self.class}"
     end
 
+    def creates_ordered_build_labels?
+      raise NotImplementedError, "creates_ordered_build_labels?() not implemented by #{self.class}"
+    end
+
     def clean_checkout(revision = nil, stdout = $stdout)
       FileUtils.rm_rf(path)
       checkout(revision, stdout)

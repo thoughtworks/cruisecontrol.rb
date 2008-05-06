@@ -83,6 +83,8 @@ module ApplicationHelper
         
   private 
   def build_label(build)
-    "#{build.label} (#{format_time(build.time, :human)})"
+    label = build.label
+    label = label[0..5] + '…' + label[-5..-1] unless label.length <= 10
+    "#{label} (#{format_time(build.time, :human)})"
   end    
 end

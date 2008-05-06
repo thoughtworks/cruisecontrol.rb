@@ -92,6 +92,8 @@ module SourceControl
       Subversion::PropgetParser.new.parse(svn_output)
     end
 
+    def creates_ordered_build_labels?() true end
+    
     private
 
     def revisions_since(revision_number)

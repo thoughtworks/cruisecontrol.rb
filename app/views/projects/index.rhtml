@@ -11,5 +11,5 @@
 
 <%= 
   periodically_call_remote :url => { :action => 'index', :format => 'js'}, :method => 'get',
-                                       :frequency => Configuration.dashboard_refresh_interval
+                                     :frequency => Configuration.dashboard_refresh_interval
 %>

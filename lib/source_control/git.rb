@@ -54,6 +54,8 @@ module SourceControl
       end
     end
 
+    def creates_ordered_build_labels?() false end
+
     protected
 
     def load_new_changesets_from_origin
