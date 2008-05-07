@@ -34,6 +34,11 @@ module SourceControl
       end
     end
 
+    # TODO implement clean_checkout as "git clean -d" - much faster
+    def clean_checkout(revision = nil, stdout = $stdout)
+      super(revision, stdout)
+    end
+
     def latest_revision
       load_new_changesets_from_origin
       git_output = git('log', ['-1', '--pretty=raw', 'origin/master'])
@@ -69,12 +74,9 @@ module SourceControl
     end
 
     def git(operation, arguments, options = {}, &block)
-      command = ["git"]
+      command = ["git", operation] + arguments.compact
 # TODO: figure out how to handle the same thing with git
 #      command << "--non-interactive" unless @interactive
-      command << operation
-      command += arguments.compact
-      command
 
       execute_in_local_copy(command, options, &block)
     end

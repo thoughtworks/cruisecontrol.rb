@@ -1,9 +1,12 @@
 TRUNK
-* 'cruise add' command:
-  ** -u|--url option is deprecated in favor of -r|--repository - in some cases what goes there is not a URL
-  ** can be invoked as ./cruise add [project name] [repository name]
-  ** -s | -source-control option added to specify the source control type
-  ** infers source control type from repository location if it starts with svn:, svn+ssh: or git:
+- support for Git (distributed source control systems)
+- 'cruise add' command:
+  * -u|--url option is deprecated in favor of -r|--repository - in some cases what goes there is not a URL
+  * can be invoked as ./cruise add [project name] [repository name]
+  * -s | -source-control option added to specify the source control type
+  * infers source control type from repository location if it starts with svn:, svn+ssh: or git:
+- [bugfix] dashboard gracefully handles the situation where there is site.css, but ./public/stylesheets is not a
+           writeable directory (prints a warning and keeps going on)   
 
 * 1.3.0
   - cruise data (build results, etc) is stored in $HOME/.cruise/ by default
