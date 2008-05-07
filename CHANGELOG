@@ -1,5 +1,5 @@
 TRUNK
-- support for Git (distributed source control systems)
+- support for Git and Mercurial (distributed source control systems) [Ben Burkert, Brett Adam, Biju Philip Chacko, Chris Johnston]
 - 'cruise add' command:
   * -u|--url option is deprecated in favor of -r|--repository - in some cases what goes there is not a URL
   * can be invoked as ./cruise add [project name] [repository name]

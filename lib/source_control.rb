@@ -38,12 +38,14 @@ module SourceControl
     def detect(path)
       git = File.directory?(File.join(path, '.git'))
       svn = File.directory?(File.join(path, '.svn'))
+      hg = File.directory?(File.join(path, '.hg'))
 
-      case [git, svn]
-      when [true, false] then SourceControl::Git.new(:path => path)
-      when [false, true] then SourceControl::Subversion.new(:path => path)
-      when [true, true] then raise "More than one type of source control was detected in #{path}"
-      when [false, false] then raise "Could not detect the type of source control in #{path}"
+      case [git, svn, hg]
+      when [true, false, false] then SourceControl::Git.new(:path => path)
+      when [false, true, false] then SourceControl::Subversion.new(:path => path)
+      when [false, false, true] then SourceControl::Mercurial.new(:path => path)
+      when [false, false, false] then raise "Could not detect the type of source control in #{path}"
+      else raise "More than one type of source control was detected in #{path}"
       end
     end
 

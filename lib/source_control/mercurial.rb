@@ -59,11 +59,21 @@ module SourceControl
 
     def new_revisions
       pull_new_changesets
-      hg_output = git('parents', ['-v'])
-      Mercurial::LogParser.new.parse(git_output).first
+      hg_output = hg('parents', ['-v'])
+      current_local_revision = Mercurial::LogParser.new.parse(hg_output).first
+      revisions_since(current_local_revision)
     end
 
-    def hg(operation, arguments, options = {}, &block)
+    def revisions_since(revision)
+      log_output = hg("log", ['-v', '-r', "#{revision.number}:tip"])
+      revs = LogParser.new.parse(log_output)
+      revs.delete_if do |rev|
+        rev.number == revision.number
+      end
+      revs
+    end
+
+    def hg(operation, arguments = [], options = {}, &block)
       command = ["hg", operation] + arguments.compact
 ## TODO: figure out how to handle the same thing with hg
 ##      command << "--non-interactive" unless @interactive

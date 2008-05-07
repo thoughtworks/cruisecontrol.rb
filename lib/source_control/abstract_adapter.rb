@@ -52,7 +52,6 @@ module SourceControl
     def execute_with_error_log(command, error_log)
       FileUtils.rm_f(error_log)
       FileUtils.touch(error_log)
-STDERR.puts command
       execute(command, :stderr => error_log) do |io|
         stdout_output = io.readlines
         begin

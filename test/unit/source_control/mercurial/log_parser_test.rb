@@ -43,7 +43,7 @@ END
                                  "moved mercurial back to plugin",
                                  [ChangesetEntry.new("", "app/models/mercurial.rb"),
                                  ChangesetEntry.new("", "test/unit/mercurial_test.rb")])]
-        assert_equal(expected, @parser.parse_log(@example_log_output_single))
+        assert_equal expected, @parser.parse(@example_log_output_single.split("\n"))
       end
 
 
