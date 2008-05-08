@@ -101,9 +101,21 @@ class SourceControlTest < Test::Unit::TestCase
     in_sandbox do
       File.expects(:directory?).with(File.join('./Proj1/work', '.git')).returns(true)
       File.expects(:directory?).with(File.join('./Proj1/work', '.svn')).returns(false)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.hg')).returns(false)
       SourceControl::Git.expects(:new).with(:path => './Proj1/work').returns(:git_instance)
 
       assert_equal :git_instance, SourceControl.detect('./Proj1/work')
+    end
+  end
+
+  def test_detect_should_identify_mercurial_repository_by_presence_of_dothg_directory
+    in_sandbox do
+      File.expects(:directory?).with(File.join('./Proj1/work', '.git')).returns(false)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.svn')).returns(false)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.hg')).returns(true)
+      SourceControl::Mercurial.expects(:new).with(:path => './Proj1/work').returns(:hg_instance)
+
+      assert_equal :hg_instance, SourceControl.detect('./Proj1/work')
     end
   end
 
@@ -111,6 +123,7 @@ class SourceControlTest < Test::Unit::TestCase
     in_sandbox do
       File.expects(:directory?).with(File.join('./Proj1/work', '.git')).returns(false)
       File.expects(:directory?).with(File.join('./Proj1/work', '.svn')).returns(true)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.hg')).returns(false)
       SourceControl::Subversion.expects(:new).with(:path => './Proj1/work').returns(:svn_instance)
 
       assert_equal :svn_instance, SourceControl.detect('./Proj1/work')
@@ -121,6 +134,7 @@ class SourceControlTest < Test::Unit::TestCase
     in_sandbox do
       File.expects(:directory?).with(File.join('./Proj1/work', '.git')).returns(false)
       File.expects(:directory?).with(File.join('./Proj1/work', '.svn')).returns(false)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.hg')).returns(false)
 
       assert_raises RuntimeError, "Could not detect the type of source control in ./Proj1/work" do
         SourceControl.detect('./Proj1/work')
@@ -132,6 +146,7 @@ class SourceControlTest < Test::Unit::TestCase
     in_sandbox do
       File.expects(:directory?).with(File.join('./Proj1/work', '.git')).returns(true)
       File.expects(:directory?).with(File.join('./Proj1/work', '.svn')).returns(true)
+      File.expects(:directory?).with(File.join('./Proj1/work', '.hg')).returns(false)
 
       assert_raises RuntimeError, "More than one type of source control was detected in ./Proj1/work" do
         SourceControl.detect('./Proj1/work')

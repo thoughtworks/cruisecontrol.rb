@@ -27,33 +27,28 @@ module SourceControl
       end
 
       def parse_for_name(message)
-        message =~ /user:\s+(.*)\</
-        $1.strip!
+        message.match(/^user:\s+(.*)\</)[1].strip!
       end
 
       def parse_for_date(message)
-        message =~ /date:\s+(.*)(\+|\-)\d+$/
-        DateTime.parse($1.strip!)
+        date_string = message.match(/^date:\s+(.*)(\+|\-)\d+$/)[1].strip!
+        DateTime.parse(date_string)
       end
 
       def parse_for_message(message)
-        message =~ /description:\s*(.*)/
-        $1
+        message.match(/^description:\s*(.*)/)[1]
       end
 
       def parse_for_rev_number(message)
-        message =~ /changeset:\s+(\d+)/
-        $1.to_i
+        message.match(/^changeset:\s+\d+:(.....)/)[1]
       end
 
       def parse_for_files(message)
-        message =~ /files:\s+(.*)/
-        $1.split(/\s/)
+        message.match(/^files:\s+(.*)/)[1].split(/\s/)
       end
 
       def split_log(message)
         message = message.join("\n") if message.is_a? Array
-
         message.split(/^\s+$/).delete_if {|t| t =~ /^\s+$/ }.map(&:strip)
       end
 

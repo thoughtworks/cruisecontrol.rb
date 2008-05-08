@@ -20,5 +20,9 @@ module SourceControl
 
     alias :eql? :==
 
+    def inspect
+      "#{self.class}:(#{number})"
+    end
+
   end
 end

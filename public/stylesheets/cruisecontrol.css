@@ -303,7 +303,7 @@ a.never_built, a.never_built:visited {
 #build_details .section_closed .section_content { display: none; }
 
 #builds_list {
-  width: 14em;
+  width: 16em;
   float: left;
   margin: 0.2em 1em 1em 0;
 }

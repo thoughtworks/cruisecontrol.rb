@@ -12,10 +12,6 @@ module SourceControl
         other.is_a?(Git::Revision) && number == other.number
       end
 
-      def inspect
-        "Git::Revision(#{number})"
-      end
-
     end
   end
 end

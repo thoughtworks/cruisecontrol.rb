@@ -1,11 +1,7 @@
 module BuildsHelper
 
-  def builds_except_last(project, n)
-    project.builds.reverse[n..-1]
-  end
-  
   def select_builds(builds)
-    return "" if !builds || builds.empty?
+    return "" if builds.blank?
 
     options = builds.map do |build|
       "<option value='#{build.label}'>#{text_to_build(build, false)}</option>"

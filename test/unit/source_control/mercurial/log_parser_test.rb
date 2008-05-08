@@ -36,8 +36,8 @@ END
 
       end
 
-      def test_should_parse_single
-        expected = [Revision.new(5,
+      def test_should_parse_single_changeset
+        expected = [Revision.new('c3f57',
                                  "Marcus Ahnve",
                                  DateTime.parse("Mon Apr 02 16:14:59 2007 +0200"),
                                  "moved mercurial back to plugin",
@@ -60,7 +60,7 @@ END
     end
 
     def test_parse_rev_number
-      assert_equal(5, @parser.parse_for_rev_number(@example_log_output_single))
+      assert_equal('c3f57', @parser.parse_for_rev_number(@example_log_output_single))
     end
 
     def test_parse_files

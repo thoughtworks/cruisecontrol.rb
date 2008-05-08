@@ -1,3 +1,5 @@
+<% unless @builds_for_dropdown.blank? %>
   <% form_tag({:action => 'show'}, :method => :get) do %>
-      <%= select_builds(builds_except_last(@project, 30)) %>
+      <%= select_builds(@builds_for_dropdown) %>
   <% end %>
+<% end %>

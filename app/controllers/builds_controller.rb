@@ -14,13 +14,16 @@ class BuildsController < ApplicationController
       @build = @project.last_build
       render :action => 'no_builds_yet' and return if @build.nil?
     end
-      
+
+    @builds_for_navigation_list = @project.builds.reverse[0, 30]
+
     @autorefresh = @build.incomplete?
   end
 
   def drop_down
     render :text => 'Project not specified', :status => 404 and return unless params[:project]
     @project = Projects.find(params[:project])
+    @builds_for_dropdown = @project.builds.reverse[30..-1]
     render :layout => false
   end
   

@@ -3,7 +3,7 @@ module SourceControl
 
     attr_accessor :repository
 
-    def initialize(options)
+    def initialize(options = {})
       options = options.dup
       @path = options.delete(:path) || "."
       @error_log = options.delete(:error_log)
@@ -36,7 +36,8 @@ module SourceControl
     end
 
     def update(revision)
-      hg("update")
+      pull_new_changesets
+      hg("update", ['-r', revision.number])
     end
 
     def up_to_date?(reasons = [])

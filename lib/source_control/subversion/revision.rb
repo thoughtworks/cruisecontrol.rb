@@ -32,9 +32,6 @@ Revision #{number} committed by #{committed_by} on #{time.strftime('%Y-%m-%d %H:
         @number
       end
 
-      def inspect
-        "Subversion::Revision(#{number})"
-      end
     end
 
   end

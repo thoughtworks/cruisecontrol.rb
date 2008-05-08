@@ -1,30 +1,36 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
-class MercurialTest < Test::Unit::TestCase
+module SourceControl
+  class MercurialTest < Test::Unit::TestCase
 
-  def setup
-    @parser = mock("parser")
-    @mercurial = Mercurial.new(@parser)
+    include FileSandbox
+
+    def setup
+      @mercurial = Mercurial.new
+    end
+
+    def test_update
+      in_sandbox do
+        revision = Mercurial::Revision.new('abcde') 
+        @mercurial.expects(:hg).with("pull")
+        @mercurial.expects(:hg).with("update", ['-r', 'abcde'])
+        @mercurial.update(revision)
+      end
+    end
+
+    def test_latest_revision
+      in_sandbox do
+        parser = mock('parser')
+        parser.expects(:parse).with("log_result").returns(["foo"])
+        Mercurial::LogParser.expects(:new).returns(parser)
+
+        @mercurial.expects(:hg).with("pull")
+        @mercurial.expects(:hg).with("log", ['-v', '-r', 'tip']).returns("log_result")
+        assert_equal("foo", @mercurial.latest_revision)
+      end
+    end
+
+    # TODO tests for other public methods of this class
+
   end
-
-  def test_update
-    @mercurial.expects(:hg).with("").returns("pull")
-    @mercurial.expects(:execute).with("pull")
-    @mercurial.expects(:update_command).with(revision).returns("update")
-    @mercurial.expects(:execute).with("update")
-    @mercurial.update(project, revision)
-  end
-
-  def test_latest_revision
-    @parser.expects(:parse_log).with("log_result").returns(["foo"])
-    project = mock("project")
-    project.expects(:local_checkout).returns("/tmp")
-    @mercurial.expects(:pull_command).returns("pull")
-    @mercurial.expects(:execute).with("pull")
-
-    @mercurial.expects(:log_command).with("tip").returns("log")
-    @mercurial.expects(:execute).with("log").returns("log_result")
-    assert_equal("foo", @mercurial.latest_revision(project))
-  end
-
 end

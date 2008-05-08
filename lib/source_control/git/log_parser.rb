@@ -20,6 +20,7 @@ module SourceControl
       def process_line(line)
         if commit_message?(line)
           @commit_message ||= true
+# TODO: we are not parsing out the commit message, and not displaying changesets on the dashboard for Git yet
 #          @commit_message += line.sub('    ', '')
         else
           add_current_revision_to_result
@@ -32,7 +33,7 @@ module SourceControl
         key, value = match[1,2]
 
         case key
-        when 'commit' then @id = value
+        when 'commit' then @id = value[0, 5]
         when 'author' then parse_author(value)
         else  # ignore other keys
         end

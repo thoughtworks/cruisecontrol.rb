@@ -197,6 +197,7 @@ class Project
     last_complete_build ? last_complete_build.status : 'never_built'
   end
 
+  # TODO this and last_builds methods are not Project methods, really - they can be inlined somewhere in the controller layer
   def last_five_builds
     last_builds(5)
   end
