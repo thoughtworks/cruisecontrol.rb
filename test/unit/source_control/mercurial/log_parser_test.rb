@@ -85,6 +85,11 @@ END
       assert_equal("Marcus Ahnve", @parser.parse_for_name(@@example_log_output_single))
     end
 
+    def test_parse_name_when_name_is_not_set
+      input = "user:        joepoon@joe-poons-computer.local"
+      assert_equal "joepoon@joe-poons-computer.local", @parser.parse_for_name(input)
+    end
+
     def test_parse_date
       assert_equal(DateTime.parse("Mon Apr 02 16:14:59 2007 +0200"), @parser.parse_for_date(@@example_log_output_single))
     end

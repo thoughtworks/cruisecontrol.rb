@@ -27,11 +27,13 @@ module SourceControl
       end
 
       def parse_for_name(message)
-        message.match(/^user:\s+(.*)\</)[1].strip!
+        name_match = (message.match(/^user:\s+(.*)\</) ||
+                     message.match(/^user:\s+(.*)$/))
+        name_match[1].strip
       end
 
       def parse_for_date(message)
-        date_string = message.match(/^date:\s+(.*)(\+|\-)\d+$/)[1].strip!
+        date_string = message.match(/^date:\s+(.*)(\+|\-)\d+$/)[1].strip
         DateTime.parse(date_string)
       end
 
