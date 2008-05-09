@@ -44,7 +44,8 @@ module SourceControl
       end
 
       def parse_for_files(message)
-        message.match(/^files:\s+(.*)/)[1].split(/\s/)
+        match = message.match(/^files:\s+(.*)/)
+        match ? match[1].split(/\s/) : []
       end
 
       def split_log(message)
