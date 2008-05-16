@@ -6,6 +6,14 @@
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
   </component>
+  <component name="CCMonitor">
+    <option name="rssURL" />
+    <option name="jmxURL" />
+    <option name="refreshInterval" value="0" />
+    <option name="selectedSortOption" value="0" />
+    <option name="fastBuildRefresh" value="false" />
+    <option name="projectFilters" />
+  </component>
   <component name="CodeStyleProjectProfileManger">
     <option name="PROJECT_PROFILE" />
     <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />

@@ -20,5 +20,5 @@ ActionController::Routing::Routes.draw do |map|
 
   # Route for CCTray.NET
   map.connect 'XmlStatusReport.aspx', :controller => 'projects', :action => 'index', :format => 'cctray'
-
+  map.connect 'XmlServerReport.aspx', :controller => 'projects', :action => 'index', :format => 'cctray'
 end
