@@ -2,6 +2,16 @@ require 'rbconfig'
 
 module Platform
 
+  def running_as_daemon?
+    @running_as_daemon
+  end
+  module_function :running_as_daemon?
+
+  def running_as_daemon=(value)
+    @running_as_daemon = value
+  end
+  module_function :running_as_daemon=
+
   def family
     target_os = Config::CONFIG["target_os"] or raise 'Cannot determine operating system'
     case target_os
@@ -34,7 +44,7 @@ module Platform
   def create_child_process(project_name, command)
     if Kernel.respond_to?(:fork)
       begin
-        pid = fork || exec(command)
+        pid = fork || safely_exec(command)
         pid_file = File.join(RAILS_ROOT, 'tmp', 'pids', 'builders', "#{project_name}.pid")
         FileUtils.mkdir_p(File.dirname(pid_file))
         File.open(pid_file, "w") {|f| f.write pid }
@@ -46,5 +56,15 @@ module Platform
     end
   end
   module_function :create_child_process
-  
+
+  def safely_exec(command)
+    if running_as_daemon?
+      STDIN.reopen("/dev/null")
+      STDOUT.reopen("/dev/null", "w")
+      STDERR.reopen("/dev/null", "w")
+    end
+    exec command
+  end
+  module_function :safely_exec
+
 end

@@ -3,6 +3,8 @@
 load "#{File.dirname(__FILE__)}/lib/cruise_control/version.rb"
 
 def start
+  require "#{File.dirname(__FILE__)}/lib/platform.rb"
+  Platform.running_as_daemon = ARGV.include?('-d') || ARGV.include?('--daemon')
   load "./script/server"
 end
 
