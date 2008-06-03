@@ -65,7 +65,7 @@ module CruiseControl
 
     CruiseControl.rb command-line client, version #{CruiseControl::VERSION::STRING}
     Type 'cruise help <command>' for help on a specific command.
-    Type 'svn --version' to see the version number.
+    Type 'cruise --version' to see the version number.
 
     Available commands:
       start      - starts the web server
