@@ -35,9 +35,13 @@ module SourceControl
       Mercurial::LogParser.new.parse(hg_output).first 
     end
 
-    def update(revision)
+    def update(revision = nil)
       pull_new_changesets
-      hg("update", ['-r', revision.number])
+      if revision
+        hg("update", ['-r', revision.number])
+      else
+        hg("update")
+      end
     end
 
     def up_to_date?(reasons = [])
