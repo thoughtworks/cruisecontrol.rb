@@ -27,25 +27,24 @@ module CruiseControl
     end
   
     def start
-      require "lib/platform.rb"
+      require File.join(File.dirname(__FILE__), '..', 'platform')
       Platform.running_as_daemon = ARGV.include?('-d') || ARGV.include?('--daemon')
-      load "./script/server"
+      load File.join(File.dirname(__FILE__), '..', '..', 'script', 'server')
     end
 
     def stop
       pid_file = File.join("tmp", "pids", "mongrel.pid")
       if File.exist?(pid_file)
-        require File.dirname(__FILE__) + "/../platform.rb"
-        Platform.safely_exec("mongrel_rails stop -P #{pid_file}")
+        exec "mongrel_rails stop -P #{pid_file}"
       end
     end
 
     def add
-      load "./script/add_project"
+      load File.join(File.dirname(__FILE__), '..', '..', 'script', 'add_project')
     end
 
     def builder
-      load "./script/builder"
+      load File.join(File.dirname(__FILE__), '..', '..', 'script', 'builder')
     end
   
     def version

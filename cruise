@@ -3,4 +3,3 @@
 load "#{File.dirname(__FILE__)}/lib/cruise_control/version.rb"
 load "#{File.dirname(__FILE__)}/lib/cruise_control/init.rb"
 CruiseControl::Init.new.run
-
