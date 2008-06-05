@@ -12,6 +12,9 @@ TRUNK
 - [bugfix] Added XmlServerReport.aspx for compatibility with CCTray.NET >= 1.3 [Steve Donie]
 - [bugfix] cruise start --daemon works with Webrick
 - [bugfix] stop builder processes from going zombie by using Process#detach [Kurtis Seebaldt]
+- [bugfix] made image URLS in stylesheets relative [Anselm Helbig]
+
+------------------------------------------------------------------------------------------------------------------------
 * 1.3.0
   - cruise data (build results, etc) is stored in $HOME/.cruise/ by default
   - builds can now be serialized - with a config option set, CC.rb will only run one build at a time

@@ -26,7 +26,7 @@ a:hover {
 /* default layout classes */
 
 .header {
-  background-image: url(/images/top_gradient.png);
+  background-image: url(../images/top_gradient.png);
   background-position: top;
   background-repeat: repeat-x;
   font-weight: normal;
@@ -125,15 +125,15 @@ a.never_built, a.never_built:visited {
 }
 
 .build_never_built, .build_incomplete {
-  background-image: url(/images/gray_gradient.png);
+  background-image: url(../images/gray_gradient.png);
 }
 
 .build_success {
-  background-image: url(/images/gray_gradient.png);
+  background-image: url(../images/gray_gradient.png);
 }
 
 .build_failed {
-  background-image: url(/images/red_gradient.png);
+  background-image: url(../images/red_gradient.png);
 }
 
 .project table.project_pane {
@@ -178,13 +178,13 @@ a.never_built, a.never_built:visited {
   background-color: transparent;
 }
 .project .build_button {
-  background-image:url(/images/button.png);
+  background-image:url(../images/button.png);
   cursor: pointer;
 }
 
 .project .build_button_disabled {
   color: #999;
-  background-image:url(/images/button_disabled.png);
+  background-image:url(../images/button_disabled.png);
 }
 
 .project .recent_builds {
@@ -207,7 +207,7 @@ a.never_built, a.never_built:visited {
   font-weight: bold;
   padding-top: 5px;
   padding-left: 25px;
-  background-image: url(/images/spinner_error.gif);
+  background-image: url(../images/spinner_error.gif);
   background-position: left;
   background-repeat: no-repeat;
 }
@@ -218,7 +218,7 @@ a.never_built, a.never_built:visited {
   font-weight: bold;
   padding-top: 5px;
   padding-left: 25px;
-  background-image: url(/images/spinner.gif);
+  background-image: url(../images/spinner.gif);
   background-position: left;
   background-repeat: no-repeat;
 }
@@ -297,8 +297,8 @@ a.never_built, a.never_built:visited {
   margin: .4em 0;
 }
 
-#build_details .section_closed .section_header { background-image: url(/images/arrow_closed.png); }
-#build_details .section_open .section_header   { background-image: url(/images/arrow_open.png); }
+#build_details .section_closed .section_header { background-image: url(../images/arrow_closed.png); }
+#build_details .section_open .section_header   { background-image: url(../images/arrow_open.png); }
 
 #build_details .section_closed .section_content { display: none; }
 

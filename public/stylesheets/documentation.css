@@ -3,7 +3,7 @@
 }
 
 #main_image {
-  background-image: url(/images/header_stock.jpg);
+  background-image: url(../images/header_stock.jpg);
   width: 644px;
   height: 165px;
   text-align: right;
@@ -22,7 +22,7 @@
 #letter_shadow {
   padding-bottom: 18px;
   margin-bottom: 5px;
-  background-image: url(/images/float-letter.png);
+  background-image: url(../images/float-letter.png);
   background-position: bottom right;
   background-repeat: no-repeat;
   width: 450px;
