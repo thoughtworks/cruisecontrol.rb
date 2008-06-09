@@ -3,7 +3,9 @@ class ProjectsController < ApplicationController
   verify :params => "id", :only => [:show, :build, :code],
          :render => { :text => "Project not specified",
                       :status => 404 }
-  
+  verify :params => "path", :only => [:code],
+         :render => { :text => "Path not specified",
+                      :status => 404 }
   def index
     @projects = Projects.load_all
     
@@ -38,8 +40,6 @@ class ProjectsController < ApplicationController
   end
   
   def code
-    render :text => 'Path not specified', :status => 404 and return unless params[:path]
-
     @project = Projects.find(params[:id])
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project 
 
