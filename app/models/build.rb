@@ -65,7 +65,6 @@ EOF
   def destroy
     FileUtils.rm_rf artifacts_directory
   end
-  
   alias abort destroy
 
   def additional_artifacts
@@ -142,11 +141,13 @@ EOF
 
   def contents_for_display(file)
     return '' unless File.file?(file) && File.readable?(file)
-    if File.size(file) < 100 * 1024
+    file_size_kbytes = File.size(file) / 1024
+    if file_size_kbytes < 100
       File.read(file)
     else
       contents = File.read(file, 100 * 1024)
-      "#{file} is over 100 kbytes - too big to display in the dashboard, output is truncated\n\n\n#{contents}"
+      response = "#{file} is #{file_size_kbytes} kbytes - too big to display in the dashboard, the output is truncated\n\n\n"
+      response += contents
     end
   end
 

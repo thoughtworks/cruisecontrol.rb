@@ -81,7 +81,7 @@
 
   <div class="<%= @build.incomplete? ? 'section_open' : 'section_closed' %>">
     <div class="section_header" onclick="toggle_section(this.parentNode)">Build Log</div>
-    <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div></div>
+    <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div><div><%= link_to "See unformatted build log&hellip;", build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %></div></div>
   </div>
 
   <% unless @build.additional_artifacts.empty? %>

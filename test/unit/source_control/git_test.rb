@@ -23,6 +23,14 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
+  def test_update_with_no_revision
+    in_sandbox do
+      git = new_git
+      git.expects(:git).with("reset", ["--hard"])
+      git.update
+    end
+  end
+
   def test_up_to_date?_should_return_false_if_there_are_new_revisions
     in_sandbox do
       git = new_git

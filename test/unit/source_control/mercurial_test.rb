@@ -30,6 +30,23 @@ module SourceControl
       end
     end
 
+    def test_update
+      in_sandbox do
+        stub_revision = stub('revision', :number => '12345')
+        @mercurial.expects(:hg).with('pull')
+        @mercurial.expects(:hg).with('update', ['-r', '12345'])
+        assert_nothing_raised { @mercurial.update(stub_revision) }
+      end
+    end
+
+    def test_update_with_no_revision_specified
+      in_sandbox do
+        @mercurial.expects(:hg).with('pull')
+        @mercurial.expects(:hg).with('update')
+        assert_nothing_raised { @mercurial.update }
+      end
+    end
+
     # TODO tests for other public methods of this class
 
   end

@@ -9,12 +9,5 @@ module CruiseControl
       assert_equal(:stop, init.method_for_command('stop'))
     end
     
-    def test_that_stop_works_for_mongrel
-      init = Init.new
-      File.expects(:exist?).with("tmp/pids/mongrel.pid").returns(true)
-      Platform.expects(:exec).with("mongrel_rails stop -P tmp/pids/mongrel.pid")
-      init.stop
-    end
-    
   end
 end

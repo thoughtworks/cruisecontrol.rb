@@ -45,7 +45,9 @@ module Platform
     if Kernel.respond_to?(:fork)
       begin
         pid = fork || safely_exec(command)
-        Process.detach(pid) if pid
+
+        # safely exec
+        Process.detach(pid)
         pid_file = File.join(RAILS_ROOT, 'tmp', 'pids', 'builders', "#{project_name}.pid")
         FileUtils.mkdir_p(File.dirname(pid_file))
         File.open(pid_file, "w") {|f| f.write pid }

@@ -45,8 +45,12 @@ module SourceControl
       Git::LogParser.new.parse(git_output).first
     end
 
-    def update(revision)
-      git("reset", ["--hard", revision.number])
+    def update(revision = nil)
+      if revision
+        git("reset", ["--hard", revision.number])
+      else
+        git("reset", ["--hard"])
+      end
     end
 
     def up_to_date?(reasons = [])
