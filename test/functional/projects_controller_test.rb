@@ -151,7 +151,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
       
       Projects.expects(:find).returns(project)
     
-      get :code, :project => 'two', :path => ['app', 'controller', 'FooController.rb'], :line => 2
+      get :code, :id => 'two', :path => ['app', 'controller', 'FooController.rb'], :line => 2
       
       assert_response :success
       assert_match /class FooController/, @response.body
@@ -165,14 +165,14 @@ class ProjectsControllerTest < Test::Unit::TestCase
     assert_response 404
     assert_equal 'Project not specified', @response.body
 
-    get :code, :project => 'foo', :line => 1
+    get :code, :id => 'foo', :line => 1
     assert_response 404
     assert_equal 'Path not specified', @response.body
   end
 
   def test_code_non_existant_project
     Projects.expects(:find).with('foo').returns(nil)
-    get :code, :project => 'foo', :path => ['foo.rb'], :line => 1
+    get :code, :id => 'foo', :path => ['foo.rb'], :line => 1
     assert_response 404
   end
 
@@ -182,7 +182,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
       project.path = sandbox.root
       Projects.expects(:find).with('project').returns(project)
 
-      get :code, :project => 'project', :path => ['foo.rb'], :line => 1
+      get :code, :id => 'project', :path => ['foo.rb'], :line => 1
       assert_response 404
     end
   end
