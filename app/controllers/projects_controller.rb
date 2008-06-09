@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
   
-  verify :params => "id", :only => [:show, :build],
+  verify :params => "id", :only => [:show, :build, :code],
          :render => { :text => "Project not specified",
                       :status => 404 }
   
@@ -38,11 +38,10 @@ class ProjectsController < ApplicationController
   end
   
   def code
-    render :text => 'Project not specified', :status => 404 and return unless params[:project]
     render :text => 'Path not specified', :status => 404 and return unless params[:path]
 
-    @project = Projects.find(params[:project])
-    render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project 
+    @project = Projects.find(params[:id])
+    render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project 
 
     path = File.join(@project.path, 'work', params[:path])
     @line = params[:line].to_i if params[:line]
