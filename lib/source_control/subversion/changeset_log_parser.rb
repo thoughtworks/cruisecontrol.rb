@@ -22,13 +22,13 @@ module SourceControl
       CHANGESET_START_PATTERN = /^\s\s(\S).*$/
 
       def parse_revision(lines)
-       number, committed_by, time = REVISION_PATTERN.match(lines.shift)[1..3]
+       number, author, time = REVISION_PATTERN.match(lines.shift)[1..3]
 
        comment_lines = []
        while (line = lines.shift) and line !~ CHANGESET_START_PATTERN
          comment_lines << line.strip
        end
-       revision = Revision.new(number.to_f, committed_by, DateTime.parse(time),
+       revision = Revision.new(number.to_f, author, DateTime.parse(time),
                                comment_lines.join("\n"), [])
 
        begin

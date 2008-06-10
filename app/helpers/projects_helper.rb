@@ -22,14 +22,14 @@ module ProjectsHelper
     return '' if revisions.empty?    
     if revisions.length == 1
       revision = revisions[0]
-      text = "<div><span class='build_committed_by'>#{revision.committed_by}</span>" + ' committed the checkin</div>'
+      text = "<div><span class='build_author'>#{revision.author}</span>" + ' committed the checkin</div>'
       # TODO: <br/> - should probably use css instead.
       text += '<br/>'
       text +="<div>Comments:<br/>#{format_changeset_log(revision.message)}</div>" unless revision.message.empty?
       text
     else
-      committers = revisions.collect { |rev| rev.committed_by }.uniq
-      text = "<div><span class='build_committed_by'>#{committers.join(', ')}</span>" + ' committed the checkin</div>'
+      committers = revisions.collect { |rev| rev.author }.uniq
+      text = "<div><span class='build_author'>#{committers.join(', ')}</span>" + ' committed the checkin</div>'
     end
   end
 

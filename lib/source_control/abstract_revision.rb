@@ -5,8 +5,7 @@ module SourceControl
       raise NotImplementedError, "number() not implemented by #{self.class}"
     end
 
-    # TODO: rename to author()
-    def committed_by
+    def author
       raise NotImplementedError, "author() not implemented by #{self.class}"
     end
 
