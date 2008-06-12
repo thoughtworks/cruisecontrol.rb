@@ -19,6 +19,11 @@ class BuildsHelperTest < Test::Unit::TestCase
   end
   
   def test_format_build_log_makes_test_summaries_bold
+    assert_equal "Finished in 0.00723 seconds\n\n<div class=\"test-results\">3 examples, 2 failures</div> foo",
+                 format_build_log("Finished in 0.00723 seconds\n\n3 examples, 2 failures foo")
+  end
+
+  def test_format_build_log_makes_rspec_summaries_bold
     assert_equal "limes <div class=\"test-results\">5 tests, 20 assertions, 10 failures, 2 errors</div> foo",
                  format_build_log("limes 5 tests, 20 assertions, 10 failures, 2 errors foo")
   end
@@ -131,14 +136,25 @@ Message: NameError: uninitialized constant BuilderStatusTest::BuilderStatus
                                              BuildStub.new(5, Date.new(2006,1,10).to_time)])
   end
 
+  def test_should_strip_ansi_color_codes
+    log_with_ansi_colors = <<-EOF
+      \e[32mGREEN\e[0m
+      \e[31mRED\e[0m
+      BLACK
+    EOF
+
+    expected_output = <<-EOF
+      GREEN
+      RED
+      BLACK
+    EOF
+    assert_equal expected_output, format_build_log(log_with_ansi_colors)    
+  end
+
   private
   
   def assert_builds(expected, actual)
     assert_equal expected, actual.map{|b| b.label}
   end
 
-  def h(text)
-    text
-  end
-  
 end

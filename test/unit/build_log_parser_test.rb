@@ -109,7 +109,65 @@ rake aborted!
 Test failures
 EOF
 
-  
+LOG_OUTPUT_OF_SUCCESSFUL_RSPEC_RUN = <<EOF
+.
+
+Finished in 0.006387 seconds
+
+1 example, 0 failures
+EOF
+
+LOG_OUTPUT_WITH_RSPEC_FAILURE = <<EOF
+.F
+
+1)
+'foo should fail' FAILED
+expected: 2,
+     got: 1 (using ==)
+./fail_spec.rb:7:
+
+Finished in 0.006825 seconds
+
+2 examples, 1 failure
+EOF
+
+LOG_OUTPUT_WITH_RSPEC_ERROR = <<EOF
+.F
+
+1)
+RuntimeError in 'foo should err'
+oops
+./foo_spec.rb:20:in `blow_up'
+./err_spec.rb:7:
+
+Finished in 0.006761 seconds
+
+2 examples, 1 failure
+EOF
+
+LOG_OUTPUT_WITH_VARIETY_OF_RSPEC_STUFF = <<EOF
+.FFP
+
+Pending:
+foo should be pending (Not Yet Implemented)
+
+1)
+'foo should fail' FAILED
+expected: 2,
+     got: 1 (using ==)
+./fail_spec.rb:7:
+
+2)
+RuntimeError in 'foo should err'
+oops
+./foo_spec.rb:20:in `blow_up'
+./err_spec.rb:7:
+
+Finished in 0.007491 seconds
+
+4 examples, 2 failures, 1 pending
+EOF
+
   def test_should_not_find_test_failures_with_a_build_with_test_errors
     assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS).failures.empty?
   end
@@ -140,6 +198,25 @@ EOF
     assert_equal [expected_test_error], BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS).errors
   end
 
+  def test_should_find_no_rspec_failures_with_successful_build
+    assert BuildLogParser.new(LOG_OUTPUT_OF_SUCCESSFUL_RSPEC_RUN).failures_and_errors.empty?
+  end
+
+  def test_should_find_rspec_failures
+    failures = BuildLogParser.new(LOG_OUTPUT_WITH_RSPEC_FAILURE).failures
+    assert_equal [expected_rspec_failure], failures
+  end
+
+  def test_should_find_rspec_errors
+    errors = BuildLogParser.new(LOG_OUTPUT_WITH_RSPEC_ERROR).errors
+    assert_equal [expected_rspec_error], errors
+  end
+
+  def test_should_process_multiple_errors_and_failures
+    failures_and_errors = BuildLogParser.new(LOG_OUTPUT_WITH_VARIETY_OF_RSPEC_STUFF).failures_and_errors
+    assert_equal [expected_rspec_failure, expected_rspec_error], failures_and_errors
+  end
+
   def expected_test_error
     TestErrorEntry.create_error("test_should_fail_due_to_comparing_same_objects_with_different_data(BuildLogParserTest)",
                                 "NameError: undefined local variable or method `expectedFirstTestFixture' for #<BuildLogParserTest:0x3f65a60>",
@@ -168,5 +245,12 @@ EOF
                                   "#<Mocha::Mock:0x-245ec74a>.force_build_if_requested - expected calls: 1, actual calls: 2",
                                   "./test/unit/polling_scheduler_test.rb:44")
   end
-  
+
+  def expected_rspec_failure
+    TestErrorEntry.create_failure('foo should fail', "expected: 2,\n     got: 1 (using ==)", "./fail_spec.rb:7:")
+  end
+
+  def expected_rspec_error
+    TestErrorEntry.create_error('foo should err', "RuntimeError in 'foo should err'\noops", "./foo_spec.rb:20:in `blow_up'\n./err_spec.rb:7:")
+  end
 end
