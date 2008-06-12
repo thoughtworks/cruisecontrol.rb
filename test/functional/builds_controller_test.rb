@@ -45,15 +45,15 @@ class BuildsControllerTest < Test::Unit::TestCase
       assert_equal '24', assigns(:build).label
       
       assert_tag :tag => 'a', 
-                 :content => 'next >',
+                 :content => 'next &gt;',
                  :attributes => {:href => /\/builds\/#{project.name}\/25/}
 
       assert_tag :tag => 'a', 
-                 :content => '< prev',
+                 :content => '&lt; prev',
                  :attributes => {:href => /\/builds\/#{project.name}\/23/}
 
       assert_tag :tag => 'a', 
-                 :content => 'latest >>',
+                 :content => 'latest &gt;&gt;',
                  :attributes => {:href => /\/builds\/#{project.name}/}
     end
   end

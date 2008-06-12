@@ -22,7 +22,7 @@ EOF
       assert_equal [expected_revision], revisions
 
       assert_equal expected_revision.number, revisions.first.number
-      assert_equal expected_revision.committed_by, revisions.first.committed_by
+      assert_equal expected_revision.author, revisions.first.author
       assert_equal expected_revision.time, revisions.first.time
     end
 

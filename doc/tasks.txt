@@ -49,9 +49,9 @@ Looks like we won't detect cruise_config modification if it happens during the b
 
 Tech
 ----
-Update all Rails-generated files to Rails 1.2.2 versions thereof
-
-look for a way to generate URLs in email templates through Rails' routes
+* Update all Rails-generated files to Rails 2.0.2 versions thereof
+* look for a way to generate URLs in email templates through Rails' routes
+* Replace get_mime_type with MIME::Types (http://mime-types.rubyforge.org/) library
 
 Necessary
 ---------
@@ -61,6 +61,7 @@ Necessary
 
 Build
 -----
+* ability to stop/kill
 
 Dev
 ---

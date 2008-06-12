@@ -1,4 +1,5 @@
 class DocumentationController < ApplicationController
+  layout nil
   caches_page :get
 
   def get

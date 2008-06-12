@@ -1,5 +1,4 @@
 class BuildsController < ApplicationController
-  layout 'default'
   caches_page :drop_down
   
   def show

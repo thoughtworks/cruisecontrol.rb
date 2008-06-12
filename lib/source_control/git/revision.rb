@@ -2,10 +2,10 @@ module SourceControl
   class Git
     class Revision < AbstractRevision
 
-      attr_reader :number, :committed_by, :time 
+      attr_reader :number, :author, :time 
 
-      def initialize(number, committed_by, time)
-        @number, @committed_by, @time = number, committed_by, time
+      def initialize(number, author, time)
+        @number, @author, @time = number, author, time
       end
 
       def ==(other)

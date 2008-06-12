@@ -7,14 +7,16 @@ TRUNK
   * infers source control type from repository location if it starts with svn:, svn+ssh: or git:
 - 'cruise stop' command:
   * currently only works for mongrel in daemon ('-d') mode
+- build log parser recognizes errors, failures and example counts produced by RSpec
+- dashboard strips out ANSI colors when displaying a build log 
 - [bugfix] dashboard gracefully handles the situation where there is site.css, but ./public/stylesheets is not a
            writeable directory (prints a warning and keeps going on)
 - [bugfix] Added XmlServerReport.aspx for compatibility with CCTray.NET >= 1.3 [Steve Donie]
 - [bugfix] cruise start --daemon works with Webrick
 - [bugfix] stop builder processes from going zombie by using Process#detach [Kurtis Seebaldt]
 - [bugfix] made image URLS in stylesheets relative [Anselm Helbig]
-- build log parser recognizes errors, failures and example counts produced by RSpec
-- dashboard strips out ANSI colors when displaying a build log 
+- [bugfix] Make dashboard xhtml compliant
+- [bugfix] Recognize OpenBSD as a platform
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.3.0

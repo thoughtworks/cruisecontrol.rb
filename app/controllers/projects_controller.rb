@@ -1,6 +1,11 @@
 class ProjectsController < ApplicationController
-  layout 'default'
   
+  verify :params => "id", :only => [:show, :build, :code],
+         :render => { :text => "Project not specified",
+                      :status => 404 }
+  verify :params => "path", :only => [:code],
+         :render => { :text => "Path not specified",
+                      :status => 404 }
   def index
     @projects = Projects.load_all
     
@@ -13,8 +18,6 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    render :text => 'Project not specified', :status => 404 and return unless params[:id]
-
     @project = Projects.find(params[:id])
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project
 
@@ -25,7 +28,6 @@ class ProjectsController < ApplicationController
   end
 
   def build
-    render :text => 'Project not specified', :status => 404 and return unless params[:id]
     render :text => 'Build requests are not allowed', :status => 403 and return if Configuration.disable_build_now
 
     @project = Projects.find(params[:id])
@@ -38,11 +40,8 @@ class ProjectsController < ApplicationController
   end
   
   def code
-    render :text => 'Project not specified', :status => 404 and return unless params[:project]
-    render :text => 'Path not specified', :status => 404 and return unless params[:path]
-
-    @project = Projects.find(params[:project])
-    render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project 
+    @project = Projects.find(params[:id])
+    render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project 
 
     path = File.join(@project.path, 'work', params[:path])
     @line = params[:line].to_i if params[:line]
