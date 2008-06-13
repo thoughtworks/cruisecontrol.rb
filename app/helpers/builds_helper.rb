@@ -12,8 +12,7 @@ module BuildsHelper
   end
   
   def format_build_log(log)
-    link_to_code(h(log).gsub(/(\d+ tests, \d+ assertions, \d+ failures, \d+ errors)/,
-                             '<div class="test-results">\1</div>'))
+    strip_ansi_colors(highlight_test_count(link_to_code(h(log))))
   end
   
   def link_to_code(log)
@@ -69,5 +68,16 @@ module BuildsHelper
       build_time_text = format_time(@build.time, :verbose)
       elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}"
     end
+  end
+
+  private
+
+  def highlight_test_count(log)
+    log.gsub(/\d+ tests, \d+ assertions, \d+ failures, \d+ errors/, '<div class="test-results">\0</div>').
+        gsub(/\d+ examples, \d+ failures/, '<div class="test-results">\0</div>')
+  end
+
+  def strip_ansi_colors(log)
+    log.gsub(/\e\[\d+m/, '')
   end
 end
