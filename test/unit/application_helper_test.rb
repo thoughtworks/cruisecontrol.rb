@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'builds_controller'
+require "build"
 
 class ApplicationHelperTest < Test::Unit::TestCase
   
@@ -62,6 +63,15 @@ class ApplicationHelperTest < Test::Unit::TestCase
     @helper.extend(ERB::Util)
     assert_equal "&lt;hr /&gt;some changeset&lt;script&gt;alert('bad')&lt;/script&gt;",
      @helper.format_changeset_log("<hr />some changeset<script>alert('bad')</script>")
+  end
+  
+  def test_build_link_includes_title
+    @helper.extend(ERB::Util)
+    project = stub(:name => "name")
+    build = stub(:label => "label", :status => "status", :changeset => "changeset")
+    @helper.stubs(:build_path).with(:project => "name", :build => "label").returns("build_path")
+    @helper.expects(:link_to).with("text", "build_path", {:class => "status", :title => "changeset"})
+    @helper.build_link("text", project, build)
   end
   
 end

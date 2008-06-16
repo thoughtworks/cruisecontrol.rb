@@ -70,7 +70,8 @@ module ApplicationHelper
   end
   
   def build_link(text, project, build)
-    link_to text, build_path(:project => project.name, :build => build.label), :class => build.status
+    link_to text, build_path(:project => project.name, :build => build.label),
+            :class => build.status, :title => format_changeset_log(build.changeset)
   end
   
   def url_path(url)
