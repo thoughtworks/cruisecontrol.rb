@@ -52,6 +52,9 @@ Tech
 * Update all Rails-generated files to Rails 2.0.2 versions thereof
 * look for a way to generate URLs in email templates through Rails' routes
 * Replace get_mime_type with MIME::Types (http://mime-types.rubyforge.org/) library
+* Project domain object
+* Extract build log parser into types
+* Upgrade Mocha to 0.5.6
 
 Necessary
 ---------
