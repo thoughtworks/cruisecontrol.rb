@@ -1,21 +1,25 @@
 # Don't change this file. Configuration is done in config/environment.rb and config/environments/*.rb
 
+require 'rbconfig'
+
 def find_home
-  ['HOME', 'USERPROFILE'].each do |homekey|
-    return ENV[homekey] if ENV[homekey]
-  end
-  if ENV['HOMEDRIVE'] && ENV['HOMEPATH']
-    return "#{ENV['HOMEDRIVE']}:#{ENV['HOMEPATH']}"
-  end
-  begin
-    File.expand_path("~")
-  rescue StandardError => ex
-    if File::ALT_SEPARATOR
-      "C:/"
+  looks_like_windows = (Config::CONFIG["target_os"] =~ /32/)
+
+  home =
+    if ENV['HOME']
+      ENV['HOME']
+    elsif ENV['USERPROFILE']
+      ENV['USERPROFILE'].gsub('\\', '/')
+    elsif ENV['HOMEDRIVE'] && ENV['HOMEPATH']
+      "#{ENV['HOMEDRIVE']}:#{ENV['HOMEPATH']}".gsub('\\', '/')
     else
-      "/"
+      begin
+        File.expand_path("~")
+      rescue StandardError => ex
+        looks_like_windows ? "C:/" : "/"
+      end
     end
-  end
+  home
 end
 
 unless defined?(RAILS_ROOT)

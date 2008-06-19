@@ -64,8 +64,8 @@ module CommandLine
         :mode => 'r',
         :exitstatus => 0 }.merge(options)
 
-    options[:stdout] = File.expand_path(options[:stdout]) if options[:stdout]
-    options[:stderr] = File.expand_path(options[:stderr]) if options[:stderr]
+    options[:stdout] = escape(File.expand_path(options[:stdout])) if options[:stdout]
+    options[:stderr] = escape(File.expand_path(options[:stderr])) if options[:stderr]
 
     Dir.chdir(options[:dir]) do
       return e(cmd, options, &proc)
@@ -77,7 +77,7 @@ module CommandLine
 
   def e(cmd, options, &proc)
     full_cmd = full_cmd(cmd, options, &proc)
-
+    
     options[:env].each{|k,v| ENV[k]=v}
     begin
       CruiseControl::Log.debug "#{Platform.prompt} #{format_for_printing(cmd)}" if options[:stdout].nil?
