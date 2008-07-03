@@ -10,6 +10,7 @@ module SourceControl
       @error_log = options.delete(:error_log)
       @interactive = options.delete(:interactive)
       @repository = options.delete(:repository)
+      @branch = options.delete(:branch) || "master"
       raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
     end
 

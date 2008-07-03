@@ -33,7 +33,7 @@ class Projects
   end
   
   def <<(project)
-    raise "project named #{project.name.inspect} already exists" if @list.include?(project)
+    raise "Project named #{project.name.inspect} already exists in #@dir" if @list.include?(project)
     begin
       @list << project
       save_project(project)

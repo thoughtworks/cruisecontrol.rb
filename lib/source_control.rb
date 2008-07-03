@@ -11,7 +11,7 @@ module SourceControl
       if scm_type.nil?
         source_control_class =
           case scm_options[:repository]
-          when /^git:/ then Git
+          when /^git:/ then SourceControl::Git
           when /^svn:/, /^svn\+ssh:/ then SourceControl::Subversion
           else SourceControl::Subversion
           end

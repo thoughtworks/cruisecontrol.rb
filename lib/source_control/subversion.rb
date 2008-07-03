@@ -24,6 +24,10 @@ module SourceControl
       @interactive = options.delete(:interactive)
       @check_externals = options.has_key?(:check_externals) ? options.delete(:check_externals) : true
 
+      if options[:branch]
+        raise "Subversion doesn't accept --branch property. You should specify Subversion URL for the branch in the --repository option."
+      end
+
       raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
     end
 

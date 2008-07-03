@@ -81,7 +81,7 @@ class ProjectsTest < Test::Unit::TestCase
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
       projects << @one      
-      assert_raises('project named "one" already exists') do
+      assert_raises("Project named \"one\" already exists in #{sandbox.root}") do
         projects << @one        
       end
       assert File.directory?(@one.path), "Project directory does not exist."

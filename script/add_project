@@ -24,10 +24,11 @@ ARGV.options do |opts|
     scm_options[:repository] = v
   end
 
-  opts.on("-s source_control", "--source-control source_control", String,
+  opts.on("-s", "--source-control source_control", String,
           "Specify the source control manager to use (default: subversion)") do |v|
     scm_options[:source_control] = v
   end
+  opts.on("-b", "--branch branch", String, "Specify a source control branch to use (Git, Mercurial)") { |v| scm_options[:branch] = v }
   opts.on("--username username", String, "Specify a username for source control") { |v| scm_options[:username] = v }
   opts.on("--password password", String, "Specify a password for source control") { |v| scm_options[:password] = v }
   opts.on('-t', '--trace', 'Print out exception stack traces') { trace = true }
