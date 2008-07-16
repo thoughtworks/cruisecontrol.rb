@@ -9,7 +9,7 @@ module SourceControl
       @error_log = options.delete(:error_log)
       @interactive = options.delete(:interactive)
       @repository = options.delete(:repository)
-      @branch = options.delete(:branch) || "default"
+      @branch = options.delete(:branch)
       raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
     end
 
@@ -20,7 +20,7 @@ module SourceControl
       FileUtils.rm_rf(path)
 
       # need to read from command output, because otherwise tests break
-      hg('clone', [@repository, path], :execute_in_current_directory => false) do |io|
+      hg('clone', [@repository, path], :execute_in_project_directory => false) do |io|
         begin
           while line = io.gets
             stdout.puts line
@@ -28,6 +28,11 @@ module SourceControl
         rescue EOFError
         end
       end
+
+      update_options = []
+      update_options << '-C' << @branch if @branch
+      update_options << '-r' << revision if revision
+      hg('update', update_options) unless update_options.empty?
     end
 
     def latest_revision
@@ -57,12 +62,6 @@ module SourceControl
 
     def creates_ordered_build_labels?() false end
 
-    protected
-
-    def pull_new_changesets
-      hg("pull")
-    end
-
     def new_revisions
       pull_new_changesets
       hg_output = hg('parents', ['-v'])
@@ -77,6 +76,12 @@ module SourceControl
         rev.number == revision.number
       end
       revs
+    end
+
+    protected
+
+    def pull_new_changesets
+      hg("pull")
     end
 
     def hg(operation, arguments = [], options = {}, &block)

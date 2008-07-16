@@ -10,7 +10,7 @@ module SourceControl
       @error_log = options.delete(:error_log)
       @interactive = options.delete(:interactive)
       @repository = options.delete(:repository)
-      @branch = options.delete(:branch) || "master"
+      @branch = options.delete(:branch)
       raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
     end
 
@@ -21,7 +21,7 @@ module SourceControl
       FileUtils.rm_rf(path)
 
       # need to read from command output, because otherwise tests break
-      git('clone', [@repository, path], :execute_in_current_directory => false) do |io|
+      git('clone', [@repository, path], :execute_in_project_directory => false) do |io|
         begin
           while line = io.gets
             stdout.puts line
@@ -30,9 +30,11 @@ module SourceControl
         end
       end
 
-      if revision
-        git("reset", ['--hard', revision.number])
+      if @branch
+        git('branch', ['--track', @branch, "origin/#@branch"])
+        git('checkout', [@branch])
       end
+      git("reset", ['--hard', revision.number]) if revision
     end
 
     # TODO implement clean_checkout as "git clean -d" - much faster
@@ -42,7 +44,7 @@ module SourceControl
 
     def latest_revision
       load_new_changesets_from_origin
-      git_output = git('log', ['-1', '--pretty=raw', 'origin/master'])
+      git_output = git('log', ['-1', '--pretty=raw', "origin/#{current_branch}"])
       Git::LogParser.new.parse(git_output).first
     end
 
@@ -66,19 +68,26 @@ module SourceControl
 
     def creates_ordered_build_labels?() false end
 
+    def new_revisions
+      load_new_changesets_from_origin
+      git_output = git('log', ['--pretty=raw', "HEAD..origin/#{current_branch}"])
+      Git::LogParser.new.parse(git_output)
+    end
+
+    def current_branch
+      git('branch') do |io|
+        branch = io.readlines.grep(/^\* .*$/).first[2..-1].strip
+        return branch
+      end
+    end
+
     protected
 
     def load_new_changesets_from_origin
       git("fetch", ["origin"])
     end
 
-    def new_revisions
-      load_new_changesets_from_origin
-      git_output = git('log', ['--pretty=raw', 'HEAD..origin/master'])
-      Git::LogParser.new.parse(git_output)
-    end
-
-    def git(operation, arguments, options = {}, &block)
+    def git(operation, arguments = [], options = {}, &block)
       command = ["git-#{operation}"] + arguments.compact
 # TODO: figure out how to handle the same thing with git
 #      command << "--non-interactive" unless @interactive

@@ -47,6 +47,36 @@ module SourceControl
       end
     end
 
+    def test_checkout
+      mercurial_with_checkout_data = Mercurial.new(:repository => '/tmp/hg_repo') 
+      in_sandbox do
+        mercurial_with_checkout_data.expects(:hg).with(
+            'clone', ['/tmp/hg_repo', '.'], :execute_in_project_directory => false)
+        assert_nothing_raised { mercurial_with_checkout_data.checkout }
+      end
+    end
+
+    def test_checkout_should_switch_to_a_specified_branch
+      mercurial_with_checkout_data = Mercurial.new(:repository => '/tmp/hg_repo', :branch => 'a_branch') 
+      in_sandbox do
+        mercurial_with_checkout_data.expects(:hg).with(
+            'clone', ['/tmp/hg_repo', '.'], :execute_in_project_directory => false)
+        mercurial_with_checkout_data.expects(:hg).with('update', ['-C', 'a_branch'])
+        assert_nothing_raised { mercurial_with_checkout_data.checkout }
+      end
+    end
+
+    def test_checkout_should_accept_a_revision
+      mercurial_with_checkout_data = Mercurial.new(:repository => '/tmp/hg_repo')
+      in_sandbox do
+        mercurial_with_checkout_data.expects(:hg).with(
+            'clone', ['/tmp/hg_repo', '.'], :execute_in_project_directory => false)
+        mercurial_with_checkout_data.expects(:hg).with('update', ['-r', '12345'])
+        assert_nothing_raised { mercurial_with_checkout_data.checkout('12345') }
+      end
+
+    end
+
     # TODO tests for other public methods of this class
 
   end

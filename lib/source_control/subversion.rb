@@ -34,13 +34,13 @@ module SourceControl
     def checkout(revision = nil, stdout = $stdout)
       raise 'Repository location is not specified' unless @repository
 
-      options = [@repository, path]
-      options << "--username" << @username if @username
-      options << "--password" << @password if @password
-      options << "--revision" << revision_number(revision) if revision
+      arguments = [@repository, path]
+      arguments << "--username" << @username if @username
+      arguments << "--password" << @password if @password
+      arguments << "--revision" << revision_number(revision) if revision
 
       # need to read from command output, because otherwise tests break
-      svn('co', options) do |io|
+      svn('co', arguments, :execute_in_project_directory => false) do |io|
         begin
           while line = io.gets
             stdout.puts line
@@ -109,7 +109,7 @@ module SourceControl
 
     def log(from, to, arguments = [])
       svn('log', arguments + ["--revision", "#{from}:#{to}", '--verbose', '--xml', @repository],
-          :execute_in_current_directory => @repository.blank?)
+          :execute_in_project_directory => @repository.blank?)
     end
 
     def info

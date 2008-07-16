@@ -35,11 +35,19 @@ module SourceControl
     end
 
     def execute_in_local_copy(command, options, &block)
+      options = {:execute_in_project_directory => true}.merge(options)
       if block_given?
-        execute(command, &block)
+        if options[:execute_in_project_directory]
+          Dir.chdir(path) do
+            execute(command, &block)
+          end
+        else
+          execute(command, &block)
+        end
       else
         error_log = File.expand_path(self.error_log)
-        if options[:execute_in_current_directory] != false
+        if options[:execute_in_project_directory]
+          raise "path is nil" if path.nil?
           Dir.chdir(path) do
             execute_with_error_log(command, error_log)
           end

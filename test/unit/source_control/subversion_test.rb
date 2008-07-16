@@ -91,7 +91,8 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
 
   def test_checkout_with_no_user_password
     svn = new_subversion(:repository => 'http://foo.com/svn/project')
-    svn.expects(:svn).with("co", ["http://foo.com/svn/project", "."])
+    svn.expects(:svn).with("co", ["http://foo.com/svn/project", "."],
+                           :execute_in_project_directory => false)
 
     svn.checkout
   end
@@ -113,7 +114,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   def test_checkout_with_user_password
     svn = new_subversion(:repository => 'http://foo.com/svn/project', :username => 'jer', :password => "crap")
     svn.expects(:svn).with("co", ["http://foo.com/svn/project", ".", "--username",
-                                "jer", "--password", "crap"])
+                                "jer", "--password", "crap"], :execute_in_project_directory => false)
 
     svn.checkout
   end
@@ -131,14 +132,15 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
 
   def test_checkout_with_revision
     svn = Subversion.new(:repository => 'http://foo.com/svn/project')
-    svn.expects(:svn).with("co", ["http://foo.com/svn/project", ".", "--revision", 5])
+    svn.expects(:svn).with("co", ["http://foo.com/svn/project", ".", "--revision", 5],
+                           :execute_in_project_directory => false)
 
     svn.checkout(Subversion::Revision.new(5))
   end
 
   def test_allowing_interaction
     svn = new_subversion(:repository => 'svn://foo.com/', :interactive => true)
-    svn.expects(:svn).with("co", ["svn://foo.com/", "."])
+    svn.expects(:svn).with("co", ["svn://foo.com/", "."], :execute_in_project_directory => false)
     svn.checkout
   end
 
@@ -158,7 +160,8 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
       assert File.directory?("project")
 
       svn = Subversion.new(:repository => 'http://foo.com/svn/project', :path => "project")
-      svn.expects(:svn).with("co", ["http://foo.com/svn/project", "project", "--revision", 5])
+      svn.expects(:svn).with("co", ["http://foo.com/svn/project", "project", "--revision", 5],
+                             :execute_in_project_directory => false)
 
       svn.clean_checkout(Subversion::Revision.new(5))
 
@@ -170,7 +173,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
     in_sandbox do
       svn = Subversion.new(:repository => 'url')
       def svn.svn(*args, &block)
-        execute_in_local_copy 'echo hello world', [], &block
+        execute_in_local_copy 'echo hello world', {}, &block
       end
 
       io = StringIO.new
