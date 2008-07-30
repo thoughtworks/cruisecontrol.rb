@@ -1,46 +1,24 @@
 #!/usr/bin/env ruby
 
-# in order to make cruise run as daemon, you need:
-# 1. cp $CCRB_HOME/daemon/cruise.sample $CCRB_HOME/daemon/cruise
-# 2. specify your cruise_path to $CCRB_HOME in $CCRB_HOME/daemon/cruise file
-# 3. ln -s $CCRB_HOME/daemon/cruise /etc/init.d/cruise (you may need to 'sudo' this)
-# 4. update-rc.d cruise (you may want to choose options by yourself, and you may need to 'sudo' this)
-# 5. it's done :>
+# Instructions to make cruise run as daemon (and work correctly on reboot):
+# 1. sudo cp CRUISE_HOME/daemon/cruise.sample /etc/init.d/cruise
+# 2. edit /etc/init.d/cruise to include your correct CRUISE_USER and CRUISE_HOME)
+# 3. sudo update-rc.d cruise defaults
+# 4. reboot system, verify cruise is running and builds are successful.  If there are problems,
+#    check CRUISE_HOME/log/cruise_daemon_env.log and $CCRB_HOME/log/cruise_daemon_err.log
 
-require "fileutils"
-include FileUtils
+CRUISE_USER = "change_me"
+CRUISE_HOME = "change_me"
 
-require "rubygems"
-
-begin
-  gem 'mongrel'
-rescue => e
-  puts "Error: daemon mode of CC.rb requires mongrel installed"
-  exit 1
-end
-
-def cruise_path
-  # NOTE: you must specify $CCRB_HOME here
-  # "/home/gigix/Projects/cc.rb"
-  raise "Please specify your $CCRB_HOME path in this method."
-end
+require CRUISE_HOME + "/daemon/daemon_helper"
 
 command = ARGV.shift
-
 case command
 when 'start'
-  cd cruise_path
-  system "./cruise start -d"
-  exit 0
+  start_cruise "cd #{CRUISE_HOME} && ./cruise start -d"
 when 'stop'
-  system "mongrel_rails stop -P #{cruise_path}/tmp/pids/mongrel.pid"
-  Dir["#{cruise_path}/tmp/pids/builders/*.pid"].each do |pid_file|
-    pid = File.open(pid_file){|f| f.read }
-    system "kill -9 #{pid}"
-    rm pid_file
-  end
-  exit 0
+  stop_cruise
 else
-  p "Usage: /etc/init.d/cruise start|stop"
+  p "Usage: #{File.dirname} start|stop"
   exit 1
 end
