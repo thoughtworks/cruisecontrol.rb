@@ -2,7 +2,9 @@
 
 # Instructions to make cruise run as daemon (and work correctly on reboot):
 # 1. sudo cp CRUISE_HOME/daemon/cruise.sample /etc/init.d/cruise
-# 2. edit /etc/init.d/cruise to include your correct CRUISE_USER and CRUISE_HOME)
+# 2. edit /etc/init.d/cruise to 
+#     * include your correct CRUISE_USER and CRUISE_HOME
+#     * ensure that /usr/bin/ruby is executable, or modify the shebang as appropriate 
 # 3. sudo update-rc.d cruise defaults
 # 4. reboot system, verify cruise is running and builds are successful.  If there are problems,
 #    check CRUISE_HOME/log/cruise_daemon_env.log and $CCRB_HOME/log/cruise_daemon_err.log
@@ -19,6 +21,6 @@ when 'start'
 when 'stop'
   stop_cruise
 else
-  p "Usage: #{File.dirname} start|stop"
+  p "Usage: #{File.dirname(__FILE__)} start|stop"
   exit 1
 end
