@@ -18,21 +18,24 @@ rescue => e
   exit 1
 end
 
-def log_error(output)
-  system("su - #{CRUISE_USER} -c 'touch #{CRUISE_HOME}/log/cruise_daemon_err.log'")
-  File.open("#{CRUISE_HOME}/log/cruise_daemon_err.log", "a+"){|f| f << output + "\n\n"}
+def log(log_suffix, output)
+  init_log_cmd = "touch #{CRUISE_HOME}/log/cruise_daemon_#{log_suffix}.log"
+  system(su_if_needed(init_log_cmd))
+  File.open("#{CRUISE_HOME}/log/cruise_daemon_#{log_suffix}.log", "a+"){|f| f << output + "\n\n"}
+end
+
+def su_if_needed(cmd)
+  "su - #{CRUISE_USER} -c '#{cmd}'" if CRUISE_USER != ENV['USER']  
 end
 
 def start_cruise(start_cmd = "cd #{CRUISE_HOME} && ./cruise start -d")
-  system("su - #{CRUISE_USER} -c 'touch #{CRUISE_HOME}/log/cruise_daemon_env.log'")
-  File.open("#{CRUISE_HOME}/log/cruise_daemon_env.log", "a+"){|f| f << ENV.inspect + "\n\n"}
-  start_cmd = "su - #{CRUISE_USER} -c '#{start_cmd}'" if CRUISE_USER != ENV['USER']
-  output = `#{start_cmd} 2>&1`
+  log(:env, ENV.inspect)
+  output = `#{su_if_needed(start_cmd)} 2>&1`
   if $?.success?
     print output + "\n"
     exit 0
   else
-    log_error(output)
+    log(:err, output)
     print output + "\n"
     exit 1
   end
@@ -47,7 +50,7 @@ def stop_cruise
     rm pid_file
   end
   if failed
-    log_error("'stop' command failed")
+    log(:err, "'stop' command failed")
     exit 1
   else
     exit 0
