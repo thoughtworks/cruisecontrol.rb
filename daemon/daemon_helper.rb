@@ -25,7 +25,8 @@ def log(log_suffix, output)
 end
 
 def su_if_needed(cmd)
-  "su - #{CRUISE_USER} -c '#{cmd}'" if CRUISE_USER != ENV['USER']  
+  return "su - #{CRUISE_USER} -c '#{cmd}'" if CRUISE_USER != ENV['USER']
+  cmd
 end
 
 def start_cruise(start_cmd = "cd #{CRUISE_HOME} && ./cruise start -d")
