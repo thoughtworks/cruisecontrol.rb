@@ -5,3 +5,6 @@ public/stylesheets/site.css
 tmp/**/*
 cruisecontrol.iws
 public/builds
+*.iws
+*.ipr
+*.iml
