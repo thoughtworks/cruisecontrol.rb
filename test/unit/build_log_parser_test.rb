@@ -341,4 +341,80 @@ EOF
   def expected_rspec_error
     TestErrorEntry.create_error('foo should err', "RuntimeError in 'foo should err'\noops", "./foo_spec.rb:20:in `blow_up'\n./err_spec.rb:7:")
   end
+
+COMPLEX_RSPEC_ERROR = <<-EOF
+Running SeleniumFastSpecSuite
+Starting GameServer with RAILS_ENV=selenium_test
+Profiling enabled.
+.FF
+
+
+Top 10 slowest examples:
+49.2588670 Game with two users game flow
+
+1)
+Polonium::PoloniumError in 'Single user game playing the game can answer questions'
+We got a new page, but it was an application exception page.
+
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/wait_for.rb:40:in `flunk'
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/driver.rb:143:in `assert_page_loaded'
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/driver.rb:77:in `click_and_wait'
+
+2)
+Polonium::PoloniumError in 'Single user game when an existing User is logged in time limits are short times out due to inactivity'
+We got a new page, but it was an application exception page.
+
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/wait_for.rb:40:in `flunk'
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/driver.rb:143:in `assert_page_loaded'
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/driver.rb:77:in `click_and_wait'
+
+Finished in 59.190039 seconds
+
+3 examples, 2 failures
+rake aborted!
+Failure
+EOF
+
+COMPLEX_RSPEC_FAILURE = <<-EOF
+Running SeleniumFastSpecSuite
+Starting GameServer with RAILS_ENV=selenium_test
+Profiling enabled.
+.FF
+
+
+Top 10 slowest examples:
+49.2588670 Game with two users game flow
+
+1)
+'Single user game playing the game can answer questions' FAILED
+We got a new page, but it was an application exception page.
+
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/wait_for.rb:40:in `flunk'
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/driver.rb:143:in `assert_page_loaded'
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/driver.rb:77:in `click_and_wait'
+
+2)
+'Single user game when an existing User is logged in time limits are short times out due to inactivity' FAILED
+We got a new page, but it was an application exception page.
+
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/wait_for.rb:40:in `flunk'
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/driver.rb:143:in `assert_page_loaded'
+/home/user/.cruise/projects/mole/work/vendor/plugins/polonium/lib/polonium/driver.rb:77:in `click_and_wait'
+
+Finished in 59.190039 seconds
+
+3 examples, 2 failures
+rake aborted!
+Failure
+EOF
+
+  def test_should_find_rspec_complex_errors
+    errors = BuildLogParser.new(COMPLEX_RSPEC_ERROR).errors
+    assert_equal 2, errors.length
+  end
+
+   def test_should_find_rspec_complex_failures
+    failures = BuildLogParser.new(COMPLEX_RSPEC_FAILURE).failures
+    assert_equal 2, failures.length
+  end
 end
