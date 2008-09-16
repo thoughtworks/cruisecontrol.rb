@@ -54,7 +54,7 @@ class BuildLogParser
   def failures
     test_failures + rspec_failures
   end
-  
+   
   def test_failures
     test_failures = []
 
