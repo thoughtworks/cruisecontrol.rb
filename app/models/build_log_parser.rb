@@ -38,8 +38,9 @@ class BuildLogParser
       content = $3.chomp
 
       stack_trace_pos = (content =~ RSPEC_STACK_TRACE_REGEX)
+      RAILS_DEFAULT_LOGGER.info "There is an issue parsing:\n#{content.inspect}" unless stack_trace_pos
 
-      rest_of_the_message = content[0...stack_trace_pos].chomp
+      rest_of_the_message = content[0...(stack_trace_pos || -1)].chomp
       message = "#{exception_name} in '#{spec_name}'\n#{rest_of_the_message}"
       stack_trace = content[stack_trace_pos..-1]
 
