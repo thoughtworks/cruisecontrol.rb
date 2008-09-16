@@ -37,15 +37,13 @@ class BuildLogParser
       spec_name = $2
       content = $3.chomp
 
-#      stack_trace_pos = (content =~ RSPEC_STACK_TRACE_REGEX)
+      stack_trace_pos = (content =~ RSPEC_STACK_TRACE_REGEX)
 
-#      rest_of_the_message = content[0...stack_trace_pos].chomp
-#      message = "#{exception_name} in '#{spec_name}'\n#{rest_of_the_message}"
-      message = "#{exception_name} in '#{spec_name}'\n#{content}"
-#      stack_trace = content[stack_trace_pos..-1]
+      rest_of_the_message = content[0...stack_trace_pos].chomp
+      message = "#{exception_name} in '#{spec_name}'\n#{rest_of_the_message}"
+      stack_trace = content[stack_trace_pos..-1]
 
-#      rspec_errors << TestErrorEntry.create_error(spec_name, message, stack_trace)
-      rspec_errors << TestErrorEntry.create_error(spec_name, message, [])
+      rspec_errors << TestErrorEntry.create_error(spec_name, message, stack_trace)
     end
     
     return rspec_errors
