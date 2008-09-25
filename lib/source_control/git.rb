@@ -88,7 +88,7 @@ module SourceControl
     end
 
     def git(operation, arguments = [], options = {}, &block)
-      command = ["git-#{operation}"] + arguments.compact
+      command = ["git", operation] + arguments.compact
 # TODO: figure out how to handle the same thing with git
 #      command << "--non-interactive" unless @interactive
 
