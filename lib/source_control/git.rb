@@ -11,6 +11,7 @@ module SourceControl
       @interactive = options.delete(:interactive)
       @repository = options.delete(:repository)
       @branch = options.delete(:branch)
+      @watch_for_changes_in = options.delete(:watch_for_changes_in)
       raise "don't know how to handle '#{options.keys.first}'" if options.length > 0
     end
 
@@ -71,7 +72,9 @@ module SourceControl
     def new_revisions
       load_new_changesets_from_origin
       git_output = git('log', ['--pretty=raw', '--stat', "HEAD..origin/#{current_branch}"])
-      Git::LogParser.new.parse(git_output)
+      revisions = Git::LogParser.new.parse(git_output)
+      revisions = filter_revisions_by_subdirectory(revisions, @watch_for_changes_in) if @watch_for_changes_in
+      revisions
     end
 
     def current_branch
@@ -82,6 +85,15 @@ module SourceControl
     end
 
     protected
+    
+    def filter_revisions_by_subdirectory(revisions, subdir)
+      revisions.find_all do |revision|
+        revision.changeset = revision.changeset.find_all do |change|
+          change.starts_with?(subdir)
+        end
+        !revision.changeset.empty?
+      end
+    end
 
     def load_new_changesets_from_origin
       git("fetch", ["origin"])

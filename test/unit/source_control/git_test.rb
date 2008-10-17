@@ -34,12 +34,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
   def test_up_to_date?_should_return_false_if_there_are_new_revisions
     in_sandbox do
       git = new_git
-      git.expects(:git).with("remote", ["update"])
-      git.expects(:git).with("log", ["--pretty=raw", "--stat", "HEAD..origin/master"]).returns("a log output")
-
-      mock_parser = Object.new
-      mock_parser.expects(:parse).with("a log output").returns([:new_revision])
-      Git::LogParser.expects(:new).returns(mock_parser)
+      mock_revisions(git, [:new_revision])
 
       reasons = []
       assert_false git.up_to_date?(reasons)
@@ -50,12 +45,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
   def test_up_to_date?_should_return_true_if_there_are_no_new_revisions
     in_sandbox do
       git = new_git
-      git.expects(:git).with("remote", ["update"])
-      git.expects(:git).with("log", ["--pretty=raw", "--stat", "HEAD..origin/master"]).returns("\n")
-
-      mock_parser = Object.new
-      mock_parser.expects(:parse).with("\n").returns([])
-      Git::LogParser.expects(:new).returns(mock_parser)
+      mock_revisions(git, [])
 
       assert git.up_to_date?
     end
@@ -106,9 +96,32 @@ class SourceControl::GitTest < Test::Unit::TestCase
       assert_equal "b2", git.current_branch
     end
   end
+  
+  def test_watching_for_changes_in_subdirectory
+    git = Git.new(:path => '.', :watch_for_changes_in => "subdir")
+    one = SourceControl::Git::Revision.new(:number => 1, :changeset => ["a.txt", "diff/sub/b.txt", "some/subdir/c.txt"])
+    two = SourceControl::Git::Revision.new(:number => 2, :changeset => ["a.txt", "subdir/b.txt", "subdir/c.txt"])
+    three = SourceControl::Git::Revision.new(:number => 3, :changeset => ["subdir/a.txt"])
+
+    mock_revisions(git, [one, two, three])
+    
+    revisions = git.new_revisions
+    assert_equal [two, three], revisions
+    assert_equal ["subdir/b.txt", "subdir/c.txt"], revisions[0].files
+    assert_equal ["subdir/a.txt"], revisions[1].files
+  end
 
   def new_git(options = {})
     Git.new({:path => "."}.merge(options))
   end
 
+  def mock_revisions(git, revisions)
+    git.expects(:git).with("branch").returns("master")
+    git.expects(:git).with("fetch", ["origin"])
+    git.expects(:git).with("log", ["--pretty=raw", "--stat", "HEAD..origin/master"]).returns("a log output")
+
+    mock_parser = Object.new
+    mock_parser.expects(:parse).with("a log output").returns(revisions)
+    Git::LogParser.expects(:new).returns(mock_parser)
+  end
 end

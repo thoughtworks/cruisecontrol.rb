@@ -4,7 +4,7 @@ module SourceControl
       attr_accessor :number, :author, :time, :message, :changeset, :summary
 
       def initialize(options = {})
-        options.each {|key, value| self.instance_variable_set("@#{key}", value) }
+        options.each {|key, value| send("#{key}=", value) }
       end
 
       def ==(other)
