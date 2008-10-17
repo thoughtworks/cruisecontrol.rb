@@ -1,61 +1,51 @@
 module SourceControl
   class Git
     class LogParser
-
       def parse(log)
-        @result = []
-
+        @log = log
+        revisions = []
+        revision = nil
+        
         log.each do |line|
+          next if line.blank?
           line.chomp!
-          line == "" ? next : process_line(line)
+          case line
+          when /^commit /
+            revisions << revision = Revision.new
+            revision.number = line.split[1][0..4]
+            
+          when /^author /
+            revision.author, revision.time = read_author_and_time(line)
+            
+          when /^    /
+            (revision.message ||= []) << line.strip
+            
+          when /^ /
+            (revision.changeset ||= []) << line.strip
+            
+          when /^tree /
+          when /^parent /
+          when /^committer /
+            # don't care
+            
+          else
+            raise "don't know how to parse #{line}"
+          end
         end
 
-        @result << Git::Revision.new(@id, @author, @time) if @commit_message
-
-        return @result
+        revisions.each do |revision|
+          revision.message = revision.message.join("\n") if revision.message
+          revision.summary = revision.changeset.pop if revision.changeset
+        end
+        revisions
       end
 
       private
-
-      def process_line(line)
-        if commit_message?(line)
-          @commit_message ||= true
-# TODO: we are not parsing out the commit message, and not displaying changesets on the dashboard for Git yet
-#          @commit_message += line.sub('    ', '')
-        else
-          add_current_revision_to_result
-          parse_line(line)
-        end
+      
+      def read_author_and_time(line)
+        author, seconds_from_epoch = line.match(/^author (.+) (\d+) [-+]\d{4}$/)[1, 2]
+        [author, Time.at(seconds_from_epoch.to_i)]
       end
-
-      def parse_line(line)
-        match = line.match(/^(\w+) (.*)$/)
-        key, value = match[1,2]
-
-        case key
-        when 'commit' then @id = value[0, 5]
-        when 'author' then parse_author(value)
-        else  # ignore other keys
-        end
-      end
-
-      def parse_author(author_value)
-        @author, seconds_from_epoch = author_value.match(/^(.+) (\d+) [-+]\d{4}$/)[1, 2]
-        @time = Time.at(seconds_from_epoch.to_i)
-      end
-
-      def commit_message?(line)
-        line[0, 4] == '    '
-      end
-
-      def add_current_revision_to_result
-        if @commit_message
-          @result << Git::Revision.new(@id, @author, @time)
-          @id = @author = @time = nil
-        end
-      end
-
     end
   end
 end
-

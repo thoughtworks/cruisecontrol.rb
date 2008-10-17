@@ -13,11 +13,39 @@ committer Alexey Verkhovsky <alexey.verkhovsky@gmail.com> 1209921867 -0600
     a comment
 EOF
 
+BIGGER_LOG_ENTRY = <<EOF
+commit d8f6735bcf7d2aa4a46572109d4e091a5d0e1497
+tree 06f8ce9a102edb2ca96bba58f02e710f62af63df
+parent 5c881c8da857dee2735349c5a36f1f525a347652
+author Scott Tamosunas and Brian Jenkins <kgb-development@googlegroups.com> 1224202833 -0700
+committer Scott Tamosunas and Brian Jenkins <kgb-development@googlegroups.com> 1224202833 -0700
+
+    improved rake cruise messags.
+
+ iphone/Rakefile |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+commit 5c881c8da857dee2735349c5a36f1f525a347652
+tree 1a3bcfaa37a254e84f0956bedfa250e6485ee04c
+parent d8120fc9372c95dd521bb77d02396c53019c4996
+parent ffebfacce8baee80f9f03a2abeea8cdb9dcc7701
+author Scott Tamosunas and Brian Jenkins <kgb-development@googlegroups.com> 1224202700 -0700
+committer Scott Tamosunas and Brian Jenkins <kgb-development@googlegroups.com> 1224202700 -0700
+
+    renamed "Unit Test" target to "UnitTest" for developer sanity.
+    fixed iphone cruise Rakefile
+
+ iphone/Rakefile                            |    2 +-
+ iphone/ikgb/ikgb.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------
+ iphone/ikgb/ikgb.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes
+ 6 files changed, 273 insertions(+), 1875 deletions(-)
+EOF
+
     def test_parse_should_work
       expected_revision = Git::Revision.new(
-                              'e51d6',
-                              'Alexey Verkhovsky <alexey.verkhovsky@gmail.com>',
-                              Time.at(1209921867))
+                              :number => 'e51d6',
+                              :author => 'Alexey Verkhovsky <alexey.verkhovsky@gmail.com>',
+                              :time => Time.at(1209921867))
       revisions = Git::LogParser.new.parse(SIMPLE_LOG_ENTRY.split("\n"))
       assert_equal [expected_revision], revisions
 
@@ -25,25 +53,27 @@ EOF
       assert_equal expected_revision.author, revisions.first.author
       assert_equal expected_revision.time, revisions.first.time
     end
-
-    def test_parse_line_should_recognize_commit_id_and_truncate_it_to_first_five_characters
-      parser = Git::LogParser.new
-      parser.send(:parse_line, "commit e51d66aa4f708fff1c87eb9afc9c48eaa8d5ffce")
-      assert_equal 'e51d6', parser.instance_variable_get(:@id)
+    
+    def test_should_split_into_separate_revisions
+      revisions = Git::LogParser.new.parse(BIGGER_LOG_ENTRY.split("\n"))
+      assert_equal 2, revisions.size
+      
+      revision = revisions[1]
+      assert_equal "5c881", revision.number
+      assert_equal "renamed \"Unit Test\" target to \"UnitTest\" for developer sanity.\nfixed iphone cruise Rakefile",
+                   revision.message
+      assert_equal ["iphone/Rakefile                            |    2 +-",
+                    "iphone/ikgb/ikgb.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------",
+                    "iphone/ikgb/ikgb.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes"],
+                   revision.changeset
+      assert_equal "6 files changed, 273 insertions(+), 1875 deletions(-)", revision.summary
     end
 
     def test_parse_line_should_recognize_author
       parser = Git::LogParser.new
-      parser.send(:parse_line, "author Alexey Verkhovsky <alexey.verkhovsky@gmail.com> 1209921867 -0600")
-      assert_equal 'Alexey Verkhovsky <alexey.verkhovsky@gmail.com>', parser.instance_variable_get(:@author)
-      assert_equal Time.at(1209921867), parser.instance_variable_get(:@time)
+      author, time = parser.send(:read_author_and_time, "author Alexey Verkhovsky <alexey.verkhovsky@gmail.com> 1209921867 -0600")
+      assert_equal 'Alexey Verkhovsky <alexey.verkhovsky@gmail.com>', author
+      assert_equal Time.at(1209921867), time
     end
-
-    def test_commit_message_should_recognize_lines_that_start_with_four_spaces_as_commit_lines
-      parser = Git::LogParser.new
-      assert_false parser.send(:commit_message?, "parent bb52b2f82fea03b7531496c77db01f9348edbbdb")
-      assert parser.send(:commit_message?, "    a comment")
-    end
-
   end
 end

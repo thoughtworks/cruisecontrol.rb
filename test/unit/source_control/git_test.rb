@@ -11,7 +11,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
       git = new_git(:repository => "git:/my_repo")
       git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_project_directory => false)
       git.expects(:git).with("reset", ['--hard', '5460c9ea8872745629918986df7238871f4135ae'])
-      git.checkout(Git::Revision.new('5460c9ea8872745629918986df7238871f4135ae', "me", Time.at(0)))
+      git.checkout(Git::Revision.new(:number => '5460c9ea8872745629918986df7238871f4135ae'))
     end
   end
 
@@ -19,7 +19,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     in_sandbox do
       git = new_git
       git.expects(:git).with("reset", ["--hard", '5460c9ea8872745629918986df7238871f4135ae'])
-      git.update(Git::Revision.new('5460c9ea8872745629918986df7238871f4135ae', "me", Time.at(0)))
+      git.update(Git::Revision.new(:number => '5460c9ea8872745629918986df7238871f4135ae'))
     end
   end
 
@@ -35,7 +35,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     in_sandbox do
       git = new_git
       git.expects(:git).with("remote", ["update"])
-      git.expects(:git).with("log", ["--pretty=raw", "HEAD..origin/master"]).returns("a log output")
+      git.expects(:git).with("log", ["--pretty=raw", "--stat", "HEAD..origin/master"]).returns("a log output")
 
       mock_parser = Object.new
       mock_parser.expects(:parse).with("a log output").returns([:new_revision])
@@ -51,7 +51,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     in_sandbox do
       git = new_git
       git.expects(:git).with("remote", ["update"])
-      git.expects(:git).with("log", ["--pretty=raw", "HEAD..origin/master"]).returns("\n")
+      git.expects(:git).with("log", ["--pretty=raw", "--stat", "HEAD..origin/master"]).returns("\n")
 
       mock_parser = Object.new
       mock_parser.expects(:parse).with("\n").returns([])
@@ -88,7 +88,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     in_sandbox do
       git = new_git
       git.expects(:git).with("branch").yields(StringIO.new("* master\n"))
-      git.expects(:git).with("log", ["-1", '--pretty=raw', 'origin/master']).returns('')
+      git.expects(:git).with("log", ["-1", '--pretty=raw', "--stat", 'origin/master']).returns('')
       git.expects(:git).with('fetch', ['origin'])
       stub_parser = Object.new
       stub_parser.stubs(:parse).returns([:foo])

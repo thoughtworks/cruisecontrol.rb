@@ -44,7 +44,7 @@ module SourceControl
 
     def latest_revision
       load_new_changesets_from_origin
-      git_output = git('log', ['-1', '--pretty=raw', "origin/#{current_branch}"])
+      git_output = git('log', ['-1', '--pretty=raw', '--stat', "origin/#{current_branch}"])
       Git::LogParser.new.parse(git_output).first
     end
 
@@ -70,7 +70,7 @@ module SourceControl
 
     def new_revisions
       load_new_changesets_from_origin
-      git_output = git('log', ['--pretty=raw', "HEAD..origin/#{current_branch}"])
+      git_output = git('log', ['--pretty=raw', '--stat', "HEAD..origin/#{current_branch}"])
       Git::LogParser.new.parse(git_output)
     end
 
