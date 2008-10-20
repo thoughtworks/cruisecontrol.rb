@@ -88,10 +88,14 @@ module SourceControl
     
     def filter_revisions_by_subdirectory(revisions, subdir)
       revisions.find_all do |revision|
-        revision.changeset = revision.changeset.find_all do |change|
-          change.starts_with?(subdir)
+        if revision.changeset
+          revision.changeset = revision.changeset.find_all do |change|
+            change.starts_with?(subdir)
+          end
+          !revision.changeset.empty?
+        else
+          true
         end
-        !revision.changeset.empty?
       end
     end
 
