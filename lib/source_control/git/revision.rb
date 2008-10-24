@@ -21,7 +21,7 @@ module SourceControl
         description << "\n\n    #{message.split("\n").join("\n    ")}" if message
         description << "\n\n #{changeset.join("\n ")}" if changeset
         description << "\n #{summary}" if summary
-        description
+        description << "\n"
       end
     end
   end

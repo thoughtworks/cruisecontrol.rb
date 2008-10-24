@@ -16,9 +16,9 @@ module SourceControl
     end
     
     def test_should_have_sensible_to_s
-      assert_equal("Revision ...1234 committed by jeremy",
+      assert_equal("Revision ...1234 committed by jeremy\n",
                    Git::Revision.new(:number => "1234", :author => "jeremy").to_s)
-      assert_equal("Revision ...1234 committed by jeremy on 2000-01-02 03:04:00",
+      assert_equal("Revision ...1234 committed by jeremy on 2000-01-02 03:04:00\n",
                    Git::Revision.new(:number => "1234", :author => "jeremy", :time => Time.parse("2000-01-02 03:04:00")).to_s)
     end
     
@@ -31,7 +31,8 @@ module SourceControl
  iphone/Rakefile                            |    2 +-
  iphone/ikgb/ikgb.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------
  iphone/ikgb/ikgb.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes
- 6 files changed, 273 insertions(+), 1875 deletions(-)}
+ 6 files changed, 273 insertions(+), 1875 deletions(-)
+}
 
       revision = Git::Revision.new(:number => "7652", :author => "Scott Tamosunas", 
                                    :time => Time.parse("2000-01-02 03:04"),
