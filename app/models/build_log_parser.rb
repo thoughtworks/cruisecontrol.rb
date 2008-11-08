@@ -3,9 +3,10 @@ class BuildLogParser
   TEST_ERROR_REGEX = /^\s+\d+\) Error:\n(.*):\n(.*)\n([\s\S]*?)\n\n/
   TEST_FAILURE_REGEX = /^\s+\d+\) Failure:\n([\S\s]*?)\n\n/
 
-  RSPEC_ERROR_REGEX = /^\s\d+\)\n(\S+) in '(.*)'\n((.+\n)+)\n/ 
-  RSPEC_FAILURE_REGEX = /^\s+\d+\)\n'(.*)' FAILED\n((.+\n)+)\n/
+  RSPEC_ERROR_REGEX = /^(\S+) in '(.*)'\n((.*\n)+)/
+  RSPEC_FAILURE_REGEX = /^'(.*)' FAILED\n((.+\n)+)/
   RSPEC_STACK_TRACE_REGEX = /^.*:\d+:.*$/
+  RSPEC_STACK_TRACE_MAYBE_END_REGEX = /\n\nFinished.*$/
   
   TEST_NAME_REGEX = /\S+/
   MESSAGE_REGEX = /\]\:\n([\s\S]+)/
@@ -30,29 +31,24 @@ class BuildLogParser
   end
 
   def rspec_errors
-    rspec_errors = []
-
-    @log.scan(RSPEC_ERROR_REGEX) do |match|
-      exception_name = $1
-      spec_name = $2
-      content = $3.chomp
-
-      stack_trace_pos = (content =~ RSPEC_STACK_TRACE_REGEX)
-
-      rest_of_the_message = content[0...stack_trace_pos].chomp
-      message = "#{exception_name} in '#{spec_name}'\n#{rest_of_the_message}"
-      stack_trace = content[stack_trace_pos..-1]
-
-      rspec_errors << TestErrorEntry.create_error(spec_name, message, stack_trace)
+    errors = []
+    [@log.split(/\d+\)/)[1..-1]].compact.flatten.each do |issue_content|
+      issue_content.chop.scan(RSPEC_ERROR_REGEX) do |match|
+        exception_name = $1
+        spec_name = $2
+        content = $3
+        rest_of_the_message, stack_trace = rspec_rest_of_message_and_stack_trace(content)
+        message = "#{exception_name} in '#{spec_name}'\n#{rest_of_the_message}"
+        errors << TestErrorEntry.create_error(spec_name, message, stack_trace)
+      end
     end
-    
-    return rspec_errors
+    errors
   end
 
   def failures
     test_failures + rspec_failures
   end
-  
+   
   def test_failures
     test_failures = []
 
@@ -72,26 +68,36 @@ class BuildLogParser
 
     test_failures
   end
-
+  
   def rspec_failures
-    rspec_failures = []
-
-    @log.scan(RSPEC_FAILURE_REGEX) do |text|
-      spec_name = $1
-      content = $2.chomp
-
-      stack_trace_pos = (content =~ RSPEC_STACK_TRACE_REGEX)
-      message = content[0...stack_trace_pos].chomp
-      stack_trace = content[stack_trace_pos..-1]
-
-      rspec_failures << TestErrorEntry.create_failure(spec_name, message, stack_trace)
+    failures = []
+    [@log.split(/\d+\)/)[1..-1]].compact.flatten.each do |issue_content|
+      issue_content.chop.scan(RSPEC_FAILURE_REGEX) do |match|
+        spec_name = $1
+        content = $2
+        rest_of_the_message, stack_trace = rspec_rest_of_message_and_stack_trace(content)
+        failures << TestErrorEntry.create_failure(spec_name, rest_of_the_message, stack_trace)
+      end
     end
-
-    rspec_failures
-  end
+    failures
+  end  
 
   def failures_and_errors
     failures + errors
   end
 
+  def rspec_rest_of_message_and_stack_trace(content)
+    rest_of_the_message = []
+    stack_trace = ""
+    content_lines = content.split("\n")
+    content_lines.each_with_index do |line, index|
+      if line =~ RSPEC_STACK_TRACE_REGEX
+        stack_trace << content_lines[index..-1].join("\n").gsub(RSPEC_STACK_TRACE_MAYBE_END_REGEX, "")
+        break
+      else
+        rest_of_the_message << line
+      end
+    end
+    [rest_of_the_message.join("\n"), stack_trace]
+  end
 end

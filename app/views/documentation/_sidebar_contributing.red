@@ -2,7 +2,7 @@
 
 h2. Source code
 
-* "Check out":http://rubyforge.org/scm/?group_id=2918
+* "Check out":http://github.com/thoughtworks/cruisecontrol.rb/
 
 h2. Maillists
 
