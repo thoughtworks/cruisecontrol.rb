@@ -17,8 +17,8 @@ BIGGER_LOG_ENTRY = <<EOF
 commit d8f6735bcf7d2aa4a46572109d4e091a5d0e1497
 tree 06f8ce9a102edb2ca96bba58f02e710f62af63df
 parent 5c881c8da857dee2735349c5a36f1f525a347652
-author Scott Tamosunas and Brian Jenkins <kgb-development@googlegroups.com> 1224202833 -0700
-committer Scott Tamosunas and Brian Jenkins <kgb-development@googlegroups.com> 1224202833 -0700
+author Scott Tamosunas and Brian Jenkins <bob-development@googlegroups.com> 1224202833 -0700
+committer Scott Tamosunas and Brian Jenkins <bob-development@googlegroups.com> 1224202833 -0700
 
     improved rake cruise messags.
 
@@ -29,15 +29,15 @@ commit 5c881c8da857dee2735349c5a36f1f525a347652
 tree 1a3bcfaa37a254e84f0956bedfa250e6485ee04c
 parent d8120fc9372c95dd521bb77d02396c53019c4996
 parent ffebfacce8baee80f9f03a2abeea8cdb9dcc7701
-author Scott Tamosunas and Brian Jenkins <kgb-development@googlegroups.com> 1224202700 -0700
-committer Scott Tamosunas and Brian Jenkins <kgb-development@googlegroups.com> 1224202700 -0700
+author Scott Tamosunas and Brian Jenkins <bob-development@googlegroups.com> 1224202700 -0700
+committer Scott Tamosunas and Brian Jenkins <bob-development@googlegroups.com> 1224202700 -0700
 
     renamed "Unit Test" target to "UnitTest" for developer sanity.
     fixed iphone cruise Rakefile
 
  iphone/Rakefile                            |    2 +-
- iphone/ikgb/ikgb.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------
- iphone/ikgb/ikgb.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes
+ iphone/ibob/ibob.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------
+ iphone/ibob/ibob.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes
  6 files changed, 273 insertions(+), 1875 deletions(-)
 EOF
 
@@ -63,8 +63,8 @@ EOF
       assert_equal "renamed \"Unit Test\" target to \"UnitTest\" for developer sanity.\nfixed iphone cruise Rakefile",
                    revision.message
       assert_equal ["iphone/Rakefile                            |    2 +-",
-                    "iphone/ikgb/ikgb.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------",
-                    "iphone/ikgb/ikgb.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes"],
+                    "iphone/ibob/ibob.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------",
+                    "iphone/ibob/ibob.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes"],
                    revision.changeset
       assert_equal "6 files changed, 273 insertions(+), 1875 deletions(-)", revision.summary
     end

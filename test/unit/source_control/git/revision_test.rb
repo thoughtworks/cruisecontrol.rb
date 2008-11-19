@@ -29,8 +29,8 @@ module SourceControl
     and another line
 
  iphone/Rakefile                            |    2 +-
- iphone/ikgb/ikgb.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------
- iphone/ikgb/ikgb.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes
+ iphone/ibob/ibob.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------
+ iphone/ibob/ibob.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes
  6 files changed, 273 insertions(+), 1875 deletions(-)
 }
 
@@ -39,8 +39,8 @@ module SourceControl
                                    :message => "fixed iphone cruise Rakefile\nand another line",
                                    :changeset => [
                                      "iphone/Rakefile                            |    2 +-",
-                                     "iphone/ikgb/ikgb.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------",
-                                     "iphone/ikgb/ikgb.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes"
+                                     "iphone/ibob/ibob.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------",
+                                     "iphone/ibob/ibob.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes"
                                    ],
                                    :summary => "6 files changed, 273 insertions(+), 1875 deletions(-)")
 
@@ -50,14 +50,14 @@ module SourceControl
     def test_get_files_from_changeset
       revision = Git::Revision.new(:changeset => [
                                      "iphone/Rakefile                            |    2 +-",
-                                     "iphone/ikgb/ikgb.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------",
-                                     "iphone/ikgb/ikgb.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes"
+                                     "iphone/ibob/ibob.xcodeproj/pivotal.pbxuser | 2009 +++-------------------------",
+                                     "iphone/ibob/ibob.xcodeproj/project.pbxproj |  Bin 26641 -> 26654 bytes"
                                    ])
                                    
       assert_equal([
         "iphone/Rakefile",
-        "iphone/ikgb/ikgb.xcodeproj/pivotal.pbxuser",
-        "iphone/ikgb/ikgb.xcodeproj/project.pbxproj"
+        "iphone/ibob/ibob.xcodeproj/pivotal.pbxuser",
+        "iphone/ibob/ibob.xcodeproj/project.pbxproj"
       ], revision.files)
     end
   end
