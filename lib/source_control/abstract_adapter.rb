@@ -69,6 +69,7 @@ module SourceControl
         ensure
           FileUtils.rm_f(error_log)
         end
+        raise BuilderError.new(error_message, "source_control_error") unless error_message.empty?
         return stdout_output
       end
     end
