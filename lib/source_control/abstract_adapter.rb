@@ -69,7 +69,7 @@ module SourceControl
         ensure
           FileUtils.rm_f(error_log)
         end
-        raise BuilderError.new("Error when executing command:\n#{command}\n\nwas:\n#{error_message}", "source_control_error") unless error_message.empty?
+        raise BuilderError.new("Error when executing command:#{command.inspect} was:\n#{error_message}", "source_control_error") unless error_message.empty?
         return stdout_output
       end
     end
