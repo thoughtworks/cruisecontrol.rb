@@ -63,7 +63,9 @@ module SourceControl
       execute(command, :stderr => error_log) do |io|
         stdout_output = io.readlines
         begin
-          error_message = File.open(error_log){|f|f.read}.strip.split("\n")[1] || ""
+          error_message = File.open(error_log){|f|f.read}.strip.split("\n") # turn into an array
+          error_message.delete_at(0) # delete echoed command
+          error_message = error_message.join("\n") # turn back into a string
         rescue
           error_message = ""
         ensure
