@@ -14,7 +14,7 @@ class SuccessfulBuildTrigger
       false
     else
       @last_successful_build = new_last_successful_build
-      reasons << "Triggered by project #{@triggering_project_name}'s build #{@last_successful_build.label}"
+      reasons << "Triggered by project #{triggering_project_name}'s build #{@last_successful_build.label}"
       true
     end
   end
