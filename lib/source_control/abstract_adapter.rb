@@ -60,20 +60,14 @@ module SourceControl
     def execute_with_error_log(command, error_log)
       FileUtils.rm_f(error_log)
       FileUtils.touch(error_log)
+      stdout_output = nil
       execute(command, :stderr => error_log) do |io|
         stdout_output = io.readlines
-        begin
-          error_message = File.open(error_log){|f|f.read}.strip.split("\n") # turn into an array
-          error_message.delete_at(0) # delete echoed command
-          error_message = error_message.join("\n") # turn back into a string
-        rescue
-          error_message = ""
-        ensure
-          FileUtils.rm_f(error_log)
-        end
-        raise BuilderError.new("Error when executing command:#{command.inspect} was:\n#{error_message}", "source_control_error") unless error_message.empty?
-        return stdout_output
+        File.open(error_log, "a") {|f| f << stdout_output}
       end
+      stdout_output
+    rescue ExecutionError => e
+      raise BuilderError.new(File.read(error_log), "source_control_error")
     end
 
   end

@@ -112,6 +112,18 @@ class CommandLineTest < Test::Unit::TestCase
   def test_escape_and_concatenate_accepts_non_strings
     assert_equal 'foo 10', CommandLine.escape_and_concatenate(['foo', 10])
   end
+  
+  def test_full_cmd_should_escape_wierd_characters_for_echoing
+    Platform.stubs(:family).returns('linux')
+    Platform.stubs(:prompt).returns('prompt>')
+
+    assert_equal "echo prompt> cd\\ some/path\\;\\ ant\\ cruise >> build.log && " + 
+                 "cd some/path; ant cruise >> build.log ", 
+                 CommandLine.full_cmd("cd some/path; ant cruise", :stdout => "build.log")
+    assert_equal "echo prompt> cd\\ some/path\\ \\&\\&\\ ant\\ cruise >> build.log && " + 
+                 "cd some/path && ant cruise >> build.log ", 
+                 CommandLine.full_cmd("cd some/path && ant cruise", :stdout => "build.log")
+  end
 
   def with_redirected_stdout
     orgout = STDOUT.dup

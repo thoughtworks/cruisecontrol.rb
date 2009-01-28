@@ -113,15 +113,15 @@ module CommandLine
         "echo [output captured and therefore not logged] >> #{options[:stdout]} && " :
         ''
 
-    cmd = escape_and_concatenate(cmd) unless cmd.is_a? String
-
     stdout_prompt_command = options[:stdout] ?
-                              "echo #{Platform.prompt} #{cmd} >> #{options[:stdout]} && " :
+                              "echo #{Platform.prompt} #{escape_and_concatenate(cmd)} >> #{options[:stdout]} && " :
                               ''
 
     stderr_prompt_command = options[:stderr] && options[:stderr] != options[:stdout] ?
-                              "echo #{Platform.prompt} #{cmd} >> #{options[:stderr]} && " :
+                              "echo #{Platform.prompt} #{escape_and_concatenate(cmd)} >> #{options[:stderr]} && " :
                               ''
+
+    cmd = escape_and_concatenate(cmd) unless cmd.is_a? String
 
     redirected_command = block_given? ? "#{cmd} #{stderr_opt}" : "#{cmd} #{stdout_opt} #{stderr_opt}"
 
@@ -174,7 +174,11 @@ module CommandLine
   module_function :redirects
   
   def escape_and_concatenate(cmd)
-    cmd.map { |item| escape(item) }.join(' ')
+    if cmd.is_a?(String)
+      escape(cmd)
+    else
+      cmd.map { |item| escape(item) }.join(' ')
+    end
   end
   module_function :escape_and_concatenate
 
@@ -206,5 +210,4 @@ module CommandLine
     end
   end
   module_function :format_for_printing
-  
 end
