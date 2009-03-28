@@ -17,6 +17,7 @@ TRUNK
 - [bugfix] made image URLS in stylesheets relative [Anselm Helbig]
 - [bugfix] Make dashboard xhtml compliant
 - [bugfix] Recognize OpenBSD as a platform
+- Improve daemon_helper to kill all child processes (don't leave any orphans)
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.3.0
