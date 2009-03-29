@@ -9,8 +9,8 @@
 # 4. reboot system, verify cruise is running and builds are successful.  If there are problems,
 #    check CRUISE_HOME/log/cruise_daemon_env.log and $CCRB_HOME/log/cruise_daemon_err.log
 
-CRUISE_USER = "change_me"
-CRUISE_HOME = "change_me"
+CRUISE_USER = ENV['CRUISE_USER'] || ENV['USER']
+CRUISE_HOME = ENV['CRUISE_HOME'] || `pwd`.chomp
 
 require CRUISE_HOME + "/daemon/daemon_helper"
 

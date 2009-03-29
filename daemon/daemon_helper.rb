@@ -68,10 +68,10 @@ def stop_cruise
     print error_msg + "\n"
     exit 1
   end
-  cruise_process = `ps -ea -o 'pid pgrp args'`.grep(/^\s*#{cruise_pid}\s+\d+\s+.*/).first
+  cruise_process = `ps -ea -o 'pid pgid command'`.grep(/^\s*#{cruise_pid}\s+\d+\s+.*/).first
   cruise_process =~ /^\s*#{cruise_pid}\s+(\d+)\s+(.*)/
   cruise_process_group = $1
-  cruise_process_args = $2
+  cruise_process_command = $2
   unless cruise_process_group  =~ /^\d+$/
     error_msg = "unable to find cruise process #{cruise_pid}, cannot stop"
     log(:err, error_msg)
@@ -79,9 +79,9 @@ def stop_cruise
     exit 1
   end
 
-  cruise_child_processes = `ps -ea -o 'pid pgrp args'`.grep(/^\s*\d+\s+#{cruise_process_group}\s+/)
+  cruise_child_processes = `ps -ea -o 'pid pgid command'`.grep(/^\s*\d+\s+#{cruise_process_group}\s+/)
 
-  print("Killing cruise process #{cruise_pid}: #{cruise_process_args}\n")
+  print("Killing cruise process #{cruise_pid}: #{cruise_process_command}\n")
   failed ||= !(system "mongrel_rails stop -P #{cruise_pid_file}")
 
   cruise_child_processes.each do |child_process|
