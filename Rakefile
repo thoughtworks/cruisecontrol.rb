@@ -24,7 +24,26 @@ RUBY_FORGE_PROJECT = "cruisecontrolrb"
 RUBY_FORGE_USER    = "stellsmi"
 
 
-require 'tasks/rails'
+desc 'Install development dependencies via GemInstaller'
+task :geminstaller do
+  begin
+    require 'geminstaller'
+  rescue LoadError
+    `gem install geminstaller`
+    Gem.refresh
+    require 'geminstaller'
+  end
+  
+  GemInstaller.install("--config=#{RAILS_ROOT}/test/geminstaller.yml -gall -rall")
+end
+
+begin
+  require 'tasks/rails'
+rescue LoadError
+  Rake::Task['geminstaller'].invoke
+  Gem.refresh
+  require 'tasks/rails'
+end
 
 
 

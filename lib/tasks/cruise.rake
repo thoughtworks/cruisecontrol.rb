@@ -13,15 +13,3 @@ task :cruise  => ['geminstaller'] do
   
   Rake::Task["test:integration"].invoke
 end
-
-desc 'Install development dependencies via GemInstaller'
-task :geminstaller do
-  begin
-    require 'geminstaller'
-  rescue LoadError
-    `gem install geminstaller`
-    puts "GemInstaller installed, please try build again"
-  end
-  
-  GemInstaller.install("--config=#{RAILS_ROOT}/test/geminstaller.yml")
-end
