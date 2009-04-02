@@ -1,5 +1,5 @@
 desc 'Continuous build target'
-task :cruise do
+task :cruise  => ['geminstaller'] do
   out = ENV['CC_BUILD_ARTIFACTS']
   mkdir_p out unless File.directory? out if out
 
@@ -12,4 +12,16 @@ task :cruise do
   mv 'coverage/functionals', "#{out}/functional test coverage" if out
   
   Rake::Task["test:integration"].invoke
+end
+
+desc 'Install development dependencies via GemInstaller'
+task :geminstaller do
+  begin
+    require 'geminstaller'
+  rescue LoadError
+    `gem install geminstaller`
+    puts "GemInstaller installed, please try build again"
+  end
+  
+  GemInstaller.install("--config=#{RAILS_ROOT}/test/geminstaller.yml")
 end

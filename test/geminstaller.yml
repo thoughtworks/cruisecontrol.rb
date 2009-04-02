@@ -1,0 +1,5 @@
+defaults:
+  install_options: --no-ri --no-rdoc
+gems:
+- name: rcov
+  version: 0.8.1.2.0
