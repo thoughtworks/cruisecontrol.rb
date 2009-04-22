@@ -19,6 +19,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     in_sandbox do
       git = new_git
       git.expects(:git).with("reset", ["--hard", '5460c9ea8872745629918986df7238871f4135ae'])
+      git.expects(:git).with("submodule", ["update", "--init"])
       git.update(Git::Revision.new(:number => '5460c9ea8872745629918986df7238871f4135ae'))
     end
   end
@@ -27,6 +28,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     in_sandbox do
       git = new_git
       git.expects(:git).with("reset", ["--hard"])
+      git.expects(:git).with("submodule", ["update", "--init"])
       git.update
     end
   end

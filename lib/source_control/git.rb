@@ -48,6 +48,7 @@ module SourceControl
       else
         git("reset", ["--hard"])
       end
+      git_update_submodule
     end
 
     def up_to_date?(reasons = [])
@@ -107,6 +108,12 @@ module SourceControl
 #      command << "--non-interactive" unless @interactive
 
       execute_in_local_copy(command, options, &block)
+    end
+    
+    private
+    
+    def git_update_submodule
+      git("submodule", ["update", "--init"])
     end
 
   end
