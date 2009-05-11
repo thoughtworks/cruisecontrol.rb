@@ -63,6 +63,9 @@
 # Amount of time a project will wait to build before failing when build serialization is on
 # Configuration.serialized_build_timeout = 3.hours
 
+# Amount of time a project will wait for git to load new changesets before failing
+# Configuration.git_load_new_changesets_timeout = 5.minutes
+
 # To delete build when there are more than a certain number present, uncomment this line - it will make the dashboard 
 # perform better
 # BuildReaper.number_of_builds_to_keep = 20

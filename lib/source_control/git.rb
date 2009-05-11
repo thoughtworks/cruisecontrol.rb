@@ -93,7 +93,12 @@ module SourceControl
     end
 
     def load_new_changesets_from_origin
-      git("fetch", ["origin"])
+      Timeout.timeout(Configuration.git_load_new_changesets_timeout, Timeout::Error) do
+        sleep 5
+        git("fetch", ["origin"])
+      end
+    rescue Timeout::Error => e
+      raise BuilderError.new("Timeout in 'git fetch origin'")
     end
 
     def git(operation, arguments = [], options = {}, &block)
