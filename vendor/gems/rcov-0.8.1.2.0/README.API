@@ -1,0 +1,42 @@
+
+= +rcov+
+
++rcov+ is a:
+1. tool for code coverage analysis for Ruby
+2. library for collecting code coverage and execution count information
+   introspectively
+
+If you want to use the command line tool, the output from
+ rcov -h
+is self-explicative.
+
+If you want to automate the execution of +rcov+ via Rake or Rant, take a look at
+README.rake[link:files/README_rake.html] or
+README.rant[link:files/README_rant.html], respectively.
+
+If you want to use the associated library, read on.
+
+== Usage of the +rcov+ runtime/library
+
++rcov+ is primarily a tool for code coverage analysis, but since 0.4.0 it
+exposes some of its code so that you can build on top of its heuristics for
+code analysis and its capabilities for coverage information and execution
+count gathering.
+
+The main classes of interest are Rcov::FileStatistics,
+Rcov::CodeCoverageAnalyzer and Rcov::CallSiteAnalyzer. 
+
+Rcov::FileStatistics can use some heuristics to determine
+which parts of the file are executable and which are mere comments.
+
+Rcov::CodeCoverageAnalyzer is used to gather code coverage and execution
+count information inside a running Ruby program.
+
+Rcov::CallSiteAnalyzer is used to obtain information about where methods are
+defined and who calls them.
+
+The parts of +rcov+'s runtime meant to be reused (i.e. the external API) are
+documented with RDoc. Those not meant to be used are clearly marked as so or
+were deliberately removed from the present documentation.
+
+

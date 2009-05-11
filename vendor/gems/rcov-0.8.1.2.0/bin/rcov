@@ -1,0 +1,1327 @@
+#!/usr/bin/env ruby
+# rcov Copyright (c) 2004-2006 Mauricio Fernandez <mfp@acm.org>
+#
+# rcov originally based on 
+# module COVERAGE__ originally (c) NAKAMURA Hiroshi
+# module PrettyCoverage originally (c) Simon Strandgaard
+#
+# rewritten & extended by Mauricio Fernández <mfp@acm.org>
+#
+# See LEGAL and LICENSE for additional licensing information.
+#
+
+require 'cgi'
+require 'rbconfig'
+require 'optparse'
+require 'ostruct'
+# load xx-0.1.0-1
+eval File.read(File.expand_path(__FILE__)).gsub(/.*^__END__$/m,"")
+
+# extend XX
+module XX
+  module XMLish
+    include Markup
+
+    def xmlish_ *a, &b
+      xx_which(XMLish){ xx_with_doc_in_effect(*a, &b)}
+    end
+  end
+end
+
+SCRIPT_LINES__ = {} unless defined? SCRIPT_LINES__
+require 'rcov/version'
+require 'rcov/report'
+
+#{{{ "main" code
+options = OpenStruct.new
+options.color = true
+options.range = 30.0
+options.profiling = false
+options.destdir = nil
+options.loadpaths = []
+options.textmode = false
+options.skip = Rcov::Formatter::DEFAULT_OPTS[:ignore]
+options.include = []
+options.html = true
+options.comments_run_by_default = false
+options.test_unit_only = false
+options.spec_only = false
+options.sort = :name
+options.sort_reverse = false
+options.output_threshold = 101
+options.replace_prog_name = false
+options.callsites = false
+options.crossrefs = false
+options.coverage_diff_file = "coverage.info"
+options.coverage_diff_mode = :compare
+options.coverage_diff_save = false
+options.diff_cmd = "diff"
+options.report_cov_bug_for = nil
+options.aggregate_file = nil
+options.gcc_output = false
+options.show_validator_links = true
+options.charset = nil
+
+EXTRA_HELP = <<-EOF
+
+You can run several programs at once:
+  rcov something.rb somethingelse.rb
+
+The parameters to be passed to the program under inspection can be specified
+after --:
+
+  rcov -Ilib -t something.rb -- --theseopts --are --given --to --something.rb
+
+ARGV will be set to the specified parameters after --.
+Keep in mind that all the programs are run under the same process
+(i.e. they just get Kernel#load()'ed in sequence).
+
+$PROGRAM_NAME (aka. $0) will be set before each file is load()ed if
+--replace-progname is used.
+EOF
+
+#{{{ OptionParser
+opts = OptionParser.new do |opts|
+    opts.banner = <<-EOF
+rcov #{Rcov::VERSION} #{Rcov::RELEASE_DATE}
+Usage: rcov [options] <script1.rb> [script2.rb] [-- --extra-options]
+EOF
+    opts.separator ""
+    opts.separator "Options:"
+    opts.on("-o", "--output PATH", "Destination directory.") do |dir|
+        options.destdir = dir
+    end
+    opts.on("-I", "--include PATHS", 
+            "Prepend PATHS to $: (colon separated list)") do |paths|
+                options.loadpaths = paths.split(/:/)
+            end
+    opts.on("--[no-]comments",
+            "Mark all comments by default.",
+            "(default: --no-comments)") do |comments_run_p|
+        options.comments_run_by_default = comments_run_p
+    end
+    opts.on("--test-unit-only",
+            "Only trace code executed inside TestCases.") do
+        options.test_unit_only = true
+    end
+    opts.on("--spec-only",
+            "Only trace code executed inside RSpec specs.") do
+        options.spec_only = true
+    end
+    opts.on("-n", "--no-color", "Create colorblind-safe output.") do
+        options.color = false
+    end
+    opts.on("-i", "--include-file PATTERNS", 
+            "Generate info for files matching a",
+            "pattern (comma-separated regexp list)") do |list|
+                begin
+                    regexps = list.split(/,/).map{|x| Regexp.new(x) }
+                    options.include += regexps
+                rescue RegexpError => e
+                    raise OptionParser::InvalidArgument, e.message
+                end
+            end
+    opts.on("-x", "--exclude PATTERNS", 
+            "Don't generate info for files matching a",
+            "pattern (comma-separated regexp list)") do |list|
+                begin
+                    regexps = list.split(/,/).map{|x| Regexp.new x}
+                    options.skip += regexps
+                rescue RegexpError => e
+                    raise OptionParser::InvalidArgument, e.message
+                end
+            end
+    opts.on("--exclude-only PATTERNS",
+            "Skip info only for files matching the",
+            "given patterns.") do |list|
+                begin
+                    options.skip = list.split(/,/).map{|x| Regexp.new(x) }
+                rescue RegexpError => e
+                    raise OptionParser::InvalidArgument, e.message
+                end
+            end
+    opts.on("--rails", "Skip config/, environment/ and vendor/.") do 
+        options.skip.concat [%r{\bvendor/},%r{\bconfig/},%r{\benvironment/}]
+    end
+    opts.on("--[no-]callsites", "Show callsites in generated XHTML report.",
+            "(somewhat slower; disabled by default)") do |val|
+        options.callsites = val
+    end
+    opts.on("--[no-]xrefs", "Generate fully cross-referenced report.",
+            "(includes --callsites)") do |val|
+        options.crossrefs = val
+        options.callsites ||= val
+    end
+    opts.on("-p", "--profile", "Generate bogo-profiling info.") do
+        options.profiling = true
+        options.destdir ||= "profiling"
+    end
+    opts.on("-r", "--range RANGE", Float, 
+            "Color scale range for profiling info (dB).") do |val|
+        options.range = val
+    end
+    opts.on("-a", "--annotate",
+            "Generate annotated source code.") do
+        options.html = false
+        options.textmode = :annotate
+        options.crossrefs = true
+        options.callsites = true
+        options.skip = [ %r!/test/unit/! ]
+    end
+
+    opts.on("-T", "--text-report", "Dump detailed plain-text report to stdout.",
+            "(filename, LoC, total lines, coverage)") do
+        options.textmode = :report
+    end
+    opts.on("-t", "--text-summary", "Dump plain-text summary to stdout.") do
+        options.textmode = :summary
+    end
+    opts.on("--text-counts", "Dump execution counts in plaintext.") do
+        options.textmode = :counts
+    end
+    opts.on("--text-coverage", "Dump coverage info to stdout, using",
+            "ANSI color sequences unless -n.") do
+        options.textmode = :coverage
+    end
+    opts.on("--gcc", "Dump uncovered line in GCC error format.") do
+        options.gcc_output = true
+    end
+    opts.on("--aggregate FILE", "Aggregate data from previous runs",
+                                "in FILE. Overwrites FILE with the",
+                                "merged data. FILE is created if",
+                                "necessary.") do |file|
+      options.aggregate_file = file
+    end
+    opts.on("-D [FILE]", "--text-coverage-diff [FILE]",
+            "Compare code coverage with saved state",
+            "in FILE, defaults to coverage.info.",
+            "Implies --comments.") do |file|
+        options.textmode = :coverage_diff
+        options.comments_run_by_default = true
+        if options.coverage_diff_save
+            raise "You shouldn't use --save and --text-coverage-diff at a time."
+        end
+        options.coverage_diff_mode = :compare
+        options.coverage_diff_file = file if file && !file.empty?
+    end
+    opts.on("--save [FILE]", "Save coverage data to FILE,",
+            "for later use with rcov -D.",
+            "(default: coverage.info)") do |file|
+        options.coverage_diff_save = true
+        options.coverage_diff_mode = :record
+        if options.textmode == :coverage_diff
+            raise "You shouldn't use --save and --text-coverage-diff at a time."
+        end
+        options.coverage_diff_file = file if file && !file.empty?
+    end
+    opts.on("--[no-]html", "Generate HTML output.",
+            "(default: --html)") do |val|
+        options.html = val
+    end
+    opts.on("--sort CRITERION", [:name, :loc, :coverage],
+            "Sort files in the output by the specified",
+            "field (name, loc, coverage)") do |criterion|
+        options.sort = criterion
+    end
+    opts.on("--sort-reverse", "Reverse files in the output.") do
+        options.sort_reverse = true
+    end
+    opts.on("--threshold INT", "Only list files with coverage < INT %.",
+            "(default: 101)") do |threshold|
+        begin
+            threshold = Integer(threshold)
+            raise if threshold <= 0 || threshold > 101
+        rescue Exception
+            raise OptionParser::InvalidArgument, threshold
+        end
+        options.output_threshold = threshold
+    end
+    opts.on("--charset CHARSET",
+            "Charset used in Content-Type declaration of HTML reports.") do |c|
+        options.charset = c
+    end
+    opts.on("--[no-]validator-links", "Add link to W3C's validation services.",
+           "(default: true)") do |show_validator_links|
+        options.show_validator_links = show_validator_links
+    end
+    opts.on("--only-uncovered", "Same as --threshold 100") do
+        options.output_threshold = 100
+    end
+    opts.on("--replace-progname", "Replace $0 when loading the .rb files.") do
+        options.replace_prog_name = true
+    end
+    opts.on("-w", "Turn warnings on (like ruby).") do
+        $VERBOSE = true
+    end
+    opts.on("--no-rcovrt", "Do not use the optimized C runtime.",
+            "(will run 30-300 times slower)") do 
+        $rcov_do_not_use_rcovrt = true
+    end
+    opts.on("--diff-cmd PROGNAME", "Use PROGNAME for --text-coverage-diff.",
+            "(default: diff)") do |cmd|
+        options.diff_cmd = cmd
+    end
+    opts.separator ""
+    opts.on_tail("-h", "--help", "Show extended help message") do
+        require 'pp'
+        puts opts
+        puts <<EOF
+
+Files matching any of the following regexps will be omitted in the report(s):
+#{PP.pp(options.skip, "").chomp}
+EOF
+        puts EXTRA_HELP
+        exit
+    end
+    opts.on_tail("--report-cov-bug SELECTOR", 
+                 "Report coverage analysis bug for the",
+                 "method specified by SELECTOR",
+                 "(format: Foo::Bar#method, A::B.method)") do |selector|
+        case selector
+        when /([^.]+)(#|\.)(.*)/: options.report_cov_bug_for = selector
+        else
+            raise OptionParser::InvalidArgument, selector
+        end
+        options.textmode = nil
+        options.html = false
+        options.callsites = true
+    end
+    opts.on_tail("--version", "Show version") do
+        puts "rcov " + Rcov::VERSION + " " + Rcov::RELEASE_DATE
+        exit
+    end
+end
+
+$ORIGINAL_ARGV = ARGV.clone
+if (idx = ARGV.index("--"))
+    extra_args = ARGV[idx+1..-1]
+    ARGV.replace(ARGV[0,idx])
+else
+    extra_args = []
+end
+
+begin
+    opts.parse! ARGV
+rescue OptionParser::InvalidOption, OptionParser::InvalidArgument,
+       OptionParser::MissingArgument => e
+    puts opts
+    puts
+    puts e.message
+    exit(-1)
+end
+options.destdir ||= "coverage"
+unless ARGV[0] or options.aggregate_file && File.file?(options.aggregate_file)
+    puts opts
+    exit
+end
+
+# {{{ set loadpath
+options.loadpaths.reverse_each{|x| $:.unshift x}
+
+#{{{ require 'rcov': do it only now in order to be able to run rcov on itself
+# since we need to set $: before.
+
+require 'rcov'
+
+options.callsites = true if options.report_cov_bug_for
+options.textmode = :gcc if !options.textmode and options.gcc_output
+
+def rcov_load_aggregate_data(file)
+    require 'zlib'
+    begin
+        old_data = nil
+        Zlib::GzipReader.open(file){|gz| old_data = Marshal.load(gz) }
+    rescue
+        old_data = {}
+    end
+    old_data || {}
+end
+
+def rcov_save_aggregate_data(file)
+    require 'zlib'
+    Zlib::GzipWriter.open(file) do |f|
+        Marshal.dump({:callsites => $rcov_callsite_analyzer, 
+                     :coverage => $rcov_code_coverage_analyzer}, f)
+    end
+end
+
+if options.callsites 
+    if options.aggregate_file
+        saved_aggregate_data = rcov_load_aggregate_data(options.aggregate_file)
+        if saved_aggregate_data[:callsites]
+            $rcov_callsite_analyzer = saved_aggregate_data[:callsites]
+        end
+    end
+    $rcov_callsite_analyzer ||= Rcov::CallSiteAnalyzer.new
+    $rcov_callsite_analyzer.install_hook
+else
+    $rcov_callsite_analyzer = nil
+end
+
+# {{{ create formatters
+formatters = []
+make_formatter = lambda do |klass| 
+    klass.new(:destdir => options.destdir, :color => options.color, 
+              :fsr => options.range, :textmode => options.textmode,
+              :ignore => options.skip, :dont_ignore => options.include, 
+              :sort => options.sort,
+              :sort_reverse => options.sort_reverse, 
+              :output_threshold => options.output_threshold,
+              :callsite_analyzer => $rcov_callsite_analyzer,
+              :coverage_diff_mode => options.coverage_diff_mode,
+              :coverage_diff_file => options.coverage_diff_file,
+              :callsites => options.callsites, 
+              :cross_references => options.crossrefs,
+              :diff_cmd => options.diff_cmd,
+              :comments_run_by_default => options.comments_run_by_default,
+              :gcc_output => options.gcc_output,
+              :validator_links => options.show_validator_links,
+              :charset => options.charset
+             )
+end
+
+if options.html
+    if options.profiling
+        formatters << make_formatter[Rcov::HTMLProfiling]
+    else
+        formatters << make_formatter[Rcov::HTMLCoverage]
+    end
+end
+textual_formatters = {:counts => Rcov::FullTextReport, 
+                      :coverage => Rcov::FullTextReport,
+                      :gcc => Rcov::FullTextReport,
+                      :annotate => Rcov::RubyAnnotation,
+                      :summary => Rcov::TextSummary, :report => Rcov::TextReport,
+                      :coverage_diff => Rcov::TextCoverageDiff}
+
+if textual_formatters[options.textmode]
+    formatters << make_formatter[textual_formatters[options.textmode]]
+end
+
+formatters << make_formatter[Rcov::TextCoverageDiff] if options.coverage_diff_save
+
+if options.aggregate_file
+    saved_aggregate_data ||= rcov_load_aggregate_data(options.aggregate_file)
+    if saved_aggregate_data[:coverage]
+        $rcov_code_coverage_analyzer = saved_aggregate_data[:coverage]
+    end
+end
+$rcov_code_coverage_analyzer ||= Rcov::CodeCoverageAnalyzer.new
+
+# must be registered before test/unit puts its own
+
+
+# The exception to rethrow after reporting has been handled.
+$__rcov_exit_exception = nil
+
+END {
+    $rcov_code_coverage_analyzer.remove_hook
+    $rcov_callsite_analyzer.remove_hook if $rcov_callsite_analyzer
+    rcov_save_aggregate_data(options.aggregate_file) if options.aggregate_file
+    $rcov_code_coverage_analyzer.dump_coverage_info(formatters)
+    if options.report_cov_bug_for
+        defsite = $rcov_callsite_analyzer.defsite(options.report_cov_bug_for)
+        if !defsite
+            $stderr.puts <<-EOF
+Couldn't find definition site of #{options.report_cov_bug_for}.
+Was it executed at all?
+EOF
+            exit(-1)
+        end
+        lines, mark_info, count_info = $rcov_code_coverage_analyzer.data(defsite.file)
+        puts <<EOF
+
+Please fill in the blanks in the following report.
+
+You can report the bug via the Ruby-Talk ML, send it directly to 
+<mfp at acm dot org> (include "rcov" in the subject to get past the spam filters),
+or post it to 
+  http://eigenclass.org/hiki.rb?rcov+#{VERSION}
+
+Thank you!
+        
+=============================================================================
+Bug report generated on #{Time.new}
+
+Ruby version:              #{RUBY_VERSION} (#{RUBY_RELEASE_DATE})
+Platform:                  #{RUBY_PLATFORM}
+rcov version:              #{Rcov::VERSION}
+rcovrt loaded?             #{$".any?{|x| /\brcovrt\b/ =~ x} }
+using RubyGems?            #{$".any?{|x| /\brubygems\b/ =~ x} }
+Command-line arguments:    #{$ORIGINAL_ARGV.inspect}
+Coverage analysis bug in:  #{options.report_cov_bug_for}
+
+Line(s) ____________ should be ______ (red/green).
+        
+Raw coverage information (feel free to remove useless data, but please leave
+some context around the faulty lines):
+
+EOF
+        defsite.line.upto(SCRIPT_LINES__[defsite.file].size) do |i|
+            puts "%7d:%5d:%s" % [count_info[i-1], i, lines[i-1]]
+        end
+        exit
+    end
+    if formatters.all?{|formatter| formatter.sorted_file_pairs.empty? }
+        require 'pp'
+        $stderr.puts <<-EOF
+
+No file to analyze was found. All the files loaded by rcov matched one of the
+following expressions, and were thus ignored:
+#{PP.pp(options.skip, "").chomp}
+
+You can solve this by doing one or more of the following:
+* rename the files not to be ignored so they don't match the above regexps
+* use --include-file to give a list of patterns for files not to be ignored
+* use --exclude-only to give the new list of regexps to match against
+* structure your code as follows:
+      test/test_*.rb  for the test cases
+      lib/**/*.rb     for the target source code whose coverage you want
+  making sure that the test/test_*.rb files are loading from lib/, e.g. by 
+  using the -Ilib command-line argument, adding  
+    $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
+  to test/test_*.rb, or running rcov via a Rakefile (read the RDoc
+  documentation or README.rake in the source distribution).
+EOF
+    end
+
+    raise $__rcov_exit_exception if $__rcov_exit_exception
+}
+
+if options.test_unit_only
+    require 'test/unit'
+    module Test::Unit
+        class TestCase
+            remove_method(:run) if instance_methods.include? "run"
+            def run(result)
+                yield(STARTED, name)
+                @_result = result
+                begin
+                    $rcov_code_coverage_analyzer.run_hooked do 
+                        setup
+                        __send__(@method_name)
+                    end
+                rescue AssertionFailedError => e
+                    add_failure(e.message, e.backtrace)
+                rescue StandardError, ScriptError
+                    add_error($!)
+                ensure
+                    begin
+                        $rcov_code_coverage_analyzer.run_hooked { teardown }
+                    rescue AssertionFailedError => e
+                        add_failure(e.message, e.backtrace)
+                    rescue StandardError, ScriptError
+                        add_error($!)
+                    end
+                end
+                result.add_run
+                yield(FINISHED, name)
+            end
+        end
+    end
+elsif options.spec_only
+    require 'spec'
+    override_run = lambda do
+        oldrun = instance_method(:run)
+        define_method(:run) do |*args|
+            $rcov_code_coverage_analyzer.run_hooked { oldrun.bind(self).call(*args) }
+        end
+    end
+    if defined? Spec::DSL::Example
+        Spec::DSL::Example.instance_eval(&override_run)
+    elsif defined? Spec::Example::ExampleGroup
+        Spec::Example::ExampleGroup.instance_eval(&override_run)
+    else
+        $stderr.puts <<-EOF
+Your RSpec version isn't supported. If it's a old one, consider upgrading;
+otherwise, please report the problem.
+        EOF
+        exit(-1)
+    end
+else
+    $rcov_code_coverage_analyzer.install_hook
+end
+
+#{{{ Load scripts
+begin
+pending_scripts = ARGV.clone
+ARGV.replace extra_args
+until pending_scripts.empty?
+    prog = pending_scripts.shift
+    if options.replace_prog_name
+        $0 = File.basename(File.expand_path(prog))
+    end
+    load prog
+end
+rescue Object => err
+  $__rcov_exit_exception = err
+end
+
+# xx-0.1.0-1 follows
+__END__
+# xx can be redistributed and used under the following conditions
+# (just keep the following copyright notice, list of conditions and disclaimer
+# in order to satisfy rcov's "Ruby license" and xx's license simultaneously).
+# 
+#ePark Labs Public License version 1
+#Copyright (c) 2005, ePark Labs, Inc. and contributors
+#All rights reserved.
+#
+#Redistribution and use in source and binary forms, with or without modification,
+#are permitted provided that the following conditions are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this
+#     list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright notice,
+#     this list of conditions and the following disclaimer in the documentation
+#     and/or other materials provided with the distribution.
+#  3. Neither the name of ePark Labs nor the names of its contributors may be
+#     used to endorse or promote products derived from this software without
+#     specific prior written permission.
+#
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+#ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+#ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+#(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+#LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+#ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+#SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+unless defined? $__xx_rb__
+
+require "rexml/document"
+
+
+module XX
+#--{{{
+  VERSION = "0.1.0"
+
+  %w(
+    CRAZY_LIKE_A_HELL
+    PERMISSIVE
+    STRICT
+    ANY
+  ).each{|c| const_set c, c}
+
+  class Document
+#--{{{
+    attr "doc"
+    attr "stack"
+    attr "size"
+
+    def initialize *a, &b
+#--{{{
+      @doc = ::REXML::Document::new(*a, &b)
+      @stack = [@doc]
+      @size = 0
+#--}}}
+    end
+    def top
+#--{{{
+      @stack.last
+#--}}}
+    end
+    def push element
+#--{{{
+      @stack.push element
+#--}}}
+    end
+    def pop
+#--{{{
+      @stack.pop unless @stack.size == 1
+#--}}}
+    end
+    def tracking_additions
+#--{{{
+      n = @size
+      yield
+      return @size - n
+#--}}}
+    end
+    def to_str port = ""
+#--{{{
+      @doc.write port, indent=-1, transitive=false, ie_hack=true
+      port
+#--}}}
+    end
+    alias_method "to_s", "to_str"
+    def pretty port = '' 
+#--{{{
+      @doc.write port, indent=2, transitive=false, ie_hack=true
+      port
+#--}}}
+    end
+    def create element
+#--{{{
+      push element
+      begin
+        object = nil
+        additions =
+          tracking_additions do
+            object = yield element if block_given?
+          end
+        if object and additions.zero?
+          self << object
+        end
+      ensure
+        pop
+      end
+      self << element
+      element
+#--}}}
+    end
+    def << object
+#--{{{
+      t, x = top, object
+
+      if x
+        case t
+          when ::REXML::Document
+
+            begin
+              t <<
+                case x
+                  when ::REXML::Document
+                    x.root || ::REXML::Text::new(x.to_s)
+                  when ::REXML::Element
+                    x
+                  when ::REXML::CData
+                    x
+                  when ::REXML::Text
+                    x
+                  else # string
+                    ::REXML::Text::new(x.to_s)
+                end
+            rescue
+              if t.respond_to? "root"
+                t = t.root
+                retry
+              else
+                raise
+              end
+            end
+
+          when ::REXML::Element
+            t <<
+              case x
+                when ::REXML::Document
+                  x.root || ::REXML::Text::new(x.to_s)
+                when ::REXML::Element
+                  x
+                when ::REXML::CData
+                  #::REXML::Text::new(x.write(""))
+                  x
+                when ::REXML::Text
+                  x
+                else # string
+                  ::REXML::Text::new(x.to_s)
+              end
+
+          when ::REXML::Text
+            t <<
+              case x
+                when ::REXML::Document
+                  x.write ""
+                when ::REXML::Element
+                  x.write ""
+                when ::REXML::CData
+                  x.write ""
+                when ::REXML::Text
+                  x.write ""
+                else # string
+                  x.to_s
+              end
+
+          else # other - try anyhow 
+            t <<
+              case x
+                when ::REXML::Document
+                  x.write ""
+                when ::REXML::Element
+                  x.write ""
+                when ::REXML::CData
+                  x.write ""
+                when ::REXML::Text
+                  x.write ""
+                else # string
+                  x.to_s
+              end
+        end
+      end
+
+      @size += 1
+      self
+#--}}}
+    end
+#--}}}
+  end
+
+  module Markup
+#--{{{
+    class Error < ::StandardError; end
+
+    module InstanceMethods
+#--{{{
+      def method_missing m, *a, &b
+#--{{{
+        m = m.to_s
+
+        tag_method, tag_name = xx_class::xx_tag_method_name m
+
+        c_method_missing = xx_class::xx_config_for "method_missing", xx_which
+        c_tags = xx_class::xx_config_for "tags", xx_which
+
+        pat =
+          case c_method_missing
+            when ::XX::CRAZY_LIKE_A_HELL
+              %r/.*/
+            when ::XX::PERMISSIVE
+              %r/_$/o
+            when ::XX::STRICT
+              %r/_$/o
+            else
+              super(m.to_sym, *a, &b)
+          end
+
+        super(m.to_sym, *a, &b) unless m =~ pat
+
+        if c_method_missing == ::XX::STRICT
+          super(m.to_sym, *a, &b) unless c_tags.include? tag_name
+        end
+
+        ret, defined = nil
+
+        begin
+          xx_class::xx_define_tmp_method tag_method
+          xx_class::xx_define_tag_method tag_method, tag_name
+          ret = send tag_method, *a, &b
+          defined = true
+        ensure
+          xx_class::xx_remove_tag_method tag_method unless defined
+        end
+
+        ret
+#--}}}
+      end
+      def xx_tag_ tag_name, *a, &b
+#--{{{
+        tag_method, tag_name = xx_class::xx_tag_method_name tag_name 
+
+        ret, defined = nil
+
+        begin
+          xx_class::xx_define_tmp_method tag_method
+          xx_class::xx_define_tag_method tag_method, tag_name
+          ret = send tag_method, *a, &b
+          defined = true
+        ensure
+          xx_class::xx_remove_tag_method tag_method unless defined
+        end
+
+        ret
+#--}}}
+      end
+      alias_method "g_", "xx_tag_"
+      def xx_which *argv 
+#--{{{
+        @xx_which = nil unless defined? @xx_which
+        if argv.empty?
+          @xx_which
+        else
+          xx_which = @xx_which
+          begin
+            @xx_which = argv.shift 
+            return yield
+          ensure
+            @xx_which = xx_which
+          end
+        end
+#--}}}
+      end
+      def xx_with_doc_in_effect *a, &b
+#--{{{
+        @xx_docs ||= []
+        doc = ::XX::Document::new(*a)
+        ddoc = doc.doc
+        begin
+          @xx_docs.push doc
+          b.call doc if b
+
+          doctype = xx_config_for "doctype", xx_which
+          if doctype
+            unless ddoc.doctype
+              doctype = ::REXML::DocType::new doctype unless 
+                ::REXML::DocType === doctype
+              ddoc << doctype
+            end
+          end
+
+          xmldecl = xx_config_for "xmldecl", xx_which
+          if xmldecl
+            if ddoc.xml_decl == ::REXML::XMLDecl::default
+              xmldecl = ::REXML::XMLDecl::new xmldecl unless
+                ::REXML::XMLDecl === xmldecl
+              ddoc << xmldecl
+            end
+          end
+
+          return doc
+        ensure
+          @xx_docs.pop
+        end
+#--}}}
+      end
+      def xx_doc
+#--{{{
+        @xx_docs.last rescue raise "no xx_doc in effect!"
+#--}}}
+      end
+      def xx_text_ *objects, &b
+#--{{{
+        doc = xx_doc
+
+        text =
+          ::REXML::Text::new("", 
+            respect_whitespace=true, parent=nil
+          )
+
+        objects.each do |object| 
+          text << object.to_s if object
+        end
+
+        doc.create text, &b
+#--}}}
+      end
+      alias_method "text_", "xx_text_"
+      alias_method "t_", "xx_text_"
+      def xx_markup_ *objects, &b
+#--{{{
+        doc = xx_doc
+
+        doc2 = ::REXML::Document::new ""
+
+        objects.each do |object| 
+          (doc2.root ? doc2.root : doc2) << ::REXML::Document::new(object.to_s)
+        end
+
+
+        ret = doc.create doc2, &b
+        puts doc2.to_s
+        STDIN.gets
+        ret
+#--}}}
+      end
+      alias_method "x_", "xx_markup_"
+      def xx_any_ *objects, &b
+#--{{{
+        doc = xx_doc
+        nothing = %r/.^/m
+
+        text =
+          ::REXML::Text::new("", 
+            respect_whitespace=true, parent=nil, raw=true, entity_filter=nil, illegal=nothing
+          )
+
+        objects.each do |object| 
+          text << object.to_s if object
+        end
+
+        doc.create text, &b
+#--}}}
+      end
+      alias_method "h_", "xx_any_"
+      remove_method "x_" if instance_methods.include? "x_"
+      alias_method "x_", "xx_any_" # supplant for now
+      def xx_cdata_ *objects, &b
+#--{{{
+        doc = xx_doc
+
+        cdata = ::REXML::CData::new ""
+
+        objects.each do |object| 
+          cdata << object.to_s if object
+        end
+
+        doc.create cdata, &b
+#--}}}
+      end
+      alias_method "c_", "xx_cdata_"
+      def xx_parse_attributes string
+#--{{{
+        string = string.to_s
+        tokens = string.split %r/,/o
+        tokens.map{|t| t.sub!(%r/[^=]+=/){|key_eq| key_eq.chop << " : "}}
+        xx_parse_yaml_attributes(tokens.join(','))
+#--}}}
+      end
+      alias_method "att_", "xx_parse_attributes"
+      def xx_parse_yaml_attributes string
+#--{{{
+        require "yaml"
+        string = string.to_s
+        string = "{" << string unless string =~ %r/^\s*[{]/o
+        string = string << "}" unless string =~ %r/[}]\s*$/o
+        obj = ::YAML::load string
+        raise ArgumentError, "<#{ obj.class }> not Hash!" unless Hash === obj
+        obj
+#--}}}
+      end
+      alias_method "at_", "xx_parse_yaml_attributes"
+      alias_method "yat_", "xx_parse_yaml_attributes"
+      def xx_class
+#--{{{
+        @xx_class ||= self.class
+#--}}}
+      end
+      def xx_tag_method_name *a, &b 
+#--{{{
+        xx_class.xx_tag_method_name(*a, &b)
+#--}}}
+      end
+      def xx_define_tmp_method *a, &b 
+#--{{{
+        xx_class.xx_define_tmp_methodr(*a, &b)
+#--}}}
+      end
+      def xx_define_tag_method *a, &b 
+#--{{{
+        xx_class.xx_define_tag_method(*a, &b)
+#--}}}
+      end
+      def xx_remove_tag_method *a, &b 
+#--{{{
+        xx_class.xx_tag_remove_method(*a, &b)
+#--}}}
+      end
+      def xx_ancestors
+#--{{{
+        raise Error, "no xx_which in effect" unless xx_which
+        xx_class.xx_ancestors xx_which
+#--}}}
+      end
+      def xx_config
+#--{{{
+        xx_class.xx_config
+#--}}}
+      end
+      def xx_config_for *a, &b
+#--{{{
+        xx_class.xx_config_for(*a, &b)
+#--}}}
+      end
+      def xx_configure *a, &b
+#--{{{
+        xx_class.xx_configure(*a, &b)
+#--}}}
+      end
+#--}}}
+    end
+
+    module ClassMethods
+#--{{{
+      def xx_tag_method_name m
+#--{{{
+        m = m.to_s
+        tag_method, tag_name = m, m.gsub(%r/_+$/, "")
+        [ tag_method, tag_name ]
+#--}}}
+      end
+      def xx_define_tmp_method m 
+#--{{{
+        define_method(m){ raise NotImplementedError, m.to_s }
+#--}}}
+      end
+      def xx_define_tag_method tag_method, tag_name = nil
+#--{{{
+        tag_method = tag_method.to_s
+        tag_name ||= tag_method.gsub %r/_+$/, ""
+
+        remove_method tag_method if instance_methods.include? tag_method
+        module_eval <<-code, __FILE__, __LINE__+1
+          def #{ tag_method } *a, &b
+            hashes, nothashes = a.partition{|x| Hash === x}
+
+            doc = xx_doc
+            element = ::REXML::Element::new '#{ tag_name }'
+
+            hashes.each{|h| h.each{|k,v| element.add_attribute k.to_s, v}}
+            nothashes.each{|nh| element << ::REXML::Text::new(nh.to_s)}
+
+            doc.create element, &b
+          end
+        code
+        tag_method
+#--}}}
+      end
+      def xx_remove_tag_method tag_method
+#--{{{
+        remove_method tag_method rescue nil
+#--}}}
+      end
+      def xx_ancestors xx_which = self
+#--{{{
+        list = []
+        ancestors.each do |a|
+          list << a if a < xx_which
+        end
+        xx_which.ancestors.each do |a|
+          list << a if a <= Markup
+        end
+        list
+#--}}}
+      end
+      def xx_config
+#--{{{
+        @@xx_config ||= Hash::new{|h,k| h[k] = {}}
+#--}}}
+      end
+      def xx_config_for key, xx_which = nil 
+#--{{{
+        key = key.to_s 
+        xx_which ||= self
+        xx_ancestors(xx_which).each do |a|
+          if xx_config[a].has_key? key
+            return xx_config[a][key]
+          end
+        end
+        nil
+#--}}}
+      end
+      def xx_configure key, value, xx_which = nil 
+#--{{{
+        key = key.to_s
+        xx_which ||= self
+        xx_config[xx_which][key] = value
+#--}}}
+      end
+#--}}}
+    end
+
+    extend ClassMethods
+    include InstanceMethods
+
+    def self::included other, *a, &b
+#--{{{
+      ret = super
+      other.module_eval do
+        include Markup::InstanceMethods
+        extend Markup::ClassMethods
+        class << self
+          define_method("included", Markup::XX_MARKUP_RECURSIVE_INCLUSION_PROC)
+        end
+      end
+      ret
+#--}}}
+    end
+    XX_MARKUP_RECURSIVE_INCLUSION_PROC = method("included").to_proc
+
+    xx_configure "method_missing", XX::PERMISSIVE
+    xx_configure "tags", []
+    xx_configure "doctype", nil
+    xx_configure "xmldecl", nil
+#--}}}
+  end
+
+  module XHTML
+#--{{{
+    include Markup
+    xx_configure "doctype", %(html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd")
+
+    def xhtml_ which = XHTML, *a, &b
+#--{{{
+      xx_which(which) do
+        doc = xx_with_doc_in_effect(*a, &b)
+        ddoc = doc.doc
+        root = ddoc.root
+        if root and root.name and root.name =~ %r/^html$/i 
+          if root.attribute("lang",nil).nil? or root.attribute("lang",nil).to_s.empty?
+            root.add_attribute "lang", "en"
+          end
+          if root.attribute("xml:lang").nil? or root.attribute("xml:lang").to_s.empty?
+            root.add_attribute "xml:lang", "en"
+          end
+          if root.namespace.nil? or root.namespace.to_s.empty?
+            root.add_namespace "http://www.w3.org/1999/xhtml"
+          end
+        end
+        doc
+      end
+#--}}}
+    end
+
+    module Strict
+#--{{{
+      include XHTML
+      xx_configure "doctype", %(html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd")
+      xx_configure "tags", %w(
+        html head body div span DOCTYPE title link meta style p
+        h1 h2 h3 h4 h5 h6 strong em abbr acronym address bdo blockquote cite q code
+        ins del dfn kbd pre samp var br a base img
+        area map object param ul ol li dl dt dd table
+        tr td th tbody thead tfoot col colgroup caption form input
+        textarea select option optgroup button label fieldset legend script noscript b
+        i tt sub sup big small hr
+      )
+      xx_configure "method_missing", ::XX::STRICT
+
+      def xhtml_ which = XHTML::Strict, *a, &b
+#--{{{
+        super(which, *a, &b)
+#--}}}
+      end
+#--}}}
+    end
+
+    module Transitional
+#--{{{
+      include XHTML
+      xx_configure "doctype", %(html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd")
+      def xhtml_ which = XHTML::Transitional, *a, &b
+#--{{{
+        super(which, *a, &b)
+#--}}}
+      end
+#--}}}
+    end
+#--}}}
+  end
+
+  module HTML4
+#--{{{
+    include Markup
+    xx_configure "doctype", %(html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN")
+ 
+    def html4_ which = HTML4, *a, &b
+#--{{{
+      xx_which(which){ xx_with_doc_in_effect(*a, &b) }
+#--}}}
+    end
+
+    module Strict
+#--{{{
+      include HTML4
+      xx_configure "doctype", %(html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN")
+      xx_configure "tags", %w(
+        html head body div span DOCTYPE title link meta style p
+        h1 h2 h3 h4 h5 h6 strong em abbr acronym address bdo blockquote cite q code
+        ins del dfn kbd pre samp var br a base img
+        area map object param ul ol li dl dt dd table
+        tr td th tbody thead tfoot col colgroup caption form input
+        textarea select option optgroup button label fieldset legend script noscript b
+        i tt sub sup big small hr
+      )
+      xx_configure "method_missing", ::XX::STRICT
+      def html4_ which = HTML4::Strict, *a, &b
+#--{{{
+        super(which, *a, &b)
+#--}}}
+      end
+#--}}}
+    end
+
+    module Transitional
+#--{{{
+      include HTML4
+      xx_configure "doctype", %(html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN")
+      def html4_ which = HTML4::Transitional, *a, &b
+#--{{{
+        super(which, *a, &b)
+#--}}}
+      end
+#--}}}
+    end
+#--}}}
+  end
+  HTML = HTML4
+
+  module XML
+#--{{{
+    include Markup
+    xx_configure "xmldecl", ::REXML::XMLDecl::new
+
+    def xml_ *a, &b
+#--{{{
+      xx_which(XML){ xx_with_doc_in_effect(*a, &b)}
+#--}}}
+    end
+#--}}}
+  end
+#--}}}
+end
+
+$__xx_rb__ = __FILE__
+end
+
+
+
+
+
+
+
+
+
+
+#
+# simple examples - see samples/ dir for more complete examples
+#
+
+if __FILE__ == $0
+
+  class Table < ::Array
+    include XX::XHTML::Strict
+    include XX::HTML4::Strict
+    include XX::XML
+
+    def doc 
+      html_{
+        head_{ title_{ "xhtml/html4/xml demo" } }
+
+        div_{
+          h_{ "< malformed html & un-escaped symbols" }
+        }
+
+        t_{ "escaped & text > <" }
+
+        x_{ "<any_valid> xml </any_valid>" }
+
+        div_(:style => :sweet){ 
+          em_ "this is a table"
+
+          table_(:width => 42, :height => 42){
+            each{|row| tr_{ row.each{|cell| td_ cell } } }
+          }
+        }
+
+        script_(:type => :dangerous){ cdata_{ "javascript" } }
+      }
+    end
+    def to_xhtml
+      xhtml_{ doc }
+    end
+    def to_html4
+      html4_{ doc }
+    end
+    def to_xml
+      xml_{ doc }
+    end
+  end
+
+  table = Table[ %w( 0 1 2 ), %w( a b c ) ]
+  
+  methods = %w( to_xhtml to_html4 to_xml )
+
+  methods.each do |method|
+    2.times{ puts "-" * 42 }
+    puts(table.send(method).pretty)
+    puts
+  end
+
+end
+# vi: set sw=4: 
+# Here is Emacs setting. DO NOT REMOVE!
+# Local Variables:
+# ruby-indent-level: 4
+# End:

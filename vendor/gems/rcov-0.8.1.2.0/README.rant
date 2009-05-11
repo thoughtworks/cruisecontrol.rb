@@ -1,0 +1,68 @@
+
+== Code coverage analysis automation with Rant
+
+Since 0.5.0, <tt>rcov</tt> features a <tt>Rcov</tt> generator for eant
+which can be used to automate test coverage analysis.  Basic usage is as
+follows:
+
+  require 'rcov/rant'
+ 
+  desc "Create a cross-referenced code coverage report."
+  gen Rcov do |g|
+    g.test_files = sys['test/test*.rb']
+  end
+
+This will create by default a task named <tt>rcov</tt>.
+
+=== Passing command line options to <tt>rcov</tt>
+
+You can provide a description, change the name of the generated tasks (the
+one used to generate the report(s) and the clobber_ one) and pass options to
+<tt>rcov</tt>:
+
+  desc "Create cross-referenced code coverage report."
+  gen Rcov, :coverage do |g|
+    g.test_files = sys['test/test*.rb']
+    g.rcov_opts << "--threshold 80" << "--callsites"
+  end
+
+That will generate a <tt>coverage</tt> task.
+
+You can specify a different destination directory, which comes handy if you
+have several rcov tasks:
+
+  desc "Analyze code coverage for the FileStatistics class."
+  gen Rcov, :rcov_sourcefile do |g|
+    g.libs << "ext/rcovrt"
+    g.test_files = sys['test/test_FileStatistics.rb']
+    g.rcov_opts << "--test-unit-only"
+    g.output_dir = "coverage.sourcefile"
+  end
+
+  desc "Analyze code coverage for CodeCoverageAnalyzer."
+  gen Rcov, :rcov_ccanalyzer do |g|
+    g.libs << "ext/rcovrt"
+    g.test_files = sys['test/test_CodeCoverageAnalyzer.rb']
+    g.rcov_opts << "--test-unit-only"
+    g.output_dir = "coverage.ccanalyzer"
+  end
+
+=== Options specified passed to the generator 
+
+The +Rcov+ generator recognizes the following options:
++libs+:: directories to be added to the <tt>$LOAD_PATH</tt>
++rcov_opts+:: array of options to be passed to rcov
++test_files+:: files to execute
++test_dirs+:: directories where to look for test files automatically
++pattern+:: pattern for automatic discovery of unit tests to be executed
++output_dir+:: directory where to leave the generated reports
+
++test_files+ overrides the combination of +test_dirs+ and +pattern+.
+
+
+=== Options passed through the <tt>rake</tt> command line
+
+You can override the options defined in the Rcov tasks by specifying them 
+using environment variables at the time rant is executed.
+  RCOVPATH=/my/modified/rcov rant rcov       # use the specified rcov executable
+  RCOVOPTS="--no-callsites -x foo" rant rcov # pass those options to rcov

@@ -1,0 +1,168 @@
+# This Rakefile serves as an example of how to use Rcov::RcovTask.
+# Take a look at the RDoc documentation (or README.rake) for further
+# information.
+
+$:.unshift "lib" if File.directory? "lib"
+require 'rcov/rcovtask'
+require 'rake/testtask'
+require 'rake/rdoctask'
+
+# Use the specified rcov executable instead of the one in $PATH
+# (this way we get a sort of informal functional test).
+# This could also be specified from the command like, e.g.
+#   rake rcov RCOVPATH=/path/to/myrcov
+ENV["RCOVPATH"] = "bin/rcov"
+
+# The following task is largely equivalent to:
+#   Rcov::RcovTask.new
+# (really!)
+desc "Create a cross-referenced code coverage report."
+Rcov::RcovTask.new do |t|
+  t.test_files = FileList['test/test*.rb']
+  t.ruby_opts << "-Ilib:ext/rcovrt" # in order to use this rcov
+  t.rcov_opts << "--xrefs"  # comment to disable cross-references
+  t.verbose = true
+end
+
+desc "Analyze code coverage for the FileStatistics class."
+Rcov::RcovTask.new(:rcov_sourcefile) do |t|
+  t.test_files = FileList['test/test_FileStatistics.rb']
+  t.verbose = true
+  t.rcov_opts << "--test-unit-only"
+  t.ruby_opts << "-Ilib:ext/rcovrt" # in order to use this rcov
+  t.output_dir = "coverage.sourcefile"
+end
+
+Rcov::RcovTask.new(:rcov_ccanalyzer) do |t|
+  t.test_files = FileList['test/test_CodeCoverageAnalyzer.rb']
+  t.verbose = true
+  t.rcov_opts << "--test-unit-only"
+  t.ruby_opts << "-Ilib:ext/rcovrt" # in order to use this rcov
+  t.output_dir = "coverage.ccanalyzer"
+end
+
+desc "Run the unit tests with rcovrt."
+Rake::TestTask.new(:test_rcovrt => ["ext/rcovrt/rcovrt.so"]) do |t|
+  t.libs << "ext/rcovrt"
+  t.test_files = FileList['test/test*.rb']
+  t.verbose = true
+end
+
+file "ext/rcovrt/rcovrt.so" => FileList["ext/rcovrt/*.c"] do
+  ruby "setup.rb config"
+  ruby "setup.rb setup"
+end
+
+desc "Run the unit tests in pure-Ruby mode."
+Rake::TestTask.new(:test_pure_ruby) do |t|
+  t.libs << "ext/rcovrt"
+  t.test_files = FileList['test/turn_off_rcovrt.rb', 'test/test*.rb']
+  t.verbose = true
+end
+
+desc "Run the unit tests"
+task :test => [:test_rcovrt]
+
+task :default => :test
+
+desc "install by setup.rb"
+task :install do
+  sh "sudo ruby setup.rb install"
+end
+
+desc "Generate rdoc documentation for the rcov library"
+Rake::RDocTask.new("rdoc") { |rdoc|
+  rdoc.rdoc_dir = 'doc'
+  rdoc.title    = "rcov"
+  rdoc.options << "--line-numbers" << "--inline-source"
+  rdoc.rdoc_files.include('README.API')
+  rdoc.rdoc_files.include('README.rake')
+  rdoc.rdoc_files.include('README.rant')
+  rdoc.rdoc_files.include('README.vim')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+}
+
+
+# {{{ Package tasks
+
+require 'rcov/version'
+
+PKG_REVISION = ".0"
+PKG_FILES = FileList[
+"bin/rcov",
+"lib/**/*.rb",
+"ext/rcovrt/extconf.rb",
+"ext/rcovrt/*.c",
+"ext/rcovrt/*.h",
+"LEGAL", "LICENSE", "Rakefile", "Rantfile", "README.*", "THANKS", "test/*.rb",
+"mingw-rbconfig.rb", "rcov.vim", "rcov.el",
+"setup.rb", "BLURB", "CHANGES"
+]
+
+require 'rake/gempackagetask'
+Spec = Gem::Specification.new do |s|
+  s.name = "rcov"
+  s.version = Rcov::VERSION + PKG_REVISION
+  s.summary = "Code coverage analysis tool for Ruby"
+  s.description = <<EOF
+rcov is a code coverage tool for Ruby. It is commonly used for viewing overall
+test unit coverage of target code.  It features fast execution (20-300 times
+faster than previous tools), multiple analysis modes, XHTML and several kinds
+of text reports, easy automation with Rake via a RcovTask, fairly accurate
+coverage information through code linkage inference using simple heuristics,
+colorblind-friendliness...
+EOF
+  s.files = PKG_FILES.to_a
+  s.require_path = 'lib'
+  s.extensions << "ext/rcovrt/extconf.rb"
+  s.author = "Mauricio Fernandez"
+  s.email = "mfp@acm.org"
+  s.homepage = "http://eigenclass.org/hiki.rb?rcov"
+  s.bindir = "bin"                               # Use these for applications.
+  s.executables = ["rcov"]
+  s.has_rdoc = true
+  s.extra_rdoc_files = %w[README.API README.rake README.rant README.vim]
+  s.rdoc_options << "--main" << "README.API" << "--title" << 'rcov code coverage tool'
+  s.test_files = Dir["test/test_*.rb"]
+end
+
+task :gem => [:test]
+Rake::GemPackageTask.new(Spec) do |p|
+  p.need_tar = true
+end
+
+# {{{ Cross-compilation and building of a binary RubyGems package for mswin32
+
+require 'rake/clean'
+
+WIN32_PKG_DIR = "rcov-" + Rcov::VERSION + PKG_REVISION
+
+file "#{WIN32_PKG_DIR}" => [:package] do
+  sh "tar zxf pkg/#{WIN32_PKG_DIR}.tgz"
+end
+
+desc "Cross-compile the rcovrt.so extension for win32"
+file "rcovrt_win32" => ["#{WIN32_PKG_DIR}"] do
+  cp "mingw-rbconfig.rb", "#{WIN32_PKG_DIR}/ext/rcovrt/rbconfig.rb"
+  sh "cd #{WIN32_PKG_DIR}/ext/rcovrt/ && ruby -I. extconf.rb && make"
+  mv "#{WIN32_PKG_DIR}/ext/rcovrt/rcovrt.so", "#{WIN32_PKG_DIR}/lib"
+end
+
+Win32Spec = Spec.clone
+Win32Spec.platform = Gem::Platform::WIN32
+Win32Spec.extensions = []
+Win32Spec.files += ["lib/rcovrt.so"]
+
+desc "Build the binary RubyGems package for win32"
+task :rubygems_win32 => ["rcovrt_win32"] do
+  Dir.chdir("#{WIN32_PKG_DIR}") do
+    Gem::Builder.new(Win32Spec).build
+    verbose(true) {
+      mv Dir["*.gem"].first, "../pkg/rcov-#{Rcov::VERSION + PKG_REVISION}-mswin32.gem"
+    }
+  end
+end
+
+CLEAN.include "#{WIN32_PKG_DIR}"
+
+# vim: set sw=2 ft=ruby:
