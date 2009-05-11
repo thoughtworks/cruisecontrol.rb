@@ -7,14 +7,8 @@ class ProjectsController
   def rescue_action(e) raise end
 end
 
-class ProjectsControllerTest < Test::Unit::TestCase
+class ProjectsControllerTest < ActionController::TestCase
   include FileSandbox
-
-  def setup
-    @controller = ProjectsController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
-  end
 
   def test_index_rhtml  
     p1 = create_project_stub('one', 'success')
@@ -191,6 +185,7 @@ class ProjectsControllerTest < Test::Unit::TestCase
     project = create_project_stub('two')
     Projects.expects(:find).with('two').returns(project)
     project.expects(:request_build)
+    Projects.stubs(:load_all).returns [ project ]
     post :build, :id => "two"
     assert_response :success
     assert_equal 'two', assigns(:project).name

@@ -4,12 +4,7 @@ require 'documentation_controller'
 # Re-raise errors caught by the controller.
 class DocumentationController; def rescue_action(e) raise e end; end
 
-class DocumentationControllerTest < Test::Unit::TestCase
-  def setup
-    @controller = DocumentationController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
-  end
+class DocumentationControllerTest < ActionController::TestCase
 
   def test_documentation
     get :get, :path => []
@@ -19,8 +14,9 @@ class DocumentationControllerTest < Test::Unit::TestCase
     assert_response :success
     assert_template 'documentation/docs'
     
-    get :get, :path => 'bad_request'
-    assert_response 404
+    assert_raises ActionView::MissingTemplate do
+      get :get, :path => 'bad_request'
+    end
   end
   
   def test_plugins

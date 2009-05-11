@@ -14,7 +14,7 @@
     <% Dir["#{RAILS_ROOT}/lib/builder_plugins/*"].each do |plugin| %>
       <% name = File.basename(plugin) %>
       <li>
-        <%= link_to Inflector.titleize(name.sub(/\.rb$/, '')), :action => 'plugins', :type => 'builtin', :name => name %> 
+        <%= link_to name.sub(/\.rb$/, '').titleize, :action => 'plugins', :type => 'builtin', :name => name %> 
         (built in)
       </li>
     <% end %>

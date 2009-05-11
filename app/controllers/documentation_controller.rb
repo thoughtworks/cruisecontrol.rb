@@ -2,23 +2,20 @@ class DocumentationController < ApplicationController
   layout nil
   caches_page :get
 
+  # TODO Fix this. Fix it hard.
   def get
-    path = File.join('documentation', params[:path])
-
-    if path == "documentation/plugin_repositories"
-      render :template => path, :layout => false
-    elsif template_exists?(path)
-      render :template => path
-    elsif template_exists?(path + '/index')
-      render :template => path + '/index'
+    if params[:path].blank?
+      render :template => "documentation/index", :layout => "documentation"
+    elsif params[:path] == "plugin_repositories"
+      render :template => "documentation/plugin_repositories"
     else
-      render :status => 404, :text => 'Documentation page not found'
+      render :template => "documentation/#{params[:path]}", :layout => "documentation"
     end
   end
   
   def plugins
     if params.has_key? :name
-      @plugin_title = Inflector.titleize(params[:name].sub(/\.rb$/, ''))
+      @plugin_title = ActiveSupport::Inflector.titleize(params[:name].sub(/\.rb$/, ''))
       case params[:type]
       when 'builtin'
         @file = File.join(RAILS_ROOT, 'lib', 'builder_plugins', params[:name])

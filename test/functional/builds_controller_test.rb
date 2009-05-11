@@ -6,15 +6,9 @@ class BuildsController
   def rescue_action(e) raise end
 end
 
-class BuildsControllerTest < Test::Unit::TestCase
+class BuildsControllerTest < ActionController::TestCase
   include FileSandbox
   include BuildFactory
-
-  def setup
-    @controller = BuildsController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
-  end
 
   def test_show
     with_sandbox_project do |sandbox, project|
