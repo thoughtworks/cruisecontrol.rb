@@ -1,12 +1,10 @@
-require File.join(File.dirname(__FILE__), '..', 'abstract_unit')
-
+require 'abstract_unit'
 
 module TestFileUtils
   def file_name() File.basename(__FILE__) end
   def file_path() File.expand_path(__FILE__) end
   def file_data() File.open(file_path, 'rb') { |f| f.read } end
 end
-
 
 class SendFileController < ActionController::Base
   include TestFileUtils
@@ -21,10 +19,11 @@ class SendFileController < ActionController::Base
   def rescue_action(e) raise end
 end
 
-SendFileController.template_root = File.dirname(__FILE__) + "/../fixtures/"
-
-class SendFileTest < Test::Unit::TestCase
+class SendFileTest < ActionController::TestCase
+  tests SendFileController
   include TestFileUtils
+
+  Mime::Type.register "image/png", :png unless defined? Mime::PNG
 
   def setup
     @controller = SendFileController.new
@@ -54,6 +53,26 @@ class SendFileTest < Test::Unit::TestCase
     assert_equal file_data, output.string
   end
 
+  def test_file_url_based_filename
+    @controller.options = { :url_based_filename => true }
+    response = nil
+    assert_nothing_raised { response = process('file') }
+    assert_not_nil response
+    assert_equal "attachment", response.headers["Content-Disposition"]
+  end
+
+  def test_x_sendfile_header
+    @controller.options = { :x_sendfile => true }
+
+    response = nil
+    assert_nothing_raised { response = process('file') }
+    assert_not_nil response
+
+    assert_equal @controller.file_path, response.headers['X-Sendfile']
+    assert response.body.blank?
+    assert !response.etag?
+  end
+
   def test_data
     response = nil
     assert_nothing_raised { response = process('data') }
@@ -65,17 +84,17 @@ class SendFileTest < Test::Unit::TestCase
 
   def test_headers_after_send_shouldnt_include_charset
     response = process('data')
-    assert_equal "application/octet-stream", response.headers["Content-Type"]
+    assert_equal "application/octet-stream", response.content_type
 
     response = process('file')
-    assert_equal "application/octet-stream", response.headers["Content-Type"]
+    assert_equal "application/octet-stream", response.content_type
   end
 
   # Test that send_file_headers! is setting the correct HTTP headers.
   def test_send_file_headers!
     options = {
       :length => 1,
-      :type => 'type',
+      :type => Mime::PNG,
       :disposition => 'disposition',
       :filename => 'filename'
     }
@@ -90,7 +109,7 @@ class SendFileTest < Test::Unit::TestCase
 
     h = @controller.headers
     assert_equal 1, h['Content-Length']
-    assert_equal 'type', h['Content-Type']
+    assert_equal 'image/png', h['Content-Type']
     assert_equal 'disposition; filename="filename"', h['Content-Disposition']
     assert_equal 'binary', h['Content-Transfer-Encoding']
 
@@ -101,17 +120,42 @@ class SendFileTest < Test::Unit::TestCase
     assert_equal 'private', h['Cache-Control']
   end
 
+  def test_send_file_headers_with_mime_lookup_with_symbol
+    options = {
+      :length => 1,
+      :type => :png
+    }
+
+    @controller.headers = {}
+    @controller.send(:send_file_headers!, options)
+
+    headers = @controller.headers
+
+    assert_equal 'image/png', headers['Content-Type']
+  end
+  
+
+  def test_send_file_headers_with_bad_symbol
+    options = {
+      :length => 1,
+      :type => :this_type_is_not_registered
+    }
+
+    @controller.headers = {}
+    assert_raise(ArgumentError){ @controller.send(:send_file_headers!, options) }
+  end
+
   %w(file data).each do |method|
     define_method "test_send_#{method}_status" do
       @controller.options = { :stream => false, :status => 500 }
       assert_nothing_raised { assert_not_nil process(method) }
-      assert_equal '500 Internal Server Error', @controller.headers['Status']
+      assert_equal '500 Internal Server Error', @response.status
     end
 
     define_method "test_default_send_#{method}_status" do
       @controller.options = { :stream => false }
       assert_nothing_raised { assert_not_nil process(method) }
-      assert_equal ActionController::Base::DEFAULT_RENDER_STATUS_CODE, @controller.headers['Status']
+      assert_equal ActionController::Base::DEFAULT_RENDER_STATUS_CODE, @response.status
     end
   end
 end

@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2004-2006 David Heinemeier Hansson
+# Copyright (c) 2004-2009 David Heinemeier Hansson
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,63 +21,96 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-$:.unshift(File.dirname(__FILE__)) unless
-  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
-
-unless defined?(ActiveSupport)
-  begin
-    $:.unshift(File.dirname(__FILE__) + "/../../activesupport/lib")
-    require 'active_support'  
-  rescue LoadError
-    require 'rubygems'
-    gem 'activesupport'
+begin
+  require 'active_support'
+rescue LoadError
+  activesupport_path = "#{File.dirname(__FILE__)}/../../activesupport/lib"
+  if File.directory?(activesupport_path)
+    $:.unshift activesupport_path
+    require 'active_support'
   end
 end
 
-require 'action_controller/base'
-require 'action_controller/deprecated_redirects'
-require 'action_controller/request'
-require 'action_controller/deprecated_request_methods'
-require 'action_controller/rescue'
-require 'action_controller/benchmarking'
-require 'action_controller/flash'
-require 'action_controller/filters'
-require 'action_controller/layout'
-require 'action_controller/deprecated_dependencies'
-require 'action_controller/mime_responds'
-require 'action_controller/pagination'
-require 'action_controller/scaffolding'
-require 'action_controller/helpers'
-require 'action_controller/cookies'
-require 'action_controller/cgi_process'
-require 'action_controller/caching'
-require 'action_controller/verification'
-require 'action_controller/streaming'
-require 'action_controller/session_management'
-require 'action_controller/components'
-require 'action_controller/macros/auto_complete'
-require 'action_controller/macros/in_place_editing'
+begin
+  gem 'rack', '~> 1.0.0'
+  require 'rack'
+rescue Gem::LoadError
+  require 'action_controller/vendor/rack-1.0/rack'
+end
+
+module ActionController
+  # TODO: Review explicit to see if they will automatically be handled by
+  # the initilizer if they are really needed.
+  def self.load_all!
+    [Base, CGIHandler, CgiRequest, Request, Response, Http::Headers, UrlRewriter, UrlWriter]
+  end
+
+  autoload :AbstractRequest, 'action_controller/request'
+  autoload :Base, 'action_controller/base'
+  autoload :Benchmarking, 'action_controller/benchmarking'
+  autoload :Caching, 'action_controller/caching'
+  autoload :Cookies, 'action_controller/cookies'
+  autoload :Dispatcher, 'action_controller/dispatcher'
+  autoload :Failsafe, 'action_controller/failsafe'
+  autoload :Filters, 'action_controller/filters'
+  autoload :Flash, 'action_controller/flash'
+  autoload :Helpers, 'action_controller/helpers'
+  autoload :HttpAuthentication, 'action_controller/http_authentication'
+  autoload :Integration, 'action_controller/integration'
+  autoload :IntegrationTest, 'action_controller/integration'
+  autoload :Layout, 'action_controller/layout'
+  autoload :MiddlewareStack, 'action_controller/middleware_stack'
+  autoload :MimeResponds, 'action_controller/mime_responds'
+  autoload :ParamsParser, 'action_controller/params_parser'
+  autoload :PolymorphicRoutes, 'action_controller/polymorphic_routes'
+  autoload :RecordIdentifier, 'action_controller/record_identifier'
+  autoload :Reloader, 'action_controller/reloader'
+  autoload :Request, 'action_controller/request'
+  autoload :RequestForgeryProtection, 'action_controller/request_forgery_protection'
+  autoload :Rescue, 'action_controller/rescue'
+  autoload :Resources, 'action_controller/resources'
+  autoload :Response, 'action_controller/response'
+  autoload :RewindableInput, 'action_controller/rewindable_input'
+  autoload :Routing, 'action_controller/routing'
+  autoload :SessionManagement, 'action_controller/session_management'
+  autoload :StatusCodes, 'action_controller/status_codes'
+  autoload :Streaming, 'action_controller/streaming'
+  autoload :TestCase, 'action_controller/test_case'
+  autoload :TestProcess, 'action_controller/test_process'
+  autoload :Translation, 'action_controller/translation'
+  autoload :UploadedFile, 'action_controller/uploaded_file'
+  autoload :UploadedStringIO, 'action_controller/uploaded_file'
+  autoload :UploadedTempfile, 'action_controller/uploaded_file'
+  autoload :UrlRewriter, 'action_controller/url_rewriter'
+  autoload :UrlWriter, 'action_controller/url_rewriter'
+  autoload :Verification, 'action_controller/verification'
+
+  module Assertions
+    autoload :DomAssertions, 'action_controller/assertions/dom_assertions'
+    autoload :ModelAssertions, 'action_controller/assertions/model_assertions'
+    autoload :ResponseAssertions, 'action_controller/assertions/response_assertions'
+    autoload :RoutingAssertions, 'action_controller/assertions/routing_assertions'
+    autoload :SelectorAssertions, 'action_controller/assertions/selector_assertions'
+    autoload :TagAssertions, 'action_controller/assertions/tag_assertions'
+  end
+
+  module Http
+    autoload :Headers, 'action_controller/headers'
+  end
+
+  module Session
+    autoload :AbstractStore, 'action_controller/session/abstract_store'
+    autoload :CookieStore, 'action_controller/session/cookie_store'
+    autoload :MemCacheStore, 'action_controller/session/mem_cache_store'
+  end
+
+  # DEPRECATE: Remove CGI support
+  autoload :CgiRequest, 'action_controller/cgi_process'
+  autoload :CGIHandler, 'action_controller/cgi_process'
+end
+
+autoload :Mime, 'action_controller/mime_type'
+
+autoload :HTML, 'action_controller/vendor/html-scanner'
 
 require 'action_view'
-ActionController::Base.template_class = ActionView::Base
-
-ActionController::Base.class_eval do
-  include ActionController::Flash
-  include ActionController::Filters
-  include ActionController::Layout
-  include ActionController::Benchmarking
-  include ActionController::Rescue
-  include ActionController::Dependencies
-  include ActionController::MimeResponds
-  include ActionController::Pagination
-  include ActionController::Scaffolding
-  include ActionController::Helpers
-  include ActionController::Cookies
-  include ActionController::Caching
-  include ActionController::Verification
-  include ActionController::Streaming
-  include ActionController::SessionManagement
-  include ActionController::Components
-  include ActionController::Macros::AutoComplete
-  include ActionController::Macros::InPlaceEditing
-end

@@ -6,12 +6,13 @@ module ActionView
 
     attr_reader :original_exception
 
-    def initialize(base_path, file_path, assigns, source, original_exception)
-      @base_path, @assigns, @source, @original_exception =
-        base_path, assigns.dup, source, original_exception
-      @file_path = file_path
+    def initialize(template, assigns, original_exception)
+      @template, @assigns, @original_exception = template, assigns.dup, original_exception
+      @backtrace = compute_backtrace
+    end
 
-      remove_deprecated_assigns!
+    def file_name
+      @template.relative_path
     end
 
     def message
@@ -19,13 +20,17 @@ module ActionView
     end
 
     def clean_backtrace
-      original_exception.clean_backtrace
+      if defined?(Rails) && Rails.respond_to?(:backtrace_cleaner)
+        Rails.backtrace_cleaner.clean(original_exception.backtrace)
+      else
+        original_exception.backtrace
+      end
     end
 
     def sub_template_message
       if @sub_templates
         "Trace of template inclusion: " +
-        @sub_templates.collect { |template| strip_base_path(template) }.join(", ")
+        @sub_templates.collect { |template| template.relative_path }.join(", ")
       else
         ""
       end
@@ -35,17 +40,18 @@ module ActionView
       return unless num = line_number
       num = num.to_i
 
-      source_code = IO.readlines(@file_path)
+      source_code = @template.source.split("\n")
 
       start_on_line = [ num - SOURCE_CODE_RADIUS - 1, 0 ].max
       end_on_line   = [ num + SOURCE_CODE_RADIUS - 1, source_code.length].min
 
       indent = ' ' * indentation
       line_counter = start_on_line
+      return unless source_code = source_code[start_on_line..end_on_line]
 
-      source_code[start_on_line..end_on_line].sum do |line|
+      source_code.sum do |line|
         line_counter += 1
-        "#{indent}#{line_counter}: #{line}"
+        "#{indent}#{line_counter}: #{line}\n"
       end
     end
 
@@ -63,35 +69,23 @@ module ActionView
         end
     end
 
-    def file_name
-      stripped = strip_base_path(@file_path)
-      stripped.slice!(0,1) if stripped[0] == ?/
-      stripped
-    end
-
     def to_s
-      "\n\n#{self.class} (#{message}) #{source_location}:\n" +
-        "#{source_extract}\n    #{clean_backtrace.join("\n    ")}\n\n"
+      "\n#{self.class} (#{message}) #{source_location}:\n" + 
+      "#{source_extract}\n    #{clean_backtrace.join("\n    ")}\n\n"
     end
 
+    # don't do anything nontrivial here. Any raised exception from here becomes fatal 
+    # (and can't be rescued).
     def backtrace
-      [
-        "#{source_location.capitalize}\n\n#{source_extract(4)}\n    " +
-        clean_backtrace.join("\n    ")
-      ]
+      @backtrace
     end
 
     private
-      def remove_deprecated_assigns!
-        ActionController::Base::DEPRECATED_INSTANCE_VARIABLES.each do |ivar|
-          @assigns.delete(ivar)
-        end
-      end
-
-      def strip_base_path(path)
-        File.expand_path(path).
-          gsub(/^#{Regexp.escape File.expand_path(RAILS_ROOT)}/, '').
-          gsub(@base_path, "")
+      def compute_backtrace
+        [
+          "#{source_location.capitalize}\n\n#{source_extract(4)}\n    " +
+          clean_backtrace.join("\n    ")
+        ]
       end
 
       def source_location
@@ -102,9 +96,4 @@ module ActionView
         end + file_name
       end
   end
-end
-
-if defined?(Exception::TraceSubstitutions)
-  Exception::TraceSubstitutions << [/:in\s+`_run_(html|xml).*'\s*$/, '']
-  Exception::TraceSubstitutions << [%r{^\s*#{Regexp.escape RAILS_ROOT}}, '#{RAILS_ROOT}'] if defined?(RAILS_ROOT)
 end

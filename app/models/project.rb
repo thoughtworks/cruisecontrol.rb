@@ -1,5 +1,3 @@
-require 'fileutils'
-
 class Project
   @@plugin_names = []
 
@@ -243,7 +241,7 @@ class Project
     if builder_state_and_activity == 'builder_down'
       BuilderStarter.begin_builder(name)
       10.times do
-        sleep 1.second
+        sleep 1.second.to_i
         break if builder_state_and_activity != 'builder_down' 
       end
     end

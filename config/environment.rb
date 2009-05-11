@@ -6,7 +6,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '1.2.3' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -14,31 +14,60 @@ ABSOLUTE_RAILS_ROOT = File.expand_path(RAILS_ROOT) unless defined? ABSOLUTE_RAIL
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here
+  config.gem "xml-simple", :lib => "xmlsimple"
+  config.gem "mocha"
+  config.gem "rcov"
+  
+  def find_home
+    looks_like_windows = (Config::CONFIG["target_os"] =~ /32/)
 
-
-  module ActiveRecord
-    # just so that WhinyNil doesn't complain about const missing
-    class Base
-      # and just so that ActiveRecordStore can load (even though we dont use it either
-      def self.before_save(*args) end 
-      # and just so controller generator can do its stuff 
-      def self.pluralize_table_names() true; end 
-      # and just so that Dispatcher#reset_application works
-      def self.reset_subclasses() end
-      # and just so that Dispatcher#prepare_application works
-      def self.verify_active_connections!() end
-      # and just so that Dispatcher#reset_application! works so Webrick (unlike Mongrel) stops bombing out
-      def self.clear_reloadable_connections!() end
-      # and just so that benchmarking's render() works 
-      def self.connected?() false; end
-      # and just so that Initializer#load_observers works
-      def self.instantiate_observers; end
+    if ENV['HOME']
+      ENV['HOME']
+    elsif ENV['USERPROFILE']
+      ENV['USERPROFILE'].gsub('\\', '/')
+    elsif ENV['HOMEDRIVE'] && ENV['HOMEPATH']
+      "#{ENV['HOMEDRIVE']}:#{ENV['HOMEPATH']}".gsub('\\', '/')
+    else
+      begin
+        File.expand_path("~")
+      rescue StandardError => ex
+        looks_like_windows ? "C:/" : "/"
+      end
     end
   end
 
+  unless defined? CRUISE_DATA_ROOT
+    if ENV['CRUISE_DATA_ROOT']
+      CRUISE_DATA_ROOT = ENV['CRUISE_DATA_ROOT']
+    else
+      CRUISE_DATA_ROOT = File.join(find_home, ".cruise")
+    end
+    puts "cruise data root = '#{CRUISE_DATA_ROOT}'"
+  end
+
+  # module ActiveRecord
+  #   # just so that WhinyNil doesn't complain about const missing
+  #   class Base
+  #     # and just so that ActiveRecordStore can load (even though we dont use it either
+  #     def self.before_save(*args) end 
+  #     # and just so controller generator can do its stuff 
+  #     def self.pluralize_table_names() true; end 
+  #     # and just so that Dispatcher#reset_application works
+  #     def self.reset_subclasses() end
+  #     # and just so that Dispatcher#prepare_application works
+  #     def self.verify_active_connections!() end
+  #     # and just so that Dispatcher#reset_application! works so Webrick (unlike Mongrel) stops bombing out
+  #     def self.clear_reloadable_connections!() end
+  #     # and just so that benchmarking's render() works 
+  #     def self.connected?() false; end
+  #     # and just so that Initializer#load_observers works
+  #     def self.instantiate_observers; end
+  #   end
+  # end
+
   
   # Skip frameworks you're not going to use (only works if using vendor/rails)
-  config.frameworks -= [ :active_record, :action_web_service ]
+  config.frameworks -= [ :active_record, :active_resource ]
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
@@ -58,6 +87,8 @@ end
 
 require 'cruise_control/version'
 require 'smtp_tls'
+require 'date'
+require 'fileutils'
 
 # custom MIME type for CCTray application
 Mime::Type.register "application/cctray", :cctray

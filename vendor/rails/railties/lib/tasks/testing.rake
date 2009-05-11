@@ -7,18 +7,18 @@ def recent_tests(source_pattern, test_path, touched_since = 10.minutes.ago)
       tests = []
       source_dir = File.dirname(path).split("/")
       source_file = File.basename(path, '.rb')
-      
+
       # Support subdirs in app/models and app/controllers
       modified_test_path = source_dir.length > 2 ? "#{test_path}/" << source_dir[1..source_dir.length].join('/') : test_path
 
       # For modified files in app/ run the tests for it. ex. /test/functional/account_controller.rb
       test = "#{modified_test_path}/#{source_file}_test.rb"
-      tests.push test if File.exists?(test)
+      tests.push test if File.exist?(test)
 
       # For modified files in app, run tests in subdirs too. ex. /test/functional/account/*_test.rb
       test = "#{modified_test_path}/#{File.basename(path, '.rb').sub("_controller","")}"
-      FileList["#{test}/*_test.rb"].each { |f| tests.push f } if File.exists?(test)
-		
+      FileList["#{test}/*_test.rb"].each { |f| tests.push f } if File.exist?(test)
+
       return tests
 
     end
@@ -38,19 +38,17 @@ module Kernel
   end
 end
 
-desc 'Test all units and functionals'
+desc 'Run all unit, functional and integration tests'
 task :test do
-  exceptions = ["test:units", "test:functionals", "test:integration"].collect do |task|
+  errors = %w(test:units test:functionals test:integration).collect do |task|
     begin
       Rake::Task[task].invoke
       nil
     rescue => e
-      e
+      task
     end
   end.compact
-  
-  exceptions.each {|e| puts e;puts e.backtrace }
-  raise "Test failures" unless exceptions.empty?
+  abort "Errors running #{errors.to_sentence(:locale => :en)}!" if errors.any?
 end
 
 namespace :test do
@@ -65,24 +63,30 @@ namespace :test do
     t.test_files = touched.uniq
   end
   Rake::Task['test:recent'].comment = "Test recent changes"
-  
+
   Rake::TestTask.new(:uncommitted => "db:test:prepare") do |t|
     def t.file_list
-      changed_since_checkin = silence_stderr { `svn status` }.map { |path| path.chomp[7 .. -1] }
+      if File.directory?(".svn")
+        changed_since_checkin = silence_stderr { `svn status` }.map { |path| path.chomp[7 .. -1] }
+      elsif File.directory?(".git")
+        changed_since_checkin = silence_stderr { `git ls-files --modified --others` }.map { |path| path.chomp }
+      else
+        abort "Not a Subversion or Git checkout."
+      end
 
-      models      = changed_since_checkin.select { |path| path =~ /app[\\\/]models[\\\/].*\.rb/ }
-      controllers = changed_since_checkin.select { |path| path =~ /app[\\\/]controllers[\\\/].*\.rb/ }  
+      models      = changed_since_checkin.select { |path| path =~ /app[\\\/]models[\\\/].*\.rb$/ }
+      controllers = changed_since_checkin.select { |path| path =~ /app[\\\/]controllers[\\\/].*\.rb$/ }
 
       unit_tests       = models.map { |model| "test/unit/#{File.basename(model, '.rb')}_test.rb" }
       functional_tests = controllers.map { |controller| "test/functional/#{File.basename(controller, '.rb')}_test.rb" }
 
       unit_tests.uniq + functional_tests.uniq
     end
-    
+
     t.libs << 'test'
     t.verbose = true
   end
-  Rake::Task['test:uncommitted'].comment = "Test changes since last checkin (only Subversion)"
+  Rake::Task['test:uncommitted'].comment = "Test changes since last checkin (only Subversion and Git)"
 
   Rake::TestTask.new(:units => "db:test:prepare") do |t|
     t.libs << "test"
@@ -105,16 +109,31 @@ namespace :test do
   end
   Rake::Task['test:integration'].comment = "Run the integration tests in test/integration"
 
+  Rake::TestTask.new(:benchmark => 'db:test:prepare') do |t|
+    t.libs << 'test'
+    t.pattern = 'test/performance/**/*_test.rb'
+    t.verbose = true
+    t.options = '-- --benchmark'
+  end
+  Rake::Task['test:benchmark'].comment = 'Benchmark the performance tests'
+
+  Rake::TestTask.new(:profile => 'db:test:prepare') do |t|
+    t.libs << 'test'
+    t.pattern = 'test/performance/**/*_test.rb'
+    t.verbose = true
+  end
+  Rake::Task['test:profile'].comment = 'Profile the performance tests'
+
   Rake::TestTask.new(:plugins => :environment) do |t|
     t.libs << "test"
 
     if ENV['PLUGIN']
       t.pattern = "vendor/plugins/#{ENV['PLUGIN']}/test/**/*_test.rb"
     else
-      t.pattern = 'vendor/plugins/**/test/**/*_test.rb'
+      t.pattern = 'vendor/plugins/*/**/test/**/*_test.rb'
     end
 
     t.verbose = true
   end
-  Rake::Task['test:plugins'].comment = "Run the plugin tests in vendor/plugins/**/test (or specify with PLUGIN=name)"
+  Rake::Task['test:plugins'].comment = "Run the plugin tests in vendor/plugins/*/**/test (or specify with PLUGIN=name)"
 end

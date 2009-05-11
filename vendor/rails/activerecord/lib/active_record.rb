@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2004-2006 David Heinemeier Hansson
+# Copyright (c) 2004-2009 David Heinemeier Hansson
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,65 +21,64 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-$:.unshift(File.dirname(__FILE__)) unless
-  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
-
-unless defined?(ActiveSupport)
-  begin
-    $:.unshift(File.dirname(__FILE__) + "/../../activesupport/lib")  
-    require 'active_support'  
-  rescue LoadError
-    require 'rubygems'
-    gem 'activesupport'
+begin
+  require 'active_support'
+rescue LoadError
+  activesupport_path = "#{File.dirname(__FILE__)}/../../activesupport/lib"
+  if File.directory?(activesupport_path)
+    $:.unshift activesupport_path
+    require 'active_support'
   end
 end
 
-require 'active_record/base'
-require 'active_record/observer'
-require 'active_record/validations'
-require 'active_record/callbacks'
-require 'active_record/reflection'
-require 'active_record/associations'
-require 'active_record/aggregations'
-require 'active_record/transactions'
-require 'active_record/timestamp'
-require 'active_record/acts/list'
-require 'active_record/acts/tree'
-require 'active_record/acts/nested_set'
-require 'active_record/locking/optimistic'
-require 'active_record/locking/pessimistic'
-require 'active_record/migration'
-require 'active_record/schema'
-require 'active_record/calculations'
-require 'active_record/xml_serialization'
-require 'active_record/attribute_methods'
+module ActiveRecord
+  # TODO: Review explicit loads to see if they will automatically be handled by the initilizer.
+  def self.load_all!
+    [Base, DynamicFinderMatch, ConnectionAdapters::AbstractAdapter]
+  end
 
-ActiveRecord::Base.class_eval do
-  include ActiveRecord::Validations
-  include ActiveRecord::Locking::Optimistic
-  include ActiveRecord::Locking::Pessimistic
-  include ActiveRecord::Callbacks
-  include ActiveRecord::Observing
-  include ActiveRecord::Timestamp
-  include ActiveRecord::Associations
-  include ActiveRecord::Aggregations
-  include ActiveRecord::Transactions
-  include ActiveRecord::Reflection
-  include ActiveRecord::Acts::Tree
-  include ActiveRecord::Acts::List
-  include ActiveRecord::Acts::NestedSet
-  include ActiveRecord::Calculations
-  include ActiveRecord::XmlSerialization
-  include ActiveRecord::AttributeMethods
+  autoload :VERSION, 'active_record/version'
+
+  autoload :ActiveRecordError, 'active_record/base'
+  autoload :ConnectionNotEstablished, 'active_record/base'
+
+  autoload :Aggregations, 'active_record/aggregations'
+  autoload :AssociationPreload, 'active_record/association_preload'
+  autoload :Associations, 'active_record/associations'
+  autoload :AttributeMethods, 'active_record/attribute_methods'
+  autoload :AutosaveAssociation, 'active_record/autosave_association'
+  autoload :Base, 'active_record/base'
+  autoload :Batches, 'active_record/batches'
+  autoload :Calculations, 'active_record/calculations'
+  autoload :Callbacks, 'active_record/callbacks'
+  autoload :Dirty, 'active_record/dirty'
+  autoload :DynamicFinderMatch, 'active_record/dynamic_finder_match'
+  autoload :DynamicScopeMatch, 'active_record/dynamic_scope_match'
+  autoload :Migration, 'active_record/migration'
+  autoload :Migrator, 'active_record/migration'
+  autoload :NamedScope, 'active_record/named_scope'
+  autoload :NestedAttributes, 'active_record/nested_attributes'
+  autoload :Observing, 'active_record/observer'
+  autoload :QueryCache, 'active_record/query_cache'
+  autoload :Reflection, 'active_record/reflection'
+  autoload :Schema, 'active_record/schema'
+  autoload :SchemaDumper, 'active_record/schema_dumper'
+  autoload :Serialization, 'active_record/serialization'
+  autoload :SessionStore, 'active_record/session_store'
+  autoload :TestCase, 'active_record/test_case'
+  autoload :Timestamp, 'active_record/timestamp'
+  autoload :Transactions, 'active_record/transactions'
+  autoload :Validations, 'active_record/validations'
+
+  module Locking
+    autoload :Optimistic, 'active_record/locking/optimistic'
+    autoload :Pessimistic, 'active_record/locking/pessimistic'
+  end
+
+  module ConnectionAdapters
+    autoload :AbstractAdapter, 'active_record/connection_adapters/abstract_adapter'
+  end
 end
 
-unless defined?(RAILS_CONNECTION_ADAPTERS)
-  RAILS_CONNECTION_ADAPTERS = %w( mysql postgresql sqlite firebird sqlserver db2 oracle sybase openbase frontbase )
-end
-
-RAILS_CONNECTION_ADAPTERS.each do |adapter|
-  require "active_record/connection_adapters/" + adapter + "_adapter"
-end
-
-require 'active_record/query_cache'
-require 'active_record/schema_dumper'
+require 'active_record/i18n_interpolation_deprecation'
+I18n.load_path << File.dirname(__FILE__) + '/active_record/locale/en.yml'

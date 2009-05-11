@@ -1,4 +1,6 @@
-require File.dirname(__FILE__) + '/../abstract_unit'
+require 'abstract_unit'
+
+ActionController::Base.helpers_dir = File.dirname(__FILE__) + '/../fixtures/helpers'
 
 class TestController < ActionController::Base
   attr_accessor :delegate_attr
@@ -15,13 +17,17 @@ module Fun
     def rescue_action(e) raise end
   end
 
-  class PDFController < ActionController::Base
+  class PdfController < ActionController::Base
     def test
       render :inline => "test: <%= foobar %>"
     end
 
     def rescue_action(e) raise end
   end
+end
+
+class ApplicationController < ActionController::Base
+  helper :all
 end
 
 module LocalAbcHelper
@@ -40,22 +46,10 @@ class HelperTest < Test::Unit::TestCase
     eval("class #{controller_class_name} < TestController; end")
     @controller_class = self.class.const_get(controller_class_name)
 
-    # Generate new template class and assign to controller.
-    template_class_name = "Test#{@symbol}View"
-    eval("class #{template_class_name} < ActionView::Base; end")
-    @template_class = self.class.const_get(template_class_name)
-    @controller_class.template_class = @template_class
-
     # Set default test helper.
     self.test_helper = LocalAbcHelper
   end
-
-  def teardown
-    # Reset template class.
-    #ActionController::Base.template_class = ActionView::Base
-  end
-
-
+  
   def test_deprecated_helper
     assert_equal expected_helper_methods, missing_methods
     assert_nothing_raised { @controller_class.helper TestHelper }
@@ -91,7 +85,7 @@ class HelperTest < Test::Unit::TestCase
   def test_helper_block_include
     assert_equal expected_helper_methods, missing_methods
     assert_nothing_raised {
-      @controller_class.helper { include TestHelper }
+      @controller_class.helper { include HelperTest::TestHelper }
     }
     assert [], missing_methods
   end
@@ -120,16 +114,59 @@ class HelperTest < Test::Unit::TestCase
     response = ActionController::TestResponse.new
     request.action = 'test'
 
-    assert_equal 'test: baz', Fun::PDFController.process(request, response).body
+    assert_equal 'test: baz', Fun::PdfController.process(request, response).body
+  end
+
+  def test_all_helpers
+    methods = ApplicationController.master_helper_module.instance_methods.map(&:to_s)
+
+    # abc_helper.rb
+    assert methods.include?('bare_a')
+
+    # fun/games_helper.rb
+    assert methods.include?('stratego')
+
+    # fun/pdf_helper.rb
+    assert methods.include?('foobar')
+  end
+
+  def test_all_helpers_with_alternate_helper_dir
+    @controller_class.helpers_dir = File.dirname(__FILE__) + '/../fixtures/alternate_helpers'
+
+    # Reload helpers
+    @controller_class.master_helper_module = Module.new
+    @controller_class.helper :all
+
+    # helpers/abc_helper.rb should not be included
+    assert !master_helper_methods.include?('bare_a')
+
+    # alternate_helpers/foo_helper.rb
+    assert master_helper_methods.include?('baz')
+  end
+
+  def test_helper_proxy
+    methods = ApplicationController.helpers.methods.map(&:to_s)
+
+    # ActionView
+    assert methods.include?('pluralize')
+
+    # abc_helper.rb
+    assert methods.include?('bare_a')
+
+    # fun/games_helper.rb
+    assert methods.include?('stratego')
+
+    # fun/pdf_helper.rb
+    assert methods.include?('foobar')
   end
 
   private
     def expected_helper_methods
-      TestHelper.instance_methods
+      TestHelper.instance_methods.map(&:to_s)
     end
 
     def master_helper_methods
-      @controller_class.master_helper_module.instance_methods
+      @controller_class.master_helper_module.instance_methods.map(&:to_s)
     end
 
     def missing_methods

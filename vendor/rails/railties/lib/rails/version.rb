@@ -1,8 +1,8 @@
 module Rails
   module VERSION #:nodoc:
-    MAJOR = 1
-    MINOR = 2
-    TINY  = 3
+    MAJOR = 2
+    MINOR = 3
+    TINY  = 2
 
     STRING = [MAJOR, MINOR, TINY].join('.')
   end

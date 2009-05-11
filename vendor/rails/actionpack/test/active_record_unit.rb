@@ -1,4 +1,4 @@
-require  File.dirname(__FILE__) + '/abstract_unit'
+require 'abstract_unit'
 
 # Define the essentials
 class ActiveRecordTestConnector
@@ -30,7 +30,6 @@ end
 $stderr.flush
 
 
-
 # Define the rest of the connector
 class ActiveRecordTestConnector
   class << self
@@ -48,46 +47,48 @@ class ActiveRecordTestConnector
     end
 
     private
+      def setup_connection
+        if Object.const_defined?(:ActiveRecord)
+          defaults = { :database => ':memory:' }
+          begin
+            adapter = defined?(JRUBY_VERSION) ? 'jdbcsqlite3' : 'sqlite3'
+            options = defaults.merge :adapter => adapter, :timeout => 500
+            ActiveRecord::Base.establish_connection(options)
+            ActiveRecord::Base.configurations = { 'sqlite3_ar_integration' => options }
+            ActiveRecord::Base.connection
+          rescue Exception  # errors from establishing a connection
+            $stderr.puts 'SQLite 3 unavailable; trying SQLite 2.'
+            options = defaults.merge :adapter => 'sqlite'
+            ActiveRecord::Base.establish_connection(options)
+            ActiveRecord::Base.configurations = { 'sqlite2_ar_integration' => options }
+            ActiveRecord::Base.connection
+          end
 
-    def setup_connection
-      if Object.const_defined?(:ActiveRecord)
-        begin
-          connection_options = {:adapter => 'sqlite3', :dbfile => ':memory:'}
-          ActiveRecord::Base.establish_connection(connection_options)
-          ActiveRecord::Base.configurations = { 'sqlite3_ar_integration' => connection_options } 
-          ActiveRecord::Base.connection
-        rescue Exception  # errors from establishing a connection
-          $stderr.puts 'SQLite 3 unavailable; falling to SQLite 2.'
-          connection_options = {:adapter => 'sqlite', :dbfile => ':memory:'}
-          ActiveRecord::Base.establish_connection(connection_options)
-          ActiveRecord::Base.configurations = { 'sqlite2_ar_integration' => connection_options } 
-          ActiveRecord::Base.connection
+          Object.send(:const_set, :QUOTED_TYPE, ActiveRecord::Base.connection.quote_column_name('type')) unless Object.const_defined?(:QUOTED_TYPE)
+        else
+          raise "Can't setup connection since ActiveRecord isn't loaded."
         end
-
-        Object.send(:const_set, :QUOTED_TYPE, ActiveRecord::Base.connection.quote_column_name('type')) unless Object.const_defined?(:QUOTED_TYPE)
-      else
-        raise "Couldn't locate ActiveRecord."
       end
-    end
 
-    # Load actionpack sqlite tables
-    def load_schema
-      File.read(File.dirname(__FILE__) + "/fixtures/db_definitions/sqlite.sql").split(';').each do |sql|
-        ActiveRecord::Base.connection.execute(sql) unless sql.blank?
+      # Load actionpack sqlite tables
+      def load_schema
+        File.read(File.dirname(__FILE__) + "/fixtures/db_definitions/sqlite.sql").split(';').each do |sql|
+          ActiveRecord::Base.connection.execute(sql) unless sql.blank?
+        end
       end
-    end
 
-    def require_fixture_models
-      Dir.glob(File.dirname(__FILE__) + "/fixtures/*.rb").each {|f| require f}
-    end
+      def require_fixture_models
+        Dir.glob(File.dirname(__FILE__) + "/fixtures/*.rb").each {|f| require f}
+      end
   end
 end
 
-# Test case for inheiritance
-class ActiveRecordTestCase < Test::Unit::TestCase
+class ActiveRecordTestCase < ActionController::TestCase
+  include ActiveRecord::TestFixtures
+
   # Set our fixture path
   if ActiveRecordTestConnector.able_to_connect
-    self.fixture_path = "#{File.dirname(__FILE__)}/fixtures/"
+    self.fixture_path = [FIXTURE_LOAD_PATH]
     self.use_transactional_fixtures = false
   end
 
@@ -95,22 +96,9 @@ class ActiveRecordTestCase < Test::Unit::TestCase
     super if ActiveRecordTestConnector.connected
   end
 
-  def setup
-    abort_tests unless ActiveRecordTestConnector.connected
+  def run(*args)
+    super if ActiveRecordTestConnector.connected
   end
-
-  # Default so Test::Unit::TestCase doesn't complain
-  def test_truth
-  end
-
-  private
-    # If things go wrong, we don't want to run our test cases. We'll just define them to test nothing.
-    def abort_tests
-      $stderr.puts 'No Active Record connection, aborting tests.'
-      self.class.public_instance_methods.grep(/^test./).each do |method|
-        self.class.class_eval { define_method(method.to_sym){} }
-      end
-    end
 end
 
 ActiveRecordTestConnector.setup

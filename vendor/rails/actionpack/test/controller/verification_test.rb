@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/../abstract_unit'
+require 'abstract_unit'
 
-class VerificationTest < Test::Unit::TestCase
+class VerificationTest < ActionController::TestCase
   class TestController < ActionController::Base
     verify :only => :guarded_one, :params => "one",
            :add_flash => { :error => 'unguarded' },
@@ -21,10 +21,10 @@ class VerificationTest < Test::Unit::TestCase
 
     verify :only => :guarded_by_method, :method => :post,
            :redirect_to => { :action => "unguarded" }
-           
+
     verify :only => :guarded_by_xhr, :xhr => true,
            :redirect_to => { :action => "unguarded" }
-           
+
     verify :only => :guarded_by_not_xhr, :xhr => false,
            :redirect_to => { :action => "unguarded" }
 
@@ -34,7 +34,19 @@ class VerificationTest < Test::Unit::TestCase
 
     verify :only => :must_be_post, :method => :post, :render => { :status => 405, :text => "Must be post" }, :add_headers => { "Allow" => "POST" }
 
+    verify :only => :guarded_one_for_named_route_test, :params => "one",
+           :redirect_to => :foo_url
+
+    verify :only => :no_default_action, :params => "santa"
+
+    verify :only => :guarded_with_back, :method => :post,
+           :redirect_to => :back
+
     def guarded_one
+      render :text => "#{params[:one]}"
+    end
+
+    def guarded_one_for_named_route_test
       render :text => "#{params[:one]}"
     end
 
@@ -61,11 +73,11 @@ class VerificationTest < Test::Unit::TestCase
     def guarded_by_method
       render :text => "#{request.method}"
     end
-    
+
     def guarded_by_xhr
       render :text => "#{request.xhr?}"
     end
-    
+
     def guarded_by_not_xhr
       render :text => "#{request.xhr?}"
     end
@@ -77,11 +89,19 @@ class VerificationTest < Test::Unit::TestCase
     def two_redirects
       render :nothing => true
     end
-    
+
     def must_be_post
       render :text => "Was a post!"
     end
-    
+
+    def guarded_with_back
+      render :text => "#{params[:one]}"
+    end
+
+    def no_default_action
+      # Will never run
+    end
+
     protected
       def rescue_action(e) raise end
 
@@ -94,6 +114,24 @@ class VerificationTest < Test::Unit::TestCase
     @controller = TestController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
+    ActionController::Routing::Routes.add_named_route :foo, '/foo', :controller => 'test', :action => 'foo'
+  end
+
+  def test_using_symbol_back_with_no_referrer
+    assert_raise(ActionController::RedirectBackError) { get :guarded_with_back }
+  end
+
+  def test_using_symbol_back_redirects_to_referrer
+    @request.env["HTTP_REFERER"] = "/foo"
+    get :guarded_with_back
+    assert_redirected_to '/foo'
+  end
+
+  def test_no_deprecation_warning_for_named_route
+    assert_not_deprecated do
+      get :guarded_one_for_named_route_test, :two => "not one"
+      assert_redirected_to '/foo'
+    end
   end
 
   def test_guarded_one_with_prereqs
@@ -188,39 +226,44 @@ class VerificationTest < Test::Unit::TestCase
     get :guarded_by_method
     assert_redirected_to :action => "unguarded"
   end
-  
+
   def test_guarded_by_xhr_with_prereqs
     xhr :post, :guarded_by_xhr
     assert_equal "true", @response.body
   end
-    
+
   def test_guarded_by_xhr_without_prereqs
     get :guarded_by_xhr
     assert_redirected_to :action => "unguarded"
   end
-  
+
   def test_guarded_by_not_xhr_with_prereqs
     get :guarded_by_not_xhr
     assert_equal "false", @response.body
   end
-    
+
   def test_guarded_by_not_xhr_without_prereqs
     xhr :post, :guarded_by_not_xhr
     assert_redirected_to :action => "unguarded"
   end
-  
+
   def test_guarded_post_and_calls_render_succeeds
     post :must_be_post
     assert_equal "Was a post!", @response.body
   end
-    
+
+  def test_default_failure_should_be_a_bad_request
+    post :no_default_action
+    assert_response :bad_request
+  end
+
   def test_guarded_post_and_calls_render_fails_and_sets_allow_header
     get :must_be_post
     assert_response 405
     assert_equal "Must be post", @response.body
     assert_equal "POST", @response.headers["Allow"]
   end
-  
+
   def test_second_redirect
     assert_nothing_raised { get :two_redirects }
   end

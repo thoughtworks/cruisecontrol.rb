@@ -17,7 +17,7 @@ config.action_controller.perform_caching             = true
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-require 'configuration'
+require RAILS_ROOT + '/config/configuration'
 
 ProjectsMigration.new.migrate_data_if_needed
 

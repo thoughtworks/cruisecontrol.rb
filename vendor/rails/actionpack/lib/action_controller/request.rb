@@ -1,159 +1,263 @@
+require 'tempfile'
+require 'stringio'
+require 'strscan'
+
+require 'active_support/memoizable'
+require 'action_controller/cgi_ext'
+
 module ActionController
-  # Subclassing AbstractRequest makes these methods available to the request objects used in production and testing,
-  # CgiRequest and TestRequest
-  class AbstractRequest
-    cattr_accessor :relative_url_root
+  class Request < Rack::Request
 
-    # Returns the hash of environment variables for this request,
-    # such as { 'RAILS_ENV' => 'production' }.
-    attr_reader :env
+    %w[ AUTH_TYPE GATEWAY_INTERFACE
+        PATH_TRANSLATED REMOTE_HOST
+        REMOTE_IDENT REMOTE_USER REMOTE_ADDR
+        SERVER_NAME SERVER_PROTOCOL
 
-    # Returns both GET and POST parameters in a single hash.
-    def parameters
-      @parameters ||= request_parameters.update(query_parameters).update(path_parameters).with_indifferent_access
+        HTTP_ACCEPT HTTP_ACCEPT_CHARSET HTTP_ACCEPT_ENCODING
+        HTTP_ACCEPT_LANGUAGE HTTP_CACHE_CONTROL HTTP_FROM
+        HTTP_NEGOTIATE HTTP_PRAGMA HTTP_REFERER HTTP_USER_AGENT ].each do |env|
+      define_method(env.sub(/^HTTP_/n, '').downcase) do
+        @env[env]
+      end
     end
 
-    # Returns the HTTP request method as a lowercase symbol (:get, for example). Note, HEAD is returned as :get
-    # since the two are supposedly to be functionaly equivilent for all purposes except that HEAD won't return a response
-    # body (which Rails also takes care of elsewhere).
+    def key?(key)
+      @env.key?(key)
+    end
+
+    HTTP_METHODS = %w(get head put post delete options)
+    HTTP_METHOD_LOOKUP = HTTP_METHODS.inject({}) { |h, m| h[m] = h[m.upcase] = m.to_sym; h }
+
+    # Returns the true HTTP request \method as a lowercase symbol, such as
+    # <tt>:get</tt>. If the request \method is not listed in the HTTP_METHODS
+    # constant above, an UnknownHttpMethod exception is raised.
+    def request_method
+      @request_method ||= HTTP_METHOD_LOOKUP[super] || raise(UnknownHttpMethod, "#{super}, accepted HTTP methods are #{HTTP_METHODS.to_sentence(:locale => :en)}")
+    end
+
+    # Returns the HTTP request \method used for action processing as a
+    # lowercase symbol, such as <tt>:post</tt>. (Unlike #request_method, this
+    # method returns <tt>:get</tt> for a HEAD request because the two are
+    # functionally equivalent from the application's perspective.)
     def method
-      @request_method ||= (!parameters[:_method].blank? && @env['REQUEST_METHOD'] == 'POST') ?
-        parameters[:_method].to_s.downcase.to_sym :
-        @env['REQUEST_METHOD'].downcase.to_sym
-      
-      @request_method == :head ? :get : @request_method
+      request_method == :head ? :get : request_method
     end
 
-    # Is this a GET (or HEAD) request?  Equivalent to request.method == :get
+    # Is this a GET (or HEAD) request?  Equivalent to <tt>request.method == :get</tt>.
     def get?
       method == :get
     end
 
-    # Is this a POST request?  Equivalent to request.method == :post
+    # Is this a POST request?  Equivalent to <tt>request.method == :post</tt>.
     def post?
-      method == :post
+      request_method == :post
     end
 
-    # Is this a PUT request?  Equivalent to request.method == :put
+    # Is this a PUT request?  Equivalent to <tt>request.method == :put</tt>.
     def put?
-      method == :put
+      request_method == :put
     end
 
-    # Is this a DELETE request?  Equivalent to request.method == :delete
+    # Is this a DELETE request?  Equivalent to <tt>request.method == :delete</tt>.
     def delete?
-      method == :delete
+      request_method == :delete
     end
 
-    # Is this a HEAD request?  HEAD is mapped as :get for request.method, so here we ask the 
-    # REQUEST_METHOD header directly. Thus, for head, both get? and head? will return true.
+    # Is this a HEAD request? Since <tt>request.method</tt> sees HEAD as <tt>:get</tt>,
+    # this \method checks the actual HTTP \method directly.
     def head?
-      @env['REQUEST_METHOD'].downcase.to_sym == :head
+      request_method == :head
     end
 
-    # Determine whether the body of a HTTP call is URL-encoded (default)
-    # or matches one of the registered param_parsers. 
+    # Provides access to the request's HTTP headers, for example:
     #
-    # For backward compatibility, the post format is extracted from the
+    #   request.headers["Content-Type"] # => "text/plain"
+    def headers
+      @headers ||= ActionController::Http::Headers.new(@env)
+    end
+
+    # Returns the content length of the request as an integer.
+    def content_length
+      super.to_i
+    end
+
+    # The MIME type of the HTTP request, such as Mime::XML.
+    #
+    # For backward compatibility, the post \format is extracted from the
     # X-Post-Data-Format HTTP header if present.
     def content_type
-      @content_type ||=
-        begin
-          content_type = @env['CONTENT_TYPE'].to_s.downcase
-          
-          if x_post_format = @env['HTTP_X_POST_DATA_FORMAT']
-            case x_post_format.to_s.downcase
-            when 'yaml'
-              content_type = 'application/x-yaml'
-            when 'xml'
-              content_type = 'application/xml'
-            end
-          end
-          
-          Mime::Type.lookup(content_type)
+      @content_type ||= begin
+        if @env['CONTENT_TYPE'] =~ /^([^,\;]*)/
+          Mime::Type.lookup($1.strip.downcase)
+        else
+          nil
+        end
+      end
+    end
+
+    # Returns the accepted MIME type for the request.
+    def accepts
+      @accepts ||= begin
+        header = @env['HTTP_ACCEPT'].to_s.strip
+
+        if header.empty?
+          [content_type, Mime::ALL].compact
+        else
+          Mime::Type.parse(header)
+        end
+      end
+    end
+
+    def if_modified_since
+      if since = env['HTTP_IF_MODIFIED_SINCE']
+        Time.rfc2822(since) rescue nil
+      end
+    end
+
+    def if_none_match
+      env['HTTP_IF_NONE_MATCH']
+    end
+
+    def not_modified?(modified_at)
+      if_modified_since && modified_at && if_modified_since >= modified_at
+    end
+
+    def etag_matches?(etag)
+      if_none_match && if_none_match == etag
+    end
+
+    # Check response freshness (Last-Modified and ETag) against request
+    # If-Modified-Since and If-None-Match conditions. If both headers are
+    # supplied, both must match, or the request is not considered fresh.
+    def fresh?(response)
+      case
+      when if_modified_since && if_none_match
+        not_modified?(response.last_modified) && etag_matches?(response.etag)
+      when if_modified_since
+        not_modified?(response.last_modified)
+      when if_none_match
+        etag_matches?(response.etag)
+      else
+        false
+      end
+    end
+
+    # Returns the Mime type for the \format used in the request.
+    #
+    #   GET /posts/5.xml   | request.format => Mime::XML
+    #   GET /posts/5.xhtml | request.format => Mime::HTML
+    #   GET /posts/5       | request.format => Mime::HTML or MIME::JS, or request.accepts.first depending on the value of <tt>ActionController::Base.use_accept_header</tt>
+    def format
+      @format ||=
+        if parameters[:format]
+          Mime::Type.lookup_by_extension(parameters[:format])
+        elsif ActionController::Base.use_accept_header
+          accepts.first
+        elsif xhr?
+          Mime::Type.lookup_by_extension("js")
+        else
+          Mime::Type.lookup_by_extension("html")
         end
     end
 
-    # Returns the accepted MIME type for the request
-    def accepts
-      @accepts ||=
-        if @env['HTTP_ACCEPT'].to_s.strip.empty?
-          [ content_type, Mime::ALL ]
-        else
-          Mime::Type.parse(@env['HTTP_ACCEPT'])
-        end
+
+    # Sets the \format by string extension, which can be used to force custom formats
+    # that are not controlled by the extension.
+    #
+    #   class ApplicationController < ActionController::Base
+    #     before_filter :adjust_format_for_iphone
+    #
+    #     private
+    #       def adjust_format_for_iphone
+    #         request.format = :iphone if request.env["HTTP_USER_AGENT"][/iPhone/]
+    #       end
+    #   end
+    def format=(extension)
+      parameters[:format] = extension.to_s
+      @format = Mime::Type.lookup_by_extension(parameters[:format])
+    end
+
+    # Returns a symbolized version of the <tt>:format</tt> parameter of the request.
+    # If no \format is given it returns <tt>:js</tt>for Ajax requests and <tt>:html</tt>
+    # otherwise.
+    def template_format
+      parameter_format = parameters[:format]
+
+      if parameter_format
+        parameter_format
+      elsif xhr?
+        :js
+      else
+        :html
+      end
+    end
+
+    def cache_format
+      parameters[:format]
     end
 
     # Returns true if the request's "X-Requested-With" header contains
     # "XMLHttpRequest". (The Prototype Javascript library sends this header with
     # every Ajax request.)
     def xml_http_request?
-      not /XMLHttpRequest/i.match(@env['HTTP_X_REQUESTED_WITH']).nil?
+      !(@env['HTTP_X_REQUESTED_WITH'] !~ /XMLHttpRequest/i)
     end
     alias xhr? :xml_http_request?
 
-    # Determine originating IP address.  REMOTE_ADDR is the standard
-    # but will fail if the user is behind a proxy.  HTTP_CLIENT_IP and/or
-    # HTTP_X_FORWARDED_FOR are set by proxies so check for these before
-    # falling back to REMOTE_ADDR.  HTTP_X_FORWARDED_FOR may be a comma-
-    # delimited list in the case of multiple chained proxies; the first is
-    # the originating IP.
-    def remote_ip
-      return @env['HTTP_CLIENT_IP'] if @env.include? 'HTTP_CLIENT_IP'
+    # Which IP addresses are "trusted proxies" that can be stripped from
+    # the right-hand-side of X-Forwarded-For
+    TRUSTED_PROXIES = /^127\.0\.0\.1$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
 
-      if @env.include? 'HTTP_X_FORWARDED_FOR' then
-        remote_ips = @env['HTTP_X_FORWARDED_FOR'].split(',').reject do |ip|
-            ip =~ /^unknown$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
+    # Determines originating IP address.  REMOTE_ADDR is the standard
+    # but will fail if the user is behind a proxy.  HTTP_CLIENT_IP and/or
+    # HTTP_X_FORWARDED_FOR are set by proxies so check for these if
+    # REMOTE_ADDR is a proxy.  HTTP_X_FORWARDED_FOR may be a comma-
+    # delimited list in the case of multiple chained proxies; the last
+    # address which is not trusted is the originating IP.
+    def remote_ip
+      remote_addr_list = @env['REMOTE_ADDR'] && @env['REMOTE_ADDR'].scan(/[^,\s]+/)
+
+      unless remote_addr_list.blank?
+        not_trusted_addrs = remote_addr_list.reject {|addr| addr =~ TRUSTED_PROXIES}
+        return not_trusted_addrs.first unless not_trusted_addrs.empty?
+      end
+      remote_ips = @env['HTTP_X_FORWARDED_FOR'] && @env['HTTP_X_FORWARDED_FOR'].split(',')
+
+      if @env.include? 'HTTP_CLIENT_IP'
+        if ActionController::Base.ip_spoofing_check && remote_ips && !remote_ips.include?(@env['HTTP_CLIENT_IP'])
+          # We don't know which came from the proxy, and which from the user
+          raise ActionControllerError.new(<<EOM)
+IP spoofing attack?!
+HTTP_CLIENT_IP=#{@env['HTTP_CLIENT_IP'].inspect}
+HTTP_X_FORWARDED_FOR=#{@env['HTTP_X_FORWARDED_FOR'].inspect}
+EOM
         end
 
-        return remote_ips.first.strip unless remote_ips.empty?
+        return @env['HTTP_CLIENT_IP']
+      end
+
+      if remote_ips
+        while remote_ips.size > 1 && TRUSTED_PROXIES =~ remote_ips.last.strip
+          remote_ips.pop
+        end
+
+        return remote_ips.last.strip
       end
 
       @env['REMOTE_ADDR']
     end
 
-    # Returns the domain part of a host, such as rubyonrails.org in "www.rubyonrails.org". You can specify
-    # a different <tt>tld_length</tt>, such as 2 to catch rubyonrails.co.uk in "www.rubyonrails.co.uk".
-    def domain(tld_length = 1)
-      return nil if !/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.match(host).nil? or host.nil?
-
-      host.split('.').last(1 + tld_length).join('.')
+    # Returns the lowercase name of the HTTP server software.
+    def server_software
+      (@env['SERVER_SOFTWARE'] && /^([a-zA-Z]+)/ =~ @env['SERVER_SOFTWARE']) ? $1.downcase : nil
     end
 
-    # Returns all the subdomains as an array, so ["dev", "www"] would be returned for "dev.www.rubyonrails.org".
-    # You can specify a different <tt>tld_length</tt>, such as 2 to catch ["www"] instead of ["www", "rubyonrails"]
-    # in "www.rubyonrails.co.uk".
-    def subdomains(tld_length = 1)
-      return [] unless host
-      parts = host.split('.')
-      parts[0..-(tld_length+2)]
+    # Returns the complete URL used for this request.
+    def url
+      protocol + host_with_port + request_uri
     end
 
-    # Receive the raw post data.
-    # This is useful for services such as REST, XMLRPC and SOAP
-    # which communicate over HTTP POST but don't use the traditional parameter format.
-    def raw_post
-      @env['RAW_POST_DATA']
-    end
-
-    # Return the request URI, accounting for server idiosyncracies.
-    # WEBrick includes the full URL. IIS leaves REQUEST_URI blank.
-    def request_uri
-      if uri = @env['REQUEST_URI']
-        # Remove domain, which webrick puts into the request_uri.
-        (%r{^\w+\://[^/]+(/.*|$)$} =~ uri) ? $1 : uri
-      else
-        # Construct IIS missing REQUEST_URI from SCRIPT_NAME and PATH_INFO.
-        script_filename = @env['SCRIPT_NAME'].to_s.match(%r{[^/]+$})
-        uri = @env['PATH_INFO']
-        uri = uri.sub(/#{script_filename}\//, '') unless script_filename.nil?
-        unless (env_qs = @env['QUERY_STRING']).nil? || env_qs.empty?
-          uri << '?' << env_qs
-        end
-        @env['REQUEST_URI'] = uri
-      end
-    end
-
-    # Return 'https://' if this is an SSL request and 'http://' otherwise.
+    # Returns 'https://' if this is an SSL request and 'http://' otherwise.
     def protocol
       ssl? ? 'https://' : 'http://'
     end
@@ -163,36 +267,36 @@ module ActionController
       @env['HTTPS'] == 'on' || @env['HTTP_X_FORWARDED_PROTO'] == 'https'
     end
 
-    # Returns the interpreted path to requested resource after all the installation directory of this application was taken into account
-    def path
-      path = (uri = request_uri) ? uri.split('?').first : ''
-
-      # Cut off the path to the installation directory if given
-      path.sub!(%r/^#{relative_url_root}/, '')
-      path || ''      
-    end
-    
-    # Returns the path minus the web server relative installation directory.
-    # This can be set with the environment variable RAILS_RELATIVE_URL_ROOT.
-    # It can be automatically extracted for Apache setups. If the server is not
-    # Apache, this method returns an empty string.
-    def relative_url_root
-      @@relative_url_root ||= case
-        when @env["RAILS_RELATIVE_URL_ROOT"]
-          @env["RAILS_RELATIVE_URL_ROOT"]
-        when server_software == 'apache'
-          @env["SCRIPT_NAME"].to_s.sub(/\/dispatch\.(fcgi|rb|cgi)$/, '')
-        else
-          ''
+    # Returns the \host for this request, such as "example.com".
+    def raw_host_with_port
+      if forwarded = env["HTTP_X_FORWARDED_HOST"]
+        forwarded.split(/,\s?/).last
+      else
+        env['HTTP_HOST'] || "#{env['SERVER_NAME'] || env['SERVER_ADDR']}:#{env['SERVER_PORT']}"
       end
+    end
+
+    # Returns the host for this request, such as example.com.
+    def host
+      raw_host_with_port.sub(/:\d+$/, '')
+    end
+
+    # Returns a \host:\port string for this request, such as "example.com" or
+    # "example.com:8080".
+    def host_with_port
+      "#{host}#{port_string}"
     end
 
     # Returns the port number of this request as an integer.
     def port
-      @port_as_int ||= @env['SERVER_PORT'].to_i
+      if raw_host_with_port =~ /:(\d+)$/
+        $1.to_i
+      else
+        standard_port
+      end
     end
 
-    # Returns the standard port number for this request's protocol
+    # Returns the standard \port number for this request's protocol.
     def standard_port
       case protocol
         when 'https://' then 443
@@ -200,66 +304,186 @@ module ActionController
       end
     end
 
-    # Returns a port suffix like ":8080" if the port number of this request
-    # is not the default HTTP port 80 or HTTPS port 443.
+    # Returns a \port suffix like ":8080" if the \port number of this request
+    # is not the default HTTP \port 80 or HTTPS \port 443.
     def port_string
-      (port == standard_port) ? '' : ":#{port}"
+      port == standard_port ? '' : ":#{port}"
     end
 
-    # Returns a host:port string for this request, such as example.com or
-    # example.com:8080.
-    def host_with_port
-      host + port_string
+    # Returns the \domain part of a \host, such as "rubyonrails.org" in "www.rubyonrails.org". You can specify
+    # a different <tt>tld_length</tt>, such as 2 to catch rubyonrails.co.uk in "www.rubyonrails.co.uk".
+    def domain(tld_length = 1)
+      return nil unless named_host?(host)
+
+      host.split('.').last(1 + tld_length).join('.')
     end
+
+    # Returns all the \subdomains as an array, so <tt>["dev", "www"]</tt> would be
+    # returned for "dev.www.rubyonrails.org". You can specify a different <tt>tld_length</tt>,
+    # such as 2 to catch <tt>["www"]</tt> instead of <tt>["www", "rubyonrails"]</tt>
+    # in "www.rubyonrails.co.uk".
+    def subdomains(tld_length = 1)
+      return [] unless named_host?(host)
+      parts = host.split('.')
+      parts[0..-(tld_length+2)]
+    end
+
+    # Returns the query string, accounting for server idiosyncrasies.
+    def query_string
+      @env['QUERY_STRING'].present? ? @env['QUERY_STRING'] : (@env['REQUEST_URI'].split('?', 2)[1] || '')
+    end
+
+    # Returns the request URI, accounting for server idiosyncrasies.
+    # WEBrick includes the full URL. IIS leaves REQUEST_URI blank.
+    def request_uri
+      if uri = @env['REQUEST_URI']
+        # Remove domain, which webrick puts into the request_uri.
+        (%r{^\w+\://[^/]+(/.*|$)$} =~ uri) ? $1 : uri
+      else
+        # Construct IIS missing REQUEST_URI from SCRIPT_NAME and PATH_INFO.
+        uri = @env['PATH_INFO'].to_s
+
+        if script_filename = @env['SCRIPT_NAME'].to_s.match(%r{[^/]+$})
+          uri = uri.sub(/#{script_filename}\//, '')
+        end
+
+        env_qs = @env['QUERY_STRING'].to_s
+        uri += "?#{env_qs}" unless env_qs.empty?
+
+        if uri.blank?
+          @env.delete('REQUEST_URI')
+        else
+          @env['REQUEST_URI'] = uri
+        end
+      end
+    end
+
+    # Returns the interpreted \path to requested resource after all the installation
+    # directory of this application was taken into account.
+    def path
+      path = request_uri.to_s[/\A[^\?]*/]
+      path.sub!(/\A#{ActionController::Base.relative_url_root}/, '')
+      path
+    end
+
+    # Read the request \body. This is useful for web services that need to
+    # work with raw requests directly.
+    def raw_post
+      unless @env.include? 'RAW_POST_DATA'
+        @env['RAW_POST_DATA'] = body.read(@env['CONTENT_LENGTH'].to_i)
+        body.rewind if body.respond_to?(:rewind)
+      end
+      @env['RAW_POST_DATA']
+    end
+
+    # Returns both GET and POST \parameters in a single hash.
+    def parameters
+      @parameters ||= request_parameters.merge(query_parameters).update(path_parameters).with_indifferent_access
+    end
+    alias_method :params, :parameters
 
     def path_parameters=(parameters) #:nodoc:
-      @path_parameters = parameters
+      @env["rack.routing_args"] = parameters
       @symbolized_path_parameters = @parameters = nil
     end
 
-    # The same as <tt>path_parameters</tt> with explicitly symbolized keys 
-    def symbolized_path_parameters 
+    # The same as <tt>path_parameters</tt> with explicitly symbolized keys.
+    def symbolized_path_parameters
       @symbolized_path_parameters ||= path_parameters.symbolize_keys
     end
 
-    # Returns a hash with the parameters used to form the path of the request 
+    # Returns a hash with the \parameters used to form the \path of the request.
+    # Returned hash keys are strings:
     #
-    # Example: 
+    #   {'action' => 'my_action', 'controller' => 'my_controller'}
     #
-    #   {:action => 'my_action', :controller => 'my_controller'}
+    # See <tt>symbolized_path_parameters</tt> for symbolized keys.
     def path_parameters
-      @path_parameters ||= {}
+      @env["rack.routing_args"] ||= {}
     end
 
-    # Returns the lowercase name of the HTTP server software.
-    def server_software
-      (@env['SERVER_SOFTWARE'] && /^([a-zA-Z]+)/ =~ @env['SERVER_SOFTWARE']) ? $1.downcase : nil
+    # The request body is an IO input stream. If the RAW_POST_DATA environment
+    # variable is already set, wrap it in a StringIO.
+    def body
+      if raw_post = @env['RAW_POST_DATA']
+        raw_post.force_encoding(Encoding::BINARY) if raw_post.respond_to?(:force_encoding)
+        StringIO.new(raw_post)
+      else
+        @env['rack.input']
+      end
     end
 
-    #--
-    # Must be implemented in the concrete request
-    #++
-    def query_parameters #:nodoc:
+    def form_data?
+      FORM_DATA_MEDIA_TYPES.include?(content_type.to_s)
     end
 
-    def request_parameters #:nodoc:
+    # Override Rack's GET method to support indifferent access
+    def GET
+      @env["action_controller.request.query_parameters"] ||= normalize_parameters(super)
+    end
+    alias_method :query_parameters, :GET
+
+    # Override Rack's POST method to support indifferent access
+    def POST
+      @env["action_controller.request.request_parameters"] ||= normalize_parameters(super)
+    end
+    alias_method :request_parameters, :POST
+
+    def body_stream #:nodoc:
+      @env['rack.input']
     end
 
-    # Returns the host for this request, such as example.com.
-    def host
-    end
-
-    def cookies #:nodoc:
-    end
-
-    def session #:nodoc:
+    def session
+      @env['rack.session'] ||= {}
     end
 
     def session=(session) #:nodoc:
-      @session = session
+      @env['rack.session'] = session
     end
 
-    def reset_session #:nodoc:
+    def reset_session
+      @env['rack.session.options'].delete(:id)
+      @env['rack.session'] = {}
     end
+
+    def session_options
+      @env['rack.session.options'] ||= {}
+    end
+
+    def session_options=(options)
+      @env['rack.session.options'] = options
+    end
+
+    def server_port
+      @env['SERVER_PORT'].to_i
+    end
+
+    private
+      def named_host?(host)
+        !(host.nil? || /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.match(host))
+      end
+
+      # Convert nested Hashs to HashWithIndifferentAccess and replace
+      # file upload hashs with UploadedFile objects
+      def normalize_parameters(value)
+        case value
+        when Hash
+          if value.has_key?(:tempfile)
+            upload = value[:tempfile]
+            upload.extend(UploadedFile)
+            upload.original_path = value[:filename]
+            upload.content_type = value[:type]
+            upload
+          else
+            h = {}
+            value.each { |k, v| h[k] = normalize_parameters(v) }
+            h.with_indifferent_access
+          end
+        when Array
+          value.map { |e| normalize_parameters(e) }
+        else
+          value
+        end
+      end
   end
 end

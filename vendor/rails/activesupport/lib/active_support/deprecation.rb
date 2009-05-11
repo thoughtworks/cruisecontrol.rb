@@ -13,7 +13,7 @@ module ActiveSupport
                          $stderr.puts callstack.join("\n  ") if debug
                        },
       'development' => Proc.new { |message, callstack|
-                         logger = defined?(::RAILS_DEFAULT_LOGGER) ? ::RAILS_DEFAULT_LOGGER : Logger.new($stderr)
+                         logger = defined?(Rails) ? Rails.logger : Logger.new($stderr)
                          logger.warn message
                          logger.debug callstack.join("\n  ") if debug
                        }
@@ -51,8 +51,8 @@ module ActiveSupport
 
       private
         def deprecation_message(callstack, message = nil)
-          message ||= "You are using deprecated behavior which will be removed from Rails 2.0."
-          "DEPRECATION WARNING: #{message}  See http://www.rubyonrails.org/deprecation for details. #{deprecation_caller_message(callstack)}"
+          message ||= "You are using deprecated behavior which will be removed from the next major or minor release."
+          "DEPRECATION WARNING: #{message}. #{deprecation_caller_message(callstack)}"
         end
 
         def deprecation_caller_message(callstack)
@@ -85,15 +85,20 @@ module ActiveSupport
     module ClassMethods #:nodoc:
       # Declare that a method has been deprecated.
       def deprecate(*method_names)
-        options = method_names.last.is_a?(Hash) ? method_names.pop : {}
+        options = method_names.extract_options!
         method_names = method_names + options.keys
         method_names.each do |method_name|
           alias_method_chain(method_name, :deprecation) do |target, punctuation|
             class_eval(<<-EOS, __FILE__, __LINE__)
-              def #{target}_with_deprecation#{punctuation}(*args, &block)
-                ::ActiveSupport::Deprecation.warn(self.class.deprecated_method_warning(:#{method_name}, #{options[method_name].inspect}), caller)
-                #{target}_without_deprecation#{punctuation}(*args, &block)
-              end
+              def #{target}_with_deprecation#{punctuation}(*args, &block)   # def generate_secret_with_deprecation(*args, &block)
+                ::ActiveSupport::Deprecation.warn(                          #   ::ActiveSupport::Deprecation.warn(
+                  self.class.deprecated_method_warning(                     #     self.class.deprecated_method_warning(
+                    :#{method_name},                                        #       :generate_secret,
+                    #{options[method_name].inspect}),                       #       "You should use ActiveSupport::SecureRandom.hex(64)"),
+                  caller                                                    #     caller
+                )                                                           #   )
+                #{target}_without_deprecation#{punctuation}(*args, &block)  #   generate_secret_without_deprecation(*args, &block)
+              end                                                           # end
             EOS
           end
         end
@@ -109,48 +114,13 @@ module ActiveSupport
       end
 
       def deprecation_horizon
-        '2.0'
+        '2.3'
       end
     end
 
-    module Assertions #:nodoc:
-      def assert_deprecated(match = nil, &block)
-        result, warnings = collect_deprecations(&block)
-        assert !warnings.empty?, "Expected a deprecation warning within the block but received none"
-        if match
-          match = Regexp.new(Regexp.escape(match)) unless match.is_a?(Regexp)
-          assert warnings.any? { |w| w =~ match }, "No deprecation warning matched #{match}: #{warnings.join(', ')}"
-        end
-        result
-      end
-
-      def assert_not_deprecated(&block)
-        result, deprecations = collect_deprecations(&block)
-        assert deprecations.empty?, "Expected no deprecation warning within the block but received #{deprecations.size}: \n  #{deprecations * "\n  "}"
-        result
-      end
-
-      private
-        def collect_deprecations
-          old_behavior = ActiveSupport::Deprecation.behavior
-          deprecations = []
-          ActiveSupport::Deprecation.behavior = Proc.new do |message, callstack|
-            deprecations << message
-          end
-          result = yield
-          [result, deprecations]
-        ensure
-          ActiveSupport::Deprecation.behavior = old_behavior
-        end
-    end
-
-    # Stand-in for @request, @attributes, @params, etc which emits deprecation
-    # warnings on any method call (except #inspect).
-    class DeprecatedInstanceVariableProxy #:nodoc:
-      instance_methods.each { |m| undef_method m unless m =~ /^__/ }
-
-      def initialize(instance, method, var = "@#{method}")
-        @instance, @method, @var = instance, method, var
+    class DeprecationProxy #:nodoc:
+      silence_warnings do
+        instance_methods.each { |m| undef_method m unless m =~ /^__/ }
       end
 
       # Don't give a deprecation warning on inspect since test/unit and error
@@ -164,7 +134,32 @@ module ActiveSupport
           warn caller, called, args
           target.__send__(called, *args, &block)
         end
+    end
 
+    class DeprecatedObjectProxy < DeprecationProxy
+      def initialize(object, message)
+        @object = object
+        @message = message
+      end
+
+      private
+        def target
+          @object
+        end
+
+        def warn(callstack, called, args)
+          ActiveSupport::Deprecation.warn(@message, callstack)
+        end
+    end
+
+    # Stand-in for <tt>@request</tt>, <tt>@attributes</tt>, <tt>@params</tt>, etc.
+    # which emits deprecation warnings on any method call (except +inspect+).
+    class DeprecatedInstanceVariableProxy < DeprecationProxy #:nodoc:
+      def initialize(instance, method, var = "@#{method}")
+        @instance, @method, @var = instance, method, var
+      end
+
+      private
         def target
           @instance.__send__(@method)
         end
@@ -173,30 +168,29 @@ module ActiveSupport
           ActiveSupport::Deprecation.warn("#{@var} is deprecated! Call #{@method}.#{called} instead of #{@var}.#{called}. Args: #{args.inspect}", callstack)
         end
     end
+
+    class DeprecatedConstantProxy < DeprecationProxy #:nodoc:
+      def initialize(old_const, new_const)
+        @old_const = old_const
+        @new_const = new_const
+      end
+
+      def class
+        target.class
+      end
+
+      private
+        def target
+          @new_const.to_s.constantize
+        end
+
+        def warn(callstack, called, args)
+          ActiveSupport::Deprecation.warn("#{@old_const} is deprecated! Use #{@new_const} instead.", callstack)
+        end
+    end
   end
 end
 
 class Module
   include ActiveSupport::Deprecation::ClassMethods
-end
-
-require 'test/unit/error'
-
-module Test
-  module Unit
-    class TestCase
-      include ActiveSupport::Deprecation::Assertions
-    end
-
-    class Error # :nodoc:
-      # Silence warnings when reporting test errors.
-      def message_with_silenced_deprecation
-        ActiveSupport::Deprecation.silence do
-          message_without_silenced_deprecation
-        end
-      end
-
-      alias_method_chain :message, :silenced_deprecation
-    end
-  end
 end

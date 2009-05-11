@@ -1,8 +1,29 @@
 module ActionView
   module Helpers
-    # Provides a set of methods for making it easier to locate problems.
+    # Provides a set of methods for making it easier to debug Rails objects.
     module DebugHelper
-      # Returns a <pre>-tag set with the +object+ dumped by YAML. Very readable way to inspect an object.
+      # Returns a YAML representation of +object+ wrapped with <pre> and </pre>.
+      # If the object cannot be converted to YAML using +to_yaml+, +inspect+ will be called instead.
+      # Useful for inspecting an object at the time of rendering.
+      #
+      # ==== Example
+      #
+      #   @user = User.new({ :username => 'testing', :password => 'xyz', :age => 42}) %>
+      #   debug(@user)
+      #   # =>
+      #   <pre class='debug_dump'>--- !ruby/object:User
+      #   attributes:
+      #   &nbsp; updated_at:
+      #   &nbsp; username: testing
+      #
+      #   &nbsp; age: 42
+      #   &nbsp; password: xyz
+      #   &nbsp; created_at:
+      #   attributes_cache: {}
+      #
+      #   new_record: true
+      #   </pre>
+
       def debug(object)
         begin
           Marshal::dump(object)

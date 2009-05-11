@@ -72,7 +72,7 @@ class BuildSerializerTest < Test::Unit::TestCase
       end
     end
     
-    assert_equal Time.at(1.hour), Time.now
+    assert_equal Time.at(1.hour.to_i), Time.now
     assert_false lock.locked?
   end
   

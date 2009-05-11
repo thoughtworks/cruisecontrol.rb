@@ -1,10 +1,8 @@
-require File.dirname(__FILE__) + '<%= '/..' * class_nesting_depth %>/../test_helper'
+require 'test_helper'
 
-class <%= class_name %>ObserverTest < Test::Unit::TestCase
-  fixtures :<%= table_name %>
-
+class <%= class_name %>ObserverTest < ActiveSupport::TestCase
   # Replace this with your real tests.
-  def test_truth
+  test "the truth" do
     assert true
   end
 end

@@ -61,22 +61,16 @@ class EmailNotifierTest < Test::Unit::TestCase
     BuildMailer.expects(:deliver_build_report)
     @notifier.emails = ['foo@happy.com', 'bar@feet.com', 'you@me.com', 'uncle@tom.com']
     @notifier.build_finished(failing_build)
-    BuildMailer.verify
-    CruiseControl::Log.verify
 
     CruiseControl::Log.expects(:event).with("Sent e-mail to 1 person", :debug)
     BuildMailer.expects(:deliver_build_report)
     @notifier.emails = ['foo@happy.com']
     @notifier.build_finished(failing_build)
-    BuildMailer.verify
-    CruiseControl::Log.verify
 
     CruiseControl::Log.expects(:event).never
     BuildMailer.expects(:deliver_build_report).never
     @notifier.emails = []
     @notifier.build_finished(failing_build)
-    BuildMailer.verify
-    CruiseControl::Log.verify
   end
   
   def test_useful_errors
@@ -88,7 +82,6 @@ class EmailNotifierTest < Test::Unit::TestCase
 
     # FIXME: how does this 'something' match? Something must be wrong with assert_raises 
     assert_raises('something') { @notifier.build_finished(failing_build) }
-    CruiseControl::Log.verify
   end
 
   def test_configuration_email_from_should_be_used_when_notifier_from_is_not_specified

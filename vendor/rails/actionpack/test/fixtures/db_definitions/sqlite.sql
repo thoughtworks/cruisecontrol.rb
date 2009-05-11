@@ -9,7 +9,8 @@ CREATE TABLE 'replies' (
   'content' text, 
   'created_at' datetime, 
   'updated_at' datetime, 
-  'topic_id' integer
+  'topic_id' integer,
+  'developer_id' integer
 );
 
 CREATE TABLE 'topics' (
@@ -39,4 +40,10 @@ CREATE TABLE 'developers_projects' (
   'project_id' INTEGER NOT NULL,
   'joined_on' DATE DEFAULT NULL,
   'access_level' INTEGER DEFAULT 1
+);
+
+CREATE TABLE 'mascots' (
+  'id' INTEGER PRIMARY KEY NOT NULL, 
+  'company_id' INTEGER NOT NULL,
+  'name' TEXT DEFAULT NULL
 );

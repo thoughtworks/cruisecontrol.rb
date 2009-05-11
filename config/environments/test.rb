@@ -18,4 +18,4 @@ config.action_controller.perform_caching             = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
-require 'configuration'
+require RAILS_ROOT + '/config/configuration'

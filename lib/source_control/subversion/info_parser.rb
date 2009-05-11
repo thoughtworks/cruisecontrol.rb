@@ -1,5 +1,3 @@
-require 'xml_simple'
-
 module SourceControl
   class Subversion
 

@@ -1,1 +1,1 @@
-# Test file for javascript_include_tag
+// application js

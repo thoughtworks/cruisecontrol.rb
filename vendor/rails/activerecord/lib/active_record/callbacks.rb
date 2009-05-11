@@ -1,28 +1,29 @@
 require 'observer'
 
 module ActiveRecord
-  # Callbacks are hooks into the lifecycle of an Active Record object that allows you to trigger logic
+  # Callbacks are hooks into the lifecycle of an Active Record object that allow you to trigger logic
   # before or after an alteration of the object state. This can be used to make sure that associated and
-  # dependent objects are deleted when destroy is called (by overwriting before_destroy) or to massage attributes
-  # before they're validated (by overwriting before_validation). As an example of the callbacks initiated, consider
-  # the Base#save call:
+  # dependent objects are deleted when +destroy+ is called (by overwriting +before_destroy+) or to massage attributes
+  # before they're validated (by overwriting +before_validation+). As an example of the callbacks initiated, consider
+  # the <tt>Base#save</tt> call for a new record:
   #
-  # * (-) save
-  # * (-) valid?
-  # * (1) before_validation
-  # * (2) before_validation_on_create
-  # * (-) validate
-  # * (-) validate_on_create
-  # * (3) after_validation
-  # * (4) after_validation_on_create
-  # * (5) before_save
-  # * (6) before_create
-  # * (-) create
-  # * (7) after_create
-  # * (8) after_save
+  # * (-) <tt>save</tt>
+  # * (-) <tt>valid</tt>
+  # * (1) <tt>before_validation</tt>
+  # * (2) <tt>before_validation_on_create</tt>
+  # * (-) <tt>validate</tt>
+  # * (-) <tt>validate_on_create</tt>
+  # * (3) <tt>after_validation</tt>
+  # * (4) <tt>after_validation_on_create</tt>
+  # * (5) <tt>before_save</tt>
+  # * (6) <tt>before_create</tt>
+  # * (-) <tt>create</tt>
+  # * (7) <tt>after_create</tt>
+  # * (8) <tt>after_save</tt>
   #
   # That's a total of eight callbacks, which gives you immense power to react and prepare for each state in the
-  # Active Record lifecycle.
+  # Active Record lifecycle. The sequence for calling <tt>Base#save</tt> an existing record is similar, except that each 
+  # <tt>_on_create</tt> callback is replaced by the corresponding <tt>_on_update</tt> callback.
   #
   # Examples:
   #   class CreditCard < ActiveRecord::Base
@@ -50,7 +51,7 @@ module ActiveRecord
   #
   # == Inheritable callback queues
   #
-  # Besides the overwriteable callback methods, it's also possible to register callbacks through the use of the callback macros.
+  # Besides the overwritable callback methods, it's also possible to register callbacks through the use of the callback macros.
   # Their main advantage is that the macros add behavior into a callback queue that is kept intact down through an inheritance
   # hierarchy. Example:
   #
@@ -62,8 +63,8 @@ module ActiveRecord
   #     before_destroy :destroy_readers
   #   end
   #
-  # Now, when Topic#destroy is run only +destroy_author+ is called. When Reply#destroy is run both +destroy_author+ and
-  # +destroy_readers+ is called. Contrast this to the situation where we've implemented the save behavior through overwriteable
+  # Now, when <tt>Topic#destroy</tt> is run only +destroy_author+ is called. When <tt>Reply#destroy</tt> is run, both +destroy_author+ and
+  # +destroy_readers+ are called. Contrast this to the situation where we've implemented the save behavior through overwriteable
   # methods:
   #
   #   class Topic < ActiveRecord::Base
@@ -74,9 +75,9 @@ module ActiveRecord
   #     def before_destroy() destroy_readers end
   #   end
   #
-  # In that case, Reply#destroy would only run +destroy_readers+ and _not_ +destroy_author+. So use the callback macros when
-  # you want to ensure that a certain callback is called for the entire hierarchy and the regular overwriteable methods when you
-  # want to leave it up to each descendent to decide whether they want to call +super+ and trigger the inherited callbacks.
+  # In that case, <tt>Reply#destroy</tt> would only run +destroy_readers+ and _not_ +destroy_author+. So, use the callback macros when
+  # you want to ensure that a certain callback is called for the entire hierarchy, and use the regular overwriteable methods
+  # when you want to leave it up to each descendant to decide whether they want to call +super+ and trigger the inherited callbacks.
   #
   # *IMPORTANT:* In order for inheritance to work for the callback queues, you must specify the callbacks before specifying the
   # associations. Otherwise, you might trigger the loading of a child before the parent has registered the callbacks and they won't
@@ -103,16 +104,12 @@ module ActiveRecord
   # The callback objects have methods named after the callback called with the record as the only parameter, such as:
   #
   #   class BankAccount < ActiveRecord::Base
-  #     before_save      EncryptionWrapper.new("credit_card_number")
-  #     after_save       EncryptionWrapper.new("credit_card_number")
-  #     after_initialize EncryptionWrapper.new("credit_card_number")
+  #     before_save      EncryptionWrapper.new
+  #     after_save       EncryptionWrapper.new
+  #     after_initialize EncryptionWrapper.new
   #   end
   #
   #   class EncryptionWrapper
-  #     def initialize(attribute)
-  #       @attribute = attribute
-  #     end
-  #
   #     def before_save(record)
   #       record.credit_card_number = encrypt(record.credit_card_number)
   #     end
@@ -134,7 +131,39 @@ module ActiveRecord
   #   end
   #
   # So you specify the object you want messaged on a given callback. When that callback is triggered, the object has
-  # a method by the name of the callback messaged.
+  # a method by the name of the callback messaged. You can make these callbacks more flexible by passing in other
+  # initialization data such as the name of the attribute to work with:
+  #
+  #   class BankAccount < ActiveRecord::Base
+  #     before_save      EncryptionWrapper.new("credit_card_number")
+  #     after_save       EncryptionWrapper.new("credit_card_number")
+  #     after_initialize EncryptionWrapper.new("credit_card_number")
+  #   end
+  #
+  #   class EncryptionWrapper
+  #     def initialize(attribute)
+  #       @attribute = attribute
+  #     end
+  #
+  #     def before_save(record)
+  #       record.send("#{@attribute}=", encrypt(record.send("#{@attribute}")))
+  #     end
+  #
+  #     def after_save(record)
+  #       record.send("#{@attribute}=", decrypt(record.send("#{@attribute}")))
+  #     end
+  #
+  #     alias_method :after_find, :after_save
+  #
+  #     private
+  #       def encrypt(value)
+  #         # Secrecy is committed
+  #       end
+  #
+  #       def decrypt(value)
+  #         # Secrecy is unveiled
+  #       end
+  #   end
   #
   # The callback macros usually accept a symbol for the method they're supposed to run, but you can also pass a "method string",
   # which will then be evaluated within the binding of the callback. Example:
@@ -143,7 +172,7 @@ module ActiveRecord
   #     before_destroy 'self.class.delete_all "parent_id = #{id}"'
   #   end
   #
-  # Notice that single plings (') are used so the #{id} part isn't evaluated until the callback is triggered. Also note that these
+  # Notice that single quotes (') are used so the <tt>#{id}</tt> part isn't evaluated until the callback is triggered. Also note that these
   # inline callbacks can be stacked just like the regular ones:
   #
   #   class Topic < ActiveRecord::Base
@@ -151,24 +180,36 @@ module ActiveRecord
   #                    'puts "Evaluated after parents are destroyed"'
   #   end
   #
-  # == The after_find and after_initialize exceptions
+  # == The +after_find+ and +after_initialize+ exceptions
   #
-  # Because after_find and after_initialize are called for each object found and instantiated by a finder, such as Base.find(:all), we've had
-  # to implement a simple performance constraint (50% more speed on a simple test case). Unlike all the other callbacks, after_find and
-  # after_initialize will only be run if an explicit implementation is defined (<tt>def after_find</tt>). In that case, all of the
+  # Because +after_find+ and +after_initialize+ are called for each object found and instantiated by a finder, such as <tt>Base.find(:all)</tt>, we've had
+  # to implement a simple performance constraint (50% more speed on a simple test case). Unlike all the other callbacks, +after_find+ and
+  # +after_initialize+ will only be run if an explicit implementation is defined (<tt>def after_find</tt>). In that case, all of the
   # callback types will be called.
   #
-  # == before_validation* returning statements
+  # == <tt>before_validation*</tt> returning statements
   #
-  # If the returning value of a before_validation callback can be evaluated to false, the process will be aborted and Base#save will return false.
-  # If Base#save! is called it will raise a RecordNotSave error.
+  # If the returning value of a +before_validation+ callback can be evaluated to +false+, the process will be aborted and <tt>Base#save</tt> will return +false+.
+  # If Base#save! is called it will raise a ActiveRecord::RecordInvalid exception.
   # Nothing will be appended to the errors object.
   #
-  # == Cancelling callbacks
+  # == Canceling callbacks
   #
-  # If a before_* callback returns false, all the later callbacks and the associated action are cancelled. If an after_* callback returns
-  # false, all the later callbacks are cancelled. Callbacks are generally run in the order they are defined, with the exception of callbacks
+  # If a <tt>before_*</tt> callback returns +false+, all the later callbacks and the associated action are cancelled. If an <tt>after_*</tt> callback returns
+  # +false+, all the later callbacks are cancelled. Callbacks are generally run in the order they are defined, with the exception of callbacks
   # defined as methods on the model, which are called last.
+  #
+  # == Transactions
+  #
+  # The entire callback chain of a +save+, <tt>save!</tt>, or +destroy+ call runs
+  # within a transaction. That includes <tt>after_*</tt> hooks. If everything
+  # goes fine a COMMIT is executed once the chain has been completed.
+  #
+  # If a <tt>before_*</tt> callback cancels the action a ROLLBACK is issued. You
+  # can also trigger a ROLLBACK raising an exception in any of the callbacks,
+  # including <tt>after_*</tt> hooks. Note, however, that in that case the client
+  # needs to be aware of it because an ordinary +save+ will raise such exception
+  # instead of quietly returning +false+.
   module Callbacks
     CALLBACKS = %w(
       after_find after_initialize before_save after_save before_create after_create before_update after_update before_validation
@@ -177,61 +218,28 @@ module ActiveRecord
     )
 
     def self.included(base) #:nodoc:
-      base.extend(ClassMethods)
-      base.class_eval do
-        class << self
-          include Observable
-          alias_method_chain :instantiate, :callbacks
-        end
+      base.extend Observable
 
-        [:initialize, :create_or_update, :valid?, :create, :update, :destroy].each do |method|
-          alias_method_chain method, :callbacks
-        end
+      [:create_or_update, :valid?, :create, :update, :destroy].each do |method|
+        base.send :alias_method_chain, method, :callbacks
       end
 
-      CALLBACKS.each do |method|
-        base.class_eval <<-"end_eval"
-          def self.#{method}(*callbacks, &block)
-            callbacks << block if block_given?
-            write_inheritable_array(#{method.to_sym.inspect}, callbacks)
-          end
-        end_eval
-      end
+      base.send :include, ActiveSupport::Callbacks
+      base.define_callbacks *CALLBACKS
     end
 
-    module ClassMethods #:nodoc:
-      def instantiate_with_callbacks(record)
-        object = instantiate_without_callbacks(record)
-
-        if object.respond_to_without_attributes?(:after_find)
-          object.send(:callback, :after_find)
-        end
-
-        if object.respond_to_without_attributes?(:after_initialize)
-          object.send(:callback, :after_initialize)
-        end
-
-        object
-      end
-    end
-
-    # Is called when the object was instantiated by one of the finders, like Base.find.
+    # Is called when the object was instantiated by one of the finders, like <tt>Base.find</tt>.
     #def after_find() end
 
-    # Is called after the object has been instantiated by a call to Base.new.
+    # Is called after the object has been instantiated by a call to <tt>Base.new</tt>.
     #def after_initialize() end
 
-    def initialize_with_callbacks(attributes = nil) #:nodoc:
-      initialize_without_callbacks(attributes)
-      result = yield self if block_given?
-      callback(:after_initialize) if respond_to_without_attributes?(:after_initialize)
-      result
-    end
-
-    # Is called _before_ Base.save (regardless of whether it's a create or update save).
+    # Is called _before_ <tt>Base.save</tt> (regardless of whether it's a +create+ or +update+ save).
     def before_save() end
 
-    # Is called _after_ Base.save (regardless of whether it's a create or update save).
+    # Is called _after_ <tt>Base.save</tt> (regardless of whether it's a +create+ or +update+ save).
+    # Note that this callback is still wrapped in the transaction around +save+. For example, if you
+    # invoke an external indexer at this point it won't see the changes in the database.
     #
     #  class Contact < ActiveRecord::Base
     #    after_save { logger.info( 'New contact saved!' ) }
@@ -239,15 +247,19 @@ module ActiveRecord
     def after_save()  end
     def create_or_update_with_callbacks #:nodoc:
       return false if callback(:before_save) == false
-      result = create_or_update_without_callbacks
-      callback(:after_save)
+      if result = create_or_update_without_callbacks
+        callback(:after_save)
+      end
       result
     end
+    private :create_or_update_with_callbacks
 
-    # Is called _before_ Base.save on new objects that haven't been saved yet (no record exists).
+    # Is called _before_ <tt>Base.save</tt> on new objects that haven't been saved yet (no record exists).
     def before_create() end
 
-    # Is called _after_ Base.save on new objects that haven't been saved yet (no record exists).
+    # Is called _after_ <tt>Base.save</tt> on new objects that haven't been saved yet (no record exists).
+    # Note that this callback is still wrapped in the transaction around +save+. For example, if you
+    # invoke an external indexer at this point it won't see the changes in the database.
     def after_create() end
     def create_with_callbacks #:nodoc:
       return false if callback(:before_create) == false
@@ -255,46 +267,50 @@ module ActiveRecord
       callback(:after_create)
       result
     end
+    private :create_with_callbacks
 
-    # Is called _before_ Base.save on existing objects that have a record.
+    # Is called _before_ <tt>Base.save</tt> on existing objects that have a record.
     def before_update() end
 
-    # Is called _after_ Base.save on existing objects that have a record.
+    # Is called _after_ <tt>Base.save</tt> on existing objects that have a record.
+    # Note that this callback is still wrapped in the transaction around +save+. For example, if you
+    # invoke an external indexer at this point it won't see the changes in the database.
     def after_update() end
 
-    def update_with_callbacks #:nodoc:
+    def update_with_callbacks(*args) #:nodoc:
       return false if callback(:before_update) == false
-      result = update_without_callbacks
+      result = update_without_callbacks(*args)
       callback(:after_update)
       result
     end
+    private :update_with_callbacks
 
-    # Is called _before_ Validations.validate (which is part of the Base.save call).
+    # Is called _before_ <tt>Validations.validate</tt> (which is part of the <tt>Base.save</tt> call).
     def before_validation() end
 
-    # Is called _after_ Validations.validate (which is part of the Base.save call).
+    # Is called _after_ <tt>Validations.validate</tt> (which is part of the <tt>Base.save</tt> call).
     def after_validation() end
 
-    # Is called _before_ Validations.validate (which is part of the Base.save call) on new objects
+    # Is called _before_ <tt>Validations.validate</tt> (which is part of the <tt>Base.save</tt> call) on new objects
     # that haven't been saved yet (no record exists).
     def before_validation_on_create() end
 
-    # Is called _after_ Validations.validate (which is part of the Base.save call) on new objects
+    # Is called _after_ <tt>Validations.validate</tt> (which is part of the <tt>Base.save</tt> call) on new objects
     # that haven't been saved yet (no record exists).
     def after_validation_on_create()  end
 
-    # Is called _before_ Validations.validate (which is part of the Base.save call) on
+    # Is called _before_ <tt>Validations.validate</tt> (which is part of the <tt>Base.save</tt> call) on
     # existing objects that have a record.
     def before_validation_on_update() end
 
-    # Is called _after_ Validations.validate (which is part of the Base.save call) on
+    # Is called _after_ <tt>Validations.validate</tt> (which is part of the <tt>Base.save</tt> call) on
     # existing objects that have a record.
     def after_validation_on_update()  end
 
     def valid_with_callbacks? #:nodoc:
       return false if callback(:before_validation) == false
       if new_record? then result = callback(:before_validation_on_create) else result = callback(:before_validation_on_update) end
-      return false if result == false
+      return false if false == result
 
       result = valid_without_callbacks?
 
@@ -304,13 +320,13 @@ module ActiveRecord
       return result
     end
 
-    # Is called _before_ Base.destroy.
+    # Is called _before_ <tt>Base.destroy</tt>.
     #
     # Note: If you need to _destroy_ or _nullify_ associated records first,
-    # use the _:dependent_ option on your associations.
+    # use the <tt>:dependent</tt> option on your associations.
     def before_destroy() end
 
-    # Is called _after_ Base.destroy (and all the attributes have been frozen).
+    # Is called _after_ <tt>Base.destroy</tt> (and all the attributes have been frozen).
     #
     #  class Contact < ActiveRecord::Base
     #    after_destroy { |record| logger.info( "Contact #{record.id} was destroyed." ) }
@@ -325,38 +341,15 @@ module ActiveRecord
 
     private
       def callback(method)
-        notify(method)
+        result = run_callbacks(method) { |result, object| false == result }
 
-        callbacks_for(method).each do |callback|
-          result = case callback
-            when Symbol
-              self.send(callback)
-            when String
-              eval(callback, binding)
-            when Proc, Method
-              callback.call(self)
-            else
-              if callback.respond_to?(method)
-                callback.send(method, self)
-              else
-                raise ActiveRecordError, "Callbacks must be a symbol denoting the method to call, a string to be evaluated, a block to be invoked, or an object responding to the callback method."
-              end
-          end
-          return false if result == false
+        if result != false && respond_to_without_attributes?(method)
+          result = send(method)
         end
 
-        result = send(method) if respond_to_without_attributes?(method)
+        notify(method)
 
         return result
-      end
-
-      def callbacks_for(method)
-        self.class.read_inheritable_attribute(method.to_sym) or []
-      end
-
-      def invoke_and_notify(method)
-        notify(method)
-        send(method) if respond_to_without_attributes?(method)
       end
 
       def notify(method) #:nodoc:

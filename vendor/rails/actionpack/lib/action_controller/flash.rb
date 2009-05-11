@@ -1,83 +1,82 @@
 module ActionController #:nodoc:
   # The flash provides a way to pass temporary objects between actions. Anything you place in the flash will be exposed
-  # to the very next action and then cleared out. This is a great way of doing notices and alerts, such as a create action
-  # that sets <tt>flash[:notice] = "Successfully created"</tt> before redirecting to a display action that can then expose 
-  # the flash to its template. Actually, that exposure is automatically done. Example:
+  # to the very next action and then cleared out. This is a great way of doing notices and alerts, such as a create
+  # action that sets <tt>flash[:notice] = "Successfully created"</tt> before redirecting to a display action that can
+  # then expose the flash to its template. Actually, that exposure is automatically done. Example:
   #
-  #   class WeblogController < ActionController::Base
+  #   class PostsController < ActionController::Base
   #     def create
   #       # save post
   #       flash[:notice] = "Successfully created post"
-  #       redirect_to :action => "display", :params => { :id => post.id }
+  #       redirect_to posts_path(@post)
   #     end
   #
-  #     def display
+  #     def show
   #       # doesn't need to assign the flash notice to the template, that's done automatically
   #     end
   #   end
   #
-  #   display.rhtml
-  #     <% if flash[:notice] %><div class="notice"><%= flash[:notice] %></div><% end %>
+  #   show.html.erb
+  #     <% if flash[:notice] %>
+  #       <div class="notice"><%= flash[:notice] %></div>
+  #     <% end %>
   #
-  # This example just places a string in the flash, but you can put any object in there. And of course, you can put as many
-  # as you like at a time too. Just remember: They'll be gone by the time the next action has been performed.
+  # This example just places a string in the flash, but you can put any object in there. And of course, you can put as
+  # many as you like at a time too. Just remember: They'll be gone by the time the next action has been performed.
   #
   # See docs on the FlashHash class for more details about the flash.
   module Flash
     def self.included(base)
-      base.send :include, InstanceMethods
-
       base.class_eval do
-        alias_method_chain :assign_shortcuts, :flash
-        alias_method_chain :process_cleanup,  :flash
-        alias_method_chain :reset_session,    :flash
+        include InstanceMethods
+        alias_method_chain :perform_action, :flash
+        alias_method_chain :reset_session,  :flash
       end
     end
-    
-    
+
     class FlashNow #:nodoc:
       def initialize(flash)
         @flash = flash
       end
-      
+
       def []=(k, v)
         @flash[k] = v
         @flash.discard(k)
         v
       end
-      
+
       def [](k)
         @flash[k]
       end
     end
-    
+
     class FlashHash < Hash
       def initialize #:nodoc:
         super
         @used = {}
       end
-      
+
       def []=(k, v) #:nodoc:
         keep(k)
         super
       end
-      
+
       def update(h) #:nodoc:
-        h.keys.each{ |k| discard(k) }
+        h.keys.each { |k| keep(k) }
         super
       end
-      
+
       alias :merge! :update
-      
+
       def replace(h) #:nodoc:
         @used = {}
         super
       end
-    
+
       # Sets a flash that will not be available to the next action, only to the current.
       #
       #     flash.now[:message] = "Hello current action"
-      # 
+      #
       # This method enables you to use the flash as a central messaging system in your app.
       # When you need to pass an object to the next action, you use the standard flash assign (<tt>[]=</tt>).
       # When you need to pass an object to the current action, you use <tt>now</tt>, and your object will
@@ -85,9 +84,9 @@ module ActionController #:nodoc:
       #
       # Entries set via <tt>now</tt> are accessed the same way as standard entries: <tt>flash['my-key']</tt>.
       def now
-        FlashNow.new self
+        FlashNow.new(self)
       end
-    
+
       # Keeps either the entire current flash or a specific flash entry available for the next action:
       #
       #    flash.keep            # keeps the entire flash
@@ -95,20 +94,20 @@ module ActionController #:nodoc:
       def keep(k = nil)
         use(k, false)
       end
-    
-      # Marks the entire flash or a single flash entry to be discarded by the end of the current action
+
+      # Marks the entire flash or a single flash entry to be discarded by the end of the current action:
       #
-      #     flash.keep                 # keep entire flash available for the next action
-      #     flash.discard(:warning)    # discard the "warning" entry (it'll still be available for the current action)
+      #     flash.discard              # discard the entire flash at the end of the current action
+      #     flash.discard(:warning)    # discard only the "warning" entry at the end of the current action
       def discard(k = nil)
         use(k)
       end
-    
+
       # Mark for removal entries that were kept, and delete unkept ones.
       #
       # This method is called automatically by filters, so you generally don't need to care about it.
       def sweep #:nodoc:
-        keys.each do |k| 
+        keys.each do |k|
           unless @used[k]
             use(k)
           else
@@ -117,9 +116,10 @@ module ActionController #:nodoc:
           end
         end
 
-        (@used.keys - keys).each{|k| @used.delete k } # clean up after keys that could have been left over by calling reject! or shift on the flash
+        # clean up after keys that could have been left over by calling reject! or shift on the flash
+        (@used.keys - keys).each{ |k| @used.delete(k) }
       end
-    
+
       private
         # Used internally by the <tt>keep</tt> and <tt>discard</tt> methods
         #     use()               # marks the entire flash as used
@@ -130,52 +130,33 @@ module ActionController #:nodoc:
           unless k.nil?
             @used[k] = v
           else
-            keys.each{|key| use key, v }
+            keys.each{ |key| use(key, v) }
           end
         end
     end
 
     module InstanceMethods #:nodoc:
-      def assign_shortcuts_with_flash(request, response) #:nodoc:
-        assign_shortcuts_without_flash(request, response)
-        flash(:refresh)
-      end
-      
-      def process_cleanup_with_flash
-        flash.sweep if @_session
-        process_cleanup_without_flash
-      end
+      protected
+        def perform_action_with_flash
+          perform_action_without_flash
+          remove_instance_variable(:@_flash) if defined? @_flash
+        end
 
-      def reset_session_with_flash
-        reset_session_without_flash
-        remove_instance_variable(:@_flash)
-        flash(:refresh)
-      end
-      
-      protected 
-        # Access the contents of the flash. Use <tt>flash["notice"]</tt> to read a notice you put there or 
-        # <tt>flash["notice"] = "hello"</tt> to put a new one.
-        # Note that if sessions are disabled only flash.now will work.
-        def flash(refresh = false) #:doc:
-          if !defined?(@_flash) || refresh
-            @_flash =
-              if session.is_a?(Hash)
-                # don't put flash in session if disabled
-                FlashHash.new
-              else
-                # otherwise, session is a CGI::Session or a TestSession
-                # so make sure it gets retrieved from/saved to session storage after request processing
-                session["flash"] ||= FlashHash.new
-              end
+        def reset_session_with_flash
+          reset_session_without_flash
+          remove_instance_variable(:@_flash) if defined? @_flash
+        end
+
+        # Access the contents of the flash. Use <tt>flash["notice"]</tt> to
+        # read a notice you put there or <tt>flash["notice"] = "hello"</tt>
+        # to put a new one.
+        def flash #:doc:
+          unless defined? @_flash
+            @_flash = session["flash"] ||= FlashHash.new
+            @_flash.sweep
           end
 
           @_flash
-        end
-
-        # deprecated. use <tt>flash.keep</tt> instead
-        def keep_flash #:doc:
-          ActiveSupport::Deprecation.warn 'keep_flash is deprecated; use flash.keep instead.', caller
-          flash.keep
         end
     end
   end

@@ -1,19 +1,20 @@
-# $Id: redcloth_template.rb 7 2006-12-22 15:59:44Z toupeira $
-
 require 'redcloth'
 
-class RedCloth
-  def hard_breaks
-    false
-  end
-  class Template
-    def initialize(view)
-      @view = view
-    end
+module ActionView
+  module TemplateHandlers
+    class RedClothTemplate < TemplateHandler
+      include Compilable
 
-    def render(template, local_assigns)
-      output = @view.compile_and_render_template('rhtml', template, nil, local_assigns)
-      RedCloth.new(output).to_html
+      cattr_accessor :erb_trim_mode
+      self.erb_trim_mode = '-'
+
+      def compile(template)
+        %{
+          interpolated = ::ERB.new(template.source, nil, "#{erb_trim_mode}").result(binding)
+          interpolated.sub!(/\A#coding:.*\n/, '') if RUBY_VERSION >= '1.9'
+          ::RedCloth.new(interpolated).to_html
+        }
+      end
     end
   end
 end

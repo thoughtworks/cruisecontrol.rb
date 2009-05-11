@@ -1,10 +1,7 @@
-require File.dirname(__FILE__) + '/../abstract_unit'
+require 'abstract_unit'
 
-class TagHelperTest < Test::Unit::TestCase
-  include ActionView::Helpers::TagHelper
-  include ActionView::Helpers::UrlHelper
-  include ActionView::Helpers::TextHelper
-  include ActionView::Helpers::CaptureHelper
+class TagHelperTest < ActionView::TestCase
+  tests ActionView::Helpers::TagHelper
 
   def test_tag
     assert_equal "<br />", tag("br")
@@ -13,11 +10,17 @@ class TagHelperTest < Test::Unit::TestCase
   end
 
   def test_tag_options
-    assert_match /\A<p class="(show|elsewhere)" \/>\z/, tag("p", "class" => "show", :class => "elsewhere")
+    str = tag("p", "class" => "show", :class => "elsewhere")
+    assert_match /class="show"/, str
+    assert_match /class="elsewhere"/, str
   end
 
   def test_tag_options_rejects_nil_option
     assert_equal "<p />", tag("p", :ignored => nil)
+  end
+
+  def test_tag_options_accepts_false_option
+    assert_equal "<p value=\"false\" />", tag("p", :value => false)
   end
 
   def test_tag_options_accepts_blank_option
@@ -34,19 +37,40 @@ class TagHelperTest < Test::Unit::TestCase
     assert_equal content_tag("a", "Create", "href" => "create"),
                  content_tag("a", "Create", :href => "create")
   end
-  
-  def test_content_tag_with_block
-    _erbout = ''
-    content_tag(:div) { _erbout.concat "Hello world!" }
-    assert_dom_equal "<div>Hello world!</div>", _erbout
+
+  def test_content_tag_with_block_in_erb
+    __in_erb_template = ''
+    content_tag(:div) { concat "Hello world!" }
+    assert_dom_equal "<div>Hello world!</div>", output_buffer
   end
-  
-  def test_content_tag_with_block_and_options
-    _erbout = ''
-    content_tag(:div, :class => "green") { _erbout.concat "Hello world!" }
-    assert_dom_equal %(<div class="green">Hello world!</div>), _erbout
+
+  def test_content_tag_with_block_and_options_in_erb
+    __in_erb_template = ''
+    content_tag(:div, :class => "green") { concat "Hello world!" }
+    assert_dom_equal %(<div class="green">Hello world!</div>), output_buffer
   end
-  
+
+  def test_content_tag_with_block_and_options_out_of_erb
+    assert_dom_equal %(<div class="green">Hello world!</div>), content_tag(:div, :class => "green") { "Hello world!" }
+  end
+
+  def test_content_tag_with_block_and_options_outside_out_of_erb
+    assert_equal content_tag("a", "Create", :href => "create"),
+                 content_tag("a", "href" => "create") { "Create" }
+  end
+
+  def test_content_tag_nested_in_content_tag_out_of_erb
+    assert_equal content_tag("p", content_tag("b", "Hello")),
+                 content_tag("p") { content_tag("b", "Hello") },
+                 output_buffer
+  end
+
+  def test_content_tag_nested_in_content_tag_in_erb
+    __in_erb_template = true
+    content_tag("p") { concat content_tag("b", "Hello") }
+    assert_equal '<p><b>Hello</b></p>', output_buffer
+  end
+
   def test_cdata_section
     assert_equal "<![CDATA[<hello world>]]>", cdata_section("<hello world>")
   end
@@ -65,5 +89,9 @@ class TagHelperTest < Test::Unit::TestCase
     ['&1;', '&#1dfa3;', '& #123;'].each do |escaped|
       assert_equal %(<a href="#{escaped.gsub /&/, '&amp;'}" />), tag('a', :href => escaped)
     end
+  end
+
+  def test_disable_escaping
+    assert_equal '<a href="&amp;" />', tag('a', { :href => '&amp;' }, false, false)
   end
 end

@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/abstract_unit"
+require 'abstract_unit'
 
 class RenderMailer < ActionMailer::Base
   def inline_template(recipient)
@@ -13,6 +13,25 @@ class RenderMailer < ActionMailer::Base
     subject    "using helpers"
     from       "tester@example.com"
     body       render(:file => "signed_up", :body => { :recipient => recipient })
+  end
+
+  def rxml_template(recipient)
+    recipients recipient
+    subject    "rendering rxml template"
+    from       "tester@example.com"
+  end
+
+  def included_subtemplate(recipient)
+    recipients recipient
+    subject    "Including another template in the one being rendered"
+    from       "tester@example.com"
+  end
+
+  def included_old_subtemplate(recipient)
+    recipients recipient
+    subject    "Including another template in the one being rendered"
+    from       "tester@example.com"
+    body       render(:inline => "Hello, <%= render \"subtemplate\" %>", :body => { :world => "Earth" })
   end
 
   def initialize_defaults(method_name)
@@ -39,11 +58,15 @@ end
 
 class RenderHelperTest < Test::Unit::TestCase
   def setup
-    ActionMailer::Base.delivery_method = :test
+    set_delivery_method :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
 
     @recipient = 'test@localhost'
+  end
+
+  def teardown
+    restore_delivery_method
   end
 
   def test_inline_template
@@ -55,15 +78,29 @@ class RenderHelperTest < Test::Unit::TestCase
     mail = RenderMailer.create_file_template(@recipient)
     assert_equal "Hello there, \n\nMr. test@localhost", mail.body.strip
   end
+
+  def test_rxml_template
+    mail = RenderMailer.deliver_rxml_template(@recipient)
+    assert_equal "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<test/>", mail.body.strip
+  end
+
+  def test_included_subtemplate
+    mail = RenderMailer.deliver_included_subtemplate(@recipient)
+    assert_equal "Hey Ho, let's go!", mail.body.strip
+  end
 end
 
 class FirstSecondHelperTest < Test::Unit::TestCase
   def setup
-    ActionMailer::Base.delivery_method = :test
+    set_delivery_method :test
     ActionMailer::Base.perform_deliveries = true
     ActionMailer::Base.deliveries = []
 
     @recipient = 'test@localhost'
+  end
+
+  def teardown
+    restore_delivery_method
   end
 
   def test_ordering

@@ -64,7 +64,7 @@ module HTML
   #
   # When using a combination of the above, the element name comes first
   # followed by identifier, class names, attributes, pseudo classes and
-  # negation in any order. Do not seprate these parts with spaces!
+  # negation in any order. Do not separate these parts with spaces!
   # Space separation is used for descendant selectors.
   #
   # For example:
@@ -158,7 +158,7 @@ module HTML
   # * <tt>:not(selector)</tt> -- Match the element only if the element does not
   #   match the simple selector.
   #
-  # As you can see, <tt>:nth-child<tt> pseudo class and its varient can get quite
+  # As you can see, <tt>:nth-child<tt> pseudo class and its variant can get quite
   # tricky and the CSS specification doesn't do a much better job explaining it.
   # But after reading the examples and trying a few combinations, it's easy to
   # figure out.
@@ -240,19 +240,24 @@ module HTML
       raise ArgumentError, "CSS expression cannot be empty" if selector.empty?
       @source = ""
       values = values[0] if values.size == 1 && values[0].is_a?(Array)
+
       # We need a copy to determine if we failed to parse, and also
       # preserve the original pass by-ref statement.
       statement = selector.strip.dup
+
       # Create a simple selector, along with negation.
       simple_selector(statement, values).each { |name, value| instance_variable_set("@#{name}", value) }
+
+      @alternates = []
+      @depends = nil
 
       # Alternative selector.
       if statement.sub!(/^\s*,\s*/, "")
         second = Selector.new(statement, values)
-        (@alternates ||= []) << second
+        @alternates << second
         # If there are alternate selectors, we group them in the top selector.
         if alternates = second.instance_variable_get(:@alternates)
-          second.instance_variable_set(:@alternates, nil)
+          second.instance_variable_set(:@alternates, [])
           @alternates.concat alternates
         end
         @source << " , " << second.to_s
@@ -412,7 +417,7 @@ module HTML
 
       # If this selector is part of the group, try all the alternative
       # selectors (unless first_only).
-      if @alternates && (!first_only || !matches)
+      if !first_only || !matches
         @alternates.each do |alternate|
           break if matches && first_only
           if subset = alternate.match(element, first_only)
@@ -551,7 +556,7 @@ module HTML
         end
 
         # Attribute value.
-        next if statement.sub!(/^\[\s*([[:alpha:]][\w\-]*)\s*((?:[~|^$*])?=)?\s*('[^']*'|"[^*]"|[^\]]*)\s*\]/) do |match|
+        next if statement.sub!(/^\[\s*([[:alpha:]][\w\-:]*)\s*((?:[~|^$*])?=)?\s*('[^']*'|"[^*]"|[^\]]*)\s*\]/) do |match|
           name, equality, value = $1, $2, $3
           if value == "?"
             value = values.shift
@@ -789,15 +794,15 @@ module HTML
     # eventually, and array of substitution values.
     #
     # This method is called from four places, so it helps to put it here
-    # for resue. The only logic deals with the need to detect comma
+    # for reuse. The only logic deals with the need to detect comma
     # separators (alternate) and apply them to the selector group of the
     # top selector.
     def next_selector(statement, values)
       second = Selector.new(statement, values)
       # If there are alternate selectors, we group them in the top selector.
       if alternates = second.instance_variable_get(:@alternates)
-        second.instance_variable_set(:@alternates, nil)
-        (@alternates ||= []).concat alternates
+        second.instance_variable_set(:@alternates, [])
+        @alternates.concat alternates
       end
       second
     end

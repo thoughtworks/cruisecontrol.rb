@@ -3,8 +3,8 @@
 # Under MIT and/or CC By license.
 #++
 
-require File.dirname(__FILE__) + '/../abstract_unit'
-require File.dirname(__FILE__) + '/fake_controllers'
+require 'abstract_unit'
+require 'controller/fake_controllers'
 
 class SelectorTest < Test::Unit::TestCase
   #
@@ -85,11 +85,11 @@ class SelectorTest < Test::Unit::TestCase
     assert_equal 2, @matches.size
     assert_equal "2", @matches[0].attributes["id"]
     assert_equal "3", @matches[1].attributes["id"]
-    # Match alement with attribute value.
+    # Match element with attribute value.
     select("*[title=foo]")
     assert_equal 1, @matches.size
     assert_equal "3", @matches[0].attributes["id"]
-    # Match alement with attribute and attribute value.
+    # Match element with attribute and attribute value.
     select("[bar=foo][title]")
     assert_equal 1, @matches.size
     assert_equal "2", @matches[0].attributes["id"]
@@ -177,7 +177,7 @@ class SelectorTest < Test::Unit::TestCase
     assert_equal 2, @matches.size
     assert_equal "foo", @matches[0].attributes["href"]
     assert_equal "baz", @matches[1].attributes["href"]
-    # And now for the three selector challange.
+    # And now for the three selector challenge.
     parse(%Q{<h1 id="1"><a href="foo"></a></h1><h2 id="2"><a href="bar"></a></h2><h3 id="2"><a href="baz"></a></h3>})
     select("h1 a, h2 a, h3 a")
     assert_equal 3, @matches.size
@@ -303,7 +303,7 @@ class SelectorTest < Test::Unit::TestCase
     assert_equal 1, @matches.size
     assert_equal "2", @matches[0].attributes["id"]
     # Before first and past last returns nothing.:
-    assert_raises(ArgumentError) { select("tr:nth-child(-1)") }
+    assert_raise(ArgumentError) { select("tr:nth-child(-1)") }
     select("tr:nth-child(0)")
     assert_equal 0, @matches.size
     select("tr:nth-child(5)")
@@ -597,8 +597,8 @@ class SelectorTest < Test::Unit::TestCase
 
   def test_negation_details
     parse(%Q{<p id="1"></p><p id="2"></p><p id="3"></p>})
-    assert_raises(ArgumentError) { select(":not(") }
-    assert_raises(ArgumentError) { select(":not(:not())") }
+    assert_raise(ArgumentError) { select(":not(") }
+    assert_raise(ArgumentError) { select(":not(:not())") }
     select("p:not(#1):not(#3)")
     assert_equal 1, @matches.size
     assert_equal "2", @matches[0].attributes["id"]

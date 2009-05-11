@@ -1,7 +1,8 @@
-require 'action_controller/integration'
+require 'active_support/test_case'
+require 'action_controller'
 
 # work around the at_exit hook in test/unit, which kills IRB
-Test::Unit.run = true
+Test::Unit.run = true if Test::Unit.respond_to?(:run=)
 
 # reference the global "app" instance, created on demand. To recreate the
 # instance, pass a non-false value as the parameter.
@@ -23,5 +24,7 @@ end
 #reloads the environment
 def reload!
   puts "Reloading..."
-  Dispatcher.reset_application!
+  Dispatcher.cleanup_application
+  Dispatcher.reload_application
+  true
 end
