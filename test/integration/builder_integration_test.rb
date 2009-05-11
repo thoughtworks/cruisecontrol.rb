@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class BuilderIntegrationTest < Test::Unit::TestCase
+class BuilderIntegrationTest < ActiveSupport::TestCase
   include FileSandbox
   
   def test_checkout
@@ -111,7 +111,15 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
 
-      expected_output = "[CruiseControl] Invoking Rake task \"db:migrate\"\nRAILS_ENV=test\n[CruiseControl] Invoking Rake task \"default\"\n"
+      expected_output = <<-OUTPUT
+[CruiseControl] Invoking Rake task "db:migrate"
+** Invoke db:migrate (first_time)
+** Execute db:migrate
+RAILS_ENV=test
+[CruiseControl] Invoking Rake task "default"
+** Invoke default (first_time)
+** Execute default
+      OUTPUT
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
 
@@ -138,7 +146,6 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       expected_output = "Vasya_was_here"
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
-
   end
 
   def test_custom_rake_task
@@ -161,20 +168,38 @@ class BuilderIntegrationTest < Test::Unit::TestCase
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
 
-      expected_output = "my_build invoked\n[CruiseControl] Invoking Rake task \"my_deploy\"\nmy_deploy invoked\n"
+      expected_output = <<-OUTPUT
+[CruiseControl] Invoking Rake task "my_build"
+** Invoke my_build (first_time)
+** Execute my_build
+my_build invoked
+[CruiseControl] Invoking Rake task "my_deploy"
+** Invoke my_deploy (first_time)
+** Execute my_deploy
+my_deploy invoked
+      OUTPUT
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
-
   end
 
   def test_should_reconnect_to_database_after_db_test_purge_in_cc_build
     with_project 'project_with_db_test_purge_and_migrate' do |project, sandbox|
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
-      expected_output = "db-test-purge\nESTABLISH_CONNECTION\n[CruiseControl] Invoking Rake task \"db:migrate\"\ndb-migrate\n"
+      # "db-test-purge\nESTABLISH_CONNECTION\n[CruiseControl] Invoking Rake task \"db:migrate\"\ndb-migrate\n"
+      expected_output = <<-OUTPUT
+db-test-purge
+ESTABLISH_CONNECTION
+[CruiseControl] Invoking Rake task "db:migrate"
+** Invoke db:migrate (first_time)
+** Execute db:migrate
+db-migrate
+[CruiseControl] Invoking Rake task "default"
+** Invoke default (first_time)
+** Execute default
+      OUTPUT
       assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
     end
-
   end
 
   def test_should_break_build_if_no_migration_scripts_but_database_yml_exists

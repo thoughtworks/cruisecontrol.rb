@@ -1,15 +1,10 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class SubversionIntegrationTest < Test::Unit::TestCase
+class SubversionIntegrationTest < ActiveSupport::TestCase
   include FileSandbox
-  
-  def setup
-    setup_sandbox
-  end
-  
-  def teardown
-    teardown_sandbox
-  end
+
+  setup :setup_sandbox
+  teardown :teardown_sandbox
   
   def test_checkout
     checkout 'passing_project'
