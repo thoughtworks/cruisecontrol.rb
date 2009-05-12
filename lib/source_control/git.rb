@@ -95,7 +95,6 @@ module SourceControl
 
     def load_new_changesets_from_origin
       Timeout.timeout(Configuration.git_load_new_changesets_timeout, Timeout::Error) do
-        sleep 5
         git("fetch", ["origin"])
       end
     rescue Timeout::Error => e
