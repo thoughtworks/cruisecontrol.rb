@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Instructions to make cruise run as daemon (and work correctly on reboot):
-# 1. sudo cp CRUISE_HOME/daemon/cruise.sample /etc/init.d/cruise
+# 1. sudo cp CRUISE_HOME/daemon/cruise /etc/init.d/cruise
 # 2. edit /etc/init.d/cruise to 
 #     * include your correct CRUISE_USER and CRUISE_HOME
 #     * ensure that /usr/bin/ruby is executable, or modify the shebang as appropriate 

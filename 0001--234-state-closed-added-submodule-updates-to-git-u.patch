@@ -1,0 +1,58 @@
+From 891115b0d3cf5bd7026dfc4278b28637694d1bc1 Mon Sep 17 00:00:00 2001
+From: Mike Gaffney <mike.gaffney@asolutions.com>
+Date: Wed, 22 Apr 2009 12:31:13 -0500
+Subject: [PATCH] [#234 state:closed] added submodule updates to git updates, added tests
+
+---
+ lib/source_control/git.rb            |    7 +++++++
+ test/unit/source_control/git_test.rb |    2 ++
+ 2 files changed, 9 insertions(+), 0 deletions(-)
+
+diff --git a/lib/source_control/git.rb b/lib/source_control/git.rb
+index cec6fe2..ab15d04 100644
+--- a/lib/source_control/git.rb
++++ b/lib/source_control/git.rb
+@@ -48,6 +48,7 @@ module SourceControl
+       else
+         git("reset", ["--hard"])
+       end
++      git_update_submodule
+     end
+ 
+     def up_to_date?(reasons = [])
+@@ -103,6 +104,12 @@ module SourceControl
+ 
+       execute_in_local_copy(command, options, &block)
+     end
++    
++    private
++    
++    def git_update_submodule
++      git("submodule", ["update", "--init"])
++    end
+ 
+   end
+ 
+diff --git a/test/unit/source_control/git_test.rb b/test/unit/source_control/git_test.rb
+index fdaaa13..b2ded62 100644
+--- a/test/unit/source_control/git_test.rb
++++ b/test/unit/source_control/git_test.rb
+@@ -19,6 +19,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
+     in_sandbox do
+       git = new_git
+       git.expects(:git).with("reset", ["--hard", '5460c9ea8872745629918986df7238871f4135ae'])
++      git.expects(:git).with("submodule", ["update", "--init"])
+       git.update(Git::Revision.new(:number => '5460c9ea8872745629918986df7238871f4135ae'))
+     end
+   end
+@@ -27,6 +28,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
+     in_sandbox do
+       git = new_git
+       git.expects(:git).with("reset", ["--hard"])
++      git.expects(:git).with("submodule", ["update", "--init"])
+       git.update
+     end
+   end
+-- 
+1.6.2.1.389.geed1
+
