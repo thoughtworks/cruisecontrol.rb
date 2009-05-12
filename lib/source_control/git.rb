@@ -112,7 +112,8 @@ module SourceControl
     private
     
     def git_update_submodule
-      git("submodule", ["update", "--init"])
+      git("submodule", ["init"])
+      git("submodule", ["update"])
     end
 
   end
