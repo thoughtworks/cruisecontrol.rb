@@ -12,7 +12,7 @@ module SourceControl
           case line
           when /^commit /
             revisions << revision = Revision.new
-            revision.number = line.split[1][0..5]
+            revision.number = line.split[1][0..6]
             
           when /^author /
             revision.author, revision.time = read_author_and_time(line)
