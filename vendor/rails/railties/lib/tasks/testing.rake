@@ -38,20 +38,10 @@ module Kernel
   end
 end
 
-desc 'Run all unit, functional and integration tests'
-task :test do
-  errors = %w(test:units test:functionals test:integration).collect do |task|
-    begin
-      Rake::Task[task].invoke
-      nil
-    rescue => e
-      task
-    end
-  end.compact
-  abort "Errors running #{errors.to_sentence(:locale => :en)}!" if errors.any?
-end
+desc 'Run all unit and functional tests'
+task :test => %w(test:units test:functionals)
 
-namespace :test do
+namespace :test do  
   Rake::TestTask.new(:recent => "db:test:prepare") do |t|
     since = TEST_CHANGES_SINCE
     touched = FileList['test/**/*_test.rb'].select { |path| File.mtime(path) > since } +
