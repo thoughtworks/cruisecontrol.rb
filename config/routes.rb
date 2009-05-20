@@ -1,6 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-
-  map.home '', Configuration.default_page
+  map.root :controller => 'projects', :action => 'index'
   
   map.resources :projects
   

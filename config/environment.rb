@@ -45,46 +45,15 @@ Rails::Initializer.run do |config|
     puts "cruise data root = '#{CRUISE_DATA_ROOT}'"
   end
 
-  # module ActiveRecord
-  #   # just so that WhinyNil doesn't complain about const missing
-  #   class Base
-  #     # and just so that ActiveRecordStore can load (even though we dont use it either
-  #     def self.before_save(*args) end 
-  #     # and just so controller generator can do its stuff 
-  #     def self.pluralize_table_names() true; end 
-  #     # and just so that Dispatcher#reset_application works
-  #     def self.reset_subclasses() end
-  #     # and just so that Dispatcher#prepare_application works
-  #     def self.verify_active_connections!() end
-  #     # and just so that Dispatcher#reset_application! works so Webrick (unlike Mongrel) stops bombing out
-  #     def self.clear_reloadable_connections!() end
-  #     # and just so that benchmarking's render() works 
-  #     def self.connected?() false; end
-  #     # and just so that Initializer#load_observers works
-  #     def self.instantiate_observers; end
-  #   end
-  # end
-
-  
   # Skip frameworks you're not going to use (only works if using vendor/rails)
   config.frameworks -= [ :active_record, :active_resource ]
-
-  # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
-  # config.plugins = %W( exception_notification ssl_requirement )
 
   # Add additional load paths for your own custom dirs
   config.load_paths << "#{CRUISE_DATA_ROOT}/builder_plugins"
   config.load_paths << "#{RAILS_ROOT}/lib/builder_plugins"
-
-  # Use the database for sessions instead of the file system
-  # (create the session table with 'rake db:sessions:create')
-  # config.action_controller.session_store = :active_record_store
-
-  # See Rails::Configuration for more options
 end
 
-# Include your application configuration below
-
+require 'config/configuration'
 require 'cruise_control/version'
 require 'smtp_tls'
 require 'date'
@@ -96,7 +65,3 @@ Mime::Type.register "application/cctray", :cctray
 # get rid of cached pages between runs
 FileUtils.rm_rf RAILS_ROOT + "/public/builds"
 FileUtils.rm_rf RAILS_ROOT + "/public/documentation"
-
-# Local configuration, for example, details of the SMTP server for email notification, should be 
-# written in ~/.cruise/site_config.rb. See ~/.cruise/site_config.rb_example for an example of what this file may 
-# look like.
