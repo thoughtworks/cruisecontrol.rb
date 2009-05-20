@@ -43,7 +43,7 @@ EOF
 
     def test_parse_should_work
       expected_revision = Git::Revision.new(
-                              :number => 'e51d66',
+                              :number => 'e51d66a',
                               :author => 'Alexey Verkhovsky <alexey.verkhovsky@gmail.com>',
                               :time => Time.at(1209921867))
       revisions = Git::LogParser.new.parse(SIMPLE_LOG_ENTRY.split("\n"))
@@ -59,7 +59,7 @@ EOF
       assert_equal 2, revisions.size
       
       revision = revisions[1]
-      assert_equal "5c881c", revision.number
+      assert_equal "5c881c8", revision.number
       assert_equal "renamed \"Unit Test\" target to \"UnitTest\" for developer sanity.\nfixed iphone cruise Rakefile",
                    revision.message
       assert_equal ["iphone/Rakefile                            |    2 +-",

@@ -19,6 +19,8 @@ class SourceControl::GitTest < Test::Unit::TestCase
     in_sandbox do
       git = new_git
       git.expects(:git).with("reset", ["--hard", '5460c9ea8872745629918986df7238871f4135ae'])
+      git.expects(:git).with("submodule", ["init"])
+      git.expects(:git).with("submodule", ["update"])
       git.update(Git::Revision.new(:number => '5460c9ea8872745629918986df7238871f4135ae'))
     end
   end
@@ -27,6 +29,8 @@ class SourceControl::GitTest < Test::Unit::TestCase
     in_sandbox do
       git = new_git
       git.expects(:git).with("reset", ["--hard"])
+      git.expects(:git).with("submodule", ["init"])
+      git.expects(:git).with("submodule", ["update"])
       git.update
     end
   end
@@ -77,14 +81,41 @@ class SourceControl::GitTest < Test::Unit::TestCase
   def test_latest_revision_should_call_git_log_and_send_it_to_parser
     in_sandbox do
       git = new_git
+      git.expects(:git).with('fetch', ['origin'])
       git.expects(:git).with("branch").yields(StringIO.new("* master\n"))
       git.expects(:git).with("log", ["-1", '--pretty=raw', "--stat", 'origin/master']).returns('')
-      git.expects(:git).with('fetch', ['origin'])
       stub_parser = Object.new
       stub_parser.stubs(:parse).returns([:foo])
       Git::LogParser.expects(:new).returns(stub_parser)
 
       assert_equal :foo, git.latest_revision
+    end
+  end
+
+  def test_latest_revision_should_timeout
+    in_sandbox do
+      git = new_git
+      class << git
+        def git(*args)
+          sleep 1
+        end
+      end
+      
+      begin
+        old_timeout = Configuration.git_load_new_changesets_timeout
+        Configuration.git_load_new_changesets_timeout = 0.5
+
+        assert_raise(BuilderError) do
+          begin
+            git.latest_revision
+          rescue BuilderError => e
+            assert_equal "Timeout in 'git fetch origin'", e.message
+            raise e
+          end
+        end
+      ensure
+        Configuration.git_load_new_changesets_timeout = old_timeout
+      end
     end
   end
 

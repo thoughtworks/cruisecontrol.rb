@@ -48,6 +48,7 @@ module SourceControl
       else
         git("reset", ["--hard"])
       end
+      git_update_submodule
     end
 
     def up_to_date?(reasons = [])
@@ -93,7 +94,11 @@ module SourceControl
     end
 
     def load_new_changesets_from_origin
-      git("fetch", ["origin"])
+      Timeout.timeout(Configuration.git_load_new_changesets_timeout, Timeout::Error) do
+        git("fetch", ["origin"])
+      end
+    rescue Timeout::Error => e
+      raise BuilderError.new("Timeout in 'git fetch origin'")
     end
 
     def git(operation, arguments = [], options = {}, &block)
@@ -102,6 +107,13 @@ module SourceControl
 #      command << "--non-interactive" unless @interactive
 
       execute_in_local_copy(command, options, &block)
+    end
+    
+    private
+    
+    def git_update_submodule
+      git("submodule", ["init"])
+      git("submodule", ["update"])
     end
 
   end
