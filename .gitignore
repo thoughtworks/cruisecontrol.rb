@@ -8,3 +8,4 @@ public/builds
 *.iws
 *.ipr
 *.iml
+.tmtags
