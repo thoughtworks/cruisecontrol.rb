@@ -2,6 +2,7 @@
 coverage
 __sandbox
 public/stylesheets/site.css
+log/*.log
 tmp/**/*
 cruisecontrol.iws
 public/builds
