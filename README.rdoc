@@ -1,36 +1,22 @@
-== CruiseControl.rb
-
+== {CruiseControl.rb}[http://cruisecontrolrb.thoughtworks.com]
 
 === What's this?
 
-CruiseControl.rb is a continuous integration tool. Its basic purpose in life is to alert members of a software project
-when one of them checks into a source control system something that breaks the build.
+{CruiseControl.rb}[http://cruisecontrolrb.thoughtworks.com] is a continuous integration tool. Its basic purpose in life is to alert members of a software project when one of them checks into a source control system something that breaks the build.
 
 CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ruby.
 
+=== Stuff
+* Documentation: http://cruisecontrolrb.thoughtworks.com/documentation
+* Download the latest release from: http://rubyforge.org/frs/?group_id=2918
+* Source: http://github.com/thoughtworks/cruisecontrol.rb
+* Issue Tracking: https://cruisecontrolrb.lighthouseapp.com
+* Mailing Lists: http://rubyforge.org/mail/?group_id=2918
 
-=== Download the latest release from:
-
-* http://rubyforge.org/frs/?group_id=2918
-
-=== Download or fork the source from:
-
-* http://github.com/thoughtworks/cruisecontrol.rb
-
-=== Project web site
-
-* http://cruisecontrolrb.thoughtworks.com
-
-=== Issue Tracking
-
-* https://cruisecontrolrb.lighthouseapp.com
-
-=== Mailing Lists (User and Dev)
-
-* http://rubyforge.org/mail/?group_id=2918
+=== The quick How-To
+  cruise add <name> -u <url>
 
 === License:
-
 * Apache Software License 2.0
 
 
