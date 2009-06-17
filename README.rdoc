@@ -8,7 +8,7 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ru
 
 === Stuff
 * Documentation: http://cruisecontrolrb.thoughtworks.com/documentation
-* Download the latest release from: http://rubyforge.org/frs/?group_id=2918
+* Download the latest release from http://rubyforge.org/frs/?group_id=2918
 * Source: http://github.com/thoughtworks/cruisecontrol.rb
 * Issue Tracking: https://cruisecontrolrb.lighthouseapp.com
 * Mailing Lists: http://rubyforge.org/mail/?group_id=2918
@@ -19,5 +19,10 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ru
 === License:
 * Apache Software License 2.0
 
+=== TODO:
+* Update docs to reflect support for git etc.
+* Move to Rails 2.3
+* Support running on JRuby
+* Support running on IronRuby
 
 (C) ThoughtWorks Inc. 2007 - 2009
