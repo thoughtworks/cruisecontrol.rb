@@ -102,7 +102,7 @@ CruiseControl.rb Eternal Hall of Fame, aka the CHANGELOG.
 
 1. Check out the latest source from the git repository:<br/>
 
-<pre><code>    git clone git://rubyforge.org/cruisecontrolrb.git</code></pre>
+<pre><code>git clone git://github.com/thoughtworks/cruisecontrol.rb.git</code></pre>
 
 2. Run the build, make sure that it passes: <code>rake</code>
 
