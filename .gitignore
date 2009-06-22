@@ -9,3 +9,4 @@ public/builds
 *.iws
 *.ipr
 *.iml
+.DS_Store
