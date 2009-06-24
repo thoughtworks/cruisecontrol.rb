@@ -102,7 +102,7 @@ CruiseControl.rb Eternal Hall of Fame, aka the CHANGELOG.
 
 1. Check out the latest source from the git repository:<br/>
 
-<pre><code>    git clone git://rubyforge.org/cruisecontrolrb.git</code></pre>
+<pre><code>git clone git://github.com/thoughtworks/cruisecontrol.rb.git</code></pre>
 
 2. Run the build, make sure that it passes: <code>rake</code>
 
@@ -126,8 +126,7 @@ p(hint). Besides, your tests should not leave any by-products in the file system
 9. Keep in touch by monitoring the issue. Think about joining the
    <%= link_to_developers_mailing_list 'cruisecontrolrb-developers mailing list'%>.
 
-Also, when we're ready to apply the patch, we'll send you an e-mail that looks like "this":contributors_agreement.html 
-which we'll need a reply to for legal reasons.
+Also, when we're ready to apply the patch, we'll send you an e-mail that looks like "this":contributors_agreement which we'll need a reply to for legal reasons.
 
 h2. <a name="documentation">Improve documentation</a>
 
