@@ -19,4 +19,4 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ru
 === License:
 * Apache Software License 2.0
 
-(C) ThoughtWorks Inc. 2007 - 2009
+(C) ThoughtWorks Inc. 2007 - 2009 
