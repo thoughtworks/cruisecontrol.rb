@@ -39,29 +39,30 @@ module SourceControl
       if block_given?
         if options[:execute_in_project_directory]
           Dir.chdir(path) do
-            execute(command, &block)
+            execute(command, options, &block)
           end
         else
-          execute(command, &block)
+          execute(command, options, &block)
         end
       else
         error_log = File.expand_path(self.error_log)
         if options[:execute_in_project_directory]
           raise "path is nil" if path.nil?
           Dir.chdir(path) do
-            execute_with_error_log(command, error_log)
+            execute_with_error_log(command, error_log, options)
           end
         else
-          execute_with_error_log(command, error_log)
+          execute_with_error_log(command, error_log, options)
         end
       end
     end
 
-    def execute_with_error_log(command, error_log)
+    def execute_with_error_log(command, error_log, options = {})
+      options = {:stderr => error_log}.merge(options)
       FileUtils.rm_f(error_log)
       FileUtils.touch(error_log)
       stdout_output = nil
-      execute(command, :stderr => error_log) do |io|
+      execute(command, options) do |io|
         stdout_output = io.readlines
         File.open(error_log, "a") {|f| f << stdout_output}
       end
