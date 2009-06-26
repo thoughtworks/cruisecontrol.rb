@@ -50,7 +50,7 @@ module CruiseControl
     def version
       puts <<-EOL
     CruiseControl.rb, version #{CruiseControl::VERSION::STRING}
-    Copyright (C) 2007 ThoughtWorks
+    Copyright (C) 2009 ThoughtWorks
       EOL
     end
   
