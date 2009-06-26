@@ -1,32 +1,32 @@
 h1. Manual
 
 This is the CruiseControl.rb manual. If you can't find what you're looking for here, make sure to look at the docs
-for "plugins":/documentation/plugins or just "contact us":/documentation/contact_us
+for "plugins":/documentation/plugins or just "contact us":/documentation/contact_us.
 
 h1. Files and folders
 
-If CC.rb is unpacked into <em>[cruise]</em> directory then:
+* <em>[cruise]</em> is how this documentation refers the directory where CC.rb itself has been unpacked or checked out.
 
-* $HOME/.cruise (%USERPROFILE%\.cruise on Windows) is where all the data goes. CC.rb documentation refers to this
-  directory as <em>[cruise&nbsp;data]</em>.
+* CC.rb places all of its project, plugin, and configuration data in $HOME/.cruise (%USERPROFILE%\.cruise on Windows).
+  This documentation refers to this directory as <em>[cruise&nbsp;data]</em>.
 
-* <em>[cruise&nbsp;data]</em>/projects/your_project/ is a directory for the project called "your_project".
+* <em>[cruise&nbsp;data]</em>/projects/your_project/ is the directory where CC.rb will place the data for the project called "your_project".
 
 * <em>[cruise&nbsp;data]</em>/projects/your_project/work/ is a local copy of your_project's source code. Builder keeps it up to date
   with the source control repository and runs builds against it.
 
-* <em>[cruise&nbsp;data]</em>/projects/your_project/build-123/ contains build status file, list of changed files,
+* <em>[cruise&nbsp;data]</em>/projects/your_project/build-123/ contains a build status file, a list of changed files,
   and other "build artifacts" created while building revision 123.
 
-* <em>[cruise&nbsp;data]</em>/projects/your_project/cruise_config.rb is builder configuration for your_project.
+* <em>[cruise&nbsp;data]</em>/projects/your_project/cruise_config.rb contains the build configuration for your_project.
 
-* <em>[cruise&nbsp;data]</em>/config/site_config.rb is the file where you can make centralized changes to the configuration of dashboard
+* <em>[cruise&nbsp;data]</em>/config/site_config.rb is the file where you can make centralized changes to the configuration of the dashboard
   and all builders.
 
 h1. Site configuration
 
-CruiseControl.rb package includes a file called <em>[cruise]</em>/config/site_config.rb.example. By copying it to
-<em>[cruise]</em>/config/site_config.rb, and uncommenting some lines you can change a number of parameters not related to
+The CruiseControl.rb package includes a file called <em>[cruise]</em>/config/site_config.rb.example. By copying it to
+<em>[cruise]</em>/config/site_config.rb and uncommenting some lines you can change a number of parameters not related to
 a specific project. In normal life, your only reason to do it would be configuring SMTP connection, for sending
 email notices. See the section on "Build monitoring via email" below. 
 

@@ -109,4 +109,4 @@ Follow these directions or watch our "5 minute install":/documentation/screencas
   p(def hint). Hint: <code>./cruise help</code> displays a list of commands, <code>./cruise help [command]</code>
     displays options available for each command.
 
-<div class="next_step">Next step: read the "manual":/documentation/manual</div>
+<div class="next_step">Next step: read the "manual":/documentation/manual.</div>
