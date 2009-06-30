@@ -20,6 +20,7 @@ TRUNK
 - Improve daemon_helper to kill all child processes (don't leave any orphans)
 - [bugfix] Timeout if 'git fetch origin' hangs.  Configurable via git_load_new_changesets_timeout.
            Fixes https://cruisecontrolrb.lighthouseapp.com/projects/9150-cruise-control-rb/tickets/229-sometimes-git-hangs
+- [bugfix] Extensive improvements to the technical accuracy, hopefully, readability of the documentation.
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.3.0
