@@ -14,7 +14,10 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ru
 * Mailing Lists: http://rubyforge.org/mail/?group_id=2918
 
 === The quick how-to
-  cruise add [project-name] -r [repository] -s [svn|git|hg|bzr]
+  $ ./cruise add [project-name] -r [repository] -s [svn|git|hg|bzr]
+  $ ./cruise start
+
+This should start cruise on port 3333.
 
 === License:
 * Apache Software License 2.0
