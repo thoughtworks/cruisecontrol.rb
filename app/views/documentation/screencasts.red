@@ -1,10 +1,9 @@
 h1. Screencasts
 
-<div class="screencast_image">
-  !/images/documentation/5_minute_install.png!:http://cruisecontrolrb.com/5_minute_install.mov
-</div>
+h3. "5 Minute Install"
 
-h3. "5 Minute Install":http://cruisecontrolrb.com/5_minute_install.mov
-
-This is a 5 minute video that takes you through the steps of getting cruise control up and running with a rails project.
+This is a 5 minute video that takes you through the steps of getting CruiseControl.rb up and running with a Ruby on Rails project.
+<p>
+<object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/lW4eSQa9M6A&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/lW4eSQa9M6A&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
+</p>
 

@@ -40,7 +40,7 @@ Ruby projects), while providing enough opportunity for extending and hacking the
 sweet simplicity of the core codebase.
 
 Ruby, of course, is an interpreted language with open classes that lets you do anything you want.
-Remember: with great powers come great dangers. The next version of CruiseControl.rb may
+Remember: with great power comes great responsibility. The next version of CruiseControl.rb may
 simply be incompatible with your black belt hackery. Be wise and constrain yourself to interface points
 designed for pluggability.
 
@@ -48,7 +48,7 @@ CruiseControl.rb has a few of these.
 
 h3. Dashboard plugins
 
-Dashboard is a regular Rails application, that can be extended through the regular
+Dashboard is a regular Rails (1.x) application that can be extended through regular
 Rails
 "plugins":http://www.agilewebdevelopment.com/plugins/index
 "infrastructure.":http://www.tutorialized.com/tutorial/HOWTO-Make-a-Rails-Plugin-From-Scratch/19055
@@ -59,7 +59,7 @@ h3. Builder plugins
 While checking source control for new revisions, building, or handling errors, a builder generates events. Anyone can
 write a listener for those events.
 
-<p>To know the types of events a builder sends to its listeners, look at implementation and usages of
+<p>To understand the types of events a builder sends to its listeners, look at implementation and usages of
 <code>Project#notify()</code>
 method.</p>
 
@@ -102,15 +102,16 @@ CruiseControl.rb Eternal Hall of Fame, aka the CHANGELOG.
 
 1. Check out the latest source from the git repository:<br/>
 
-<pre><code>    git clone git://rubyforge.org/cruisecontrolrb.git</code></pre>
+<pre><code>git clone git://github.com/thoughtworks/cruisecontrol.rb.git</code></pre>
 
 2. Run the build, make sure that it passes: <code>rake</code>
 
-3. Make changes to the source. Don't forget the unit tests.
+3. Make changes to the source. Don't forget the unit tests. In fact, write them first. Changes with tests are strongly
+preferred to changes without them.
 
-4. Run the build again, make sure that it still passes.
+4. Run the build again, and make sure that it still passes.
 
-p(hint). Besides, your tests should not leave any by-products in the file system. If you need to create a file in your
+p(hint). Your tests should not leave any by-products in the file system. If you need to create a file in your
          test, use <code>in_sandbox()</code> or <code>with_sandbox_project()</code> test helpers.
 
 5. Commit changes into your local git repository.
@@ -126,12 +127,11 @@ p(hint). Besides, your tests should not leave any by-products in the file system
 9. Keep in touch by monitoring the issue. Think about joining the
    <%= link_to_developers_mailing_list 'cruisecontrolrb-developers mailing list'%>.
 
-Also, when we're ready to apply the patch, we'll send you an e-mail that looks like "this":contributors_agreement.html 
-which we'll need a reply to for legal reasons.
+Also, when we're ready to apply the patch, we'll send you an e-mail that looks like "this":contributors_agreement which we'll need a reply to for legal reasons.
 
 h2. <a name="documentation">Improve documentation</a>
 
-Believe it or not, but we value contributions to end user documentation as much as (if not more than) we value patches.
+Believe it or not, we value contributions to end user documentation as much as (if not more than) we value patches.
 
 Documentation for CruiseControl.rb is included in the release package, as files under
 the <em>[cruise]</em>/app/views/documentation directory. When you connect to CruiseControl.rb dashboard running on your computer
@@ -150,9 +150,10 @@ Any change that you make to a documentation file can be seen in the
 browser as soon as you hit the Refresh button.
 
 
-h2. Copyright considerarions
+h2. Copyright considerations
 
-CruiseControl.rb is developed by "ThoughtWorks":http://www.thoughtworks.com.
+CruiseControl.rb was originally developed by "ThoughtWorks":http://www.thoughtworks.com, though it is
+now maintained by a team of developers from the wider community that includes many ThoughtWorkers.
 ThoughtWorks is an IT consultancy, and we built this tool primarily because our own project
 teams need it (these days, we do a lot of Ruby work).
 

@@ -50,7 +50,7 @@ module CruiseControl
     def version
       puts <<-EOL
     CruiseControl.rb, version #{CruiseControl::VERSION::STRING}
-    Copyright (C) 2007 ThoughtWorks
+    Copyright (C) 2009 ThoughtWorks
       EOL
     end
   
@@ -72,7 +72,7 @@ module CruiseControl
       build      - starts the builder for an individual project
 
     CruiseControl.rb is a Continous Integration Server.
-    For additional information, see http://cruisecontrolrb.rubyforge.org/
+    For additional information, see http://cruisecontrolrb.thoughtworks.com/
         EOL
       elsif method_for_command(command)
         self.send(method_for_command(command))

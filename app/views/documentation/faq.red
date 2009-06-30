@@ -11,21 +11,21 @@ By default we use rake and look for the first of
 
 see "rake tasks":/documentation/rake_tasks and the "manual":/documentation/manual for more information.
 
-h2. Can I use CC.rb to build a java or c# project?
+h2. Can I use CC.rb to build a Java or C# project?
 
 The answer is a qualified yes.  You should be able to have any command line tool build your project including ant or 
 nant or even msbuild.  See the "manual":/documentation/manual for more information.
 
 h2. Can I use CC.rb to build a project with Selenium tests in it?
 
-Yes, you can, although there are some stuff you should pay attention to. See "Working with Selenium":/documentation/selenium 
+Yes, you can, although there's some stuff you should pay attention to. See "Working with Selenium":/documentation/selenium 
 for detail.
 
 h2. What source control systems do you support?
 
-We currently only support "Subversion":http://subversion.tigris.org/.  We are planning on adding support for
-some other version control systems in near future.  It depends on what people ask for (and what they
-"contribute":/documentation/contributing)
+We currently support "Subversion":http://subversion.tigris.org/, "Git":http://git-scm.com/, "Mercurial":http://mercurial.selenic.com/wiki/, 
+and "Bazaar":http://bazaar-vcs.org/, thanks to generous contributions from the community. 
+"Learn more about contributing.":/documentation/contributing)
 
 h2. Why does CC.rb report my build as passing even though it failed?
 

@@ -1,5 +1,30 @@
-#tw-image-link {
-  display:block;
+h2 a, h2 a:hover {
+  clear: both;
+  font-size: 110%;
+  color: #f28218;
+  font-weight: bold;
+  background: url("../images/hdbg.gif") top left repeat;
+  padding: 4px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  color: #f28218 !important;
+}
+
+pre {
+  margin: 1em;
+}
+
+code {
+  font-family: courier, monospace;
+  font-style: normal;
+  font-size: 0.8em;
+  color: #202430;
+}
+
+#tw_image_link {
+  display: block;
 }
 
 #main_image {
@@ -29,6 +54,7 @@
   margin: 0 auto;
   
 }
+
 .letter {
   font-family: georgia, times, serif;
   font-style: italic;
@@ -36,7 +62,8 @@
   background: #fff;
   border: 1px solid #333;
 }
-.letter p{
+
+.letter p {
   margin-bottom: 0;
   padding-bottom: 0;
 }
@@ -64,17 +91,6 @@ div.next_step {
   font-style: italic;
 }
 
-pre {
-  margin: 1em;
-}
-
-code {
-  font-family: courier, monospace;
-  font-style: normal;
-  font-size: 1em;
-  color: #202430;
-}
-
 .hint code {
   font-style: normal;
   padding:0 0.3em;
@@ -94,24 +110,21 @@ code {
   padding: 3px;
 }
 
-div.box ul{
+div.box ul { 
   padding-left: 0;
-  }
+}
   
-div.box li{
+div.box li {
   list-style: none;
-  }
+}
   
-.instruction{
-	}
-
 .large_number {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 5em;
-	font-weight: bold;
-	display: block;
-	margin: -15px 0.1em 0 0;
-	vertical-align: text-top;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 5em;
+  font-weight: bold;
+  display: block;
+  margin: -15px 0.1em 0 0;
+  vertical-align: text-top;
   float: left;
 }
 
@@ -133,40 +146,36 @@ td.instruction_detail, td.instruction_detail_final {
   margin-left: 3.5em;
 }
 
-td.instruction_detail{
-	border-right: 5px solid white;
-	border-left: 5px solid white;
+td.instruction_detail {
+  border-right: 5px solid white;
+  border-left: 5px solid white;
 }
 
-td.instruction_detail_final{
-	border-right: 5px solid white;
-	border-left: 5px solid white;
+td.instruction_detail_final {
+  border-right: 5px solid white;
+  border-left: 5px solid white;
 }
 
-.install_step_title{
-	font-weight: bold;
+.install_step_title {
+  font-weight: bold;
 }
 
-ul.instruction{
-	list-style: none;
-	margin: 0;
-	padding: 0;
+ul.instruction {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-ul li.instruction{
-	float: left;
-	margin: 0;
-	padding: 0;
+ul li.instruction {
+  float: left;
+  margin: 0;
+  padding: 0;
 }
-h2 a, h2 a:hover {
-	clear: both;
-	font-size: 110%;
-	color: #f28218;
-	font-weight: bold;
-	background: url("../images/hdbg.gif") top left repeat;
-	padding: 4px;
-	margin-bottom: 10px;
+
+h1 a {
+  color: white;
 }
-h2{
-	color: #f28218 !important;
+
+h1 a:hover {
+  color: white;
 }

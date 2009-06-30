@@ -1,5 +1,4 @@
 class DocumentationController < ApplicationController
-  layout nil
   caches_page :get
 
   # TODO Fix this. Fix it hard.

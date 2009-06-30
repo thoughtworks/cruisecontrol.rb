@@ -23,50 +23,50 @@ ThoughtWorks<br/>
 
 h1. Basics
 
-CruiseControl.rb has two parts: a builder and a dashboard.
+CruiseControl.rb consists of two pieces: a builder and a dashboard.
 
-*Builder* is a daemon process that polls source control every once in a while for new revisions.
+A *builder* is a daemon process that polls your source control repository every once in a while looking for new revisions.
 
-When someone performs a check in, the builder:
+When someone performs a check in, the builder will:
 
-# detects it
-# updates its own copy of the project
-# runs the build
-# notifies interested parties about the build's outcome
+# detect it
+# update its own copy of the project
+# run the build
+# notify interested parties of the build's outcome
 
-*Dashboard* is a web application that helps to monitor the status of project builds and troubleshoot failures.
+The *dashboard* is a web application allows you to monitor the status of project builds and help you troubleshoot failures.
 
 Each installation of CruiseControl.rb may have multiple projects and multiple builders (one per project). There may
 also be multiple installations of CruiseControl.rb per computer.
 
-
 h1. Prerequisites
 
-* "Ruby":http://www.ruby-lang.org/en/ 1.8.4 or 1.8.5 (Note: at the time of this writing there is a known problem with Ruby 1.8.6 that should be fixed in the next release of Ruby 1.8)
-* "Subversion":http://subversion.tigris.org/ client 1.4 or later
-* svn and ruby executables must both be in the PATH.
-
+* "Ruby":http://www.ruby-lang.org/en/ 1.8.6. (Note: at the time of this writing CruiseControl.rb does not work with Ruby 1.8.7 or 1.9).
+* A supported SCM tool, such as:
+** "Subversion":http://subversion.tigris.org/ client 1.4 or later
+** "Git":http://git-scm.com/
+** "Mercurial":http://mercurial.selenic.com/wiki/
+** "Bazaar":http://bazaar-vcs.org/
+* The Ruby executable and the associated executable for which SCM you are using must both be in your PATH.
 
 h1. Assumptions and limitations
 
-* CruiseControl.rb currently only works with Subversion. We will be adding Mercurial and Git support in a near future.
 * Dashboard and all builders need to run on the same computer.
-
 
 h1. Installation
 
 Follow these directions or watch our "5 minute install":/documentation/screencasts screencast.
 
+1. "Download":http://github... and unpack CruiseControl.rb.
 
-1. "Download":http://rubyforge.org/frs/?group_id=2918 and unpack CruiseControl.rb
+  p(def). Below, we will refer to the place where you unpack it as <em>[cruise]</em>.
 
-  p(def). Below, we will refer to the place where you unpack it as <em>[cruise]</em>
+2. From <em>[cruise]</em>, run <code>./cruise add your_project --source-control [git|hg|svn] --repository [location of your source control repository]</code>.
 
-2. From <em>[cruise]</em>, run <code>./cruise add your_project --url [URL of your_project Subversion trunk]</code>.
-
-  <p class="def hint">Optionally, you can specify username and password by adding <code> --username [your_user] --password 
-    [your_password]</code> to the command</p>
-
+  p(def hint). Hint: Optionally, you can specify username and password by adding <code> --username [your_user] --password 
+    [your_password]</code> to the command.
+  p(def hint). Hint: You can also tell CCRB to build a particular branch by using <code> --branch [branch name]</code> 
+    (Git and Mercural only).
 
   p(def). This creates a <code>$HOME/.cruise</code> directory (<code>%USERPROFILE%\.cruise</code>
     if you are on Windows), and that is where CruiseControl.rb keeps its data, and then checks out your_project
@@ -74,30 +74,32 @@ Follow these directions or watch our "5 minute install":/documentation/screencas
 
   p(def). Documentation refers to $HOME/.cruise/ as <em>[cruise&nbsp;data]</em>.
 
-  p(def hint). Hint: Rakefile of your_project should be in <em>[cruise&nbsp;data]</em>/projects/your_project/work/ directory, not anywhere under
-    it. A common mistake is to specify in <code>--url</code> option the root of project's SVN repository instead of the trunk.
-    Rakefile then ends up in <em>[cruise&nbsp;data]</em>/projects/your_project/work/trunk/ and CruiseControl.rb does not see it there.
-
+  p(def hint). Hint: A common Subversion mistake is to provide the root of project's repository instead of the trunk.
+    If you do, CruiseControl.rb will check your project out to [cruise data]/projects/your_project/work/trunk/,
+    and so will not be able to locate your project's build script or Rakefile.
 
 3. From <em>[cruise]</em>, run <code>./cruise start</code>.
 
-  p(def hint). Hint: This starts CruiseControl.rb dashboard and builder(s). By default, the dashboard is bound to port 3333, 
-    if you want to run your server on a different port, just type <code>./cruise start -p [port]</code>
+  p(def hint). Hint: This starts both the dashboard and any builder(s). By default, the dashboard is bound to port 3333;
+    if you want to run your server on a different port, just type <code>./cruise start -p [port]</code>.
 
 4. Browse to "http://localhost:3333":http://localhost:3333. 
 
-  p(def). All going well, weather permitting, you will see a page with CruiseControl.rb logo. This is the dashboard, and it 
-    should display your project.  If it's passing, you're done - though you should double check that it's doing what it should be 
-    by clicking on the project name and looking at the build log for the last build.  If it's failing or otherwise misbehaving, go 
-    on to step 5.
+  p(def). At this point you should see a page with the CruiseControl.rb logo and one project--the one you've just configured. 
+    This is the dashboard, and it displays all your currently-configured projects and their build status.  If your build is green, 
+    you're done, although you should double check that it's doing what it should be by clicking on the project name and looking 
+    at the build log for the last build.  If it's failing or otherwise misbehaving, go on to step 5.
    
-5. Go to <em>[cruise&nbsp;data]</em>/projects/your_project/work/ and make the build pass.
+5. Figure out what's making your build fail and fix it. Most often this involves running <code>rake test</code> in your project and examining
+  the output.
 
-  p(def). For a regular Rails app, this involves creating a test database, editing database.yml to connect to that 
-    database, performing <code>rake RAILS_ENV=test db:migrate</code>, running <code>rake test</code> and making 
-    sure that it passes.
+  p(def hint). Hint: Often, the easiest way to diagnose build failures is navigate to 
+    <em>[cruise&nbsp;data]</em>/projects/<em>your_project</em>/work/ and run the same command that CruiseControl.rb is 
+    running. You'll be able to monitor the logs for your app in real time rather than relying on the archived build
+    logs available by default.
 
-6. Press the "build now" button on the "Dashboard":http://localhost:3333 to rebuild your project
+6. Press the "build now" button on the "Dashboard":http://localhost:3333 to rebuild your project. Or, just commit more code and wait for
+  CruiseControl.rb to rebuild it automatically!
 
   p(def). This should build your_project and place build outputs into <em>[cruise&nbsp;data]</em>/projects/your_project/build-[revision-number]/
 
@@ -107,5 +109,4 @@ Follow these directions or watch our "5 minute install":/documentation/screencas
   p(def hint). Hint: <code>./cruise help</code> displays a list of commands, <code>./cruise help [command]</code>
     displays options available for each command.
 
-
-<div class="next_step">Next step: read the "manual":/documentation/manual</div>
+<div class="next_step">Next step: read the "manual":/documentation/manual.</div>

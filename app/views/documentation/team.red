@@ -6,15 +6,13 @@ This page is a small recognition of their efforts.
 We appreciate you!
 
 <br/>
-h1. Version 1.1 Team :
+h1. Version 1.4 Team:
 
-* *Rolf Russel* (iteration manager, has been spotted writing code on more than one occasion)
-* *Alexey Verkhovsky*  (lead) [averkhov at thoughtworks.com]  
-* "*Jeremy Stell-Smith*":http://onemanswalk.com/ (lead) [jeremystellsmith at gmail.com] yahoo:stellsmi
-
-* *Jeff Xiong* [gigix1980 at gmail.com]
-* *Josh Evnin*
-* *Zhang Lin*
+* *Alexey Verkhovsky* [averkhov at thoughtworks.com]  
+* "*Jeremy Stell-Smith*":http://onemanswalk.com/ [jeremystellsmith at gmail.com] yahoo:stellsmi
+* *Chad Woolley* [thewoolleyman at gmail.com]
+* "*Sidu Ponnappa*":http://blog.sidu.in [darkseid at thoughtworks.com]
+* "*Brian Guthrie*":http://blog.brianguthrie.com [bguthrie at thoughtworks.com]
 
 h1. Contributors:
 
@@ -26,3 +24,9 @@ h1. Contributors:
 * *Peter Zhao* (past contributor)
 * *Ricky Lui* (past contributor)
 * *Stephen Chu* (past contributor)
+* *Brian Takita* (improved RSpec support)
+* *Marcel Molina* (improved RSpec support)
+* *Jeff Xiong* [gigix1980 at gmail.com] (past contributor)
+* *Josh Evnin* (past contributor)
+* *Zhang Lin* (past contributor)
+* *Rolf Russel* (past iteration manager, has been spotted writing code on more than one occasion)
