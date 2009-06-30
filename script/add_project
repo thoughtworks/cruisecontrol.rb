@@ -15,7 +15,7 @@ if ARGV.first and ARGV.first !~ /^-/
 end
 
 ARGV.options do |opts|
-  opts.banner = "usage: cruise add <project-name> --url <source control URL> [source control options]"
+  opts.banner = "usage: add [project-name] -r [repository] -s [svn|git|hg|bzr]"
 
   opts.separator ""
 
