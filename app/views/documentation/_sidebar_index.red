@@ -20,6 +20,7 @@ h2. Quick links
 * "Request a Feature":http://jira.public.thoughtworks.org/browse/CCRB
 * <%= link_to_users_mailing_list 'Users mailing list' %>
 * "How to contribute":/documentation/contributing
+* "Source":http://github.com/thoughtworks/cruisecontrol.rb
 
 </div>
 <div class="box">
