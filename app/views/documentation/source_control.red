@@ -1,57 +1,62 @@
 h1. Source Control
 
-Cruise Control currently ships with only Subversion support. Mercurial and Git support is planned for the next release.
+CruiseControl.rb currently ships with support for <a href="#subversion">Subversion</a>, 
+<a href="#git">Git</a>, <a href="#mercurial">Mercurial</a> and <a href="bazaar">Bazaar</a>. By default 
+you should not need to configure any settings for your SCM of choice, though you may choose to if you wish.
 
-h1. Configuring Subversion
+h1. <a name="subversion">Configuring Subversion</a>
 
-If you want to configure Subversion, you can do it in your cruise_config.rb file.  
-
-<pre><code>Project.configure do |project|
-  project.source_control = Subversion.new
-end</code></pre>
-
-Since Subversion is the default, you shouldn't have to specify this.  However, you might want to in order to change the default settings.
-
-By default cruise checks externals for changes.  If you don't want it to, you can turn it off like this:
+Subversion may be explicitly configured in your cruise_config.rb file as follows:
 
 <pre><code>Project.configure do |project|
-  project.source_control = Subversion.new :check_externals => false
+  project.source_control = SourceControl::Subversion.new :option => value...
 end</code></pre>
 
-h1. Adding other source controls
+Subversion accepts the following configuration options:
 
-p(hint). We have NOT actually tested this.  However, we've thought a lot about it, hopefully enough to give you a good place to start.
+* <code>:repository</code>, <code>:username</code>, <code>:password</code> as in standard Subversion
+* <code>:interactive</code> sets interactive mode; false by default
+* <code>:check_externals</code> tells CC.rb to trigger a build if externals change; true by default
+* <code>:path</code> is the location of an empty directory to check your project out into
 
-To use another source control system, you will need to implement the "source_control" interface Subversion does, it will be something like (check the subversion.rb for the uptodate interface) :
+h1. <a name="git">Configuring Git</a>
 
-<pre><code>
-  checkout(target_directory, revision = nil)  # you don't need checkout
-  latest_revision(project)
-  revisions_since(project, revision_number)
-  update(project, revision = nil)
-</code></pre>
+Git may be explicitly configured in your cruise_config.rb file as follows:
 
-you should be able to create a project directory in
+<pre><code>Project.configure do |project|
+  project.source_control = SourceControl::Git.new :option => value...
+end</code></pre>
 
-<pre><code>
-  CRUISE/projects/PROJECT_NAME
-</code></pre>
+Git accepts the following configuration options:
 
-and in that project directory, create a cruise_config.rb file that has something like this in it :
+* <code>:repository</code> as in standard Git
+* <code>:watch_for_changes_in</code> to tell CC.rb to only monitor for changes in this subdirectory
+* <code>:branch</code> to build a particular branch of your Git repository
+* <code>:path</code> is the location of an empty directory to check your project out into
 
-<pre><code>
-Project.configure do |project|
-  project.source_control =
-      Perforce.new(:user => 'cruise', :password => 'something cute')
-end
-</code></pre>
+h1. <a name="mercurial">Configuring Mercurial</a>
 
-where you replace "Perforce" with your source control class.  for now, you'll also have to manually checkout your project to
+Mercurial may be explicitly configured in your cruise_config.rb file as follows:
 
-<pre><code>
-  CRUISE/projects/PROJECT_NAME/work
-</code></pre>
+<pre><code>Project.configure do |project|
+  project.source_control = SourceControl::Mercurial.new :option => value...
+end</code></pre>
 
-However, once we support a couple different source controls, we should add a flag to "./cruise add ..." that will let you specify which to use as well as options for it.
+Mercurial accepts the following configuration options:
 
-Anyway, that should do it.  Try it and let us know how it goes!
+* <code>:repository</code> as in standard Mercurial
+* <code>:branch</code> to build a particular branch of your Mercurial repository
+* <code>:path</code> is the location of an empty directory to check your project out into
+
+h1. <a name="bazaar">Configuring Bazaar</a>
+
+Bazaar may be explicitly configured in your cruise_config.rb file as follows:
+
+<pre><code>Project.configure do |project|
+  project.source_control = SourceControl::Bazaar.new :option => value...
+end</code></pre>
+
+Bazaar accepts the following configuration options:
+
+* <code>:repository</code> as in standard Mercurial
+* <code>:path</code> is the location of an empty directory to check your project out into

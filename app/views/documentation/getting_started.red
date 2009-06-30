@@ -44,9 +44,9 @@ h1. Prerequisites
 * "Ruby":http://www.ruby-lang.org/en/ 1.8.6. (Note: at the time of this writing CruiseControl.rb does not work with Ruby 1.8.7 or 1.9).
 * A supported SCM tool, such as:
 ** "Subversion":http://subversion.tigris.org/ client 1.4 or later
-** "Git" client 1.6 or later
-** "Mercurial" client XXX or later
-** "Bazaar" client XXX or later
+** "Git":http://git-scm.com/
+** "Mercurial":http://mercurial.selenic.com/wiki/
+** "Bazaar":http://bazaar-vcs.org/
 * The Ruby executable and the associated executable for which SCM you are using must both be in your PATH.
 
 h1. Assumptions and limitations

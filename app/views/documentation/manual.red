@@ -19,8 +19,7 @@ h1. Table of Contents
 * <a href="#performing_a_clean_checkout">Performing a clean checkout</a>
 * <a href="#troubleshooting_and_support">Troubleshooting and support</a>
 
-h1. Files and folders
-<a name="files_and_folders"></a>
+h1. <a name="files_and_folders">Files and folders</a>
 
 * <em>[cruise]</em> is how this documentation refers the directory where CC.rb itself has been unpacked or checked out.
 
@@ -40,8 +39,7 @@ h1. Files and folders
 * <em>[cruise&nbsp;data]</em>/config/site_config.rb is the file where you can make centralized changes to the configuration of the dashboard
   and all builders.
 
-h1. Site configuration
-<a name="site_configuration"></a>
+h1. <a name="site_configuration">Site configuration</a>
 
 p. The CruiseControl.rb package includes a file called <em>[cruise]</em>/config/site_config.rb.example. By copying it to
 <em>[cruise]</em>/config/site_config.rb and uncommenting some lines you can set a number of global configuration settings.
@@ -49,8 +47,7 @@ Normally you would only need to do this to configure an SMTP server for email no
 ActionMailer component and accepts its standard configuration settings.
 
 
-h1. Project builder configuration
-<a name="project_builder_configuration"></a>
+h1. <a name="project_builder_configuration">Project builder configuration</a>
 
 <p>If you don't provide a Cruise configuration for your project, CC.rb will try to make some reasonable guesses about how
 to build your project, particularly if it's a Ruby application. (See <a href="#default_build_tasks">Default build tasks</a> below.)
@@ -94,8 +91,7 @@ end
 
 p(hint). Hint: Use code like above to source-control configuration of multiple CruiseControl.rb projects building the same codebase.
 
-h1. Default build tasks
-<a name="default_build_tasks"></a>
+h1. <a name="default_build_tasks">Default build tasks</a>
 
 <p>By default, CC.rb will assume that you are building a Ruby project, load your Rakefile, and look for the <code>cruise</code>, 
 <code>test</code>, and <code>default</code> (what happens when you just type <code>rake</code> with no arguments) tasks,
@@ -110,8 +106,7 @@ p(hint). WARNING: with Rails projects, it is important that RAILS_ENV does not d
          it to 'test' before invoking the defaults.
 
 
-h1. Changing the build command or Rake task
-<a name="changing_the_build_command"></a>
+h1. <a name="changing_the_build_command">Changing the build command or Rake task</a>
 
 <code>cruise</code> may be the task for a quick build, but you may also want to run a long build with all acceptance
 tests included. This can be done by assigning the <code>project.rake_task</code> attribute in cruise_config.rb:
@@ -158,8 +153,7 @@ build passed or failed.
 p(hint). Hint: You cannot set both the <code>rake_task</code> and <code>build_command</code> attributes in a a given project configuration.
 
 
-h1. What should I do with custom build artifacts?
-<a name="handling_custom_build_artifacts"></a>
+h1. <a name="handling_custom_build_artifacts">What should I do with custom build artifacts?</a>
 
 Some build tasks generate custom output, like test coverage statistics, that you may want to keep and see on the build page.
 CruiseControl.rb supports the integration of that output by setting the <strong>CC_BUILD_ARTFACTS</strong> environment variable
@@ -176,8 +170,7 @@ p(hint). Hint: The "metric_fu":http://github.com/jscruggs/metric_fu/tree/master 
          helpful Ruby code metrics into a single, easy-to-configure plugin and integrates well with CC.rb.
 
 
-h1. Build scheduling
-<a name="build_scheduling"></a>
+h1. <a name="build_scheduling">Build scheduling</a>
 
 By default, the builder polls Subversion every 10 seconds for new revisions. This can be changed by adding the
 following line to cruise_config.rb:
@@ -207,15 +200,13 @@ build is requested by user (by pressing the Build Now button), so a custom sched
 Look at <em>[cruise]</em>/app/models/polling_scheduler.rb to understand how a scheduler interacts with a project.
 
 
-h1. Deleting a project
-<a name="deleting_a_project"></a>
+h1. <a name="deleting_a_project">Deleting a project</a>
 
 To remove your_project from CruiseControl.rb, kill its builder process and then delete the <em>[cruise&nbsp;data]</em>/projects/your_project/
 directory.
 
 
-h1. Build chaining & triggers
-<a name="build_chaining_and_triggers"></a>
+h1. <a name="build_chaining_and_triggers">Build chaining & triggers</a>
 
 CC.rb uses triggers to tell it when to build a project.  Every project is configured, by default, with a ChangeInSourceControl trigger: it builds
 when (surprise) it detects a change in a project's source control.
@@ -242,8 +233,7 @@ These examples, *added* a SuccessfulBuildTrigger.  We could also *replace* the d
 
 Why wouldn't we want our project to be triggered by a change to it's source code?  In this case, maybe we've separated our project into a fast and slow build.  We could use this to only trigger a slow build if the fast one passes.
 
-h1. Environment variables
-<a name="environment_variables"></a>
+h1. <a name="environment_variables">Environment variables</a>
 
 CC.rb sets some environment variables when it runs your build, and you can use them inside your build process to tweak it or its output. Currently
 there are just three:
@@ -251,8 +241,7 @@ there are just three:
 * CC_BUILD_LABEL - usually this is the same as CC_BUILD_REVISION, but if there is more than one build of a particular revision, it will have a ".n" after it, so it might look like "323", "323.2", "4236.20", etc.
 * CC_BUILD_ARTIFACTS - this is the directory which the dashboard looks in.  Any files you copy into here will be available from the dashboard.
 
-h1. Remote builds
-<a name="remote_builds"></a>
+h1. <a name="remote_builds">Remote builds</a>
 
 CC.rb can run builds on remote servers.  This is done by sshing to the server in your build command.  For example:
 
@@ -274,8 +263,7 @@ Note that CC.rb will still maintain a checkout of the code on the local server, 
 More robust support for builders on remote servers is expected in release 2.0.
 
 
-h1. Performing a clean checkout for each build
-<a name="performing_a_clean_checkout"></a>
+h1. <a name="performing_a_clean_checkout">Performing a clean checkout for each build</a>
 
 CC.rb supports clean checkouts, though they are not the default behavior.  To enable them, you must use the <code>do_clean_checkout</code>
 flag together with an optional frequency. Acceptable values are <code>:always</code>, <code>:never</code>, and <code>:every => [duration]</code>.
@@ -284,8 +272,7 @@ flag together with an optional frequency. Acceptable values are <code>:always</c
   project.do_clean_checkout :every => 6.hours
 </code></pre>
 
-h1. Troubleshooting and support
-<a name="troubleshooting_and_support"></a>
+h1. <a name="troubleshooting_and_support">Troubleshooting and support</a>
 
 If you have an issue that you cannot fix on your own, please consider subscribing to our mailing list at cruisecontrolrb-users@rubyforge.org 
 and asking for help. Please note, though, that we take great pains to make CC.rb easy to hack, and we encourage you to poke around in the

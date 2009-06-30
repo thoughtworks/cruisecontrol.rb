@@ -1,15 +1,16 @@
 h2. What is a plugin?
 
-CruiseControl.rb uses plugins to extend it's core.  Click on one of the above plugins to see the docs about that plugin.
+CruiseControl.rb uses a plugin mechanism to extend itself and to allow others to extend it.  
+Click on one of the above plugins to see the docs about that plugin.
 
 h2. Installing / uninstalling a plugin
 
-All installed plugins are found in the <em>[cruise]</em>/builder_plugins/installed/ directory.
-To install a plugin, all you need to do is move it into this directory and restart the cruise.  To uninstall, simply
-delete it.
+All installed plugins are found in the <em>[cruise&nbsp;data]</em>/builder_plugins/ directory.
+To install a plugin, all you need to do is move it into this directory and restart CC.rb.  To uninstall, 
+simply delete it.
 
-For your convenience, additional plugins are distributed in <em>[cruise]</em>/builder_plugins/available, you should see them
-in the list at the top of this page.
+For your convenience, additional plugins are distributed in <em>[cruise]</em>/lib/builder_plugins. You should see them
+appear in the list at the top of this page.
 
 h2. Writing a plugin
 
@@ -50,7 +51,7 @@ name will then be called when the events are fired.
 
 If you need a more complicated plugin, they can also be in the form of a directory, see the Jabber plugin as an example.
 
-h2. After you write your uber cool plugin
+h2. After you write your plugin
 
 "Send":contributing it to us if you think it might be useful to someone else.
 To document it, simply put Textile comments on the top of the file or in the README if it's a directory.
