@@ -11,7 +11,7 @@ h1. Version 1.4 Team:
 * *Alexey Verkhovsky* [averkhov at thoughtworks.com]  
 * "*Jeremy Stell-Smith*":http://onemanswalk.com/ [jeremystellsmith at gmail.com] yahoo:stellsmi
 * *Chad Woolley* [thewoolleyman at gmail.com]
-* *Sidu Ponnappa* [schonira at thoughtworks.com]
+* "*Sidu Ponnappa*":http://blog.sidu.in [darkseid at thoughtworks.com]
 * "*Brian Guthrie*":http://blog.brianguthrie.com [bguthrie at thoughtworks.com]
 
 h1. Contributors:
