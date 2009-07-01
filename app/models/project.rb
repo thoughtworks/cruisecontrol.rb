@@ -298,9 +298,8 @@ class Project
       log_changeset(build.artifacts_directory, reasons)
       update_project_to_revision(build, revision)
 
-      if config_tracker.config_modified?
+      if config_modified?
         build.abort
-        notify(:configuration_modified)
         throw :reload_project
       end
     
@@ -324,10 +323,14 @@ class Project
   end
 
   def notify(event, *event_parameters)
+    unless BuilderPlugin.known_event? event
+      raise "You attempted to notify the project of the #{event} event, but the plugin architecture does not understand this event. Add a method to BuilderPlugin, and document it."
+    end
+    
     errors = []
     results = @plugins.collect do |plugin| 
       begin
-        plugin.send(event, *event_parameters) if plugin.respond_to?(event)
+        plugin.send(event, *event_parameters) if plugin.respond_to? event
       rescue => plugin_error
         CruiseControl::Log.error(plugin_error)
         if (event_parameters.first and event_parameters.first.respond_to? :artifacts_directory)

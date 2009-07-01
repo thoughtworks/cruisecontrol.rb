@@ -227,6 +227,7 @@ class ProjectTest < Test::Unit::TestCase
       listener = Object.new
       listener.expects(:sleeping).raises(StandardError.new("Listener failed"))
       listener.expects(:doing_something).with(:foo).raises(StandardError.new("Listener failed with :foo"))
+      BuilderPlugin.stubs(:known_event?).returns true
 
       @project.add_plugin listener
 
@@ -313,8 +314,8 @@ class ProjectTest < Test::Unit::TestCase
   end
 
   def test_notify_should_handle_plugin_error
+    BuilderPlugin.expects(:known_event?).with(:hey_you).returns true
     plugin = Object.new
-    
     @project.plugins << plugin
     
     plugin.expects(:hey_you).raises("Plugin talking")
@@ -323,6 +324,7 @@ class ProjectTest < Test::Unit::TestCase
   end
 
   def test_notify_should_handle_multiple_plugin_errors
+    BuilderPlugin.stubs(:known_event?).with(:hey_you).returns true
     plugin1 = Object.new
     plugin2 = Object.new
     
@@ -644,6 +646,13 @@ class ProjectTest < Test::Unit::TestCase
     assert_raises RuntimeError do
       @project.add_plugin BuildReaper.new(@project)
       @project.add_plugin BuildReaper.new(@project)
+    end
+  end
+  
+  def test_notifying_project_of_an_unknown_event_raises_exception
+    BuilderPlugin.expects(:known_event?).returns false
+    assert_raises RuntimeError do
+      @project.notify :some_random_event
     end
   end
   
