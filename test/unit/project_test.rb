@@ -634,6 +634,19 @@ class ProjectTest < Test::Unit::TestCase
     assert_equal(File.expand_path("foo/work"), @svn.path)
   end
   
+  def test_plugins_should_be_accessible_by_their_name
+    plugin = BuildReaper.new(@project)
+    @project.add_plugin plugin
+    assert_equal plugin, @project.build_reaper
+  end
+  
+  def test_adding_a_plugin_should_raise_exception_if_already_configured
+    assert_raises RuntimeError do
+      @project.add_plugin BuildReaper.new(@project)
+      @project.add_plugin BuildReaper.new(@project)
+    end
+  end
+  
   private
   
   def stub_build(label)

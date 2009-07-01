@@ -1,27 +1,29 @@
 # A Project represents a particular CI build of a particular codebase. An instance is created 
 # each time a build is triggered and yielded back to be configured by cruise_config.rb.
 class Project
-  @@plugin_names = []
+  class << self
+    attr_accessor_with_default :plugin_names, []
+    
+    def plugin(plugin_name)
+      self.plugin_names << plugin_name unless RAILS_ENV == 'test' or self.plugin_names.include? plugin_name
+    end
 
-  def self.plugin(plugin_name)
-    @@plugin_names << plugin_name unless RAILS_ENV == 'test' or @@plugin_names.include? plugin_name
-  end
+    def read(dir, load_config = true)
+      @project_in_the_works = Project.new(File.basename(dir))
+      begin
+        @project_in_the_works.load_config if load_config
+        return @project_in_the_works
+      ensure
+        @project_in_the_works = nil
+      end
+    end
 
-  def self.read(dir, load_config = true)
-    @project_in_the_works = Project.new(File.basename(dir))
-    begin
-      @project_in_the_works.load_config if load_config
-      return @project_in_the_works
-    ensure
-      @project_in_the_works = nil
+    def configure
+      raise 'No project is currently being created' unless @project_in_the_works
+      yield @project_in_the_works
     end
   end
   
-  def self.configure
-    raise 'No project is currently being created' unless @project_in_the_works
-    yield @project_in_the_works
-  end
-
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
   attr_accessor :source_control, :scheduler
 
@@ -30,7 +32,6 @@ class Project
     @path = File.join(CRUISE_DATA_ROOT, 'projects', @name)
     @scheduler = PollingScheduler.new(self)
     @plugins = []
-    @plugins_by_name = {}
     @config_tracker = ProjectConfigTracker.new(self.path)
     @settings = ''
     @config_file_content = ''
@@ -88,7 +89,7 @@ class Project
   end
 
   def instantiate_plugins
-    @@plugin_names.each do |plugin_name|
+    self.class.plugin_names.each do |plugin_name|
       plugin_instance = plugin_name.to_s.camelize.constantize.new(self)
       self.add_plugin(plugin_instance)
     end
@@ -101,15 +102,10 @@ class Project
       raise "Cannot register an plugin with name #{plugin_name.inspect} " +
             "because another plugin, or a method with the same name already exists"
     end
-    @plugins_by_name[plugin_name] = plugin
+    self.metaclass.send(:define_method, plugin_name) { plugin }
     plugin
   end
 
-  # access plugins by their names
-  def method_missing(method_name, *args, &block)
-    @plugins_by_name.key?(method_name) ? @plugins_by_name[method_name] : super
-  end
-  
   def ==(another)
     another.is_a?(Project) and another.name == self.name
   end
@@ -364,10 +360,6 @@ class Project
     File.open(File.join(artifacts_directory, 'changeset.log'), 'w') do |f|
       reasons.each { |reason| f << reason.to_s << "\n" }
     end
-  end
-
-  def respond_to?(method_name)
-    @plugins_by_name.key?(method_name) or super
   end
 
   def build_requested_flag_file
