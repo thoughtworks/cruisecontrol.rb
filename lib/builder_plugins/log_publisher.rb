@@ -8,19 +8,17 @@
 # 
 # <pre><code>project.log_publisher.globs = ['log/*.log', 'tmp/*']</code></log>
 #
-require 'fileutils'
-
-class LogPublisher
+class LogPublisher < BuilderPlugin
   attr_accessor :globs
   
   def initialize(project)
-    @project = project
     @globs = ["log/*.log"]
+    super
   end
 
   def build_finished(build)
     @globs.each do |glob|
-      Dir["#{@project.local_checkout}/#{glob}"].each do |file|
+      Dir["#{project.local_checkout}/#{glob}"].each do |file|
         FileUtils.mv file, build.artifacts_directory
       end
     end

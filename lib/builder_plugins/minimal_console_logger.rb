@@ -4,10 +4,7 @@
 #
 # (this plugin is built in and needs no customization)
 #
-class MinimalConsoleLogger
-  def initialize(project)
-  end
-
+class MinimalConsoleLogger < BuilderPlugin
   def build_started(build)
     puts "Build #{build.label} started"
   end

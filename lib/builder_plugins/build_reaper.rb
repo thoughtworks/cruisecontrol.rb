@@ -3,22 +3,15 @@
 # Configuration.number_of_builds_to_keep = 20
 # 
 # in site_config.rb
-#
-require 'fileutils'
-
-class BuildReaper
+class BuildReaper < BuilderPlugin
   cattr_accessor :number_of_builds_to_keep
-
-  def initialize(project)
-    @project = project
-  end
 
   def build_finished(build)
     delete_all_builds_but BuildReaper.number_of_builds_to_keep
   end
   
   def delete_all_builds_but(number)
-    @project.builds[0..-(number + 1)].each do |build|
+    project.builds[0..-(number + 1)].each do |build|
       build.destroy
     end
   end

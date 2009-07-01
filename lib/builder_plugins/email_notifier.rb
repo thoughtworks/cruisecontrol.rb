@@ -23,8 +23,7 @@
 # Usually, you will want the latter. Set the dashboard URL in the <em>[cruise&nbsp;data]</em>/config/site_config.rb as follows:
 #
 # <pre><code>Configuration.dashboard_url = 'http://your.host.name.com:3333'</pre></code>
-
-class EmailNotifier
+class EmailNotifier < BuilderPlugin
   attr_accessor :emails
   attr_writer :from
   

@@ -3,11 +3,7 @@
 #
 # (this plugin is built in and needs no customization)
 #
-class ProjectLogger
-
-  def initialize(project)
-  end
-
+class ProjectLogger < BuilderPlugin
   def build_started(build)
     CruiseControl::Log.event("Build #{build.label} started")
   end
@@ -42,7 +38,6 @@ class ProjectLogger
     backtrace = error.backtrace.map { |line| "  #{line}" }.join("\n") rescue ""
     CruiseControl::Log.debug("#{error.class}: #{error.message}\n#{backtrace}")
   end
-
 end
 
 Project.plugin :project_logger

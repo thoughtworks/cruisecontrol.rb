@@ -5,11 +5,7 @@
 #
 require 'builder_error'
 
-class BuilderStatus
-  def initialize(project)
-    @project = project
-  end
-
+class BuilderStatus < BuilderPlugin
   def status
     if builder_down?
       'builder_down'
@@ -64,7 +60,7 @@ class BuilderStatus
   
   private
   def existing_status_file
-    Dir["#{@project.path}/builder_status.*"].first
+    Dir["#{project.path}/builder_status.*"].first
   end
   
   def read_status
@@ -76,14 +72,14 @@ class BuilderStatus
   end
 
   def set_status(status, message = nil)
-    FileUtils.rm_f(Dir["#{@project.path}/builder_status.*"])
-    status_file = "#{@project.path}/builder_status.#{status}"
+    FileUtils.rm_f(Dir["#{project.path}/builder_status.*"])
+    status_file = "#{project.path}/builder_status.#{status}"
     FileUtils.touch(status_file)
     File.open(status_file, "w"){|f| f.write message } if message
   end
 
   def builder_down?
-    !ProjectBlocker.blocked?(@project)
+    !ProjectBlocker.blocked?(project)
   end
 
 end
