@@ -1,6 +1,4 @@
-TestErrorEntry = Struct.new :type, :test_name, :message, :stacktrace
-
-class TestErrorEntry
+class TestErrorEntry < Struct.new(:type, :test_name, :message, :stacktrace)
   ERROR_TYPE = "Error"
   FAILURE_TYPE = "Failure"
 

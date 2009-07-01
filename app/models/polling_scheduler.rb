@@ -1,3 +1,5 @@
+# PollingScheduler is a build scheduler that checks the given project's status one per polling
+# interval to determine whether or not it should kick off a new build.
 class PollingScheduler
 
   def initialize(project)

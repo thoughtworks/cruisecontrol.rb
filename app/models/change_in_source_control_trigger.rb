@@ -1,3 +1,6 @@
+# ChangeInSourceControlTrigger is one of two build triggers included in CC.rb by default (see also:
+# SuccessfulBuildTrigger). It determines whether or not a build is necessary by utilizing the SCM
+# a project to determine whether or not it is up to date.
 class ChangeInSourceControlTrigger
 
   def initialize(triggered_project)

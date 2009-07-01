@@ -1,5 +1,9 @@
+# A Build represents a single build of a particular Project. It possesses all of the attributes
+# typically associated with a CI build, such as revision, status, and changeset.
 class Build
   include CommandLine
+  
+  class ConfigError < StandardError; end
 
   attr_reader :project, :label
   IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|changeset.log|cruise_config.rb|plugin_errors.log)$/

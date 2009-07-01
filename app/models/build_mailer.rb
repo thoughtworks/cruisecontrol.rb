@@ -1,3 +1,4 @@
+# BuildMailer is an ActionMailer class that understands how to send build status reports.
 class BuildMailer < ActionMailer::Base
 
   def build_report(build, recipients, from, subject, message, sent_at = Time.now)

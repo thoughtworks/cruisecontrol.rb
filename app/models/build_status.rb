@@ -1,7 +1,17 @@
+# BuildStatus represents the state of a build. It is used by the Dashboard and generated XML
+# to provide feedback on current or old builds. It uses the build artifacts directory to determine
+# the age of the build, and uses the name of that directory to indicate the status of past builds.
 class BuildStatus
+  # The build was a success, because the build command exited successfully.
   SUCCESS = 'success'
+  
+  # The build failed, because the build command exited with a non-zero status.
   FAILED = 'failed'
+  
+  # The build is currently running and thus incomplete.
   INCOMPLETE = 'incomplete'
+  
+  # The build was never begun, typically because no workers were available to pick the build up.
   NEVER_BUILT = 'never_built'
   
   def initialize(artifacts_directory)

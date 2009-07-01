@@ -1,3 +1,5 @@
+# A Project represents a particular CI build of a particular codebase. An instance is created 
+# each time a build is triggered and yielded back to be configured by cruise_config.rb.
 class Project
   @@plugin_names = []
 
@@ -478,7 +480,6 @@ end
 
 # TODO make me pretty, move me to another file, invoke me from environment.rb
 # TODO check what happens if loading a plugin raises an error (e.g, SyntaxError in plugin/init.rb)
-
 plugin_loader = Object.new
 
 def plugin_loader.load_plugin(plugin_path)
