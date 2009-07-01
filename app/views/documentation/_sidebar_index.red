@@ -17,7 +17,7 @@ h2. Quick links
 * <%= link_to_download 'Download' %>
 * "Watch 5 min install":/documentation/screencasts
 * "Report a Bug":https://cruisecontrolrb.lighthouseapp.com
-* "Request a Feature":http://jira.public.thoughtworks.org/browse/CCRB
+* "Request a Feature":https://cruisecontrolrb.lighthouseapp.com
 * <%= link_to_users_mailing_list 'Users mailing list' %>
 * "How to contribute":/documentation/contributing
 * "Source":http://github.com/thoughtworks/cruisecontrol.rb
