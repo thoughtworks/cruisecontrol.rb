@@ -1,27 +1,32 @@
+* HEAD
+  - Improved plugin loading and documentation.
+  - CruiseControl.rb-contrib project on Github.
+  - Rails 2.3/Rack support.
+------------------------------------------------------------------------------------------------------------------------
 * 1.4.0
-- support for Git, Bazaar and Mercurial (distributed source control systems) [Ben Burkert, Brett Adam, Biju Philip Chacko, Chris Johnston, johnf(https://cruisecontrolrb.lighthouseapp.com/projects/9150/tickets/236-add-bazaar-support)]
-- 'cruise add' command:
-  * -u|--url option is deprecated in favor of -r|--repository - in some cases what goes there is not a URL
-  * can be invoked as ./cruise add [project name] [repository name]
-  * -s | -source-control option added to specify the source control type
-  * infers source control type from repository location if it starts with svn:, svn+ssh: or git:
-- 'cruise stop' command:
-  * currently only works for mongrel in daemon ('-d') mode
-- build log parser recognizes errors, failures and example counts produced by RSpec
-- dashboard strips out ANSI colors when displaying a build log
-- added google analytics to the documentation pages (which is effectively the ccrb website)
-- [bugfix] dashboard gracefully handles the situation where there is site.css, but ./public/stylesheets is not a
-           writeable directory (prints a warning and keeps going on)
-- [bugfix] Added XmlServerReport.aspx for compatibility with CCTray.NET >= 1.3 [Steve Donie]
-- [bugfix] cruise start --daemon works with Webrick
-- [bugfix] stop builder processes from going zombie by using Process#detach [Kurtis Seebaldt]
-- [bugfix] made image URLS in stylesheets relative [Anselm Helbig]
-- [bugfix] Make dashboard xhtml compliant
-- [bugfix] Recognize OpenBSD as a platform
-- Improve daemon_helper to kill all child processes (don't leave any orphans)
-- [bugfix] Timeout if 'git fetch origin' hangs.  Configurable via git_load_new_changesets_timeout.
-           Fixes https://cruisecontrolrb.lighthouseapp.com/projects/9150-cruise-control-rb/tickets/229-sometimes-git-hangs
-- [bugfix] Extensive improvements to the technical accuracy, hopefully, readability of the documentation.
+  - support for Git, Bazaar and Mercurial (distributed source control systems) [Ben Burkert, Brett Adam, Biju Philip Chacko, Chris Johnston, johnf(https://cruisecontrolrb.lighthouseapp.com/projects/9150/tickets/236-add-bazaar-support)]
+  - 'cruise add' command:
+    * -u|--url option is deprecated in favor of -r|--repository - in some cases what goes there is not a URL
+    * can be invoked as ./cruise add [project name] [repository name]
+    * -s | -source-control option added to specify the source control type
+    * infers source control type from repository location if it starts with svn:, svn+ssh: or git:
+  - 'cruise stop' command:
+    * currently only works for mongrel in daemon ('-d') mode
+  - build log parser recognizes errors, failures and example counts produced by RSpec
+  - dashboard strips out ANSI colors when displaying a build log
+  - added google analytics to the documentation pages (which is effectively the ccrb website)
+  - [bugfix] dashboard gracefully handles the situation where there is site.css, but ./public/stylesheets is not a
+             writeable directory (prints a warning and keeps going on)
+  - [bugfix] Added XmlServerReport.aspx for compatibility with CCTray.NET >= 1.3 [Steve Donie]
+  - [bugfix] cruise start --daemon works with Webrick
+  - [bugfix] stop builder processes from going zombie by using Process#detach [Kurtis Seebaldt]
+  - [bugfix] made image URLS in stylesheets relative [Anselm Helbig]
+  - [bugfix] Make dashboard xhtml compliant
+  - [bugfix] Recognize OpenBSD as a platform
+  - Improve daemon_helper to kill all child processes (don't leave any orphans)
+  - [bugfix] Timeout if 'git fetch origin' hangs.  Configurable via git_load_new_changesets_timeout.
+             Fixes https://cruisecontrolrb.lighthouseapp.com/projects/9150-cruise-control-rb/tickets/229-sometimes-git-hangs
+  - [bugfix] Extensive improvements to the technical accuracy, hopefully, readability of the documentation.
 
 ------------------------------------------------------------------------------------------------------------------------
 * 1.3.0
