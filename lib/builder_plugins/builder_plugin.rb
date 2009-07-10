@@ -27,6 +27,47 @@ class BuilderPlugin
     def known_event?(event_name)
       self.instance_methods(false).include? event_name.to_s
     end
+    
+    def load_all
+      plugins_to_load.each do |plugin|
+        if can_load_immediately?(plugin)
+          load_plugin(File.basename(plugin))
+        elsif File.directory?(plugin)
+          init_path = File.join(plugin, 'init.rb')
+          if File.file?(init_path)
+            load_plugin(init_path)
+          else
+            log.error("No init.rb found in plugin directory #{plugin}")
+          end
+        end
+      end
+    end
+    
+    private
+    
+      def plugins_to_load
+        (Dir[RAILS_ROOT + "/lib/builder_plugins/*"] + Dir[CRUISE_DATA_ROOT + "/builder_plugins/*"]).reject do |plugin_path|
+           # ignore hidden files and directories (they should be considered hidden by Dir[], but just in case)
+           File.basename(plugin_path)[0, 1] == '.'
+        end
+      end
+    
+      def can_load_immediately?(plugin)
+        File.file?(plugin) && plugin[-3..-1] == '.rb'
+      end
+    
+      def load_plugin(plugin_path)
+        plugin_file = File.basename(plugin_path).sub(/\.rb$/, '')
+        plugin_is_directory = (plugin_file == 'init')  
+        plugin_name = plugin_is_directory ? File.basename(File.dirname(plugin_path)) : plugin_file
+
+        CruiseControl::Log.debug("Loading plugin #{plugin_name}")
+        if RAILS_ENV == 'development'
+          load plugin_path
+        else
+          if plugin_is_directory then require "#{plugin_name}/init" else require plugin_name end
+        end
+      end
   end
   
   # Called by ChangeInSourceControlTrigger to indicate that it is about to poll source control.

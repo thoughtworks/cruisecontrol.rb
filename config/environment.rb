@@ -65,3 +65,5 @@ Mime::Type.register "application/cctray", :cctray
 # get rid of cached pages between runs
 FileUtils.rm_rf RAILS_ROOT + "/public/builds"
 FileUtils.rm_rf RAILS_ROOT + "/public/documentation"
+
+BuilderPlugin.load_all
