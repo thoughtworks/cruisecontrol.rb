@@ -1,12 +1,15 @@
 = 2.0
 
   - Rails 2.3 support. This will come initially through a branch on Github.
-  - A smaller memory footprint for project builders. Currently they
-    load a great deal of Rails into memory with them when launched.
-  - A revised user interface for the dashboard.
+    * DONE - on Github HEAD.
+  - A smaller memory footprint for project builders. Currently they're implemented
+    as a fork() and load all of Cruise into memory when loaded.
   - The ability to distribute builders across multiple machines.
+  - A revised user interface for the dashboard.
   - A project build button on the main project display page.
   - Encouraging a more open community by broadening the core team of those with 
     access to core maintenance tasks.
   - Improving the plugin ecosystem by documenting the plugin API and running tests
     against community plugins.
+    * DONE - Plugin documentation, better loading.
+    * PENDING - A test suite for cruisecontrol.rb-contrib.
