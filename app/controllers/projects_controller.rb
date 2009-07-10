@@ -12,7 +12,7 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html
       format.js { render :action => 'index_js' }
-      format.rss { render :action => 'index_rss', :layout => false }
+      format.rss { render :action => 'index_rss', :layout => false, :format => :xml }
       format.cctray { render :action => 'index_cctray', :layout => false }
     end
   end
