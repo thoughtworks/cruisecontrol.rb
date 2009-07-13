@@ -190,7 +190,11 @@ class Project
     
   def last_complete_build_status
     return "failed" if BuilderStatus.new(self).fatal?
-    last_complete_build ? last_complete_build.status : 'never_built'
+    previously_built? ? last_complete_build.status : 'never_built'
+  end
+  
+  def previously_built?
+    not last_complete_build.nil?
   end
 
   # TODO this and last_builds methods are not Project methods, really - they can be inlined somewhere in the controller layer
@@ -426,7 +430,7 @@ class Project
   def triggered_by=(triggers)
     @triggers = [triggers].flatten
   end
-
+  
   private
   
   # sorts a array of builds in order of revision number and rebuild number 
@@ -471,4 +475,5 @@ class Project
     all_builds.each_with_index {|build, index| result = index if build.label == build_label}
     result 
   end
+  
 end

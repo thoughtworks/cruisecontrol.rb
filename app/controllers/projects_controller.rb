@@ -36,7 +36,7 @@ class ProjectsController < ApplicationController
     @project.request_build rescue nil
     @projects = Projects.load_all
 
-    render :action => 'index_js'
+    respond_to { |format| format.js { render :action => 'index_js' } }
   end
   
   def code

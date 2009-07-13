@@ -1,6 +1,7 @@
 # Projects represents a list of Project objects. It is used internally by Cruise to keep track of
 # and instantiate all projects associated with this CC.rb instance.
 class Projects
+  include Enumerable
 
   class << self
     def load_all
@@ -69,8 +70,8 @@ class Projects
   end
 
   # delegate everything else to the underlying @list
-  def method_missing(method, *args, &block)
-    @list.send(method, *args, &block)
+  def each(&block)
+    @list.each(&block)
   end
 
 end

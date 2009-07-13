@@ -51,6 +51,21 @@ class ProjectTest < Test::Unit::TestCase
       assert_nil @project.last_complete_build
     end
   end
+  
+  def test_previously_built_should_return_true_if_there_is_a_complete_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      sandbox.new :directory => "build-1-success.in1s/"
+      assert @project.previously_built?
+    end
+  end
+  
+  def test_previously_built_should_return_false_if_there_are_no_previous_builds
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      assert !@project.previously_built?
+    end    
+  end
 
   def test_builds_should_return_empty_array_when_project_has_no_builds
     in_sandbox do |sandbox|
