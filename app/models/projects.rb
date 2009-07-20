@@ -1,6 +1,7 @@
 # Projects represents a list of Project objects. It is used internally by Cruise to keep track of
 # and instantiate all projects associated with this CC.rb instance.
-class Projects < Array
+class Projects
+
   class << self
     def load_all
       Projects.new.load_all
@@ -22,21 +23,21 @@ class Projects < Array
   
   # Create a new project list with the given CRUISE_DATA_ROOT, /projects by default.
   def initialize(dir = CRUISE_DATA_ROOT + "/projects")
-    super()
     @dir = dir
+    @list = []
   end
 
   # Load all projects associated with this CC.rb instance by iterating through 
   def load_all
-    Dir["#{@dir}/*"].find_all {|child| File.directory?(child)}.sort.
-                     each     {|child| self << Projects.load_project(child)}
+    @list = Dir["#{@dir}/*"].find_all {|child| File.directory?(child)}.sort.
+                             collect  {|child| Projects.load_project(child)}
     self
   end
   
   def <<(project)
-    raise "Project named #{project.name.inspect} already exists in #@dir" if self.include?(project)
+    raise "Project named #{project.name.inspect} already exists in #@dir" if @list.include?(project)
     begin
-      super(project)
+      @list << project
       save_project(project)
       checkout_local_copy(project)
       write_config_example(project)
@@ -66,4 +67,10 @@ class Projects < Array
       FileUtils.cp(config_example, cruise_config)
     end
   end
+
+  # delegate everything else to the underlying @list
+  def method_missing(method, *args, &block)
+    @list.send(method, *args, &block)
+  end
+
 end
