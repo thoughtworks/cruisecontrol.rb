@@ -671,28 +671,57 @@ class ProjectTest < Test::Unit::TestCase
     end
   end
   
+  def test_project_all_should_return_all_existing_projects
+    svn = FakeSourceControl.new("bob")
+    one = Project.new("one", @svn)
+    two = Project.new("two", @svn)
+    
+    in_sandbox do |sandbox|
+      sandbox.new :file => "one/cruise_config.rb", :with_content => ""
+      sandbox.new :file => "two/cruise_config.rb", :with_content => ""
+      assert_equal %w(one two), Project.all(sandbox.root).map(&:name)
+    end
+  end
+
+  def test_project_all_should_always_reload_project_objects
+    svn = FakeSourceControl.new("bob")
+    one = Project.new("one", @svn)
+    two = Project.new("two", @svn)
+    
+    in_sandbox do |sandbox|
+      sandbox.new :file => "one/cruise_config.rb", :with_content => ""
+      sandbox.new :file => "two/cruise_config.rb", :with_content => ""
+      old_projects = Project.all(sandbox.root)
+      
+      sandbox.new :file => "three/cruise_config.rb", :with_content => ""
+      current_projects = Project.all(sandbox.root)
+      
+      assert_not_equal old_projects, current_projects
+      assert_not_same old_projects.first, current_projects.first
+    end
+  end
+  
   private
   
-  def stub_build(label)
-    build = Object.new
-    build.stubs(:label).returns(label)
-    build.stubs(:artifacts_directory).returns("project1/build-#{label}")
-    build.stubs(:run)
-    build.stubs(:successful?).returns(true)
-    build
-  end
+    def stub_build(label)
+      stub(
+        :label => label, 
+        :artifacts_directory => "project1/build-#{label}", 
+        :successful? => true, 
+        :run => nil
+      )
+    end
 
-  def new_revision(number)
-    SourceControl::Subversion::Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
-  end
+    def new_revision(number)
+      SourceControl::Subversion::Revision.new(number, 'alex', DateTime.new(2005, 1, 1), 'message', [])
+    end
 
-  def new_mock_build(label)
-    build = Object.new
-    Build.expects(:new).with(@project, label).returns(build)
-    build.stubs(:artifacts_directory).returns("project1/build-#{label}")
-    build.stubs(:last).returns(nil)
-    build.stubs(:label).returns(label)
-    build
-  end  
+    def new_mock_build(label)
+      build = Object.new
+      Build.expects(:new).with(@project, label).returns(build)
+      build.stubs(:artifacts_directory).returns("project1/build-#{label}")
+      build.stubs(:last).returns(nil)
+      build.stubs(:label).returns(label)
+      build
+    end
 end
-

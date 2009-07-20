@@ -70,11 +70,9 @@ begin
 
   source_control = SourceControl.create(scm_options)
 
-  project = Project.new(project_name, source_control)
-	projects = Projects.load_all
-	projects << project
-	
-	if source_control.repository =~ /^svn\+ssh\:\/\//
+  Project.all << Project.new(project_name, source_control)
+  
+  if source_control.repository =~ /^svn\+ssh\:\/\//
     puts "IMPORTANT!!! - It looks like you are connecting to your repository with an svn+ssh connection.  " +
          "For cruise to build this project, you need to have set up authentication caching for ssh, see this article"
     puts "   http://subversion.tigris.org/faq.html#ssh-auth-cache"

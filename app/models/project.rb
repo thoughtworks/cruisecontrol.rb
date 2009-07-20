@@ -4,6 +4,10 @@ class Project
   class << self
     attr_accessor_with_default :plugin_names, []
     
+    def all(dir=CRUISE_DATA_ROOT + "/projects")
+      Projects.new(dir).load_all
+    end
+        
     def plugin(plugin_name)
       self.plugin_names << plugin_name unless RAILS_ENV == 'test' or self.plugin_names.include? plugin_name
     end

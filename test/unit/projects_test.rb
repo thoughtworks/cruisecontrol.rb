@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
-class ProjectsTest < Test::Unit::TestCase
+class ProjectsTest < ActiveSupport::TestCase
   include FileSandbox
 
   def setup
@@ -9,38 +9,7 @@ class ProjectsTest < Test::Unit::TestCase
     @two = Project.new("two", @svn)
   end
 
-  def test_load_all
-    in_sandbox do |sandbox|
-      sandbox.new :file => "one/cruise_config.rb", :with_content => ""
-      sandbox.new :file => "two/cruise_config.rb", :with_content => ""
-
-      projects = Projects.new(sandbox.root)
-      projects.load_all
-
-      assert_equal %w(one two), projects.map(&:name)
-    end
-  end
-
-  def test_should_always_reload_project_objects
-    in_sandbox do |sandbox|
-      sandbox.new :file => "one/cruise_config.rb", :with_content => ""
-      sandbox.new :file => "two/cruise_config.rb", :with_content => ""
-
-      projects = Projects.new(sandbox.root)
-      old_projects = projects.load_all
-      old_project_one = Project.read("#{sandbox.root}/one", false)
-      
-      sandbox.new :file => "three/cruise_config.rb", :with_content => ""
-      projects = Projects.new(sandbox.root)
-      current_projects = projects.load_all
-      current_project_one = Project.read("#{sandbox.root}/one", false)
-      
-      assert_not_equal old_projects, current_projects
-      assert_not_same old_project_one, current_project_one
-    end
-  end
-
-  def test_add
+  test "Projects#<< should add a new project" do
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
       projects << @one << @two
@@ -52,7 +21,7 @@ class ProjectsTest < Test::Unit::TestCase
     end
   end
 
-  def test_add_checks_out_fresh_project
+  test "Projects#<< should check out an existing project" do
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
 
@@ -63,7 +32,7 @@ class ProjectsTest < Test::Unit::TestCase
     end
   end
 
-  def test_add_cleans_up_after_itself_if_svn_throws_exception
+  test "Projects#<< should clean up after itself if the source control throws an exception" do
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
       @svn.expects(:checkout).raises("svn error")
@@ -77,7 +46,7 @@ class ProjectsTest < Test::Unit::TestCase
     end
   end
 
-  def test_can_not_add_project_with_same_name
+  test "Projects#<< should not allow you to add the same project twice" do
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
       projects << @one      
@@ -88,7 +57,7 @@ class ProjectsTest < Test::Unit::TestCase
     end
   end
 
-  def test_load_project
+  test "Projects.load_project should load the project in the given directory" do
     in_sandbox do |sandbox|
       sandbox.new :file => 'one/cruise_config.rb', :with_content => ''
 
@@ -99,7 +68,7 @@ class ProjectsTest < Test::Unit::TestCase
     end
   end
 
-  def test_load_project_with_no_config
+  test "Projects.load_project should load a project without any configuration" do
     in_sandbox do |sandbox|
       sandbox.new :directory => "myproject/work/.svn"
       sandbox.new :directory => "myproject/builds-1"
@@ -112,7 +81,7 @@ class ProjectsTest < Test::Unit::TestCase
     end
   end
 
-  def test_each
+  test "Projects#each should allow enumeration over its project list" do
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
       projects << @one << @two

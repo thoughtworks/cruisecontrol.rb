@@ -3,10 +3,6 @@
 class Projects
 
   class << self
-    def load_all
-      Projects.new.load_all
-    end
-
     def find(project_name)
       # TODO: sanitize project_name to prevent a query injection attack here
       path = File.join(CRUISE_DATA_ROOT, 'projects', project_name)

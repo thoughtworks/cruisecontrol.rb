@@ -13,7 +13,7 @@ class ProjectsControllerTest < ActionController::TestCase
   def test_index_rhtml  
     p1 = create_project_stub('one', 'success')
     p2 = create_project_stub('two', 'failed', [create_build_stub('1', 'failed')])
-    Projects.expects(:load_all).returns([p1, p2])
+    Project.expects(:all).returns([p1, p2])
     stub_change_set_parser
     
     get :index
@@ -22,7 +22,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
   
   def test_index_rjs
-    Projects.expects(:load_all).returns([create_project_stub('one'), create_project_stub('two')])
+    Project.expects(:all).returns([create_project_stub('one'), create_project_stub('two')])
     
     post :index, :format => 'js'
 
@@ -32,7 +32,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   def test_index_rss
-    Projects.expects(:load_all).returns([
+    Project.expects(:all).returns([
         create_project_stub('one', 'success', [create_build_stub('10', 'success')]),
         create_project_stub('two')])
 
@@ -50,7 +50,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
   
   def test_rss_should_exclude_incomplete_build
-    Projects.expects(:load_all).returns([
+    Project.expects(:all).returns([
         create_project_stub('one', 'success', [create_build_stub('1', 'success')]),
         create_project_stub('two', 'incomplete', [create_build_stub('10', 'failed'), create_build_stub('11', 'incomplete')])
         ])
@@ -71,14 +71,14 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   def test_dashboard_should_have_link_to_single_project
-    Projects.expects(:load_all).returns([create_project_stub('one', 'success')])
+    Project.expects(:all).returns([create_project_stub('one', 'success')])
     get :index
     assert_tag :tag => "a", :attributes => {:href => /\/projects\/one/}, :content => "one"
   end
   
   def test_dashboard_should_have_button_to_start_builder_if_builder_is_down
     project = create_project_stub('one', 'success')
-    Projects.stubs(:load_all).returns([project])
+    Project.stubs(:all).returns([project])
     
     project.stubs(:builder_state_and_activity).returns("builder_down")
     get :index
@@ -98,7 +98,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   def test_index_cctray
-    Projects.expects(:load_all).returns([
+    Project.expects(:all).returns([
         create_project_stub('one', 'success', [create_build_stub('10', 'success')]),
         create_project_stub('two')])
 
@@ -123,7 +123,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   def test_index_cctray_should_exclude_incomplete_build
-    Projects.expects(:load_all).returns([
+    Project.expects(:all).returns([
         create_project_stub('one', 'failed', [create_build_stub('10', 'failed'), create_build_stub('11', 'incomplete')])
         ])
 
@@ -212,7 +212,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
   def test_should_disable_build_now_button_if_configured_to_do_so
     Configuration.stubs(:disable_build_now).returns(true)
-    Projects.expects(:load_all).returns([create_project_stub('one', 'success')])
+    Project.expects(:all).returns([create_project_stub('one', 'success')])
     get :index
     assert_tag :tag => "button", :attributes => {:onclick => /return false;/}
   end
