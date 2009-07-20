@@ -1,5 +1,6 @@
 module CruiseControl
   class Init
+    DEFAULT_PORT = 3333
   
     def run
       command = ARGV.shift
@@ -27,6 +28,8 @@ module CruiseControl
     end
   
     def start
+      ARGV << "-p"
+      ARGV << DEFAULT_PORT.to_s
       require File.join(File.dirname(__FILE__), '..', 'platform')
       Platform.running_as_daemon = ARGV.include?('-d') || ARGV.include?('--daemon')
       load File.join(File.dirname(__FILE__), '..', '..', 'script', 'server')

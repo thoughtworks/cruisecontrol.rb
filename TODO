@@ -13,3 +13,5 @@
     against community plugins.
     * DONE - Plugin documentation, better loading.
     * PENDING - A test suite for cruisecontrol.rb-contrib.
+ - Make default port configurable. This is difficult to do through configuration.rb 
+   due to load order issues.
