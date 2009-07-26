@@ -20,8 +20,6 @@ config.action_mailer.raise_delivery_errors = false
 
 CruiseControl::Log.verbose = true
 
-require RAILS_ROOT + '/config/configuration'
-
 config.after_initialize do
   require CRUISE_DATA_ROOT + '/site_config' if File.exists?(CRUISE_DATA_ROOT + "/site_config.rb")
   require RAILS_ROOT + '/config/dashboard_initialize' 

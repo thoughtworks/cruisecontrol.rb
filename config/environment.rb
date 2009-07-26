@@ -51,9 +51,12 @@ Rails::Initializer.run do |config|
   # Add additional load paths for your own custom dirs
   config.load_paths << "#{CRUISE_DATA_ROOT}/builder_plugins"
   config.load_paths << "#{RAILS_ROOT}/lib/builder_plugins"
+  
+  config.after_initialize do
+    require RAILS_ROOT + '/config/configuration'
+  end
 end
 
-require RAILS_ROOT + '/config/configuration'
 require RAILS_ROOT + '/lib/cruise_control/version'
 require 'smtp_tls'
 require 'date'
