@@ -53,8 +53,8 @@ Rails::Initializer.run do |config|
   config.load_paths << "#{RAILS_ROOT}/lib/builder_plugins"
 end
 
-require 'config/configuration'
-require 'cruise_control/version'
+require RAILS_ROOT + '/config/configuration'
+require RAILS_ROOT + '/lib/cruise_control/version'
 require 'smtp_tls'
 require 'date'
 require 'fileutils'
