@@ -1,6 +1,7 @@
 module CruiseControl
   class Init
     DEFAULT_PORT = 3333
+    DEFAULT_ENV  = 'production'
   
     def run
       command = ARGV.shift
@@ -28,7 +29,16 @@ module CruiseControl
     end
   
     def start
-      ARGV << " -p #{DEFAULT_PORT}"
+      unless ARGV.include?('-p') || ARGV.include?('--port')
+        ARGV << '-p'
+        ARGV << DEFAULT_PORT.to_s
+      end
+      
+      unless ARGV.include?('-e') || ARGV.include?('--environment')
+        ARGV << '-e'
+        ARGV << 'production'
+      end
+      
       require File.join(File.dirname(__FILE__), '..', 'platform')
       Platform.running_as_daemon = ARGV.include?('-d') || ARGV.include?('--daemon')
       load File.join(File.dirname(__FILE__), '..', '..', 'script', 'server')
@@ -69,7 +79,7 @@ module CruiseControl
     Type 'cruise --version' to see the version number.
 
     Available commands:
-      start      - starts the web server
+      start      - starts the web server (port 3333, production environment by default)
       add        - adds a project
       build      - starts the builder for an individual project
 
