@@ -394,10 +394,20 @@ class ProjectTest < ActiveSupport::TestCase
     in_sandbox do |sandbox|      
       @project.path = sandbox.root
       sandbox.new :file => 'build_requested'
+      @project.stubs(:remove_build_requested_flag_file)
+      @project.expects(:build).with(@project.source_control.latest_revision, ['Build was manually requested'])
+      @project.build_if_requested
+    end
+  end
+  
+  def test_build_if_requested_should_specify_build_requested_reason
+    in_sandbox do |sandbox|      
+      @project.path = sandbox.root
+      sandbox.new :file => 'build_requested'
       @project.expects(:remove_build_requested_flag_file)
       @project.expects(:build)
       @project.build_if_requested
-    end
+    end    
   end
     
   def test_build_requested

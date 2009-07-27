@@ -90,12 +90,13 @@ class Test::Unit::TestCase
 end
 
 class FakeSourceControl < SourceControl::AbstractAdapter
-  attr_reader :username
+  attr_reader :username, :latest_revision
   attr_accessor :path
 
   def initialize(username = nil)
     @username = username
     @path = "/some/fake/path"
+    @latest_revision = nil
   end
 
   def checkout
@@ -109,9 +110,26 @@ class FakeSourceControl < SourceControl::AbstractAdapter
   def creates_ordered_build_labels?
     true
   end
-
-  def latest_revision
-    nil
+  
+  def add_revision(opts={})
+    @latest_revision = FakeRevision.new(:message => "Initial commit", :number => 1)
+  end
+  
+  class FakeRevision < SourceControl::AbstractRevision
+    attr_reader :message, :number, :time, :author, :files
+    
+    def initialize(opts={})
+      number, message = opts[:number], opts[:message]
+      @time   = Time.now
+      @author = "gthreepwood@monkeyisland.gov"
+      @files  = []
+    end
+    
+    def ==(other); true; end
+  
+    def to_s
+      "#{number}: #{message}"
+    end
   end
 end
 
