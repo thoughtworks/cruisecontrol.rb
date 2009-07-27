@@ -1,21 +1,6 @@
 # Projects represents a list of Project objects. It is used internally by Cruise to keep track of
 # and instantiate all projects associated with this CC.rb instance.
 class Projects
-
-  class << self
-    def find(project_name)
-      # TODO: sanitize project_name to prevent a query injection attack here
-      path = File.join(CRUISE_DATA_ROOT, 'projects', project_name)
-      return nil unless File.directory?(path)
-      load_project(path)
-    end
-
-    def load_project(dir)
-      project = Project.read(dir, load_config = false)
-      project.path = dir
-      project
-    end
-  end
   
   # Create a new project list with the given CRUISE_DATA_ROOT, /projects by default.
   def initialize(dir = CRUISE_DATA_ROOT + "/projects")
@@ -26,7 +11,7 @@ class Projects
   # Load all projects associated with this CC.rb instance by iterating through 
   def load_all
     @list = Dir["#{@dir}/*"].find_all {|child| File.directory?(child)}.sort.
-                             collect  {|child| Projects.load_project(child)}
+                             collect  {|child| Project.load_project(child)}
     self
   end
   

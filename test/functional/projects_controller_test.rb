@@ -61,7 +61,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
   
   def test_should_be_able_to_provide_rss_for_single_project
-    Projects.expects(:find).with('one').returns(create_project_stub('one', 'success', [create_build_stub('10', 'success')]))
+    Project.expects(:find).with('one').returns(create_project_stub('one', 'success', [create_build_stub('10', 'success')]))
     get :show, :id => 'one', :format => 'rss'
     assert_response :success
     assert_template 'show_rss'
@@ -91,7 +91,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
   def test_show_action_with_html_format_should_redirect_to_builds_show
     stub_project = Object.new
-    Projects.expects(:find).with('one').returns(stub_project)
+    Project.expects(:find).with('one').returns(stub_project)
     get :show, :id => 'one'
     assert_response :redirect
     assert_redirected_to :controller => "builds", :action => "show", :project => stub_project
@@ -143,7 +143,7 @@ class ProjectsControllerTest < ActionController::TestCase
       project.path = sandbox.root
       sandbox.new :file => 'work/app/controller/FooController.rb', :with_contents => "class FooController\nend\n"
       
-      Projects.expects(:find).returns(project)
+      Project.expects(:find).returns(project)
     
       get :code, :id => 'two', :path => ['app', 'controller', 'FooController.rb'], :line => 2
       
@@ -153,7 +153,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   def test_code_url_not_fully_specified
-    Projects.expects(:find).never
+    Project.expects(:find).never
 
     get :code, :path => ['foo'], :line => 1
     assert_response 404
@@ -165,7 +165,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   def test_code_non_existant_project
-    Projects.expects(:find).with('foo').returns(nil)
+    Project.expects(:find).with('foo').returns(nil)
     get :code, :id => 'foo', :path => ['foo.rb'], :line => 1
     assert_response 404
   end
@@ -174,7 +174,7 @@ class ProjectsControllerTest < ActionController::TestCase
     in_sandbox do |sandbox|
       project = Project.new('project')
       project.path = sandbox.root
-      Projects.expects(:find).with('project').returns(project)
+      Project.expects(:find).with('project').returns(project)
 
       get :code, :id => 'project', :path => ['foo.rb'], :line => 1
       assert_response 404
@@ -183,16 +183,16 @@ class ProjectsControllerTest < ActionController::TestCase
 
   def test_build_should_request_build
     project = create_project_stub('two')
-    Projects.expects(:find).with('two').returns(project)
+    Project.expects(:find).with('two').returns(project)
     project.expects(:request_build)
-    Projects.stubs(:load_all).returns [ project ]
+    Project.stubs(:load_all).returns [ project ]
     post :build, :id => "two"
     assert_response :success
     assert_equal 'two', assigns(:project).name
   end
   
   def test_build_non_existant_project
-    Projects.expects(:find).with('non_existing_project').returns(nil)
+    Project.expects(:find).with('non_existing_project').returns(nil)
     post :build, :id => "non_existing_project"
     assert_response 404
   end
@@ -204,7 +204,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   def test_show_non_existant_project
-    Projects.expects(:find).with('non_existing_project').returns(nil)
+    Project.expects(:find).with('non_existing_project').returns(nil)
     post :show, :id => "non_existing_project", :format => 'rss'
     assert_response 404
     assert_equal 'Project "non_existing_project" not found', @response.body

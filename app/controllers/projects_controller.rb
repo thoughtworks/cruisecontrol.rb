@@ -18,7 +18,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = Projects.find(params[:id])
+    @project = Project.find(params[:id])
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project
 
     respond_to do |format|
@@ -30,7 +30,7 @@ class ProjectsController < ApplicationController
   def build
     render :text => 'Build requests are not allowed', :status => 403 and return if Configuration.disable_build_now
 
-    @project = Projects.find(params[:id])
+    @project = Project.find(params[:id])
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project
 
     @project.request_build rescue nil
@@ -40,7 +40,7 @@ class ProjectsController < ApplicationController
   end
   
   def code
-    @project = Projects.find(params[:id])
+    @project = Project.find(params[:id])
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project 
 
     path = File.join(@project.path, 'work', params[:path])

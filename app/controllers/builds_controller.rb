@@ -3,7 +3,7 @@ class BuildsController < ApplicationController
   
   def show
     render :text => 'Project not specified', :status => 404 and return unless params[:project]
-    @project = Projects.find(params[:project])
+    @project = Project.find(params[:project])
     render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
 
     if params[:build]
@@ -21,7 +21,7 @@ class BuildsController < ApplicationController
 
   def drop_down
     render :text => 'Project not specified', :status => 404 and return unless params[:project]
-    @project = Projects.find(params[:project])
+    @project = Project.find(params[:project])
     @builds_for_dropdown = @project.builds.reverse[30..-1]
     render :layout => false
   end
@@ -31,7 +31,7 @@ class BuildsController < ApplicationController
     render :text => 'Build not specified', :status => 404 and return unless params[:build]
     render :text => 'Path not specified', :status => 404 and return unless params[:path]
 
-    @project = Projects.find(params[:project])
+    @project = Project.find(params[:project])
     render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
     @build = @project.find_build(params[:build])
     render :text => "Build #{params[:build].inspect} not found", :status => 404 and return unless @build

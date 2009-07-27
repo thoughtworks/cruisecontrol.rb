@@ -57,30 +57,6 @@ class ProjectsTest < ActiveSupport::TestCase
     end
   end
 
-  test "Projects.load_project should load the project in the given directory" do
-    in_sandbox do |sandbox|
-      sandbox.new :file => 'one/cruise_config.rb', :with_content => ''
-
-      new_project = Projects.load_project(File.join(sandbox.root, 'one'))
-
-      assert_equal('one', new_project.name)
-      assert_equal(File.join(sandbox.root, 'one'), new_project.path)
-    end
-  end
-
-  test "Projects.load_project should load a project without any configuration" do
-    in_sandbox do |sandbox|
-      sandbox.new :directory => "myproject/work/.svn"
-      sandbox.new :directory => "myproject/builds-1"
-
-      new_project = Projects.load_project(sandbox.root + '/myproject')
-
-      assert_equal("myproject", new_project.name)
-      assert_equal(SourceControl::Subversion, new_project.source_control.class)
-      assert_equal(sandbox.root + "/myproject", new_project.path)
-    end
-  end
-
   test "Projects#each should allow enumeration over its project list" do
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)

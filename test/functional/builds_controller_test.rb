@@ -14,7 +14,7 @@ class BuildsControllerTest < ActionController::TestCase
     with_sandbox_project do |sandbox, project|
       create_builds 24, 25
 
-      Projects.expects(:find).with(project.name).returns(project)
+      Project.expects(:find).with(project.name).returns(project)
 
       get :show, :project => project.name
 
@@ -29,7 +29,7 @@ class BuildsControllerTest < ActionController::TestCase
     with_sandbox_project do |sandbox, project|
       create_builds 23, 24, 25
 
-      Projects.expects(:find).with(project.name).returns(project)
+      Project.expects(:find).with(project.name).returns(project)
 
       get :show, :project => project.name, :build => 24
 
@@ -55,7 +55,7 @@ class BuildsControllerTest < ActionController::TestCase
   def test_show_only_30_builds
     with_sandbox_project do |sandbox, project|
       create_builds *(1..50)
-      Projects.stubs(:find).with(project.name).returns(project)
+      Project.stubs(:find).with(project.name).returns(project)
       
       get :show, :project => project.name
       assert_tag :tag => 'a', :content => /30 \(.*\)/
@@ -66,7 +66,7 @@ class BuildsControllerTest < ActionController::TestCase
   def test_drop_down_list_for_older_builds
     with_sandbox_project do |sandbox, project|
       create_builds *(1..50)
-      Projects.stubs(:find).with(project.name).returns(project)
+      Project.stubs(:find).with(project.name).returns(project)
 
       get :drop_down, :format => 'js', :project => project.name
       assert_tag :tag => "option", :parent => {:tag => "select"}, :content => /11 \(.*\)/
@@ -79,7 +79,7 @@ class BuildsControllerTest < ActionController::TestCase
 
   def test_show_with_no_build
     with_sandbox_project do |sandbox, project|
-      Projects.expects(:find).with(project.name).returns(project)
+      Project.expects(:find).with(project.name).returns(project)
 
       get :show, :project => project.name
 
@@ -93,7 +93,7 @@ class BuildsControllerTest < ActionController::TestCase
   def test_show_unknown_build
     with_sandbox_project do |sandbox, project|
       create_build 1
-      Projects.expects(:find).with(project.name).returns(project)
+      Project.expects(:find).with(project.name).returns(project)
 
       get :show, :project => project.name, :build => 2
 
@@ -110,7 +110,7 @@ class BuildsControllerTest < ActionController::TestCase
   end
 
   def test_show_unknown_project
-    Projects.expects(:find).with('foo').returns(nil)
+    Project.expects(:find).with('foo').returns(nil)
     get :show, :project => 'foo'
 
     assert_response 404
@@ -122,7 +122,7 @@ class BuildsControllerTest < ActionController::TestCase
       create_build 1
       sandbox.new :file => 'build-1/rcov/index.html', :with_contents => 'apple pie'
 
-      Projects.expects(:find).with(project.name).returns(project)
+      Project.expects(:find).with(project.name).returns(project)
 
       get :artifact, :project => project.name, :build => '1', :path => ['rcov', 'index.html']
 
@@ -154,7 +154,7 @@ class BuildsControllerTest < ActionController::TestCase
     with_sandbox_project do |sandbox, project|
       create_build 1
 
-      Projects.expects(:find).with(project.name).returns(project)
+      Project.expects(:find).with(project.name).returns(project)
 
       get :artifact, :project => project.name, :build => '1', :path => 'foo'
       assert_response 404
@@ -166,7 +166,7 @@ class BuildsControllerTest < ActionController::TestCase
       create_build 1
       sandbox.new :file => 'build-1/foo/index.html'
 
-      Projects.expects(:find).with(project.name).returns(project)
+      Project.expects(:find).with(project.name).returns(project)
 
       get :artifact, :project => project.name, :build => '1', :path => 'foo'
 
@@ -189,7 +189,7 @@ class BuildsControllerTest < ActionController::TestCase
   end
 
   def test_artifact_unknown_project
-    Projects.expects(:find).with('foo').returns(nil)
+    Project.expects(:find).with('foo').returns(nil)
 
     get :artifact, :project => 'foo', :build => '1', :path => 'foo'
     assert_response 404
@@ -198,7 +198,7 @@ class BuildsControllerTest < ActionController::TestCase
 
   def test_artifact_unknown_build
     mock_project = Object.new
-    Projects.expects(:find).with('foo').returns(mock_project)
+    Project.expects(:find).with('foo').returns(mock_project)
     mock_project.expects(:find_build).with('1').returns(nil)
 
     get :artifact, :project => 'foo', :build => '1', :path => 'foo'
@@ -210,7 +210,7 @@ class BuildsControllerTest < ActionController::TestCase
     with_sandbox_project do |sandbox, project|
       sandbox.new :file => 'build-1/build_status.pingpong'
     
-      Projects.expects(:find).with(project.name).returns(project)
+      Project.expects(:find).with(project.name).returns(project)
       get :show, :project => project.name
       assert_tag :tag => "link", :attributes => {
         :href => /\/projects\/#{project.name}.rss/, 
@@ -223,7 +223,7 @@ class BuildsControllerTest < ActionController::TestCase
       sandbox.new :directory => 'build-1-success'
       sandbox.new :directory => 'build-2'
     
-      Projects.stubs(:find).with(project.name).returns(project)
+      Project.stubs(:find).with(project.name).returns(project)
 
       assert project.last_build.incomplete?
       
@@ -238,7 +238,7 @@ class BuildsControllerTest < ActionController::TestCase
   def assert_type(file, type)
     @sandbox.new :file => "build-1/#{file}", :with_content => 'lemon'
 
-    Projects.expects(:find).with(@project.name).returns(@project)
+    Project.expects(:find).with(@project.name).returns(@project)
 
     get :artifact, :project => @project.name, :build => '1', :path => file
 

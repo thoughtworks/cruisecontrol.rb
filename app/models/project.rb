@@ -1,8 +1,12 @@
 # A Project represents a particular CI build of a particular codebase. An instance is created 
 # each time a build is triggered and yielded back to be configured by cruise_config.rb.
 class Project
+  attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
+  attr_accessor :source_control, :scheduler
+  
   class << self
     attr_accessor_with_default :plugin_names, []
+    attr_accessor :current_project
     
     def all(dir=CRUISE_DATA_ROOT + "/projects")
       Projects.new(dir).load_all
@@ -13,24 +17,33 @@ class Project
     end
 
     def read(dir, load_config = true)
-      @project_in_the_works = Project.new(File.basename(dir))
-      begin
-        @project_in_the_works.load_config if load_config
-        return @project_in_the_works
-      ensure
-        @project_in_the_works = nil
+      returning Project.new(File.basename(dir)) do |project|
+        self.current_project = project
+        project.load_config if load_config
       end
+    ensure
+      self.current_project = nil
     end
 
     def configure
-      raise 'No project is currently being created' unless @project_in_the_works
-      yield @project_in_the_works
+      raise 'No project is currently being created' if current_project.nil?
+      yield current_project
+    end
+    
+    def find(project_name)
+      # TODO: sanitize project_name to prevent a query injection attack here
+      path = File.join(CRUISE_DATA_ROOT, 'projects', project_name)
+      return nil unless File.directory?(path)
+      load_project(path)
+    end
+
+    def load_project(dir)
+      returning read(dir, load_config = false) do |project|
+        project.path = dir
+      end
     end
   end
   
-  attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
-  attr_accessor :source_control, :scheduler
-
   def initialize(name, scm = nil)
     @name = name
     @path = File.join(CRUISE_DATA_ROOT, 'projects', @name)
