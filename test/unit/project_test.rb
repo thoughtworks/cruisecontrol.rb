@@ -393,9 +393,11 @@ class ProjectTest < ActiveSupport::TestCase
   def test_build_if_requested_should_build_if_build_requested_file_exists
     in_sandbox do |sandbox|      
       @project.path = sandbox.root
+      revision = @project.source_control.add_revision :message => "A super special feature", :number => 1
+      
       sandbox.new :file => 'build_requested'
       @project.stubs(:remove_build_requested_flag_file)
-      @project.expects(:build).with(@project.source_control.latest_revision, ['Build was manually requested'])
+      @project.expects(:build).with(revision, ['Build was manually requested.', '1: A super special feature'])
       @project.build_if_requested
     end
   end

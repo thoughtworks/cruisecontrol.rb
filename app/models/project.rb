@@ -282,7 +282,7 @@ class Project
   def build_if_requested
     if build_requested?
       remove_build_requested_flag_file
-      build(source_control.latest_revision, ['Build was manually requested'])
+      build(source_control.latest_revision, ['Build was manually requested.', source_control.latest_revision.to_s])
     end
   end
   

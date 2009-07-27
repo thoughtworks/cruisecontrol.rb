@@ -112,17 +112,18 @@ class FakeSourceControl < SourceControl::AbstractAdapter
   end
   
   def add_revision(opts={})
-    @latest_revision = FakeRevision.new(:message => "Initial commit", :number => 1)
+    @latest_revision = FakeRevision.new(opts)
   end
   
   class FakeRevision < SourceControl::AbstractRevision
     attr_reader :message, :number, :time, :author, :files
     
     def initialize(opts={})
-      number, message = opts[:number], opts[:message]
-      @time   = Time.now
-      @author = "gthreepwood@monkeyisland.gov"
-      @files  = []
+      @number  = opts[:number]
+      @message = opts[:message]
+      @time    = Time.now
+      @author  = "gthreepwood@monkeyisland.gov"
+      @files   = []
     end
     
     def ==(other); true; end
