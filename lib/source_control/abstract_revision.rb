@@ -14,7 +14,7 @@ module SourceControl
     end
 
     def ==(other)
-      raise NotImplementedError, "time() not implemented by #{self.class}"
+      raise NotImplementedError, "==() not implemented by #{self.class}"
     end
 
     alias :eql? :==
