@@ -27,10 +27,12 @@ require CRUISE_HOME + "/daemon/daemon_helper"
 command = ARGV.shift
 case command
 when 'start'
-  start_cruise "cd #{CRUISE_HOME} && ./cruise start -d"
+  start_cruise
 when 'stop'
   stop_cruise
+when 'restart'
+  restart_cruise
 else
-  p "Usage: #{File.dirname(__FILE__)} start|stop"
+  p "Usage: #{File.dirname(__FILE__)} start|stop|restart"
   exit 1
 end
