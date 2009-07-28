@@ -45,7 +45,7 @@ module CruiseControl
     end
 
     def stop
-      pid_file = File.join("tmp", "pids", "mongrel.pid")
+      pid_file = File.join("tmp", "pids", "server.pid")
       if File.exist?(pid_file)
         exec "mongrel_rails stop -P #{pid_file}"
       end

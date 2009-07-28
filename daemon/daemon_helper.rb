@@ -30,7 +30,7 @@ def su_if_needed(cmd)
 end
 
 def cruise_pid_file
-  "#{CRUISE_HOME}/tmp/pids/mongrel.pid"
+  "#{CRUISE_HOME}/tmp/pids/server.pid"
 end
 
 def read_cruise_pid
