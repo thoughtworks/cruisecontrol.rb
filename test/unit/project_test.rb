@@ -737,6 +737,45 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
   
+  test "Project.create should add a new project" do
+    in_sandbox do |sandbox|
+      Project.create "one", @svn, sandbox.root
+      Project.create "two", @svn, sandbox.root
+      assert_equal %w(one two), Project.all(sandbox.root).map(&:name)
+    end
+  end
+
+  test "Project.create should check out an existing project" do
+    in_sandbox do |sandbox|
+      Project.create "one", @svn, sandbox.root
+      assert SandboxFile.new('one/work').exists?
+      assert SandboxFile.new('one/work/README').exists?
+    end
+  end
+
+  test "Project.create should clean up after itself if the source control throws an exception" do
+    in_sandbox do |sandbox|
+      @svn.expects(:checkout).raises("svn error")
+
+      assert_raises('svn error') do
+        Project.create "one", @svn, sandbox.root
+      end
+      
+      assert_false SandboxFile.new('one/work').exists?
+      assert_false SandboxFile.new('one').exists?
+    end
+  end
+
+  test "Project.create should not allow you to add the same project twice" do
+    in_sandbox do |sandbox|
+      project = Project.create "one", @svn, sandbox.root
+      assert_raises("Project named \"one\" already exists in #{sandbox.root}") do
+        Project.create "one", @svn, sandbox.root
+      end
+      assert File.directory?(project.path), "Project directory does not exist."
+    end
+  end
+  
   private
   
     def stub_build(label)
