@@ -185,7 +185,7 @@ class ProjectsControllerTest < ActionController::TestCase
     project = create_project_stub('two')
     Project.expects(:find).with('two').returns(project)
     project.expects(:request_build)
-    Project.stubs(:load_all).returns [ project ]
+    Project.stubs(:all).returns [ project ]
     post :build, :id => "two"
     assert_response :success
     assert_equal 'two', assigns(:project).name

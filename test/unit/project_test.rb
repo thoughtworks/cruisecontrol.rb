@@ -713,7 +713,7 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
   
-  test "Projects.load_project should load the project in the given directory" do
+  test "Project.load_project should load the project in the given directory" do
     in_sandbox do |sandbox|
       sandbox.new :file => 'one/cruise_config.rb', :with_content => ''
 
@@ -724,7 +724,7 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
-  test "Projects.load_project should load a project without any configuration" do
+  test "Project.load_project should load a project without any configuration" do
     in_sandbox do |sandbox|
       sandbox.new :directory => "myproject/work/.svn"
       sandbox.new :directory => "myproject/builds-1"

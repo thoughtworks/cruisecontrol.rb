@@ -9,7 +9,9 @@ class Project
     attr_accessor :current_project
     
     def all(dir=CRUISE_DATA_ROOT + "/projects")
-      Projects.new(dir).load_all
+      load_all(dir).map do |project_dir|
+        load_project project_dir
+      end
     end
     
     def create(project_name, scm, dir=CRUISE_DATA_ROOT + "/projects")
@@ -58,6 +60,10 @@ class Project
     end
     
     private
+    
+      def load_all(dir)
+        Dir["#{dir}/*"].find_all {|child| File.directory?(child)}.sort
+      end
     
       def save_project(project, dir)
         project.path = File.join(dir, project.name)
