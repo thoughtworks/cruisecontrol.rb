@@ -12,3 +12,4 @@ public/builds
 *.iml
 .tmtags
 .DS_Store
+tmtags

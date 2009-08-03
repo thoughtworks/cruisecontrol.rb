@@ -18,6 +18,18 @@ rescue => e
   exit 1
 end
 
+def start_cruise(start_cmd = nil)
+  exit start(start_cmd)
+end
+
+def stop_cruise
+  exit stop
+end
+
+def restart_cruise(start_cmd = nil)
+  exit restart(start_cmd)
+end
+
 def log(log_suffix, output)
   init_log_cmd = "touch #{CRUISE_HOME}/log/cruise_daemon_#{log_suffix}.log"
   system(su_if_needed(init_log_cmd))
@@ -30,7 +42,7 @@ def su_if_needed(cmd)
 end
 
 def cruise_pid_file
-  "#{CRUISE_HOME}/tmp/pids/mongrel.pid"
+  "#{CRUISE_HOME}/tmp/pids/server.pid"
 end
 
 def read_cruise_pid
@@ -38,7 +50,13 @@ def read_cruise_pid
   nil
 end
 
-def start_cruise(start_cmd = "cd #{CRUISE_HOME} && ./cruise start -d")
+def restart(start_cmd)
+  stop
+  start(start_cmd)
+end
+
+def start(start_cmd)
+  cmd ||= "cd #{CRUISE_HOME} && ./cruise start -d"
   log(:env, ENV.inspect)
 
   # remove cruise pid file if process is no longer running
@@ -48,25 +66,25 @@ def start_cruise(start_cmd = "cd #{CRUISE_HOME} && ./cruise start -d")
     FileUtils.rm(cruise_pid_file) unless cruise_process
   end
 
-  output = `#{su_if_needed(start_cmd)} 2>&1`
+  output = `#{su_if_needed(cmd)} 2>&1`
   if $?.success?
     print output + "\n"
-    exit 0
+    return 0
   else
     log(:err, output)
     print output + "\n"
-    exit 1
+    return 1
   end
 end
 
-def stop_cruise
+def stop
   failed = false
   cruise_pid = read_cruise_pid
   unless cruise_pid
     error_msg = "unable to read cruisecontrol.rb pid file #{cruise_pid_file}, cannot stop"
     log(:err, error_msg)
     print error_msg + "\n"
-    exit 1
+    return 1
   end
   cruise_process = `ps -ea -o 'pid pgid command'`.grep(/^\s*#{cruise_pid}\s+\d+\s+.*/).first
   cruise_process =~ /^\s*#{cruise_pid}\s+(\d+)\s+(.*)/
@@ -76,7 +94,7 @@ def stop_cruise
     error_msg = "unable to find cruise process #{cruise_pid}, cannot stop"
     log(:err, error_msg)
     print error_msg + "\n"
-    exit 1
+    return 1
   end
 
   cruise_child_processes = `ps -ea -o 'pid pgid command'`.grep(/^\s*\d+\s+#{cruise_process_group}\s+/)
@@ -100,8 +118,8 @@ def stop_cruise
 
   if failed
     log(:err, "'stop' command failed")
-    exit 1
+    return 1
   else
-    exit 0
-  end 
+    return 0
+  end
 end
