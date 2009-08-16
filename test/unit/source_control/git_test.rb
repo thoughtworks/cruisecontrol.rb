@@ -119,6 +119,46 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
+  def test_latest_revision__should_reraise_any_builder_error_without_modification
+    in_sandbox do
+      git = new_git
+      class << git
+        def git(*args)
+          raise BuilderError.new('This is a BuilderError, just reraise it')
+        end
+      end
+      
+      assert_raise(BuilderError) do
+        begin
+          git.latest_revision
+        rescue BuilderError => e
+          assert_equal 'This is a BuilderError, just reraise it', e.message
+          raise e
+        end
+      end
+    end
+  end
+
+  def test_latest_revision__should_reraise_any_non_builder_error_exception_as_a_builder_error
+    in_sandbox do
+      git = new_git
+      class << git
+        def git(*args)
+          raise Exception.new('Git blew up')
+        end
+      end
+      
+      assert_raise(BuilderError) do
+        begin
+          git.latest_revision
+        rescue BuilderError => e
+          assert_equal "Exception while Git was loading new changesets from origin.  Exception: Git blew up", e.message
+          raise e
+        end
+      end
+    end
+  end
+
   def test_current_branch_should_parse_git_branch_output
     in_sandbox do
       git = new_git

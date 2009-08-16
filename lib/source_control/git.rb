@@ -99,6 +99,9 @@ module SourceControl
       end
     rescue Timeout::Error => e
       raise BuilderError.new("Timeout in 'git fetch origin'")
+    rescue Exception => e
+      raise e if e.class == BuilderError
+      raise BuilderError.new("Exception while Git was loading new changesets from origin.  #{e.class}: #{e.message}")
     end
 
     def git(operation, arguments = [], options = {}, &block)
