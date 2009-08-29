@@ -55,6 +55,7 @@ class BuildSerializerTest < Test::Unit::TestCase
   end
     
   def test_serialize_when_times_out
+    Configuration.stubs(:serialized_build_timeout).returns(5.hours)
     lock = AvailableLock.new
     Time.stubs(:now).returns(Time.at(0))
     def @serializer.wait
@@ -66,13 +67,13 @@ class BuildSerializerTest < Test::Unit::TestCase
     @project.expects(:notify).with(:queued).once
     @project.expects(:notify).with(:timed_out).once
     FileLock.expects(:new).returns(lock)
-    assert_raises "Timed out after waiting to build for about 1 hour" do
+    assert_raises "Timed out after waiting to build for about 5 hours" do
       @serializer.serialize do
         fail "should never run"
       end
     end
     
-    assert_equal Time.at(1.hour.to_i), Time.now
+    assert_equal Time.at(5.hours.to_i), Time.now
     assert_false lock.locked?
   end
   

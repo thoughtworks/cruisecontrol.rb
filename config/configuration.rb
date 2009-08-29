@@ -8,7 +8,7 @@ class Configuration
   @email_from = 'cruisecontrol@thoughtworks.com'
   @disable_build_now = false
   @serialize_builds = false
-  @serialized_build_timeout = 1.hour
+  @serialized_build_timeout = 3.hour
   @git_load_new_changesets_timeout = 5.minutes
 
   class << self
