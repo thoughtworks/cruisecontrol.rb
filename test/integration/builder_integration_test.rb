@@ -43,7 +43,7 @@ class BuilderIntegrationTest < ActiveSupport::TestCase
   def test_build_if_necessary_should_abort_build_when_central_config_modified
     with_project('project_with_central_config', :revision => 16) do |project, sandbox|
       assert_throws(:reload_project) { project.build_if_necessary }
-      assert Dir["#{sandbox.root}/project_with_central_config/build*"].empty?
+      assert Dir["#{sandbox.root}/project_with_central_config/build-*"].empty?
       assert_equal "$config_loaded = true\n\n",
                    File.read("#{sandbox.root}/project_with_central_config/work/cruise_config.rb")
     end
