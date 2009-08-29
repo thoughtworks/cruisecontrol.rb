@@ -79,6 +79,14 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
+  def test_checkout_with_master_branch_explicitly_specified_should_not_perform_git_branch_and_checkout
+    in_sandbox do
+      git = new_git(:repository => "git:/my_repo", :branch => "master")
+      git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_project_directory => false)
+      git.checkout
+    end
+  end
+
   def test_checkout_should_blow_up_when_repository_was_not_given_to_the_ctor
     in_sandbox do
       git = Git.new(:repository => nil)
