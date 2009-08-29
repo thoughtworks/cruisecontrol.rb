@@ -69,6 +69,16 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
+  def test_checkout_with_branch_should_perform_git_clone_branch_and_checkout
+    in_sandbox do
+      git = new_git(:repository => "git:/my_repo", :branch => "mybranch")
+      git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_project_directory => false)
+      git.expects(:git).with("branch", ["--track", 'mybranch', 'origin/mybranch'])
+      git.expects(:git).with("checkout", ["-q", 'mybranch'])
+      git.checkout
+    end
+  end
+
   def test_checkout_should_blow_up_when_repository_was_not_given_to_the_ctor
     in_sandbox do
       git = Git.new(:repository => nil)
