@@ -16,7 +16,7 @@ Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here
   config.gem "xml-simple", :lib => "xmlsimple"
   config.gem "mocha"
-  config.gem "rcov"
+  config.gem "rcov" if RUBY_VERSION != '1.8.7' && RUBY_VERSION !~ /^1.9/
   
   def find_home
     looks_like_windows = (Config::CONFIG["target_os"] =~ /32/)
