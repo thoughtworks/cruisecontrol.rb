@@ -404,8 +404,8 @@ class Project
   
   def do_clean_checkout?
     case @clean_checkout_when
-    when :always: true
-    when nil, :never: false
+    when :always then true
+    when nil, :never then false
     else
       timestamp_filename = File.join(self.path, 'last_clean_checkout_timestamp')
       unless File.exist?(timestamp_filename)
