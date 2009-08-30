@@ -62,7 +62,7 @@ def start(start_cmd)
   # remove cruise pid file if process is no longer running
   cruise_pid = read_cruise_pid
   if cruise_pid
-    cruise_process = `ps -ea -o 'pid'`.grep(/#{cruise_pid}/).first
+    cruise_process = `ps -ea -o 'pid'`.split("\n").grep(/#{cruise_pid}/).first
     FileUtils.rm(cruise_pid_file) unless cruise_process
   end
 
