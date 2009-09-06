@@ -9,7 +9,7 @@ require 'optparse'
 CRUISE_OPTIONS = { :verbose => false }
 
 ARGV.options do |opts|
-  opts.banner = "Usage: cruise builder <project_name> []options]"
+  opts.banner = "Usage: cruise builder <project_name> [options]"
 
   opts.separator ""
 
