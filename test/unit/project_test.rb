@@ -758,6 +758,7 @@ class ProjectTest < ActiveSupport::TestCase
       build.stubs(:artifacts_directory).returns("project1/build-#{label}")
       build.stubs(:last).returns(nil)
       build.stubs(:label).returns(label)
+      build.stubs(:successful?).returns(true)
       build
     end
 end
