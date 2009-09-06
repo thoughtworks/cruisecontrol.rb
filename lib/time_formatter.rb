@@ -11,13 +11,11 @@ class << TimeFormatter
     today = now.beginning_of_day
     tomorrow = 1.day.since(today)
 
-    format =
-      case(time)
-      when Time.at(0)...this_year then '%d %b %y'
-      when this_year...today then '%d %b'
-      when today...tomorrow then '%H:%M'
-      else '%Y-%m-%d %H:%M:%S ?future?'
-      end
+    format = '%Y-%m-%d %H:%M:%S ?future?'
+    format = '%d %b %y' if time >= Time.at(0) && time < this_year
+    format = '%d %b'    if time >= this_year  && time < today
+    format = '%H:%M'    if time >= today      && time < tomorrow
+
     remove_leading_zero(time.strftime(format))
   end
 

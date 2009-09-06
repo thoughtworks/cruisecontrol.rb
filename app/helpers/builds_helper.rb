@@ -8,7 +8,7 @@ module BuildsHelper
     end
     options.unshift "<option value=''>Older Builds...</option>"
     
-    select_tag "build", options, :onChange => "this.form.submit();"
+    select_tag "build", options.join, :onChange => "this.form.submit();"
   end
   
   def format_build_log(log)

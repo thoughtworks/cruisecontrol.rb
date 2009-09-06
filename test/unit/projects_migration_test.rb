@@ -42,11 +42,10 @@ class ProjectsMigrationTest < Test::Unit::TestCase
 
     @migration.expects(:migration_scripts).returns(['001_foo.rb', '002_bar.rb', '003_baz.rb'])
 
-    script_error = StandardError.new
     @migration.expects(:execute).with("ruby #{expected_script_path('002_bar.rb')} #{@sandbox.root}")
-    @migration.expects(:execute).with("ruby #{expected_script_path('003_baz.rb')} #{@sandbox.root}").raises(script_error)
+    @migration.expects(:execute).with("ruby #{expected_script_path('003_baz.rb')} #{@sandbox.root}").raises(StandardError.new)
 
-    assert_raises(script_error) { @migration.migrate_data_if_needed }
+    assert_raise(StandardError) { @migration.migrate_data_if_needed }
 
     # migration #3 was broken, current version shall remain at 2
     assert_equal 2, @migration.current_data_version

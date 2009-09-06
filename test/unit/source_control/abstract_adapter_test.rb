@@ -17,7 +17,7 @@ class SourceControl::AbstractAdapterTest < Test::Unit::TestCase
   def test_execute_with_error_log__shows_all_lines_of_multiline_exceptions
     @adapter = SourceControl::AbstractAdapter.new
     in_total_sandbox do
-      assert_raises(BuilderError, /svn:.*svn:/m) do
+      assert_raise(BuilderError, /svn:.*svn:/m) do
               @adapter.execute_with_error_log("svn co file://foo/bar", @stderr)
             end
     end

@@ -5,7 +5,7 @@ class SourceControlTest < Test::Unit::TestCase
 
   def test_create_should_require_presence_of_url_in_options
     in_sandbox do
-      assert_raises(ArgumentError, "options should include repository") do
+      assert_raise(ArgumentError, "options should include repository") do
         scm = SourceControl.create({:repository => nil})
       end
     end
@@ -76,7 +76,7 @@ class SourceControlTest < Test::Unit::TestCase
 
   def test_create_should_blow_up_if_given_a_non_recognized_source_control_string
     in_sandbox do
-      assert_raises RuntimeError do
+      assert_raise RuntimeError do
         SourceControl.create(:repository => "http://my_repo", :source_control => 'not_a_scm')
       end
     end
@@ -84,7 +84,7 @@ class SourceControlTest < Test::Unit::TestCase
 
   def test_create_should_blow_up_if_given_class_that_can_be_constantized_but_is_not_a_scm_adapter
     in_sandbox do
-      assert_raises RuntimeError do
+      assert_raise RuntimeError do
         SourceControl.create(:repository => "http://my_repo", :source_control => "String")
       end
     end
@@ -153,7 +153,7 @@ class SourceControlTest < Test::Unit::TestCase
       File.expects(:directory?).with(File.join('./Proj1/work', '.hg')).returns(false)
       File.expects(:directory?).with(File.join('./Proj1/work', '.bzr')).returns(false)
 
-      assert_raises RuntimeError, "Could not detect the type of source control in ./Proj1/work" do
+      assert_raise RuntimeError, "Could not detect the type of source control in ./Proj1/work" do
         SourceControl.detect('./Proj1/work')
       end
     end
@@ -166,7 +166,7 @@ class SourceControlTest < Test::Unit::TestCase
       File.expects(:directory?).with(File.join('./Proj1/work', '.hg')).returns(false)
       File.expects(:directory?).with(File.join('./Proj1/work', '.bzr')).returns(false)
 
-      assert_raises RuntimeError, "More than one type of source control was detected in ./Proj1/work" do
+      assert_raise RuntimeError, "More than one type of source control was detected in ./Proj1/work" do
         SourceControl.detect('./Proj1/work')
       end
     end

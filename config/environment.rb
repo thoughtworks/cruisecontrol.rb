@@ -62,9 +62,6 @@ require 'smtp_tls'
 require 'date'
 require 'fileutils'
 
-# custom MIME type for CCTray application
-Mime::Type.register "application/cctray", :cctray
-
 # get rid of cached pages between runs
 FileUtils.rm_rf RAILS_ROOT + "/public/builds"
 FileUtils.rm_rf RAILS_ROOT + "/public/documentation"
