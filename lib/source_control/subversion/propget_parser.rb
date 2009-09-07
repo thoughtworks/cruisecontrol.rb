@@ -5,7 +5,7 @@ module SourceControl
       def parse(lines)
         directories = {}
         current_dir = nil
-        lines.each do |line|
+        lines.lines.each do |line|
           split = line.split(" - ")
           if split.length > 1
             current_dir = split[0]
@@ -20,4 +20,3 @@ module SourceControl
     
   end
 end
-
