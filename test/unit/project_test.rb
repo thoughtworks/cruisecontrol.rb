@@ -428,13 +428,17 @@ class ProjectTest < ActiveSupport::TestCase
     new_build = stub_build('20.2')
     new_build_with_interesting_number = stub_build('2')
                  
+    builder_status = Object.new
+    builder_status.stubs(:build_initiated).returns(true)
+    BuilderStatus.expects(:new).returns(builder_status)
+
     project = Project.new('project1', @svn)
     @svn.stubs(:update)
     project.stubs(:log_changeset) 
     project.stubs(:builds).returns([existing_build1, existing_build2])
     project.stubs(:last_build).returns(nil) 
     project.stubs(:new_revisions).returns(nil)
-         
+    
     Build.expects(:new).with(project, '20.2').returns(new_build) 
     project.build(new_revision(20))
 
