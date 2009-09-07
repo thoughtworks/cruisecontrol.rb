@@ -27,7 +27,7 @@ class BuildSerializerTest < Test::Unit::TestCase
     lock = AvailableLock.new
     FileLock.expects(:new).returns(lock)
 
-    assert_raises "some exception" do
+    assert_raise_with_message(RuntimeError, "some exception") do
       @serializer.serialize { raise "some exception" }
     end
     
@@ -67,7 +67,7 @@ class BuildSerializerTest < Test::Unit::TestCase
     @project.expects(:notify).with(:queued).once
     @project.expects(:notify).with(:timed_out).once
     FileLock.expects(:new).returns(lock)
-    assert_raises "Timed out after waiting to build for about 5 hours" do
+    assert_raise_with_message(RuntimeError, "Timed out after waiting to build for about 5 hours") do
       @serializer.serialize do
         fail "should never run"
       end

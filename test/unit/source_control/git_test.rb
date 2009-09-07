@@ -92,7 +92,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
       git = Git.new(:repository => nil)
       git.expects(:git).never
 
-      assert_raises(RuntimeError) { git.checkout }
+      assert_raise(RuntimeError) { git.checkout }
     end
   end
 

@@ -76,12 +76,13 @@ class EmailNotifierTest < Test::Unit::TestCase
   def test_useful_errors
     ActionMailer::Base.stubs(:smtp_settings).returns(:foo => 5)
     CruiseControl::Log.expects(:event).with("Error sending e-mail - current server settings are :\n  :foo = 5", :error)
-    BuildMailer.expects(:deliver_build_report).raises('something')
+    BuildMailer.expects(:deliver_build_report).raises('oh noes!')
     
     @notifier.emails = ['foo@crapty.com']
-
-    # FIXME: how does this 'something' match? Something must be wrong with assert_raises 
-    assert_raises('something') { @notifier.build_finished(failing_build) }
+    
+    assert_raise_with_message(RuntimeError, 'oh noes!') do
+      @notifier.build_finished(failing_build)
+    end
   end
 
   def test_configuration_email_from_should_be_used_when_notifier_from_is_not_specified
