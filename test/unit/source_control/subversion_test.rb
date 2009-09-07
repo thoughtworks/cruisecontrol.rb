@@ -65,7 +65,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
     revision_number = 10
 
     svn = new_subversion
-    svn.expects(:svn).with("update", ["--revision", revision_number]).returns("your mom")
+    svn.expects(:svn).with("update", ["--revision", revision_number]).returns(["your mom"])
 
     svn.update(Subversion::Revision.new(revision_number))
   end
