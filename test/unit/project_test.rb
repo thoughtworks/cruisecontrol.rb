@@ -82,6 +82,7 @@ class ProjectTest < ActiveSupport::TestCase
       build = new_mock_build('5')
 
       build.stubs(:artifacts_directory).returns(sandbox.root)
+      build.stubs(:successful?).returns(true)
       
       @project.stubs(:builds).returns([])
       @project.stubs(:config_modified?).returns(false)
@@ -292,6 +293,7 @@ class ProjectTest < ActiveSupport::TestCase
       build = new_mock_build('2')
       @project.stubs(:last_build).returns(nil)
       build.stubs(:artifacts_directory).returns(sandbox.root)      
+      build.stubs(:successful?).returns(true)
       @svn.stubs(:up_to_date?).with([]).returns(false)
       @svn.expects(:update).with(revision)
       @svn.expects(:latest_revision).returns(revision)
