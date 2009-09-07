@@ -224,6 +224,8 @@ class ProjectTest < ActiveSupport::TestCase
       
       mock_build = Object.new
       mock_build.stubs(:artifacts_directory).returns(sandbox.root)
+      mock_build.stubs(:label).returns("1")
+      mock_build.stubs(:successful?).returns(true)
 
       listener = Object.new
       listener.expects(:build_finished).with(mock_build).raises(StandardError.new("Listener failed"))
