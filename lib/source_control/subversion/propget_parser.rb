@@ -3,9 +3,11 @@ module SourceControl
 
     class Subversion::PropgetParser
       def parse(lines)
+        lines = lines.lines if lines.is_a?(String)
+        
         directories = {}
         current_dir = nil
-        lines.lines.each do |line|
+        lines.each do |line|
           split = line.split(" - ")
           if split.length > 1
             current_dir = split[0]
