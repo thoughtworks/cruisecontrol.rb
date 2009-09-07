@@ -328,7 +328,7 @@ class Project
       build.run
       notify(:build_finished, build)
     rescue => e
-        build.fail!(e.message)
+      build.fail!(e.message)
       raise
     end
 
