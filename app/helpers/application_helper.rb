@@ -29,7 +29,7 @@ module ApplicationHelper
     build_link(text, project, build)
   end
 
-  def text_to_build(build, with_elapsed_time = true)
+  def build_to_text(build, with_elapsed_time = true)
     text = build_label(build)
     if build.failed?
       text += ' FAILED'
@@ -43,7 +43,7 @@ module ApplicationHelper
   end
   
   def link_to_build_with_elapsed_time(project, build)
-    build_link(text_to_build(build), project, build)
+    build_link(build_to_text(build), project, build)
   end
     
   def display_builder_state(state)
