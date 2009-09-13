@@ -2,7 +2,7 @@
 module ApplicationHelper
 
   def format_time(time, format = :iso)
-    TimeFormatter.send(format, time)
+    TimeFormatter.new(time).send(format)
   end
   
   def format_seconds(total_seconds, format = :general)

@@ -9,19 +9,29 @@ class ApplicationHelperTest < Test::Unit::TestCase
   end
 
   def test_format_time_sends_to_time_formatter
+    time_formatter = mock()
+    time_formatter.expects(:human)
     time = Time.parse('2009-07-01 12:30:00')
-    TimeFormatter.expects(:human).with(time).returns('2009-07-01')
+    TimeFormatter.expects(:new).with(time).returns(time_formatter)
     @helper.format_time(time, :human)
   end
 
-  def test_format_duration_sends_to_duration_formatter
+  def test_format_time_defaults_to_iso
+    time_formatter = mock()
+    time_formatter.expects(:iso)
+    time = Time.parse('2009-07-01 12:30:00')
+    TimeFormatter.expects(:new).with(time).returns(time_formatter)
+    @helper.format_time(time)
+  end
+
+  def test_format_seconds_sends_to_duration_formatter
     duration_formatter = mock()
     duration_formatter.expects(:precise)
     DurationFormatter.expects(:new).with(0).returns(duration_formatter)
     @helper.format_seconds(0, :precise)
   end
 
-  def test_format_duration_defaults_to_general
+  def test_format_seconds_defaults_to_general
     duration_formatter = mock()
     duration_formatter.expects(:general)
     DurationFormatter.expects(:new).with(0).returns(duration_formatter)
