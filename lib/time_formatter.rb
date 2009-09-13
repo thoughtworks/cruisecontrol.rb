@@ -1,10 +1,7 @@
-# TODO: move unit tests for this functionality from ApplicationHelperTest to a unit test for the class
-
 class TimeFormatter
 end
 
 class << TimeFormatter
-
   def human(time)
     now = Time.now
     this_year = now.beginning_of_year
@@ -46,5 +43,4 @@ class << TimeFormatter
   def remove_leading_zero(string)
     string.gsub(/^0(\d:\d\d|\d )/, '\1')
   end
-  
 end

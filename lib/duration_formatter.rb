@@ -1,13 +1,9 @@
-# TODO: move unit tests for this functionality from ApplicationHelperTest to a unit test for the class
-
 class DurationFormatter
-
   def initialize(duration)
     @duration = duration
     @minutes, @seconds = duration.divmod(60)
     @hours, @minutes = @minutes.divmod(60)
   end
-
 
   def general
     if @hours >= 1 and @minutes == 0
@@ -44,5 +40,4 @@ class DurationFormatter
   def method_missing(format, *args)
     raise "Unknown duration format #{format.inspect}"
   end
-
 end
