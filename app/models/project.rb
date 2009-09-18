@@ -9,9 +9,25 @@ class Project
     attr_accessor :current_project
     
     def all(dir=CRUISE_DATA_ROOT + "/projects")
-      Projects.new(dir).load_all
+      load_all(dir).map do |project_dir|
+        load_project project_dir
+      end
     end
-        
+    
+    def create(project_name, scm, dir=CRUISE_DATA_ROOT + "/projects")
+      returning(Project.new(project_name, scm)) do |project|
+        raise "Project named #{project.name.inspect} already exists in #{dir}" if Project.all(dir).include?(project)
+        begin
+          save_project(project, dir)
+          checkout_local_copy(project)
+          write_config_example(project)
+        rescue
+          FileUtils.rm_rf "#{dir}/#{project.name}"
+          raise
+        end
+      end
+    end
+    
     def plugin(plugin_name)
       self.plugin_names << plugin_name unless RAILS_ENV == 'test' or self.plugin_names.include? plugin_name
     end
@@ -42,6 +58,32 @@ class Project
         project.path = dir
       end
     end
+    
+    private
+    
+      def load_all(dir)
+        Dir["#{dir}/*"].find_all {|child| File.directory?(child)}.sort
+      end
+    
+      def save_project(project, dir)
+        project.path = File.join(dir, project.name)
+        FileUtils.mkdir_p project.path
+      end
+
+      def checkout_local_copy(project)
+        work_dir = File.join(project.path, 'work')
+        FileUtils.mkdir_p work_dir
+        project.source_control.checkout
+      end
+
+      def write_config_example(project)
+        config_example = File.join(RAILS_ROOT, 'config', 'cruise_config.rb.example')
+        config_in_subversion = File.join(project.path, 'work', 'cruise_config.rb')
+        cruise_config = File.join(project.path, 'cruise_config.rb')
+        if File.exists?(config_example) and not File.exists?(config_in_subversion)
+          FileUtils.cp(config_example, cruise_config)
+        end
+      end
   end
   
   def initialize(name, scm = nil)

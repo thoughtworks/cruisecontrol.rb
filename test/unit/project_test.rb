@@ -1,8 +1,4 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
-require 'date'
-require 'ostruct'
-require 'email_notifier'
-require 'fileutils'
 
 class ProjectTest < ActiveSupport::TestCase
   include FileSandbox
@@ -434,21 +430,19 @@ class ProjectTest < ActiveSupport::TestCase
     assert @project.build_requested?
   end
   
-  def test_build_should_generate_new_label_if_same_name_label_exists    
+  def test_build_should_generate_new_label_if_same_name_label_exists
     existing_build1 = stub_build('20')
     existing_build2 = stub_build('20.1')
     new_build = stub_build('20.2')
     new_build_with_interesting_number = stub_build('2')
-                 
-    builder_status = Object.new
-    builder_status.stubs(:build_initiated).returns(true)
-    BuilderStatus.expects(:new).returns(builder_status)
+
+    BuilderStatus.expects(:new).returns stub(:build_initiated => true)
 
     project = Project.new('project1', @svn)
     @svn.stubs(:update)
-    project.stubs(:log_changeset) 
+    project.stubs(:log_changeset)
     project.stubs(:builds).returns([existing_build1, existing_build2])
-    project.stubs(:last_build).returns(nil) 
+    project.stubs(:last_build).returns(nil)
     project.stubs(:new_revisions).returns(nil)
     
     Build.expects(:new).with(project, '20.2').returns(new_build) 
@@ -733,7 +727,7 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
   
-  test "Projects.load_project should load the project in the given directory" do
+  test "Project.load_project should load the project in the given directory" do
     in_sandbox do |sandbox|
       sandbox.new :file => 'one/cruise_config.rb', :with_content => ''
 
@@ -744,7 +738,7 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
-  test "Projects.load_project should load a project without any configuration" do
+  test "Project.load_project should load a project without any configuration" do
     in_sandbox do |sandbox|
       sandbox.new :directory => "myproject/work/.svn"
       sandbox.new :directory => "myproject/builds-1"
@@ -754,6 +748,45 @@ class ProjectTest < ActiveSupport::TestCase
       assert_equal("myproject", new_project.name)
       assert_equal(SourceControl::Subversion, new_project.source_control.class)
       assert_equal(sandbox.root + "/myproject", new_project.path)
+    end
+  end
+  
+  test "Project.create should add a new project" do
+    in_sandbox do |sandbox|
+      Project.create "one", @svn, sandbox.root
+      Project.create "two", @svn, sandbox.root
+      assert_equal %w(one two), Project.all(sandbox.root).map(&:name)
+    end
+  end
+
+  test "Project.create should check out an existing project" do
+    in_sandbox do |sandbox|
+      Project.create "one", @svn, sandbox.root
+      assert SandboxFile.new('one/work').exists?
+      assert SandboxFile.new('one/work/README').exists?
+    end
+  end
+
+  test "Project.create should clean up after itself if the source control throws an exception" do
+    in_sandbox do |sandbox|
+      @svn.expects(:checkout).raises("svn error")
+
+      assert_raise RuntimeError, 'svn error' do
+        Project.create "one", @svn, sandbox.root
+      end
+      
+      assert_false SandboxFile.new('one/work').exists?
+      assert_false SandboxFile.new('one').exists?
+    end
+  end
+
+  test "Project.create should not allow you to add the same project twice" do
+    in_sandbox do |sandbox|
+      project = Project.create "one", @svn, sandbox.root
+      assert_raise RuntimeError, "Project named \"one\" already exists in #{sandbox.root}" do
+        Project.create "one", @svn, sandbox.root
+      end
+      assert File.directory?(project.path), "Project directory does not exist."
     end
   end
   

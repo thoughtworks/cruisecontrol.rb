@@ -70,7 +70,7 @@ begin
 
   source_control = SourceControl.create(scm_options)
 
-  Project.all << Project.new(project_name, source_control)
+  Project.create(project_name, source_control)
   
   if source_control.repository =~ /^svn\+ssh\:\/\//
     puts "IMPORTANT!!! - It looks like you are connecting to your repository with an svn+ssh connection.  " +

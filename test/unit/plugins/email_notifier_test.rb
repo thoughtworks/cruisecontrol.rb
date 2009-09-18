@@ -23,7 +23,7 @@ class EmailNotifierTest < Test::Unit::TestCase
     @notifier.emails = ["jeremystellsmith@gmail.com", "jeremy@thoughtworks.com"]
     @notifier.from = 'cruisecontrol@thoughtworks.com'
     
-    @project.add_plugin(@notifier)
+    @project.add_plugin(@notifier, :test_email_notifier)
   end
   
   def teardown
