@@ -1,6 +1,4 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'builds_controller'
-require "build"
 
 class ApplicationHelperTest < Test::Unit::TestCase
   

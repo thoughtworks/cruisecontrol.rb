@@ -1,8 +1,4 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
-require 'date'
-require 'ostruct'
-require 'email_notifier'
-require 'fileutils'
 
 class ProjectTest < ActiveSupport::TestCase
   include FileSandbox
@@ -422,21 +418,19 @@ class ProjectTest < ActiveSupport::TestCase
     assert @project.build_requested?
   end
   
-  def test_build_should_generate_new_label_if_same_name_label_exists    
+  def test_build_should_generate_new_label_if_same_name_label_exists
     existing_build1 = stub_build('20')
     existing_build2 = stub_build('20.1')
     new_build = stub_build('20.2')
     new_build_with_interesting_number = stub_build('2')
-                 
-    builder_status = Object.new
-    builder_status.stubs(:build_initiated).returns(true)
-    BuilderStatus.expects(:new).returns(builder_status)
+
+    BuilderStatus.expects(:new).returns stub(:build_initiated => true)
 
     project = Project.new('project1', @svn)
     @svn.stubs(:update)
-    project.stubs(:log_changeset) 
+    project.stubs(:log_changeset)
     project.stubs(:builds).returns([existing_build1, existing_build2])
-    project.stubs(:last_build).returns(nil) 
+    project.stubs(:last_build).returns(nil)
     project.stubs(:new_revisions).returns(nil)
     
     Build.expects(:new).with(project, '20.2').returns(new_build) 
