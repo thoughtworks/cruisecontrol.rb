@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'fileutils'
 
 class CommandLineTest < Test::Unit::TestCase
   include FileSandbox

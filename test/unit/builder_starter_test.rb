@@ -1,6 +1,4 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'builder_starter'
-require 'project'
 
 class BuilderStarterTest < Test::Unit::TestCase
   include FileSandbox
