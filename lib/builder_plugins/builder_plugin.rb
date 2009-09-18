@@ -25,7 +25,7 @@ class BuilderPlugin
   
   class << self
     def known_event?(event_name)
-      self.instance_methods(false).include? event_name.to_s
+      self.instance_methods(false).map { |m| m.to_s }.include? event_name.to_s
     end
     
     def load_all

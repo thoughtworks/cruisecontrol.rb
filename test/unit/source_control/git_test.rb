@@ -35,7 +35,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
-  def test_up_to_date?_should_return_false_if_there_are_new_revisions
+  def test_up_to_date_should_return_false_if_there_are_new_revisions
     in_sandbox do
       git = new_git
       mock_revisions(git, [:new_revision])
@@ -46,7 +46,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
-  def test_up_to_date?_should_return_true_if_there_are_no_new_revisions
+  def test_up_to_date_should_return_true_if_there_are_no_new_revisions
     in_sandbox do
       git = new_git
       mock_revisions(git, [])
@@ -69,12 +69,30 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
+  def test_checkout_with_branch_should_perform_git_clone_branch_and_checkout
+    in_sandbox do
+      git = new_git(:repository => "git:/my_repo", :branch => "mybranch")
+      git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_project_directory => false)
+      git.expects(:git).with("branch", ["--track", 'mybranch', 'origin/mybranch'])
+      git.expects(:git).with("checkout", ["-q", 'mybranch'])
+      git.checkout
+    end
+  end
+
+  def test_checkout_with_master_branch_explicitly_specified_should_not_perform_git_branch_and_checkout
+    in_sandbox do
+      git = new_git(:repository => "git:/my_repo", :branch => "master")
+      git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_project_directory => false)
+      git.checkout
+    end
+  end
+
   def test_checkout_should_blow_up_when_repository_was_not_given_to_the_ctor
     in_sandbox do
       git = Git.new(:repository => nil)
       git.expects(:git).never
 
-      assert_raises(RuntimeError) { git.checkout }
+      assert_raise(RuntimeError) { git.checkout }
     end
   end
 
@@ -115,6 +133,26 @@ class SourceControl::GitTest < Test::Unit::TestCase
         end
       ensure
         Configuration.git_load_new_changesets_timeout = old_timeout
+      end
+    end
+  end
+
+  def test_latest_revision__should_reraise_any_builder_error_without_modification
+    in_sandbox do
+      git = new_git
+      class << git
+        def git(*args)
+          raise BuilderError.new('This is a BuilderError, just reraise it')
+        end
+      end
+      
+      assert_raise(BuilderError) do
+        begin
+          git.latest_revision
+        rescue BuilderError => e
+          assert_equal 'This is a BuilderError, just reraise it', e.message
+          raise e
+        end
       end
     end
   end

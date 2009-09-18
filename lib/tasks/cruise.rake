@@ -16,10 +16,12 @@ task :cruise => ['geminstaller'] do
   out = ENV['CC_BUILD_ARTIFACTS']
   mkdir_p out unless File.directory? out if out
 
-  if RUBY_VERSION == '1.8.7'
-    puts '!!!!!! Skipping rcov on Ruby 1.8.7'
+  if RUBY_VERSION == '1.8.7' || RUBY_VERSION =~ /^1.9/
+    puts '!!!!!! Skipping rcov on Ruby 1.8.7 and 1.9'
     Rake::Task["test:units"].invoke
     Rake::Task["test:functionals"].invoke
+    # TODO: Why were there no integration tests under 1.8.7?  Do they not work?
+    # Rake::Task["test:integration"].invoke
   else
     ENV['SHOW_ONLY'] = 'models,lib,helpers'
     Rake::Task["test:units:rcov"].invoke

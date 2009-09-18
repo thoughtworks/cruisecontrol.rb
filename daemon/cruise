@@ -22,6 +22,10 @@
 CRUISE_USER = ENV['CRUISE_USER'] || ENV['USER']
 CRUISE_HOME = ENV['CRUISE_HOME'] || `pwd`.chomp
 
+if !File.exist?(CRUISE_HOME + "/daemon/daemon_helper.rb")
+  raise "CRUISE_HOME was incorrectly set to '#{CRUISE_HOME}.  Please hardcode it in this script, set it as an environment variable, or run this script as 'ci/cruise' from the ccrb project directory"
+end
+
 require CRUISE_HOME + "/daemon/daemon_helper"
 
 command = ARGV.shift

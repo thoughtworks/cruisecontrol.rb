@@ -56,7 +56,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   end
 
   def test_only_except_known_options
-    assert_raises("don't know how to handle 'sugar'") do
+    assert_raise_with_message(RuntimeError, "don't know how to handle 'sugar'") do
       Subversion.new(:sugar => "1/2 cup")
     end
   end
@@ -65,7 +65,7 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
     revision_number = 10
 
     svn = new_subversion
-    svn.expects(:svn).with("update", ["--revision", revision_number]).returns("your mom")
+    svn.expects(:svn).with("update", ["--revision", revision_number]).returns(["your mom"])
 
     svn.update(Subversion::Revision.new(revision_number))
   end
@@ -145,11 +145,11 @@ class SourceControl::SubversionTest < Test::Unit::TestCase
   end
 
   def test_checkout_requires_repository_location
-    assert_raises('Repository location is not specified') { Subversion.new.checkout('.') }
+    assert_raise_with_message(RuntimeError, 'Repository location is not specified') { Subversion.new.checkout('.') }
   end
 
   def test_new_does_not_allow_random_params
-    assert_raises("don't know how to handle 'lollipop'") do
+    assert_raise_with_message(RuntimeError, "don't know how to handle 'lollipop'") do
       Subversion.new(:repository => 'http://foo.com/svn/project', :lollipop => 'http://foo.com/svn/project')
     end
   end

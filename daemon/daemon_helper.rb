@@ -12,9 +12,9 @@ include FileUtils
 require "rubygems"
 
 begin
-  gem 'mongrel'
+  gem 'mongrel' if RUBY_VERSION =~ /^1.8/
 rescue => e
-  puts "Error: daemon mode of CC.rb requires mongrel installed"
+  puts "Error: Under Ruby 1.8, daemon mode of CC.rb requires mongrel installed"
   exit 1
 end
 
@@ -62,7 +62,7 @@ def start(start_cmd)
   # remove cruise pid file if process is no longer running
   cruise_pid = read_cruise_pid
   if cruise_pid
-    cruise_process = `ps -ea -o 'pid'`.grep(/#{cruise_pid}/).first
+    cruise_process = `ps -ea -o 'pid'`.split("\n").grep(/#{cruise_pid}/).first
     FileUtils.rm(cruise_pid_file) unless cruise_process
   end
 
@@ -86,7 +86,7 @@ def stop
     print error_msg + "\n"
     return 1
   end
-  cruise_process = `ps -ea -o 'pid pgid command'`.grep(/^\s*#{cruise_pid}\s+\d+\s+.*/).first
+  cruise_process = `ps -ea -o 'pid pgid command'`.split("\n").grep(/^\s*#{cruise_pid}\s+\d+\s+.*/).first
   cruise_process =~ /^\s*#{cruise_pid}\s+(\d+)\s+(.*)/
   cruise_process_group = $1
   cruise_process_command = $2
@@ -97,10 +97,11 @@ def stop
     return 1
   end
 
-  cruise_child_processes = `ps -ea -o 'pid pgid command'`.grep(/^\s*\d+\s+#{cruise_process_group}\s+/)
+  cruise_child_processes = `ps -ea -o 'pid pgid command'`.split("\n").grep(/^\s*\d+\s+#{cruise_process_group}\s+/)
 
   print("Killing cruise process #{cruise_pid}: #{cruise_process_command}\n")
-  failed ||= !(system "mongrel_rails stop -P #{cruise_pid_file}")
+  server = RUBY_VERSION =~ /^1.9/ ? 'thin -f' : 'mongrel_rails'
+  failed ||= !(system "#{server} stop -P #{cruise_pid_file}")
 
   cruise_child_processes.each do |child_process|
     child_process =~ /^\s*(\d+)\s+#{cruise_process_group}\s+(.*)/

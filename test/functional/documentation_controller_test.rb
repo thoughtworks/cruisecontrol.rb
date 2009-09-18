@@ -14,7 +14,7 @@ class DocumentationControllerTest < ActionController::TestCase
     assert_response :success
     assert_template 'documentation/docs'
     
-    assert_raises ActionView::MissingTemplate do
+    assert_raise ActionView::MissingTemplate do
       get :get, :path => 'bad_request'
     end
   end

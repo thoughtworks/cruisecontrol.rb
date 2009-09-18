@@ -24,8 +24,8 @@ module SourceControl
       # need to read from command output, because otherwise tests break
       git('clone', [@repository, path], :execute_in_project_directory => false)
 
-      if @branch
-        git('branch', ['--track', @branch, "origin/#@branch"])
+      if @branch and @branch != 'master'
+        git('branch', ['--track', @branch, "origin/#{@branch}"])
         git('checkout', ['-q', @branch]) # git prints 'Switched to branch "branch"' to stderr unless you pass -q 
       end
       git("reset", ['--hard', revision.number]) if revision

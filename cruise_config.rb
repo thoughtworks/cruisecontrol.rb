@@ -3,5 +3,5 @@
 #   simple, ain't it
 
 Project.configure do |project|
-  project.email_notifier.emails = ["cruisecontrolrb-developers@rubyforge.org"]
+  project.email_notifier.emails = ["cruisecontrolrb-developers@rubyforge.org"] if Socket.gethostname =~ /cruisecontrolrb.thoughtworks.com/
 end

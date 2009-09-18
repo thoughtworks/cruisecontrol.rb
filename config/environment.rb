@@ -16,7 +16,7 @@ Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here
   config.gem "xml-simple", :lib => "xmlsimple"
   config.gem "mocha"
-  config.gem "rcov"
+  config.gem "rcov" if RUBY_VERSION != '1.8.7' && RUBY_VERSION !~ /^1.9/
   
   def find_home
     looks_like_windows = (Config::CONFIG["target_os"] =~ /32/)
@@ -61,9 +61,6 @@ require RAILS_ROOT + '/lib/cruise_control/version'
 require 'smtp_tls'
 require 'date'
 require 'fileutils'
-
-# custom MIME type for CCTray application
-Mime::Type.register "application/cctray", :cctray
 
 # get rid of cached pages between runs
 FileUtils.rm_rf RAILS_ROOT + "/public/builds"
