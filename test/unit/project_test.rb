@@ -771,7 +771,7 @@ class ProjectTest < ActiveSupport::TestCase
     in_sandbox do |sandbox|
       @svn.expects(:checkout).raises("svn error")
 
-      assert_raises('svn error') do
+      assert_raise RuntimeError, 'svn error' do
         Project.create "one", @svn, sandbox.root
       end
       
@@ -783,7 +783,7 @@ class ProjectTest < ActiveSupport::TestCase
   test "Project.create should not allow you to add the same project twice" do
     in_sandbox do |sandbox|
       project = Project.create "one", @svn, sandbox.root
-      assert_raises("Project named \"one\" already exists in #{sandbox.root}") do
+      assert_raise RuntimeError, "Project named \"one\" already exists in #{sandbox.root}" do
         Project.create "one", @svn, sandbox.root
       end
       assert File.directory?(project.path), "Project directory does not exist."
