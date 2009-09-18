@@ -29,7 +29,7 @@ class BuildMailerTest < Test::Unit::TestCase
   
   private
     def read_fixture(action)
-      IO.readlines("#{FIXTURES_PATH}/build_mailer/#{action}")
+      IO.readlines("#{FIXTURES_PATH}/build_mailer/#{action}").join
     end
 
     def encode(subject)

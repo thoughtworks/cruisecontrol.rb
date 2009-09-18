@@ -12,9 +12,9 @@ include FileUtils
 require "rubygems"
 
 begin
-  gem 'mongrel'
+  gem 'mongrel' if RUBY_VERSION =~ /^1.8/
 rescue => e
-  puts "Error: daemon mode of CC.rb requires mongrel installed"
+  puts "Error: Under Ruby 1.8, daemon mode of CC.rb requires mongrel installed"
   exit 1
 end
 

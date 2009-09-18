@@ -35,7 +35,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
-  def test_up_to_date?_should_return_false_if_there_are_new_revisions
+  def test_up_to_date_should_return_false_if_there_are_new_revisions
     in_sandbox do
       git = new_git
       mock_revisions(git, [:new_revision])
@@ -46,7 +46,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
     end
   end
 
-  def test_up_to_date?_should_return_true_if_there_are_no_new_revisions
+  def test_up_to_date_should_return_true_if_there_are_no_new_revisions
     in_sandbox do
       git = new_git
       mock_revisions(git, [])
@@ -92,7 +92,7 @@ class SourceControl::GitTest < Test::Unit::TestCase
       git = Git.new(:repository => nil)
       git.expects(:git).never
 
-      assert_raises(RuntimeError) { git.checkout }
+      assert_raise(RuntimeError) { git.checkout }
     end
   end
 

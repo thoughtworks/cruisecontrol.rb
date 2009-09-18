@@ -37,7 +37,7 @@ class ProjectsTest < ActiveSupport::TestCase
       projects = Projects.new(sandbox.root)
       @svn.expects(:checkout).raises("svn error")
 
-      assert_raises('svn error') do
+      assert_raise_with_message(RuntimeError, 'svn error') do
         projects << @one
       end
 
@@ -50,7 +50,7 @@ class ProjectsTest < ActiveSupport::TestCase
     in_sandbox do |sandbox|
       projects = Projects.new(sandbox.root)
       projects << @one      
-      assert_raises("Project named \"one\" already exists in #{sandbox.root}") do
+      assert_raise_with_message(RuntimeError, "Project named \"one\" already exists in #{sandbox.root}") do
         projects << @one        
       end
       assert File.directory?(@one.path), "Project directory does not exist."

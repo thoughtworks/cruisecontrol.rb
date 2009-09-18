@@ -12,23 +12,10 @@ ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
 
 class Test::Unit::TestCase
-  
-  def assert_raises(arg1 = nil, arg2 = nil)
-    expected_error = arg1.is_a?(Exception) ? arg1 : nil
-    expected_class = arg1.is_a?(Class) ? arg1 : nil
-    expected_message = arg1.is_a?(String) ? arg1 : arg2
-    begin 
-      yield
-      fail "expected error was not raised"
-    rescue Test::Unit::AssertionFailedError
-      raise
-    rescue => e
-      raise if e.message == "expected error was not raised"
-      assert_equal(expected_error, e) if expected_error
-      assert_equal(expected_class, e.class, "Unexpected error type raised") if expected_class
-      assert_equal(expected_message, e.message, "Unexpected error message") if expected_message.is_a? String
-      assert_match(expected_message, e.message, "Unexpected error message") if expected_message.is_a? Regexp
-    end
+  def assert_raise_with_message(types, matcher, message = nil, &block)
+    args = [types].flatten + [message]
+    exception = assert_raise(*args, &block)
+    assert_match matcher, exception.message, message
   end
   
   def assert_false(expression)

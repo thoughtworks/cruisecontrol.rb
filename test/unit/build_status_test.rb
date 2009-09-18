@@ -96,7 +96,7 @@ class BuildStatusTest < Test::Unit::TestCase
   end
 
   def test_elapsed_time_should_raise_an_error_if_elapsed_time_not_availabe
-    assert_raises("Could not parse elapsed time") do
+    assert_raise_with_message(RuntimeError, "Could not parse elapsed time") do
       BuildStatus.new("artifacts_directory").elapsed_time
     end
   end
@@ -129,7 +129,7 @@ class BuildStatusTest < Test::Unit::TestCase
   private
 
   def assert_exception_when_parsing_elapsed_time(file_name)
-    assert_raises("Could not parse elapsed time") do
+    assert_raise_with_message(RuntimeError, "Could not parse elapsed time") do
       @status.match_elapsed_time(file_name)
     end  
   end  

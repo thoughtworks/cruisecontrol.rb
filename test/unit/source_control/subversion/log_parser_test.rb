@@ -73,7 +73,7 @@ EOF
       actual = parse_log(SIMPLE_LOG_ENTRY)
 
       assert_equal expected_result, actual
-      assert_equal "Revision 359 committed by aslak on 2006-05-22 13:23:29\nversioning\n  A /trunk/foo.txt\n", actual.to_s #this is fixing a bug
+      assert_equal "Revision 359 committed by aslak on 2006-05-22 13:23:29\nversioning\n  A /trunk/foo.txt\n", actual.join
     end
 
     def test_can_parse_LOG_WITH_NO_MESSAGE
@@ -81,7 +81,7 @@ EOF
       actual = parse_log(LOG_WITH_NO_MESSAGE)
 
       assert_equal expected, actual
-      assert_equal "Revision 1 committed by  on \n\n\n", actual.to_s #this is fixing a bug
+      assert_equal "Revision 1 committed by  on \n\n\n", actual.join
     end
 
     def test_can_parse_LOG_ENTRY_WITH_ANONYMOUS_AUTHOR

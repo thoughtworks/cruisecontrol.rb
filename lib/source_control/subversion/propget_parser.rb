@@ -3,6 +3,8 @@ module SourceControl
 
     class Subversion::PropgetParser
       def parse(lines)
+        lines = lines.lines if lines.is_a?(String) && lines.respond_to?(:lines)
+        
         directories = {}
         current_dir = nil
         lines.each do |line|
@@ -20,4 +22,3 @@ module SourceControl
     
   end
 end
-

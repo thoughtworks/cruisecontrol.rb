@@ -15,11 +15,11 @@ class PollingSchedulerTest < Test::Unit::TestCase
 
   def test_polling_interval_limits
     assert_nothing_raised { @scheduler.polling_interval = 5.seconds }
-    assert_raises("Polling interval of 4 seconds is too small (min. 5 seconds)") do
+    assert_raise_with_message(RuntimeError, "Polling interval of 4 seconds is too small (min. 5 seconds)") do
       @scheduler.polling_interval = 4.seconds
     end
     assert_nothing_raised { @scheduler.polling_interval = 24.hours }
-    assert_raises("Polling interval of 86401 seconds is too big (max. 24 hours)") do
+    assert_raise_with_message(RuntimeError, "Polling interval of 86401 seconds is too big (max. 24 hours)") do
       @scheduler.polling_interval = 24.hours + 1.second
     end
   end
