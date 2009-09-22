@@ -436,8 +436,6 @@ class ProjectTest < ActiveSupport::TestCase
     new_build = stub_build('20.2')
     new_build_with_interesting_number = stub_build('2')
 
-    BuilderStatus.expects(:new).returns stub(:build_initiated => true)
-
     project = Project.new('project1', @svn)
     @svn.stubs(:update)
     project.stubs(:log_changeset)
