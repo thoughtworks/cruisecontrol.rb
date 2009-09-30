@@ -139,8 +139,8 @@ EOF
         :controller => 'builds', :action => 'show', :project => project, :build => to_param)
   end
   
-  def artifact(file_name)
-    File.join(artifacts_directory, file_name)
+  def artifact(path)
+    File.join(artifacts_directory, path)
   end
 
   def contents_for_display(file)

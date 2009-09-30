@@ -170,7 +170,7 @@ class BuildsControllerTest < ActionController::TestCase
 
       get :artifact, :project => project.name, :build => '1', :path => 'foo'
 
-      assert_redirected_to :path => ['foo/index.html']
+      assert_redirected_to 'http://test.host/builds/my_project/1/foo/index.html'
     end
   end
 

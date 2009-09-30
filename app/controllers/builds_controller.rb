@@ -36,11 +36,11 @@ class BuildsController < ApplicationController
     @build = @project.find_build(params[:build])
     render :text => "Build #{params[:build].inspect} not found", :status => 404 and return unless @build
 
-    path = File.join(@build.artifacts_directory, params[:path])
+    path = @build.artifact(params[:path])
 
     if File.directory? path
-      if File.exists?(path + '/index.html')
-        redirect_to :path => File.join(params[:path], 'index.html')
+      if File.exists?(File.join(path, 'index.html'))
+        redirect_to request.request_uri + '/index.html'
       else
         # TODO: generate an index from directory contents
         render :text => "this should be an index of #{params[:path]}"
