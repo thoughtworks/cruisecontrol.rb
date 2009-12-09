@@ -443,10 +443,10 @@ class ProjectTest < ActiveSupport::TestCase
     project.stubs(:last_build).returns(nil)
     project.stubs(:new_revisions).returns(nil)
     
-    Build.expects(:new).with(project, '20.2').returns(new_build) 
+    Build.expects(:new).with(project, '20.2', true).returns(new_build)
     project.build(new_revision(20))
 
-    Build.expects(:new).with(project, '2').returns(new_build)
+    Build.expects(:new).with(project, '2', true).returns(new_build)
     project.build(new_revision(2))
   end
   
@@ -805,7 +805,7 @@ class ProjectTest < ActiveSupport::TestCase
 
     def new_mock_build(label)
       build = Object.new
-      Build.expects(:new).with(@project, label).returns(build)
+      Build.expects(:new).with(@project, label, true).returns(build)
       build.stubs(:artifacts_directory).returns("project1/build-#{label}")
       build.stubs(:last).returns(nil)
       build.stubs(:label).returns(label)

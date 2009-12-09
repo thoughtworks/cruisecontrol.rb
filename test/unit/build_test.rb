@@ -74,15 +74,10 @@ class BuildTest < ActiveSupport::TestCase
 
   def test_artifacts_directory_method_should_remove_cached_pages
     with_sandbox_project do |sandbox, project|
-      build = Build.new(project, 2)
-      build.expects(:clear_cache)
-      build.artifacts_directory      
+      project = create_project_stub('one', 'success')
+      FileUtils.expects(:rm_f).with("#{RAILS_ROOT}/public/builds/older/#{project.name}.html")
+      Build.new(project, 1, true)
     end
-    
-    project = create_project_stub('one', 'success')
-    build = Build.new(project, 1)
-    FileUtils.expects(:rm_f).with("#{RAILS_ROOT}/public/builds/older/#{project.name}.html")
-    build.clear_cache
   end
   
   def test_output_gives_empty_string_when_file_does_not_exist
@@ -123,9 +118,8 @@ class BuildTest < ActiveSupport::TestCase
       expected_build_directory = File.join(sandbox.root, 'build-123')
   
       Time.expects(:now).at_least(2).returns(Time.at(0), Time.at(3.2))
-      build = Build.new(project, 123)
+      build = Build.new(project, 123, true)
   
-      expected_command = build.rake
       expected_build_log = File.join(expected_build_directory, 'build.log')
       expected_redirect_options = {
           :stdout => expected_build_log,
@@ -141,10 +135,9 @@ class BuildTest < ActiveSupport::TestCase
 
   def test_run_stores_settings
     with_sandbox_project do |sandbox, project|
-      expected_build_directory = File.join(sandbox.root, 'build-123')
       project.stubs(:config_file_content).returns("cool project settings")
   
-      build = Build.new(project, 123)
+      build = Build.new(project, 123, true)
       build.stubs(:execute)
 
       build.run
@@ -158,7 +151,7 @@ class BuildTest < ActiveSupport::TestCase
       expected_build_directory = File.join(sandbox.root, 'build-123')
   
       Time.stubs(:now).returns(Time.at(1))
-      build = Build.new(project, 123)
+      build = Build.new(project, 123, true)
   
       expected_build_log = File.join(expected_build_directory, 'build.log')
       expected_redirect_options = {
@@ -179,7 +172,7 @@ class BuildTest < ActiveSupport::TestCase
     
       expected_build_directory = File.join(sandbox.root, 'build-123')
   
-      build = Build.new(project, 123)
+      build = Build.new(project, 123, true)
 
       expected_build_log = File.join(expected_build_directory, 'build.log')
       expected_redirect_options = {
@@ -197,7 +190,7 @@ class BuildTest < ActiveSupport::TestCase
   
   def test_brief_error_is_short_with_execution_error
     with_sandbox_project do |sandbox, project|
-      build = Build.new(project, 123)
+      build = Build.new(project, 123, true)
 
       build.expects(:execute).raises(CommandLine::ExecutionError.new(*%w(a b c d e)))
       build.run
@@ -253,11 +246,10 @@ class BuildTest < ActiveSupport::TestCase
   def test_build_should_fail_if_project_config_is_invalid
     Time.stubs(:now).returns(Time.at(0))
     with_sandbox_project do |sandbox, project|
-      expected_build_directory = File.join(sandbox.root, 'build-123')
       project.stubs(:config_file_content).returns("cool project settings")
       project.stubs(:error_message).returns("some project config error")
       project.expects(:'config_valid?').returns(false)
-      build = Build.new(project, 123)
+      build = Build.new(project, 123, true)
       build.run
       assert build.failed?
       log_message = File.open("build-123-failed.in0s/build.log"){|f| f.read }
@@ -272,7 +264,7 @@ class BuildTest < ActiveSupport::TestCase
       project.stubs(:error_message).returns("fail message")
       project.stubs(:"config_valid?").returns(false)
       
-      build = Build.new(project, 1)
+      build = Build.new(project, 1, true)
       build.run
       assert_equal "fail message", File.open("build-1-failed.in0s/error.log"){|f|f.read}
       assert_equal "fail message", build.brief_error

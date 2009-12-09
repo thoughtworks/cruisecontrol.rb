@@ -211,9 +211,7 @@ class Project
   end
   
   def create_build(label)
-    build = Build.new(self, label)
-    build.artifacts_directory # create the build directory
-    build
+    Build.new(self, label, true)
   end
   
   def previous_build(current_build)  
@@ -355,7 +353,7 @@ class Project
     notify(:build_initiated)
     previous_build = last_build    
     
-    build = Build.new(self, create_build_label(revision.number))
+    build = Build.new(self, create_build_label(revision.number), true)
     
     begin
       log_changeset(build.artifacts_directory, reasons)
