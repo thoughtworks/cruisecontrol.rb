@@ -308,4 +308,14 @@ class BuildTest < ActiveSupport::TestCase
   ensure
     ENV['RAILS_ENV'] = 'test'
   end
+
+  def test_abbreviated_label
+    with_sandbox_project do |sandbox, project|
+      assert_equal "foo", Build.new(project, "foo").abbreviated_label
+      assert_equal "foobarb", Build.new(project, "foobarbaz").abbreviated_label
+      assert_equal "foo.bar", Build.new(project, "foo.bar").abbreviated_label
+      assert_equal "foobarb.quux", Build.new(project, "foobarbaz.quux").abbreviated_label
+    end
+  end
+
 end

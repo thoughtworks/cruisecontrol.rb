@@ -6,7 +6,7 @@
     
     <%= link_to_unless !prev_build, '&lt; prev', 
                        {:project => @project, :build => prev_build}, :accesskey => 'k' %>
-    <strong><%= @build.label %></strong>
+    <strong><%= @build.abbreviated_label %></strong>
     <%= link_to_unless !next_build, 'next &gt;', 
                        {:project => @project, :build => next_build}, :accesskey => 'j' %>
     <%= link_to_unless !next_build, 'latest &gt;&gt;', :project => @project.name %>
@@ -31,13 +31,13 @@
         )%>
         
   function selectCurrentBuild() {
-    var build = $('build')
-    if (!build) return true
-    var options = build.options
+    var build = $('build');
+    if (!build) return;
+    var options = build.options;
     for (var i = 0; options.length > i; i++) {
         if(options[i].value == '<%= @build.label %>') {
-            build.selectedIndex = i
-            build.options[0] = null
+            build.selectedIndex = i;
+            build.options[0] = null;
         }
     }
   }
@@ -48,7 +48,7 @@
 
 <div id="build_details">
   <h1>
-    <%= h @project.name %> build <%= h @build.label %>
+    <%= h @project.name %> build <%= h @build.abbreviated_label %>
     <% if @build.failed? %><span class="error">FAILED</span><% end %>
     <% if @build.incomplete? %> (INCOMPLETE)<% end %>    
   </h1>

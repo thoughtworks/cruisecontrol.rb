@@ -113,6 +113,9 @@ Message: NameError: uninitialized constant BuilderStatusTest::BuilderStatus
   class BuildStub
     def failed?() @state == 'failed' end
     def incomplete?() @state == 'incomplete' end
+    def abbreviated_label
+      label
+    end
   end
   
   def test_select_builds

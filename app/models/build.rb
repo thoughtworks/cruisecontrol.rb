@@ -100,7 +100,7 @@ EOF
   def revision
     label.split(".")[0]
   end
-  
+
   def changeset
     @changeset ||= contents_for_display(artifact('changeset.log'))
   end
@@ -208,6 +208,11 @@ EOF
 
   def seconds_since(start)
     (Time.now - start).ceil.abs
+  end
+
+  def abbreviated_label
+    revision, rebuild_number = label.split('.')
+    [revision[0..6], rebuild_number].compact.join('.')
   end
 
 end

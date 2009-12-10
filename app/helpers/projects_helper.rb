@@ -1,7 +1,7 @@
 module ProjectsHelper
 
   def rss_title(project, build)
-    project.name + (build ? " build #{build.label} #{build.status}" :
+    project.name + (build ? " build #{build.abbreviated_label} #{build.status}" :
                             " has never been built")
   end
 

@@ -66,6 +66,7 @@ class Test::Unit::TestCase
   def create_build_stub(label, status, time = Time.at(0))
     build = Object.new
     build.stubs(:label).returns(label)
+    build.stubs(:abbreviated_label).returns(label)
     build.stubs(:status).returns(status)
     build.stubs(:time).returns(time)
     build.stubs(:failed?).returns(status == 'failed')

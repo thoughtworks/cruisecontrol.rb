@@ -85,6 +85,6 @@ module ApplicationHelper
   private
   
   def build_label(build)
-    "#{build.label} (#{format_time(build.time, :human)})"
+    "#{build.abbreviated_label} (#{format_time(build.time, :human)})"
   end    
 end
