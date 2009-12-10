@@ -23,6 +23,11 @@ module SourceControl
         description << "\n #{summary}" if summary
         description << "\n"
       end
+
+      def label
+        self.number.to_s[0..7]
+      end
+
     end
   end
 end

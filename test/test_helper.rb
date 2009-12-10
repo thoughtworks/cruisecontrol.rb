@@ -73,7 +73,6 @@ class Test::Unit::TestCase
     build.stubs(:incomplete?).returns(status == 'incomplete')
     build.stubs(:changeset).returns("bobby checked something in")
     build.stubs(:brief_error).returns(nil)
-    
     build
   end
   

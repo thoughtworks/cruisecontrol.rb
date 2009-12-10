@@ -23,5 +23,9 @@ module SourceControl
       "#{self.class}:(#{number})"
     end
 
+    def label
+      self.number.to_s[0..7]
+    end
+
   end
 end
