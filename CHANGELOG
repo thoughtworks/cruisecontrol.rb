@@ -2,6 +2,8 @@
   - Improved plugin loading and documentation.
   - CruiseControl.rb-contrib project on Github.
   - Rails 2.3/Rack support.
+  - Storing and passing to plugins a full revision GUID. Displaying in web UI only first 7 characters thereof.
+  - [bug] Occasionally, cleaning up old builds resulted in phantom unfinished builds. Not anymore.
 ------------------------------------------------------------------------------------------------------------------------
 * 1.4.0
   - support for Git, Bazaar and Mercurial (distributed source control systems) [Ben Burkert, Brett Adam, Biju Philip Chacko, Chris Johnston, johnf(https://cruisecontrolrb.lighthouseapp.com/projects/9150/tickets/236-add-bazaar-support)]
