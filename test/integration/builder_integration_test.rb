@@ -110,16 +110,11 @@ class BuilderIntegrationTest < ActiveSupport::TestCase
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
 
-      expected_output = <<-OUTPUT
-[CruiseControl] Invoking Rake task "db:migrate"
-** Invoke db:migrate (first_time)
-** Execute db:migrate
-RAILS_ENV=test
-[CruiseControl] Invoking Rake task "default"
-** Invoke default (first_time)
-** Execute default
-      OUTPUT
-      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
+      expected_output1 = '[CruiseControl] Invoking Rake task "db:migrate"'
+      expected_output2 = 'RAILS_ENV=test'
+      expected_output3 = '[CruiseControl] Invoking Rake task "default"'
+      expected_output = /#{Regexp.escape(expected_output1)}.*#{Regexp.escape(expected_output2)}.*#{Regexp.escape(expected_output3)}/m
+      assert_match expected_output, build_log
     end
 
   end
@@ -167,17 +162,12 @@ RAILS_ENV=test
       build = project.build
       build_log = File.read("#{build.artifacts_directory}/build.log")
 
-      expected_output = <<-OUTPUT
-[CruiseControl] Invoking Rake task "my_build"
-** Invoke my_build (first_time)
-** Execute my_build
-my_build invoked
-[CruiseControl] Invoking Rake task "my_deploy"
-** Invoke my_deploy (first_time)
-** Execute my_deploy
-my_deploy invoked
-      OUTPUT
-      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
+      expected_output1 = '[CruiseControl] Invoking Rake task "my_build"'
+      expected_output2 = 'my_build invoked'
+      expected_output3 = '[CruiseControl] Invoking Rake task "my_deploy"'
+      expected_output4 = 'my_deploy invoked'
+      expected_output = /#{Regexp.escape(expected_output1)}.*#{Regexp.escape(expected_output2)}.*#{Regexp.escape(expected_output3)}.*#{Regexp.escape(expected_output4)}/m
+      assert_match expected_output, build_log
     end
   end
 
@@ -197,7 +187,12 @@ db-migrate
 ** Invoke default (first_time)
 ** Execute default
       OUTPUT
-      assert build_log.include?(expected_output), "#{expected_output.inspect} not found in build log:\n#{build_log}"
+      expected_output1 = 'db-test-purge'
+      expected_output2 = '[CruiseControl] Invoking Rake task "db:migrate"'
+      expected_output3 = 'db-migrate'
+      expected_output4 = '[CruiseControl] Invoking Rake task "default"'
+      expected_output = /#{Regexp.escape(expected_output1)}.*#{Regexp.escape(expected_output2)}.*#{Regexp.escape(expected_output3)}.*#{Regexp.escape(expected_output4)}/m
+      assert_match expected_output, build_log
     end
   end
 
