@@ -326,10 +326,6 @@ class Project
     end
   end
   
-  def force_build(message = 'Build was forced')
-    build(source_control.latest_revision, [message, source_control.latest_revision.to_s])
-  end
-  
   def update_project_to_revision(build, revision)
     if do_clean_checkout?
       File.open(build.artifact('source_control.log'), 'w') do |f| 

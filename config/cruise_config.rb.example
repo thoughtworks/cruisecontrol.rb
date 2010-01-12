@@ -19,8 +19,4 @@ Project.configure do |project|
   # Ping Subversion for new revisions every 5 minutes (default: 30 seconds)
   # project.scheduler.polling_interval = 5.minutes
 
-  # Force the project always build once every day
-  # project.scheduler.polling_interval = 1.day
-  # project.scheduler.always_build = true
-
 end

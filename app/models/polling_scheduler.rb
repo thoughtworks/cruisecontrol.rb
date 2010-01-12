@@ -1,7 +1,6 @@
 # PollingScheduler is a build scheduler that checks the given project's status one per polling
 # interval to determine whether or not it should kick off a new build.
 class PollingScheduler
-  attr_accessor :always_build
 
   def initialize(project)
     @project = project
@@ -26,11 +25,7 @@ class PollingScheduler
   def check_build_request_until_next_polling
     time_to_go = Time.now + polling_interval
     while Time.now < time_to_go
-      if @always_build
-        @project.force_build("Forcing build because project has 'always_build' flag set.")
-      else
-        @project.build_if_requested
-      end
+      @project.build_if_requested
       sleep build_request_checking_interval
     end
   end
