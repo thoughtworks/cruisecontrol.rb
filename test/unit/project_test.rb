@@ -424,6 +424,15 @@ class ProjectTest < ActiveSupport::TestCase
     end    
   end
     
+  def test_force_build
+    in_sandbox do |sandbox|      
+      @project.path = sandbox.root
+      revision = @project.source_control.add_revision :message => "A super special feature", :number => 1
+      @project.expects(:build).with(revision, ['Custom message.', '1: A super special feature'])
+      @project.force_build('Custom message.')
+    end    
+  end
+    
   def test_build_requested
     @project.stubs(:path).returns("a_path")
     File.expects(:file?).with(@project.build_requested_flag_file).returns(true)
