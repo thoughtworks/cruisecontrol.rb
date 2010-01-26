@@ -4,7 +4,19 @@ Net::SMTP.class_eval do
   private
   def do_start(helodomain, user, secret, authtype)
     raise IOError, 'SMTP session already started' if @started
-    check_auth_args user, secret, authtype if user or secret
+
+    if user or secret
+      arity = instance_method(:check_auth_args).arity
+      
+      if arity == 2
+        #Ruby 1.8.7 and above -- check_auth_args takes two args, check_auth_method is separate
+        check_auth_method(authtype || DEFAULT_AUTH_TYPE)
+        check_auth_args user, secret
+      else
+        #Ruby 1.8.6 and below -- check_auth_args takes three args
+        check_auth_args user, secret, authtype
+      end
+    end
 
     open_conversation(helodomain)
 
