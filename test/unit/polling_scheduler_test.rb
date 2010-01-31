@@ -54,4 +54,16 @@ class PollingSchedulerTest < Test::Unit::TestCase
 
     assert_throws(:reload_project) { @scheduler.run }
   end
+
+  def test_should_always_build_if_always_build_is_set
+    @scheduler.expects(:polling_interval).returns(1.seconds)
+    @scheduler.stubs(:build_request_checking_interval).returns(0)
+    Time.expects(:now).times(3).returns(Time.at(0), Time.at(0), Time.at(2))
+    
+    @mock_project.expects(:build_if_requested).times(0)
+    @mock_project.expects(:force_build).times(1)
+
+    @scheduler.always_build = true
+    @scheduler.check_build_request_until_next_polling
+  end
 end

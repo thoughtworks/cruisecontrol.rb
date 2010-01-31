@@ -18,8 +18,11 @@ Project.configure do |project|
 
   # Ping Subversion for new revisions every 5 minutes (default: 30 seconds)
   # project.scheduler.polling_interval = 5.minutes
-  
-  # Force the project to build once in every given time interval
+
+  # Force the project always build once every day and always build whether there are source control changes or not
+  # project.scheduler.polling_interval = 1.day
+  # project.scheduler.always_build = true
+
+  # Force the project to check for source control changes every given time interval, but NOT build if there are no changes
   # project.triggered_by ScheduledBuildTrigger.new(project, :build_interval => 5.minutes, :start_time => 2.minutes.from_now)
-  
 end
