@@ -56,7 +56,7 @@ def restart(start_cmd)
 end
 
 def start(start_cmd)
-  cmd ||= "cd #{CRUISE_HOME} && ./cruise start -d"
+  cmd = start_cmd || "cd #{CRUISE_HOME} && ./cruise start -d"
   log(:env, ENV.inspect)
 
   # remove cruise pid file if process is no longer running
