@@ -25,7 +25,7 @@ module SourceControl
 
     def latest_revision
       bzr('pull')
-      bzr_output = bzr('log', ['-v', '-r', '-1'])
+      bzr_output = bzr('log', ['-v', '-r', '-1', '--xml'])
       Bazaar::LogParser.new.parse(bzr_output).first
     end
 
@@ -39,7 +39,7 @@ module SourceControl
       elsif bzr_local > bzr_remote
         raise "Local repository is bigger that should be impossible"
       else
-        bzr_output = bzr('missing', ['-v'], :exitstatus => 1)
+        bzr_output = bzr('xmlmissing', ['-v'])
         _new_revisions = Bazaar::LogParser.new.parse(bzr_output)
         reasons << _new_revisions
         return false
