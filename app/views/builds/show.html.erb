@@ -13,7 +13,7 @@
   </div>
   
   <% @builds_for_navigation_list.each do |build| %>
-    <div class="build-link<%= ' selected' if @build.label == build.label %>">
+    <div class="build_link<%= ' selected' if @build.label == build.label %>">
       <%= link_to_build(@project, build) %>
     </div>
   <% end %>
