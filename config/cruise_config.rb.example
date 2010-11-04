@@ -16,13 +16,15 @@ Project.configure do |project|
   # in version control, it should be '../build_my_app.sh' instead
   # project.build_command = 'build_my_app.sh'
 
-  # Ping Subversion for new revisions every 5 minutes (default: 30 seconds)
-  # project.scheduler.polling_interval = 5.minutes
+  # Set the frequency to poll the repository, to check if there are source control changes
+  # project.scheduler.polling_interval = 1.hour
 
-  # Force the project always build once every day and always build whether there are source control changes or not
-  # project.scheduler.polling_interval = 1.day
-  # project.scheduler.always_build = true
+  # Whether to always build at each polling
+  # project.scheduler.always_build = true # to build no matter whether there are source control changes or not
+  # project.scheduler.always_build = false # to build only when there are source control changes
+   
+  # Set a regular build interval. A build will always be started at each interval,
+  # no matter whether there are source control changes or not; no matter what is the project.scheduler.always_build setting.
+  # project.triggered_by ScheduledBuildTrigger.new(project, :build_interval => 1.day, :start_time => 2.minutes.from_now)
 
-  # Force the project to check for source control changes every given time interval, but NOT build if there are no changes
-  # project.triggered_by ScheduledBuildTrigger.new(project, :build_interval => 5.minutes, :start_time => 2.minutes.from_now)
 end
