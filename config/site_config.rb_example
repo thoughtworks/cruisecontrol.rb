@@ -1,7 +1,9 @@
-# site_config.rb contains examples of various configuration options for the local installation
-# of CruiseControl.rb.
+# site_config.rb should contain configuration options for the whole local installation of CruiseControl.rb.
+# It should be located at DATA_ROOT/site_config.rb, ie, ~/.cruise/site_config.rb
 
 # YOU MUST RESTART YOUR CRUISE CONTROL SERVER FOR ANY CHANGES MADE HERE TO TAKE EFFECT!!!
+
+# Repository and project specific configuration is defined at various cruise_config.rb
 
 # EMAIL NOTIFICATION
 # ------------------
