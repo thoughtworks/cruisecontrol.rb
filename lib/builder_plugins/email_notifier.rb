@@ -10,6 +10,8 @@
 #   project.email_notifier.emails = ['john@doe.com', 'jane@doe.com']
 #   ...
 # end</code></pre>
+# Please note, this setting can be put into project specific cruise_config.rb, usually at ~/.cruise/projects/YourProject/cruise_config.rb
+# Or be put into repository specific cruise_config.rb, ie, YourRepository/cruise_config.rb
 
 # You can also specify who to send the email from, either for the entire site by setting Configuration.email_from
 # in <em>[cruise&nbsp;data]</em>//site_config.rb, or on a per project basis, by placing the following line in cruise_config.rb:
