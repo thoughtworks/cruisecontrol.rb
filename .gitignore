@@ -1,12 +1,14 @@
 *~
 coverage
 __sandbox
+
 public/stylesheets/site.css
-public/documentation
+public/documentation*
+public/builds
+
 log/*
 tmp/**/*
 cruisecontrol.iws
-public/builds
 *.iws
 *.ipr
 *.iml
