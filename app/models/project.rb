@@ -260,7 +260,7 @@ class Project
   end
   
   def last_builds(n)
-    result = builds.reverse[0..(n-1)]
+    builds.reverse[0..(n-1)]
   end
 
   def build_if_necessary
