@@ -16,6 +16,7 @@ module BuildsHelper
   end
   
   def link_to_code(log)
+    return log if Configuration.disable_code_browsing
     @work_path ||= File.expand_path(@project.path + '/work')
     
     log.gsub(/(\#\{RAILS_ROOT\}\/)?([\w\.-]*\/[ \w\/\.-]+)\:(\d+)/) do |match|
