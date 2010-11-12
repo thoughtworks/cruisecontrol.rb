@@ -66,7 +66,7 @@
 # Amount of time a project will wait for git to load new changesets before failing
 # Configuration.git_load_new_changesets_timeout = 5.minutes
 
-# Disable URLs like 
+# Disable URLs like /projects/code/[project name]/* - used for browsing source code
 # Configuration.disable_code_browsing = true
 
 # To delete build when there are more than a certain number present, uncomment this line - it will make the dashboard 
