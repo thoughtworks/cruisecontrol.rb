@@ -1,4 +1,6 @@
 * HEAD
+  - site_config option to disable code browsing 
+  - Fixed TLS incompatibility with various Ruby versions
   - Improved plugin loading and documentation.
   - CruiseControl.rb-contrib project on Github.
   - Rails 2.3/Rack support.

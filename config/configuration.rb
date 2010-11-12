@@ -16,6 +16,7 @@ class Configuration
     attr_accessor :default_polling_interval, :disable_build_now, :email_from,
                   :dashboard_refresh_interval, :serialize_builds,
                   :serialized_build_timeout, :git_load_new_changesets_timeout
+                  :disable_code_browsing
     attr_reader :dashboard_url
 
     # non-published configuration options (obscure stuff, mostly useful for http://cruisecontrolrb.thoughtworks.com)
@@ -32,7 +33,7 @@ class Configuration
     end
     
     def sleep_after_build_loop_error
-      @sleep_after_build_loop_error #.to_i
+      @sleep_after_build_loop_error
     end
 
     def build_request_checking_interval

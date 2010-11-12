@@ -40,6 +40,10 @@ class ProjectsController < ApplicationController
   end
   
   def code
+    if Configuration.disable_code_browsing
+      render :text => "Code browsing disabled" and return
+    end
+
     @project = Project.find(params[:id])
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project 
 
