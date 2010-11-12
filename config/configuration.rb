@@ -15,7 +15,7 @@ class Configuration
     # published configuration options (mentioned in config/site_config.rb.example)
     attr_accessor :default_polling_interval, :disable_build_now, :email_from,
                   :dashboard_refresh_interval, :serialize_builds,
-                  :serialized_build_timeout, :git_load_new_changesets_timeout
+                  :serialized_build_timeout, :git_load_new_changesets_timeout,
                   :disable_code_browsing
     attr_reader :dashboard_url
 
