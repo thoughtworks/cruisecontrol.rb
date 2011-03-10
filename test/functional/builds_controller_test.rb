@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
-require 'builds_controller'
+require 'test_helper'
 
 # Re-raise errors caught by the controller.
 class BuildsController

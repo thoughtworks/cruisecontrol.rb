@@ -5,6 +5,11 @@ require 'test_help'
 require 'mocha'
 require 'ostruct'
 
+require 'stringio'
+require 'fileutils'
+require 'date'
+require 'xmlsimple'
+
 $LOAD_PATH << File.dirname(__FILE__)
 require 'file_sandbox'
 require 'build_factory'

@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
-require 'documentation_controller'
+require 'test_helper'
 
 # Re-raise errors caught by the controller.
 class DocumentationController; def rescue_action(e) raise e end; end

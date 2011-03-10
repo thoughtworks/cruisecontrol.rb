@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/../../test_helper'
-require 'stringio'
+require 'test_helper'
 
 class SourceControl::GitTest < Test::Unit::TestCase
 
@@ -116,12 +115,13 @@ class SourceControl::GitTest < Test::Unit::TestCase
       class << git
         def git(*args)
           sleep 1
+          ""
         end
       end
       
       begin
         old_timeout = Configuration.git_load_new_changesets_timeout
-        Configuration.git_load_new_changesets_timeout = 0.5
+        Configuration.git_load_new_changesets_timeout = 0.5.seconds
 
         assert_raise(BuilderError) do
           begin

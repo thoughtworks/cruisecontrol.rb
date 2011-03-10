@@ -13,3 +13,8 @@ public/builds
 .tmtags
 .DS_Store
 tmtags
+.bundle
+
+# CCRB isn't intended for deployment onto a fixed platform, so checking in a lockfile (which will try to
+# resolve gems on the current platform) isn't desirable.
+Gemfile.lock

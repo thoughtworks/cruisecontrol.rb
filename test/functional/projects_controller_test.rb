@@ -1,7 +1,8 @@
-require File.dirname(__FILE__) + '/../test_helper'
-require 'projects_controller'
+require 'test_helper'
+
 require 'rexml/document'
 require 'rexml/xpath'
+
 # Re-raise errors caught by the controller.
 class ProjectsController
   def rescue_action(e) raise end
