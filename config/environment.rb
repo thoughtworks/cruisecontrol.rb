@@ -6,7 +6,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.11' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -44,8 +44,8 @@ Rails::Initializer.run do |config|
   config.frameworks -= [ :active_record, :active_resource ]
 
   # Add additional load paths for your own custom dirs
-  config.load_paths << "#{CRUISE_DATA_ROOT}/builder_plugins"
-  config.load_paths << "#{RAILS_ROOT}/lib/builder_plugins"
+  config.autoload_paths << "#{CRUISE_DATA_ROOT}/builder_plugins"
+  config.autoload_paths << "#{RAILS_ROOT}/lib/builder_plugins"
   
   config.after_initialize do
     require RAILS_ROOT + '/config/configuration'

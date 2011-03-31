@@ -3,11 +3,6 @@ require 'test_helper'
 require 'rexml/document'
 require 'rexml/xpath'
 
-# Re-raise errors caught by the controller.
-class ProjectsController
-  def rescue_action(e) raise end
-end
-
 class ProjectsControllerTest < ActionController::TestCase
   include FileSandbox
 

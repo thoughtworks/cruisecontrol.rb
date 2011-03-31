@@ -10,22 +10,22 @@ class BuilderIntegrationTest < ActiveSupport::TestCase
     end
   end
 
-  def test_build_if_necessary
-    with_project('passing_project', :revision => 2) do |project, sandbox|
-      sandbox.new :file=> 'passing_project/cruise_config.rb', :with_contents => ' '
-      sandbox.new :file=> 'passing_project/build-2/build_status.success'
+  def test_build_if_necessary_builds_as_expected
+    with_project('passing_project', :revision => 7) do |project, sandbox|
+      sandbox.new :file => 'passing_project/cruise_config.rb', :with_contents => ' '
+      sandbox.new :file => 'passing_project/build-2/build_status.success'
 
       project.config_tracker.update_contents
 
-      assert_equal '2', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").chomp
+      assert_equal '7', File.read("#{sandbox.root}/passing_project/work/revision_label.txt").strip
       result = project.build_if_necessary
 
-      assert result.is_a?(Build)
+      assert_equal Build, result.class
 
       assert_equal true, result.successful?
 
-      build_dir = Dir["#{sandbox.root}/passing_project/build-7-success.*"][0]
-      assert build_dir
+      build_dir = Dir["#{sandbox.root}/passing_project/build-29-success.*"][0]
+      assert_not_nil build_dir
       assert File.exists?("#{build_dir}/changeset.log")
       assert File.exists?("#{build_dir}/build.log")
     end
@@ -89,19 +89,18 @@ class BuilderIntegrationTest < ActiveSupport::TestCase
   end
 
   def test_build_should_still_build_even_when_no_changes_were_made
-    with_project('passing_project', :revision => 7) do |project, sandbox|
-      status_file_path = 'passing_project/build-7/build_status.success'
-      sandbox.new :file=> status_file_path
+    with_project('passing_project', :revision => 29) do |project, sandbox|
+      status_file_path = 'passing_project/build-29/build_status.success'
+      sandbox.new :file => status_file_path
 
-      new_status_file_path = 'passing_project/build-7.1/build_status.success.*'
+      new_status_file_path = 'passing_project/build-29.1/build_status.success.*'
       new_status_file_full_path = "#{sandbox.root}/#{new_status_file_path}"
 
       result = project.build
-      assert result.is_a?(Build)
+      assert_equal Build, result.class
 
-      assert_equal true, result.successful?
-
-      assert Dir["passing_project/build-7.1-success.*"][0]
+      assert result.successful?
+      assert Dir["passing_project/build-29.1-success.*"][0]
      end
   end
 

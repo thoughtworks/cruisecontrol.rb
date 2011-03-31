@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'test_helper'
 
 class ProjectTest < ActiveSupport::TestCase
   include FileSandbox
@@ -440,23 +440,26 @@ class ProjectTest < ActiveSupport::TestCase
   end
   
   def test_build_should_generate_new_label_if_same_name_label_exists
-    existing_build1 = stub_build('20')
-    existing_build2 = stub_build('20.1')
-    new_build = stub_build('20.2')
-    new_build_with_interesting_number = stub_build('2')
+    in_sandbox do |sandbox|
+      existing_build1 = stub_build('20')
+      existing_build2 = stub_build('20.1')
+      new_build = stub_build('20.2')
+      new_build_with_interesting_number = stub_build('2')
 
-    project = Project.new('project1', @svn)
-    @svn.stubs(:update)
-    project.stubs(:log_changeset)
-    project.stubs(:builds).returns([existing_build1, existing_build2])
-    project.stubs(:last_build).returns(nil)
-    project.stubs(:new_revisions).returns(nil)
-    
-    Build.expects(:new).with(project, '20.2', true).returns(new_build)
-    project.build(new_revision(20))
+      project = Project.new('project1', @svn)
+      @svn.stubs(:update)
+      project.path = sandbox.root
+      project.stubs(:log_changeset)
+      project.stubs(:builds).returns([existing_build1, existing_build2])
+      project.stubs(:last_build).returns(nil)
+      project.stubs(:new_revisions).returns(nil)
 
-    Build.expects(:new).with(project, '2', true).returns(new_build)
-    project.build(new_revision(2))
+      Build.expects(:new).with(project, '20.2', true).returns(new_build)
+      project.build(new_revision(20))
+
+      Build.expects(:new).with(project, '2', true).returns(new_build)
+      project.build(new_revision(2))
+    end
   end
   
   def test_should_load_configuration_from_work_directory_and_then_root_directory

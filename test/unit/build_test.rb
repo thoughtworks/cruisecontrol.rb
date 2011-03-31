@@ -209,12 +209,12 @@ class BuildTest < ActiveSupport::TestCase
   def test_build_command_customization
     with_sandbox_project do |sandbox, project|
       build_with_defaults = Build.new(project, '1')
-      assert_match(/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'/, build_with_defaults.command)
+      assert_match(/cc_build.rake'; ARGV << '--nosearch' << '--trace' << 'cc:build'/, build_with_defaults.command)
       assert_nil build_with_defaults.rake_task
   
       project.rake_task = 'my_build_task'
       build_with_custom_rake_task = Build.new(project, '2')
-      assert_match(/cc_build.rake'; ARGV << '--nosearch' << 'cc:build'/, build_with_custom_rake_task.command)
+      assert_match(/cc_build.rake'; ARGV << '--nosearch' << '--trace' << 'cc:build'/, build_with_custom_rake_task.command)
       assert_equal 'my_build_task', build_with_custom_rake_task.rake_task
   
       project.rake_task = nil

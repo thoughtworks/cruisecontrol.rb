@@ -1,10 +1,5 @@
 require 'test_helper'
 
-# Re-raise errors caught by the controller.
-class BuildsController
-  def rescue_action(e) raise end
-end
-
 class BuildsControllerTest < ActionController::TestCase
   include FileSandbox
   include BuildFactory

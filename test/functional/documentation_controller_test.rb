@@ -1,8 +1,5 @@
 require 'test_helper'
 
-# Re-raise errors caught by the controller.
-class DocumentationController; def rescue_action(e) raise e end; end
-
 class DocumentationControllerTest < ActionController::TestCase
 
   def test_documentation
