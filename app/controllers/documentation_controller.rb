@@ -19,7 +19,7 @@ class DocumentationController < ApplicationController
       when 'builtin'
         @file = File.join(RAILS_ROOT, 'lib', 'builder_plugins', params[:name])
       when 'installed'
-        @file = File.join(CRUISE_DATA_ROOT, 'builder_plugins', params[:name])
+        @file = Configuration.plugins_root.join(params[:name])
       when 'available'
         #???
       end

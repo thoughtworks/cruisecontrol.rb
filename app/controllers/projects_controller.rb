@@ -49,7 +49,7 @@ class ProjectsController < ApplicationController
 
     path = File.join(@project.path, 'work', params[:path])
     @line = params[:line].to_i if params[:line]
-    
+
     if File.directory?(path)
       render :text => 'Viewing of source directories is not supported yet', :status => 500 
     elsif File.file?(path)

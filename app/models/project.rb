@@ -8,14 +8,14 @@ class Project
     attr_accessor_with_default :plugin_names, []
     attr_accessor :current_project
     
-    def all(dir=CRUISE_DATA_ROOT + "/projects")
+    def all(dir=Configuration.projects_root)
       load_all(dir).map do |project_dir|
         load_project project_dir
       end
     end
     
-    def create(project_name, scm, dir=CRUISE_DATA_ROOT + "/projects")
-      returning(Project.new(project_name, scm)) do |project|
+    def create(project_name, scm, dir=Configuration.projects_root)
+      returning(Project.new(:name => project_name, :scm => scm)) do |project|
         raise "Project named #{project.name.inspect} already exists in #{dir}" if Project.all(dir).include?(project)
         begin
           save_project(project, dir)
@@ -33,7 +33,7 @@ class Project
     end
 
     def read(dir, load_config = true)
-      returning Project.new(File.basename(dir)) do |project|
+      returning Project.new(:name => File.basename(dir)) do |project|
         self.current_project = project
         project.load_config if load_config
       end
@@ -46,9 +46,9 @@ class Project
       yield current_project
     end
     
-    def find(project_name)
-      # TODO: sanitize project_name to prevent a query injection attack here
-      path = File.join(CRUISE_DATA_ROOT, 'projects', project_name)
+    def find(project_name, dir=Configuration.projects_root)
+      # TODO: sanitize project_name to prevent a query injection attack here      
+      path = dir.join(project_name)
       return nil unless File.directory?(path)
       load_project(path)
     end
@@ -86,17 +86,20 @@ class Project
       end
   end
   
-  def initialize(name, scm = nil)
-    @name = name
-    @path = File.join(CRUISE_DATA_ROOT, 'projects', @name)
+  def initialize(attrs = {})
+    attrs = attrs.with_indifferent_access
+
+    @name = attrs[:name]
+    @path = attrs[:path] || Configuration.projects_root.join(@name)
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @config_tracker = ProjectConfigTracker.new(self.path)
     @settings = ''
     @config_file_content = ''
     @error_message = ''
-    @triggers = [ChangeInSourceControlTrigger.new(self)]
-    self.source_control = scm if scm
+    @triggers = [ ChangeInSourceControlTrigger.new(self) ]
+    self.source_control = attrs[:scm] if attrs[:scm]
+
     instantiate_plugins
   end
   
@@ -195,6 +198,7 @@ class Project
       build_label = build_directory.split("-")[1]
       Build.new(self, build_label)
     end
+
     order_by_label(the_builds)
   end
 

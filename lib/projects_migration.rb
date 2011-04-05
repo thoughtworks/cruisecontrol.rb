@@ -2,7 +2,7 @@ class ProjectsMigration
   include CommandLine
   include FileUtils
 
-  def initialize(data_dir = CRUISE_DATA_ROOT)
+  def initialize(data_dir = Configuration.data_root)
     @data_dir = data_dir
     if File.exists? data_dir and not File.directory? data_dir
       raise "#{data_dir} is not a directory"

@@ -5,8 +5,8 @@ class BuilderStarterTest < Test::Unit::TestCase
   
   def setup
     @svn = FakeSourceControl.new("bob")
-    @one = Project.new("one", @svn)
-    @two = Project.new("two", @svn)
+    @one = Project.new(:name => "one", :scm => @svn)
+    @two = Project.new(:name => "two", :scm => @svn)
   end
   
   def test_start_builders_should_begin_builder_for_each_project

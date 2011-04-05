@@ -1,4 +1,4 @@
-site_css = File.join(CRUISE_DATA_ROOT, "site.css")
+site_css = Configuration.data_root.join("site.css")
 if File.exists?(site_css)
   copy_of_site_css = File.join(RAILS_ROOT, 'public', 'stylesheets', 'site.css')
   begin

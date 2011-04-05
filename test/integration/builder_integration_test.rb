@@ -220,7 +220,7 @@ db-migrate
                            :path => "#{project_name}/work"
       svn.checkout options[:revision], StringIO.new
 
-      project = Project.new(project_name)
+      project = Project.new(:name => project_name)
       project.path = "#{project_name}"
 
       block.call(project, sandbox)

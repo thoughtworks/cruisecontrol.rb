@@ -14,7 +14,7 @@ class EmailNotifierTest < Test::Unit::TestCase
 
     ActionMailer::Base.deliveries = []
 
-    @project = Project.new("myproj")
+    @project = Project.new(:name => "myproj")
     @project.path = @sandbox.root
     @build = Build.new(@project, 5)
     @previous_build = Build.new(@project, 4)

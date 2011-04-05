@@ -23,13 +23,24 @@ class Configuration
     attr_accessor :default_page
     attr_writer :build_request_checking_interval, :sleep_after_build_loop_error
 
+    def data_root=(root)
+      @data_root = Pathname.new(root)
+    end
+
+    def data_root
+      @data_root ||= Pathname.new(CRUISE_DATA_ROOT)
+    end
+
+    def projects_root
+      self.data_root.join("projects")
+    end
+
+    def plugins_root
+      self.data_root.join("builder_plugins")
+    end
+
     def dashboard_url=(value)
       @dashboard_url = remove_trailing_slash(value)
-    end
-    
-    def projects_directory=(value)
-      raise "projects directory may no longer be set, projects now live in ~/.cruise/projects by default.\n" +
-            "To configure this, set the CRUISE_DATA_ROOT environment variable"
     end
     
     def sleep_after_build_loop_error

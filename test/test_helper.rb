@@ -42,7 +42,7 @@ class Test::Unit::TestCase
     in_total_sandbox do |sandbox|
       FileUtils.mkdir_p("#{sandbox.root}/work/.svn")
       
-      project = Project.new('my_project')
+      project = Project.new(:name => 'my_project')
       project.path = sandbox.root
       
       yield(sandbox, project)

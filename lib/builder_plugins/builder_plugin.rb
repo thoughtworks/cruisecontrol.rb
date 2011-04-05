@@ -46,7 +46,7 @@ class BuilderPlugin
     private
     
       def plugins_to_load
-        (Dir[RAILS_ROOT + "/lib/builder_plugins/*"] + Dir[CRUISE_DATA_ROOT + "/builder_plugins/*"]).reject do |plugin_path|
+        (Dir[RAILS_ROOT + "/lib/builder_plugins/*"] + Dir[Configuration.plugins_root.join("*")]).reject do |plugin_path|
            # ignore hidden files and directories (they should be considered hidden by Dir[], but just in case)
            File.basename(plugin_path)[0, 1] == '.'
         end

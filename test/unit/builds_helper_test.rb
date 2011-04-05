@@ -15,7 +15,7 @@ class BuildsHelperTest < Test::Unit::TestCase
   
   def setup
     @work_path = File.expand_path('/Users/jeremy/src/cruisecontrolrb/builds/CruiseControl/work')
-    @project = Project.new('mine', FakeSourceControl.new)
+    @project = Project.new(:name => 'mine', :scm => FakeSourceControl.new)
   end
   
   def test_format_build_log_makes_test_summaries_bold

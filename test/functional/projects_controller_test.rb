@@ -5,6 +5,7 @@ require 'rexml/xpath'
 
 class ProjectsControllerTest < ActionController::TestCase
   include FileSandbox
+  include BuildFactory
 
   def test_index_rhtml  
     p1 = create_project_stub('one', 'success')
@@ -135,14 +136,11 @@ class ProjectsControllerTest < ActionController::TestCase
 
   def test_code
     in_sandbox do |sandbox|
-      project = Project.new('three')
-      project.path = sandbox.root
-      sandbox.new :file => 'work/app/controller/FooController.rb', :with_contents => "class FooController\nend\n"
-      
-      Project.expects(:find).returns(project)
+      project = create_project "three"
+      sandbox.new :file => 'projects/three/work/app/controller/FooController.rb', :with_contents => "class FooController\nend\n"
     
-      get :code, :id => 'two', :path => ['app', 'controller', 'FooController.rb'], :line => 2
-      
+      get :code, :id => 'three', :path => ['app', 'controller', 'FooController.rb'], :line => 2
+
       assert_response :success
       assert_match /class FooController/, @response.body
     end
@@ -168,9 +166,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
   def test_code_non_existant_path
     in_sandbox do |sandbox|
-      project = Project.new('project')
-      project.path = sandbox.root
-      Project.expects(:find).with('project').returns(project)
+      project = create_project "project"
 
       get :code, :id => 'project', :path => ['foo.rb'], :line => 1
       assert_response 404
