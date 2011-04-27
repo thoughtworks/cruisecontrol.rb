@@ -1,7 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.root :controller => 'projects', :action => 'index'
   
-  map.resources :projects, :member => { :build => :post }
+  map.resources :projects, :member => { :build => :post, :getting_started => :get }
   
   map.builds_drop_down 'builds/older/:project', :controller => 'builds', :action => 'drop_down'
   map.project_without_builds 'builds/:project', :controller => 'builds', :action => 'show'

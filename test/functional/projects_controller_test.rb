@@ -218,6 +218,26 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_equal 'Build requests are not allowed', @response.body
   end
 
+  def test_create_adds_a_new_project
+    in_sandbox do
+      scm = stub("FakeSourceControl")
+
+      FakeSourceControl.expects(:new).returns scm
+      Project.expects(:create).with("new_project", scm).returns stub(:id => "some_project")
+      post :create, :project => { :name => "new_project", :source_control => { :source_control => "fake_source_control", :repository => "file:///foo" } }
+    end
+  end
+
+  def test_create_project_redirects_to_project_documentation
+    in_sandbox do
+      SourceControl.stubs(:create)
+      Project.stubs(:create).returns stub(:id => "new_project")
+
+      post :create, :project => { :source_control => {} }
+      assert_redirected_to getting_started_project_path("new_project")
+    end
+  end
+
   def stub_change_set_parser
     mock = Object.new
     SourceControl::Subversion::ChangesetLogParser.stubs(:new).returns(mock)

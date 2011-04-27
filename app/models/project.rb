@@ -3,6 +3,8 @@
 class Project
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
   attr_accessor :source_control, :scheduler
+
+  alias_method :id, :name
   
   class << self
     attr_accessor_with_default :plugin_names, []
@@ -15,7 +17,7 @@ class Project
     end
     
     def create(project_name, scm, dir=Configuration.projects_root)
-      returning(Project.new(:name => project_name, :scm => scm)) do |project|
+      Project.new(:name => project_name, :scm => scm).tap do |project|
         raise "Project named #{project.name.inspect} already exists in #{dir}" if Project.all(dir).include?(project)
         begin
           save_project(project, dir)
@@ -33,7 +35,7 @@ class Project
     end
 
     def read(dir, load_config = true)
-      returning Project.new(:name => File.basename(dir)) do |project|
+      Project.new(:name => File.basename(dir)).tap do |project|
         self.current_project = project
         project.load_config if load_config
       end
@@ -54,7 +56,7 @@ class Project
     end
 
     def load_project(dir)
-      returning read(dir, load_config = false) do |project|
+      read(dir, load_config = false).tap do |project|
         project.path = dir
       end
     end
@@ -89,7 +91,7 @@ class Project
   def initialize(attrs = {})
     attrs = attrs.with_indifferent_access
 
-    @name = attrs[:name]
+    @name = attrs[:name] || ""
     @path = attrs[:path] || Configuration.projects_root.join(@name)
     @scheduler = PollingScheduler.new(self)
     @plugins = []

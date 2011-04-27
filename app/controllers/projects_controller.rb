@@ -17,6 +17,18 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def create
+    scm = SourceControl.create(params[:project][:source_control])
+    project = Project.create(params[:project][:name], scm)
+
+    redirect_to getting_started_project_path(project.id)
+  end
+
+  def getting_started
+    @project = Project.find(params[:id])
+    @config_example = File.read( File.join("config", "cruise_config.rb.example") )
+  end
+
   def show
     @project = Project.find(params[:id])
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project
