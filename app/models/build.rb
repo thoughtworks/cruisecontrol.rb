@@ -188,7 +188,7 @@ EOF
     # smart about it)
     ENV['CC_RAKE_TASK'] = self.rake_task
     Dir.chdir(project.local_checkout) do
-      block.call
+      Bundler.with_clean_env &block
     end
   ensure
     ENV['RAILS_ENV'] = old_rails_env
