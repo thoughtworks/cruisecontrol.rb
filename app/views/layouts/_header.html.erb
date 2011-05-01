@@ -1,16 +1,19 @@
 <div class="header">
-  <div class="main_menu">
-    <span class="menu_item">
-      <%= link_to_unless_current 'Dashboard', :controller => 'projects', :action => 'index' %>
-    </span>
-    <span class="menu_item">
-      <%= link_to 'Documentation', document_path %>
-    </span>
-  </div>
+  <ul class="main_menu">
+    <li class="menu_item">
+      <%= link_to_unless_current 'All Projects', projects_path %>
+    </li>
+    <li class="menu_item">
+      <%= link_to_unless_current 'Add Project', new_project_path %>
+    </li>
+    <li class="menu_item">
+      <%= link_to 'Help', document_path %>
+    </li>
+  </ul>
 
   <div class="cc_logo">
     <%= link_to image_tag("cruise_logo.png"), Configuration.default_page %>
-  </div>    
+  </div>
 
   <% unless flash[:notice].blank? -%>
     <div class="flash_notice"><%= h flash[:notice] %></div>

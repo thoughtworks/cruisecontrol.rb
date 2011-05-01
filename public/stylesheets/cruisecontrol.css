@@ -7,6 +7,11 @@ body {
   background-color: #FFF;
 }
 
+ul, li {
+  margin: 0;
+  padding: 0;
+}
+
 h3 {
   margin-top: .4em;
 }
@@ -35,7 +40,6 @@ a:hover {
 
 .header .cc_logo { 
   margin: 10px 0 0 1.5em;
- 
 }
 
 .footer {
@@ -166,25 +170,39 @@ a.never_built, a.never_built:visited {
   display: inline;
 }
 
-.project .build_button, .project .build_button_disabled {
-  color: #000;
-  font-weight:bold;
-  background-repeat: no-repeat;
+button {
+  background: #8AB2EB;
+  background: -moz-linear-gradient(top, #8AB2EB 0%, #507EC0 100%);
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#8AB2EB), to(#507EC0));
+  border: 1px solid #507EC0;
+  border-bottom: 1px solid #2C5DA3;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  color: white;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
   font-size: 11px;
+  font-weight: bold;
+  line-height: 1;
+  padding: 6px 8px;
   text-align: center;
-  width: 110px;
-  height: 23px;
-  border: none;
-  background-color: transparent;
 }
-.project .build_button {
-  background-image:url(../images/button.png);
+
+button:hover {
+  background: #8AB2EB;
+  background: -moz-linear-gradient(top, #8AB2EB 0%, #2C5DA3 100%);
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#8AB2EB), to(#2C5DA3));
+  border: 1px solid #2C5DA3;
+  border-bottom: 1px solid #163E78;
   cursor: pointer;
 }
 
-.project .build_button_disabled {
-  color: #999;
-  background-image:url(../images/button_disabled.png);
+button:active {
+  border: 1px solid #2C5DA3;
+  border-bottom: 1px solid #163E78;
+  -moz-box-shadow: inset 0 0 5px 2px #2C5DA3, 0 1px 0 0 #8AB2EB;
+  -webkit-box-shadow: inset 0 0 5px 2px #2C5DA3, 0 1px 0 0 #8AB2EB;
+  box-shadow: inset 0 0 5px 2px #2C5DA3, 0 1px 0 0 #8AB2EB;
 }
 
 .project .recent_builds {
@@ -361,4 +379,15 @@ a.never_built, a.never_built:visited {
 #navigate_build strong {
   color: black;
   font-weight: normal;
+}
+
+form.new_project dt {
+  clear: both;
+  float: left;
+  width: 200px;
+}
+
+form.new_project dd {
+  float: left;
+  width: 300px;
 }

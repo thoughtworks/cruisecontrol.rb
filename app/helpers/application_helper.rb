@@ -81,6 +81,10 @@ module ApplicationHelper
       url.match(/\/\/.+?(\/.+)/)[1]
     end
   end
+
+  def button_tag(label, attrs={})
+    content_tag :button, label, attrs
+  end
         
   private
   
