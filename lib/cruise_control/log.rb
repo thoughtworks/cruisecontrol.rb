@@ -17,9 +17,10 @@ module CruiseControl
     end
   
     def self.method_missing(method, *args, &block)
-      return if method == :debug and not @verbose
+      return if method == :debug && !@verbose
       first_arg = args.shift
       message = backtrace = nil
+      
       case first_arg
       when Exception
         message = "#{print_severity(method)} #{first_arg.message}"
@@ -27,10 +28,12 @@ module CruiseControl
       else
         message = "#{print_severity(method)} #{first_arg}"
       end
+      
       logger.send(method, message, *args, &block)
       backtrace.each { |line| logger.send(method, line) } if backtrace
-      is_error = (method == :error or method == :fatal)
-      if @verbose or is_error and defined?(RAILS_ENV) and RAILS_ENV != 'test'  
+      is_error = (method == :error || method == :fatal)
+      
+      if ( @verbose || is_error ) && ( defined?(Rails) && !Rails.env.test? )
         stream = is_error ? STDERR : STDOUT
         stream.puts message
         backtrace.each { |line| stream.puts line } if backtrace and @verbose
@@ -46,7 +49,8 @@ module CruiseControl
     private
     
     def self.logger
-      defined?(::RAILS_DEFAULT_LOGGER) ? ::RAILS_DEFAULT_LOGGER : Logger.new($stderr)
+      # defined?(::RAILS_DEFAULT_LOGGER) ? ::RAILS_DEFAULT_LOGGER : Logger.new($stderr)
+      defined?(Rails) ? Rails.logger : Logger.new($stderr)
     end
   end
 end

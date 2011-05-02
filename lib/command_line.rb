@@ -183,6 +183,8 @@ module CommandLine
   module_function :escape_and_concatenate
 
   def escape(item)
+    item = item.to_s
+    
     if Platform.family == 'mswin32'
       escaped_characters = /\\|&|\||>|<|\^/
       escape_symbol = '^'

@@ -17,7 +17,7 @@ class DocumentationController < ApplicationController
       @plugin_title = ActiveSupport::Inflector.titleize(params[:name].sub(/\.rb$/, ''))
       case params[:type]
       when 'builtin'
-        @file = File.join(RAILS_ROOT, 'lib', 'builder_plugins', params[:name])
+        @file = Rails.root.join('lib', 'builder_plugins', params[:name])
       when 'installed'
         @file = Configuration.plugins_root.join(params[:name])
       when 'available'

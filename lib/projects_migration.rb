@@ -2,7 +2,7 @@ class ProjectsMigration
   include CommandLine
   include FileUtils
 
-  def initialize(data_dir = Configuration.data_root)
+  def initialize(data_dir = ::Configuration.data_root)
     @data_dir = data_dir
     if File.exists? data_dir and not File.directory? data_dir
       raise "#{data_dir} is not a directory"
@@ -24,11 +24,11 @@ class ProjectsMigration
   end
 
   def migration_scripts
-    Dir[File.join(migrate_scripts_directory, '*.rb')].map { |path| File.basename(path) }.sort
+    Dir[migrate_scripts_directory.join('*.rb')].map { |path| File.basename(path) }.sort
   end
 
   def migrate_scripts_directory
-    File.join(RAILS_ROOT, 'db', 'migrate')
+    Rails.root.join('db', 'migrate')
   end
 
   def script_version(script_name)
@@ -51,7 +51,7 @@ class ProjectsMigration
   end
   
   def old_data_version_file
-    File.join(RAILS_ROOT, 'projects', 'data.version')
+    Rails.root.join('projects', 'data.version')
   end
 
   def set_data_version(version)
@@ -61,7 +61,7 @@ class ProjectsMigration
   def clear_cached_pages
     cached_assets_in_public = [ 'documentation', 'index.html']
     cached_assets_in_public.each do |asset|
-      rm_rf File.join(RAILS_ROOT, 'public', asset)
+      rm_rf Rails.root.join('public', asset)
     end
   end
 

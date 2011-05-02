@@ -10,7 +10,6 @@ RAILS_GEM_VERSION = '2.3.11' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
-ABSOLUTE_RAILS_ROOT = File.expand_path(RAILS_ROOT) unless defined? ABSOLUTE_RAILS_ROOT
 
 Rails::Initializer.run do |config|
   def find_home
@@ -48,11 +47,12 @@ Rails::Initializer.run do |config|
   config.autoload_paths << "#{RAILS_ROOT}/lib/builder_plugins"
   
   config.after_initialize do
-    require RAILS_ROOT + '/config/configuration'
+    require Rails.root.join('config', 'configuration')
+    require Rails.root.join('lib', 'cruise_control', 'version')
   end
 end
 
-require RAILS_ROOT + '/lib/cruise_control/version'
+
 require 'smtp_tls'
 require 'date'
 require 'fileutils'

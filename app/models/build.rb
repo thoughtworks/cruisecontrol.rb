@@ -130,7 +130,7 @@ EOF
   end
   
   def clear_cache
-    FileUtils.rm_f "#{RAILS_ROOT}/public/builds/older/#{@project.name}.html"
+    FileUtils.rm_f Rails.root.join(Rails.root, 'public', 'builds', 'older', "#{@project.name}.html")
   end
   
   def url
@@ -166,13 +166,16 @@ EOF
   
   def rake
     # Simply calling rake is this convoluted due to idiosyncrazies of Windows, Debian and JRuby. :(
-    # ABSOLUTE_RAILS_ROOT is set in config/envirolnment.rb, and is necessary because
-    # in_clean_environment__with_local_copy() changes current working directory. Replacing it with RAILS_ROOT doesn't
-    # fail any tests, because in test environment (unlike production) RAILS_ROOT is already absolute. 
+    # ABSOLUTE_RAILS_ROOT is set in config/environment.rb, and is necessary because
+    # in_clean_environment_with_local_copy changes current working directory. Replacing it with RAILS_ROOT doesn't
+    # fail any tests, because in test environment (unlike production) Rails.root is already absolute. 
     # --nosearch flag here prevents CC.rb from building itself when a project has no Rakefile
     # ARGV.clear at the end prevents Test::Unit's AutoRunner from doing anything silly, like trying to require 'cc:rb'
     # Some people saw it happening.
-    %{#{Platform.interpreter} -e "require 'rubygems' rescue nil; require 'rake'; load '#{ABSOLUTE_RAILS_ROOT}/tasks/cc_build.rake'; ARGV << '--nosearch'#{CruiseControl::Log.verbose? ? " << '--trace'" : ""} << 'cc:build'; Rake.application.run; ARGV.clear"}
+    cc_build_path = Rails.root.join('tasks', 'cc_build.rake')
+    maybe_trace   = CruiseControl::Log.verbose? ? " << '--trace'" : ""
+    
+    %{#{Platform.interpreter} -e "require 'rubygems' rescue nil; require 'rake'; load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
   end
 
   def in_clean_environment_on_local_copy(&block)

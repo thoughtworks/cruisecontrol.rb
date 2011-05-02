@@ -64,14 +64,13 @@ class BuilderStarterTest < Test::Unit::TestCase
   def test_if_someone_in_their_infinite_wisdom_runs_ccrb_from_a_weird_path_it_should_be_escaped
     Platform.stubs(:family).returns("mswin32")
 
-
     Platform.stubs(:interpreter).returns("ruby")
-    CommandLine.expects(:escape).with("#{RAILS_ROOT}/cruise").returns('escaped_path')
+    CommandLine.expects(:escape).with(Rails.root.join('cruise')).returns('escaped_path')
     Platform.expects(:create_child_process).with(@one.name, "ruby escaped_path build #{@one.name}")
     BuilderStarter.begin_builder(@one.name)
 
     Platform.stubs(:interpreter).returns("jruby")
-    CommandLine.expects(:escape).with("#{RAILS_ROOT}/cruise").returns('escaped_path')
+    CommandLine.expects(:escape).with(Rails.root.join('cruise')).returns('escaped_path')
     Platform.expects(:create_child_process).with(@one.name, "jruby escaped_path build #{@one.name}")
 
     BuilderStarter.begin_builder(@one.name)

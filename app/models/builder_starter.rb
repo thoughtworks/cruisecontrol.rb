@@ -36,7 +36,7 @@ class BuilderStarter
   end
 
   def self.path_to_cruise(extension = '')
-    CommandLine.escape(File.join(RAILS_ROOT, "cruise#{extension}"))
+    CommandLine.escape(Rails.root.join("cruise#{extension}"))
   end
 
 end

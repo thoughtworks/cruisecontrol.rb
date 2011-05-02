@@ -16,10 +16,14 @@ config.action_controller.perform_caching             = true
 
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
-ProjectsMigration.new.migrate_data_if_needed
+
 
 config.after_initialize do
+  require Rails.root.join('config', 'configuration')
+  ProjectsMigration.new.migrate_data_if_needed
+  
+  require Rails.root.join('lib', 'cruise_control', 'version')
   require CRUISE_DATA_ROOT + '/site_config' if File.exists?(CRUISE_DATA_ROOT + "/site_config.rb")
-  require RAILS_ROOT + '/config/dashboard_initialize' 
+  require Rails.root.join('config', 'dashboard_initialize')
   BuilderStarter.start_builders 
 end

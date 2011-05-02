@@ -31,7 +31,7 @@ class Project
     end
     
     def plugin(plugin_name)
-      self.plugin_names << plugin_name unless RAILS_ENV == 'test' or self.plugin_names.include? plugin_name
+      self.plugin_names << plugin_name unless Rails.env == 'test' or self.plugin_names.include? plugin_name
     end
 
     def read(dir, load_config = true)
@@ -79,7 +79,7 @@ class Project
       end
 
       def write_config_example(project)
-        config_example = File.join(RAILS_ROOT, 'config', 'cruise_config.rb.example')
+        config_example = Rails.root.join('config', 'cruise_config.rb.example')
         config_in_subversion = File.join(project.path, 'work', 'cruise_config.rb')
         cruise_config = File.join(project.path, 'cruise_config.rb')
         if File.exists?(config_example) and not File.exists?(config_in_subversion)
@@ -166,7 +166,7 @@ class Project
       raise "Cannot register an plugin with name #{plugin_name.inspect} " +
             "because another plugin, or a method with the same name already exists"
     end
-    self.metaclass.send(:define_method, plugin_name) { plugin }
+    self.singleton_class.send(:define_method, plugin_name) { plugin }
     plugin
   end
 

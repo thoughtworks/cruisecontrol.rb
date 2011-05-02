@@ -86,7 +86,7 @@ class ProjectsMigrationTest < Test::Unit::TestCase
   end
 
   def expected_script_path(script_name)
-    File.join(RAILS_ROOT, 'db', 'migrate', script_name)
+    Rails.root.join('db', 'migrate', script_name)
   end
 
 end
