@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SourceControl::SubversionTest < Test::Unit::TestCase
+class SourceControl::SubversionTest < ActiveSupport::TestCase
 
   include FileSandbox
   include SourceControl

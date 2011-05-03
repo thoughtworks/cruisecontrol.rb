@@ -39,7 +39,7 @@ module ApplicationHelper
       elapsed_time_text = elapsed_time(build)
       text += " took #{elapsed_time_text}" if (with_elapsed_time and !elapsed_time_text.empty?)
     end
-    return text
+    return text.html_safe
   end
   
   def link_to_build_with_elapsed_time(project, build)
@@ -49,11 +49,11 @@ module ApplicationHelper
   def display_builder_state(state)
     case state
     when 'building', 'builder_down', 'build_requested', 'source_control_error', 'queued', 'timed_out', 'error'
-      "<div class=\"builder_status_#{state}\">#{state.gsub('_', ' ')}</div>"
+      content_tag :div, state.gsub('_', ' '), :class => "builder_status_#{state}"
     when 'sleeping', 'checking_for_modifications'
       ''
     else
-      "<div class=\"builder_status_unknown\">#{h state}<br/>unknown state</div>"
+      content_tag :div, state + tag(:br) + "unknown state", :class => "builder_status_unknown"
     end
   end
 
@@ -63,7 +63,7 @@ module ApplicationHelper
   
   def elapsed_time(build, format = :general)
     begin
-      "<span>#{format_seconds(build.elapsed_time, format)}</span>"
+      content_tag :span, format_seconds(build.elapsed_time, format)
     rescue
       '' # The build time is not present.
     end

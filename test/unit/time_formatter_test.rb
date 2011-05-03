@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class TimeFormatterTest < Test::Unit::TestCase
+class TimeFormatterTest < ActiveSupport::TestCase
   def test_formats_last_year_human
     Time.stubs(:now).returns(Time.parse('2009-07-01 00:00:00'))
     assert_equal '31 Dec 08', TimeFormatter.new(Time.parse('2008-12-31 23:59:59')).human

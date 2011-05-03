@@ -40,7 +40,7 @@ class BuildsController < ApplicationController
 
     if File.directory? path
       if File.exists?(File.join(path, 'index.html'))
-        redirect_to request.request_uri + '/index.html'
+        redirect_to request.fullpath + '/index.html'
       else
         # TODO: generate an index from directory contents
         render :text => "this should be an index of #{params[:path]}"

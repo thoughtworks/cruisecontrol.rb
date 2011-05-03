@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class DurationFormatterTest < Test::Unit::TestCase
+class DurationFormatterTest < ActiveSupport::TestCase
   def test_format_general
     assert_equal '0 seconds',         DurationFormatter.new(0).general
     assert_equal '1 second',          DurationFormatter.new(1).general

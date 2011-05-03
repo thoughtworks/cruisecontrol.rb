@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'test_helper'
 
-class ProjectsMigrationTest < Test::Unit::TestCase                                     
+class ProjectsMigrationTest < ActiveSupport::TestCase
   include FileSandbox
 
   def setup

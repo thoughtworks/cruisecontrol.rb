@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'test_helper'
 
-class PollingSchedulerTest < Test::Unit::TestCase
+class PollingSchedulerTest < ActiveSupport::TestCase
 
   def setup
     @mock_project = Object.new

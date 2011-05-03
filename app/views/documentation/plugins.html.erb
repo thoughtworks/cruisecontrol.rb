@@ -11,7 +11,7 @@
       </li>
     <% end %>
 
-    <% Dir["#{RAILS_ROOT}/lib/builder_plugins/*"].each do |plugin| %>
+    <% Dir[Rails.root.join("lib", "builder_plugins", "*")].each do |plugin| %>
       <% name = File.basename(plugin) %>
       <li>
         <%= link_to name.sub(/\.rb$/, '').titleize, :action => 'plugins', :type => 'builtin', :name => name %> 

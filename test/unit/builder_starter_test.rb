@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class BuilderStarterTest < Test::Unit::TestCase
+class BuilderStarterTest < ActiveSupport::TestCase
   include FileSandbox
   
   def setup
@@ -21,24 +21,24 @@ class BuilderStarterTest < Test::Unit::TestCase
   def test_should_use_platform_specific_executable
     Platform.stubs(:family).returns("mswin32")
     Platform.stubs(:interpreter).returns("ruby")
-    Platform.expects(:create_child_process).with(@one.name, "ruby #{RAILS_ROOT}/cruise build #{@one.name}")
+    Platform.expects(:create_child_process).with(@one.name, "ruby #{Rails.root}/cruise build #{@one.name}")
     BuilderStarter.begin_builder(@one.name)
 
     Platform.stubs(:family).returns("linux")
     Platform.stubs(:interpreter).returns("ruby")
-    Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise build #{@one.name}")
+    Platform.expects(:create_child_process).with(@one.name, "#{Rails.root}/cruise build #{@one.name}")
     BuilderStarter.begin_builder(@one.name)
   end
 
   def test_should_accomodate_jruby_interpreter
     Platform.stubs(:family).returns("mswin32")
     Platform.stubs(:interpreter).returns("jruby")
-    Platform.expects(:create_child_process).with(@one.name, "jruby #{RAILS_ROOT}/cruise build #{@one.name}")
+    Platform.expects(:create_child_process).with(@one.name, "jruby #{Rails.root}/cruise build #{@one.name}")
     BuilderStarter.begin_builder(@one.name)
 
     Platform.stubs(:family).returns("linux")
     Platform.stubs(:interpreter).returns("jruby")
-    Platform.expects(:create_child_process).with(@one.name, "jruby #{RAILS_ROOT}/cruise build #{@one.name}")
+    Platform.expects(:create_child_process).with(@one.name, "jruby #{Rails.root}/cruise build #{@one.name}")
     BuilderStarter.begin_builder(@one.name)
   end
 
@@ -48,13 +48,13 @@ class BuilderStarterTest < Test::Unit::TestCase
       Platform.stubs(:family).returns("mswin32")
       Platform.stubs(:interpreter).returns("ruby")
 
-      Platform.expects(:create_child_process).with(@one.name, "ruby #{RAILS_ROOT}/cruise build #{@one.name} --trace")
+      Platform.expects(:create_child_process).with(@one.name, "ruby #{Rails.root}/cruise build #{@one.name} --trace")
 
       BuilderStarter.begin_builder(@one.name)
 
       Platform.stubs(:family).returns("linux")
       Platform.stubs(:interpreter).returns("ruby")
-      Platform.expects(:create_child_process).with(@one.name, "#{RAILS_ROOT}/cruise build #{@one.name} --trace")
+      Platform.expects(:create_child_process).with(@one.name, "#{Rails.root}/cruise build #{@one.name} --trace")
       BuilderStarter.begin_builder(@one.name)
     ensure
       $VERBOSE_MODE = false

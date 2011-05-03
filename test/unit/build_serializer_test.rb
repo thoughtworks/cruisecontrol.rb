@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'test_helper'
 
-class BuildSerializerTest < Test::Unit::TestCase
+class BuildSerializerTest < ActiveSupport::TestCase
   def setup
     @project = Object.new
     @serializer = BuildSerializer.new(@project)

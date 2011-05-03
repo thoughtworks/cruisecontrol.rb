@@ -48,9 +48,9 @@ class ProjectsControllerTest < ActionController::TestCase
   
   def test_rss_should_exclude_incomplete_build
     Project.expects(:all).returns([
-        create_project_stub('one', 'success', [create_build_stub('1', 'success')]),
-        create_project_stub('two', 'incomplete', [create_build_stub('10', 'failed'), create_build_stub('11', 'incomplete')])
-        ])
+      create_project_stub('one', 'success', [create_build_stub('1', 'success')]),
+      create_project_stub('two', 'incomplete', [create_build_stub('10', 'failed'), create_build_stub('11', 'incomplete')])
+    ])
     post :index, :format => 'rss'
     
     xml = REXML::Document.new(@response.body)
@@ -146,18 +146,6 @@ class ProjectsControllerTest < ActionController::TestCase
     end
   end
 
-  def test_code_url_not_fully_specified
-    Project.expects(:find).never
-
-    get :code, :path => ['foo'], :line => 1
-    assert_response 404
-    assert_equal 'Project not specified', @response.body
-
-    get :code, :id => 'foo', :line => 1
-    assert_response 404
-    assert_equal 'Path not specified', @response.body
-  end
-
   def test_code_non_existant_project
     Project.expects(:find).with('foo').returns(nil)
     get :code, :id => 'foo', :path => ['foo.rb'], :line => 1
@@ -189,12 +177,6 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_response 404
   end
   
-  def test_show_unspecified_project
-    post :show, :format => 'rss'
-    assert_response 404
-    assert_equal 'Project not specified', @response.body
-  end
-
   def test_show_non_existant_project
     Project.expects(:find).with('non_existing_project').returns(nil)
     post :show, :id => "non_existing_project", :format => 'rss'
@@ -206,7 +188,7 @@ class ProjectsControllerTest < ActionController::TestCase
     Configuration.stubs(:disable_build_now).returns(true)
     Project.expects(:all).returns([create_project_stub('one', 'success')])
     get :index
-    assert_tag :tag => "button", :attributes => {:onclick => /return false;/}
+    assert_tag :tag => "form", :attributes => {:"data-disable-build-now" => "true"}
   end
 
   def test_should_refuse_build_if_build_now_is_disabled

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SourceControl::GitTest < Test::Unit::TestCase
+class SourceControl::GitTest < ActiveSupport::TestCase
 
   include FileSandbox
   include SourceControl

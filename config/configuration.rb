@@ -28,7 +28,7 @@ class Configuration
     end
 
     def data_root
-      @data_root ||= Pathname.new(CRUISE_DATA_ROOT)
+      @data_root ||= Pathname.new(CruiseControl::Application::CRUISE_DATA_ROOT)
     end
 
     def projects_root

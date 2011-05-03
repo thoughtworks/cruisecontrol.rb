@@ -8,9 +8,7 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ru
 
 === Stuff
 * Documentation: http://cruisecontrolrb.thoughtworks.com/documentation
-* Download the latest release from 
-  1. http://rubyforge.org/frs/?group_id=2918
-  2. through the 'Download' button on Github (remember to pick the right tag first)
+* Download: https://github.com/thoughtworks/cruisecontrol.rb (click the Downloads button)
 * Source: http://github.com/thoughtworks/cruisecontrol.rb
 * Issue Tracking: https://cruisecontrolrb.lighthouseapp.com
 * Mailing Lists: http://rubyforge.org/mail/?group_id=2918

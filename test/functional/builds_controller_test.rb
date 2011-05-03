@@ -8,7 +8,7 @@ class BuildsControllerTest < ActionController::TestCase
     with_sandbox_project do |sandbox, project|
       create_builds 24, 25
 
-      Project.expects(:find).with(project.name).returns(project)
+      Project.expects(:find).returns(project)
 
       get :show, :project => project.name
 
@@ -25,7 +25,7 @@ class BuildsControllerTest < ActionController::TestCase
 
       Project.expects(:find).with(project.name).returns(project)
 
-      get :show, :project => project.name, :build => 24
+      get :show, :project => project.name, :build => "24"
 
       assert_response :success
       assert_template 'show'
@@ -89,7 +89,7 @@ class BuildsControllerTest < ActionController::TestCase
       create_build 1
       Project.expects(:find).with(project.name).returns(project)
 
-      get :show, :project => project.name, :build => 2
+      get :show, :project => project.name, :build => "2"
 
       assert_response 404
       assert_equal 'Build "2" not found', @response.body

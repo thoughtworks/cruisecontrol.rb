@@ -1,11 +1,5 @@
 class ProjectsController < ApplicationController
-  
-  verify :params => "id", :only => [:show, :build, :code],
-         :render => { :text => "Project not specified",
-                      :status => 404 }
-  verify :params => "path", :only => [:code],
-         :render => { :text => "Path not specified",
-                      :status => 404 }
+
   def index
     @projects = Project.all
     
@@ -48,7 +42,10 @@ class ProjectsController < ApplicationController
     @project.request_build rescue nil
     @projects = Project.all
 
-    respond_to { |format| format.js { render :action => 'index_js' } }
+    respond_to do |format| 
+      format.html { head :ok }
+      format.js { render :action => 'index_js' }
+    end
   end
   
   def code

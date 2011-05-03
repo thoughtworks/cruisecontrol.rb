@@ -3,7 +3,7 @@ require 'test_helper'
 class DocumentationControllerTest < ActionController::TestCase
 
   def test_documentation
-    get :get, :path => []
+    get :get
     assert_response :success
     
     get :get, :path => 'docs'

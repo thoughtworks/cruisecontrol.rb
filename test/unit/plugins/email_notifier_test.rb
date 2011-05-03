@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
+require 'test_helper'
 
-class EmailNotifierTest < Test::Unit::TestCase
+class EmailNotifierTest < ActiveSupport::TestCase
   include FileSandbox
   
   BUILD_LOG = <<-EOL
@@ -58,17 +58,17 @@ class EmailNotifierTest < Test::Unit::TestCase
   
   def test_logging_on_send
     CruiseControl::Log.expects(:event).with("Sent e-mail to 4 people", :debug)
-    BuildMailer.expects(:deliver_build_report)
+    BuildMailer.expects(:build_report).returns mock(:deliver => true)
     @notifier.emails = ['foo@happy.com', 'bar@feet.com', 'you@me.com', 'uncle@tom.com']
     @notifier.build_finished(failing_build)
 
     CruiseControl::Log.expects(:event).with("Sent e-mail to 1 person", :debug)
-    BuildMailer.expects(:deliver_build_report)
+    BuildMailer.expects(:build_report).returns mock(:deliver => true)
     @notifier.emails = ['foo@happy.com']
     @notifier.build_finished(failing_build)
 
     CruiseControl::Log.expects(:event).never
-    BuildMailer.expects(:deliver_build_report).never
+    BuildMailer.expects(:build_report).never
     @notifier.emails = []
     @notifier.build_finished(failing_build)
   end
@@ -76,7 +76,10 @@ class EmailNotifierTest < Test::Unit::TestCase
   def test_useful_errors
     ActionMailer::Base.stubs(:smtp_settings).returns(:foo => 5)
     CruiseControl::Log.expects(:event).with("Error sending e-mail - current server settings are :\n  :foo = 5", :error)
-    BuildMailer.expects(:deliver_build_report).raises('oh noes!')
+    mock_mail = mock("Email")
+    mock_mail.expects(:deliver).raises('oh noes!')
+    
+    BuildMailer.expects(:build_report).returns mock_mail
     
     @notifier.emails = ['foo@crapty.com']
     
@@ -90,8 +93,8 @@ class EmailNotifierTest < Test::Unit::TestCase
     @notifier.from = nil
     build = failing_build()
     
-    BuildMailer.expects(:deliver_build_report).with(build, ['jeremystellsmith@gmail.com', 'jeremy@thoughtworks.com'],
-                        'central@foo.com', 'myproj build 5 failed', 'The build failed.')
+    BuildMailer.expects(:build_report).with(build, ['jeremystellsmith@gmail.com', 'jeremy@thoughtworks.com'],
+                        'central@foo.com', 'myproj build 5 failed', 'The build failed.').returns mock(:deliver => true)
 
     @notifier.build_finished(failing_build)
   end
@@ -102,7 +105,7 @@ class EmailNotifierTest < Test::Unit::TestCase
     @notifier.build_finished(failing_build)
     
     mail = ActionMailer::Base.deliveries[0]
-    assert_match /http:\/\/www.my.com\/builds\/myproj\/5/, mail.body
+    assert_match /http:\/\/www.my.com\/builds\/myproj\/5/, mail.body.to_s
   end
 
   def test_notification_mail_should_list_build_info_if_dashboard_url_is_not_set
@@ -111,7 +114,7 @@ class EmailNotifierTest < Test::Unit::TestCase
     @notifier.build_finished(failing_build)
 
     mail = ActionMailer::Base.deliveries[0]
-    assert_match /Note: if you set Configuration\.dashboard_url in config\/site_config\.rb/, mail.body
+    assert_match /Note: if you set Configuration\.dashboard_url in config\/site_config\.rb/, mail.body.to_s
   end
 
   private

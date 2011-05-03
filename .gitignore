@@ -14,6 +14,7 @@ public/builds
 .DS_Store
 tmtags
 .bundle
+vendor/plugins/rails_upgrade
 
 # CCRB isn't intended for deployment onto a fixed platform, so checking in a lockfile (which will try to
 # resolve gems on the current platform) isn't desirable.

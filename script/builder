@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 
-RAILS_ENV = 'builder'
+ENV["RAILS_ENV"] = 'builder'
 
-require File.dirname(__FILE__) + '/../config/boot'
+require File.expand_path(File.dirname(__FILE__) + '/../config/boot')
 require 'optparse'
-
 
 CRUISE_OPTIONS = { :verbose => false }
 
@@ -30,7 +29,7 @@ ARGV.options do |opts|
   CRUISE_OPTIONS[:log_file_name] = "log/#{CRUISE_OPTIONS[:project_name]}_builder.log"
 end
 
-require RAILS_ROOT + "/config/environment"
+require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 
 CruiseControl::Log.verbose = CRUISE_OPTIONS[:verbose]
 

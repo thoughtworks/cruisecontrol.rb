@@ -4,12 +4,12 @@
   <div id="navigate_build">
     <% prev_build, next_build = @project.previous_build(@build), @project.next_build(@build)%>
     
-    <%= link_to_unless !prev_build, '&lt; prev', 
+    <%= link_to_unless !prev_build, "&lt; prev".html_safe, 
                        {:project => @project, :build => prev_build}, :accesskey => 'k' %>
     <strong><%= @build.abbreviated_label %></strong>
-    <%= link_to_unless !next_build, 'next &gt;', 
+    <%= link_to_unless !next_build, "next &gt;".html_safe, 
                        {:project => @project, :build => next_build}, :accesskey => 'j' %>
-    <%= link_to_unless !next_build, 'latest &gt;&gt;', :project => @project.name %>
+    <%= link_to_unless !next_build, "latest &gt;&gt;".html_safe, :project => @project.name %>
   </div>
   
   <% @builds_for_navigation_list.each do |build| %>
@@ -59,14 +59,14 @@
   <br/>
 
   <div class="section_open">
-    <div class="section_header" onclick="toggle_section(this.parentNode)">Build Changeset</div>
+    <div class="section_header">Build Changeset</div>
     <div class="section_content"><%= format_changeset_log(@build.changeset) %></div>
   </div>
 
   <% test_failures = failures_and_errors_if_any(@build.output) %>
   <% if test_failures %>
     <div class="section_open">
-      <div class="section_header" onclick="toggle_section(this.parentNode)">Test Failures and Errors</div>
+      <div class="section_header">Test Failures and Errors</div>
       <div class="section_content"><%= test_failures %></div>
     </div>
   <% end %>
@@ -74,25 +74,25 @@
   <% plugin_errors = @build.plugin_errors %>
   <% unless plugin_errors.empty? %>
     <div class="section_open">
-      <div class="section_header" onclick="toggle_section(this.parentNode)">Plugin Errors</div>
+      <div class="section_header">Plugin Errors</div>
       <div class="section_content"><%= h plugin_errors %></div>
     </div>
   <% end %>
 
   <div class="<%= @build.incomplete? ? 'section_open' : 'section_closed' %>">
-    <div class="section_header" onclick="toggle_section(this.parentNode)">Build Log</div>
-    <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div><div><%= link_to "See unformatted build log&hellip;", build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %></div></div>
+    <div class="section_header">Build Log</div>
+    <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div><div><%= link_to "See unformatted build log&hellip;".html_safe, build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %></div></div>
   </div>
 
   <% unless @build.additional_artifacts.empty? %>
     <div class="section_open">
-      <div class="section_header" onclick="toggle_section(this.parentNode)">Custom Build Artifacts</div>
+      <div class="section_header">Custom Build Artifacts</div>
       <div class="section_content"><% @build.additional_artifacts.each do |artifact| %><div class="artifact"><%= link_to artifact, build_artifact_path(:project => @project.name, :build => @build.label, :path => artifact) %></div><% end %></div>
     </div>
   <% end %>
   
   <div class="section_closed">
-    <div class="section_header" onclick="toggle_section(this.parentNode)">Project Settings</div>
+    <div class="section_header">Project Settings</div>
     <div class="section_content"><%= format_project_settings(@build.project_settings) %></div>
   </div>
 

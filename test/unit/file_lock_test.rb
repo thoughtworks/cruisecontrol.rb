@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'test_helper'
 
-class FileLockTest < Test::Unit::TestCase
+class FileLockTest < ActiveSupport::TestCase
   include FileSandbox
   
   def test_lock_and_release

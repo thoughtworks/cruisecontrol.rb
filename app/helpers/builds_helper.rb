@@ -3,12 +3,11 @@ module BuildsHelper
   def select_builds(builds)
     return "" if builds.blank?
 
-    options = builds.map do |build|
-      "<option value='#{build.label}'>#{build_to_text(build, false)}</option>"
+    options = [ [ "Older Builds...", nil ] ] + builds.map do |build|
+      [ build_to_text(build, false), build.label ]
     end
-    options.unshift "<option value=''>Older Builds...</option>"
     
-    select_tag "build", options.join, :onChange => "this.form.submit();"
+    select_tag "build", options_for_select(options), :onChange => "this.form.submit();"
   end
   
   def format_build_log(log)

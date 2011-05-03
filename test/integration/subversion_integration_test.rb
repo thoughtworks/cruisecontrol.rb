@@ -76,8 +76,8 @@ and one more revision, for good measure
   end
   
   def fixture_repository_url
-    repository_path = File.expand_path("#{RAILS_ROOT}/test/fixtures/svn-repo")
-    urlified_path = repository_path.sub(/^[a-zA-Z]:/, '').gsub('\\', '/')
+    repository_path = Rails.root.join("test", "fixtures", "svn-repo")
+    urlified_path = repository_path.to_s.sub(/^[a-zA-Z]:/, '').gsub('\\', '/')
     "file://#{urlified_path}"
   end
 

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ApplicationHelperTest < Test::Unit::TestCase
+class ApplicationHelperTest < ActionView::TestCase
   
   def setup
     @helper = Object.new.extend(ApplicationHelper)
