@@ -22,4 +22,4 @@ This should start cruise on port 3333.
 === License:
 * Apache Software License 2.0
 
-(C) ThoughtWorks Inc. 2007 - 2009 
+(C) ThoughtWorks Inc. 2007 - 2011

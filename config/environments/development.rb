@@ -1,6 +1,4 @@
 CruiseControl::Application.configure do
-  # Settings specified here will take precedence over those in config/environment.rb
-
   # In the development environment your application's code is reloaded on
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the webserver when you make code changes.
@@ -24,7 +22,6 @@ CruiseControl::Application.configure do
 
   config.after_initialize do
     CruiseControl::Log.verbose = true
-    # require CRUISE_DATA_ROOT + '/site_config' if File.exists?(CRUISE_DATA_ROOT + "/site_config.rb")
     CruiseControl.require_site_config_if_needed
     require Rails.root.join('config', 'dashboard_initialize')
   end
