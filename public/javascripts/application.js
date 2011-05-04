@@ -34,4 +34,10 @@ document.observe("dom:loaded", function() {
       section.addClassName("section_open").removeClassName("section_closed");
     }
   });
+
+  $$("button[href]").invoke("observe", "click", function(evt) {
+    evt.stop();
+    var button = evt.findElement();
+    window.location = button.readAttribute("href");
+  });
 });
