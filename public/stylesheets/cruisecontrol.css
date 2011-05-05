@@ -188,6 +188,17 @@ button {
   text-align: center;
 }
 
+button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled="disabled"]:active {
+  background: #EBEBEB;
+  background: -moz-linear-gradient(top, #EBEBEB 0%, #C9C9C9 100%);
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EBEBEB), to(#C9C9C9));
+  border: 1px solid #C9C9C9;
+  border-bottom: 1px solid #AAA;
+  color: #777;
+  cursor: default;
+  box-shadow: none;
+}
+
 button:hover {
   background: #8AB2EB;
   background: -moz-linear-gradient(top, #8AB2EB 0%, #2C5DA3 100%);
@@ -218,10 +229,10 @@ button:active {
   float: left;
 }
 
-.project .builder_control .builder_status_builder_down, 
-.project .builder_control .builder_status_unknown, 
-.project .builder_control .builder_status_source_control_error,
-.project .builder_control .builder_status_timed_out {
+.builder_control .builder_status_builder_down, 
+.builder_control .builder_status_unknown, 
+.builder_control .builder_status_source_control_error,
+.builder_control .builder_status_timed_out {
   font-weight: bold;
   padding-top: 5px;
   padding-left: 25px;
@@ -230,9 +241,9 @@ button:active {
   background-repeat: no-repeat;
 }
 
-.project .builder_control .builder_status_building, 
-.project .builder_control .builder_status_build_requested,
-.project .builder_control .builder_status_queued {
+.builder_control .builder_status_building, 
+.builder_control .builder_status_build_requested,
+.builder_control .builder_status_queued {
   font-weight: bold;
   padding-top: 5px;
   padding-left: 25px;
@@ -324,6 +335,11 @@ button:active {
   width: 16em;
   float: left;
   margin: 0.2em 1em 1em 0;
+}
+
+#builds_list .builder_control {
+  padding: 1em 0;
+  border-bottom: 1px solid #eee;
 }
 
 #builds_list .selected a {

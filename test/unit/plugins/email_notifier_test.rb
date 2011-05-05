@@ -114,7 +114,7 @@ class EmailNotifierTest < ActiveSupport::TestCase
     @notifier.build_finished(failing_build)
 
     mail = ActionMailer::Base.deliveries[0]
-    assert_match /Note: if you set Configuration\.dashboard_url in config\/site_config\.rb/, mail.body.to_s
+    assert_match /Note: if you set Configuration\.dashboard_url in site_config\.rb/, mail.body.to_s
   end
 
   private

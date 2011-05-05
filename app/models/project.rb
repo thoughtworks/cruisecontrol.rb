@@ -206,7 +206,19 @@ class Project
 
   def builder_state_and_activity
     BuilderStatus.new(self).status
-  end 
+  end
+  
+  def builder_down?
+    self.builder_state_and_activity == 'builder_down'
+  end
+  
+  def can_build_now?
+    !(building? || builder_down? || Configuration.disable_build_now)
+  end
+  
+  def building?
+    self.builder_state_and_activity == 'building'
+  end
   
   def builder_error_message
     BuilderStatus.new(self).error_message
