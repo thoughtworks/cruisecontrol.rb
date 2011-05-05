@@ -51,6 +51,8 @@ class ActiveSupport::TestCase
     project.stubs(:builder_error_message).returns('')
     project.stubs(:to_param).returns(name)
     project.stubs(:path).returns('.')
+    project.stubs(:builder_down?).returns(false)
+    project.stubs(:can_build_now?).returns(true)
     
     project.stubs(:last_complete_build).returns(nil)
     last_five_builds.reverse.each do |build|

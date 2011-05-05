@@ -3,7 +3,7 @@ class Configuration
   @default_polling_interval = 20.seconds
   @sleep_after_build_loop_error = 30.seconds
   @build_request_checking_interval = 5.seconds
-  @dashboard_refresh_interval = 5.seconds
+  @dashboard_refresh_interval = 30.seconds
   @dashboard_url = nil
   @email_from = 'cruisecontrol@thoughtworks.com'
   @disable_build_now = false

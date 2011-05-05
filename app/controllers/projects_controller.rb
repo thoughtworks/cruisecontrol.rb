@@ -43,7 +43,7 @@ class ProjectsController < ApplicationController
     @projects = Project.all
 
     respond_to do |format| 
-      format.html { head :ok }
+      format.html { redirect_to :controller => "builds", :action => "show", :project => @project }
       format.js { render :action => 'index_js' }
     end
   end

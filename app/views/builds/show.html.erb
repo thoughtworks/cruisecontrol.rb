@@ -1,6 +1,10 @@
 <% @rss_feeds = {"#{@project.name} builds" => {:controller => 'projects', :action => 'show', :id => @project, :format => 'rss'}} -%>
 
 <div id="builds_list">
+  <div id="project_build_now" class="builder_control">
+    <%= render :partial => "builds/build_buttons", :locals => { :project => @project } %>
+  </div>
+  
   <div id="navigate_build">
     <% prev_build, next_build = @project.previous_build(@build), @project.next_build(@build)%>
     

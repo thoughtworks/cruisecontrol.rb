@@ -49,11 +49,11 @@ module ApplicationHelper
   def display_builder_state(state)
     case state
     when 'building', 'builder_down', 'build_requested', 'source_control_error', 'queued', 'timed_out', 'error'
-      content_tag :div, state.gsub('_', ' '), :class => "builder_status_#{state}"
+      content_tag :div, state.gsub('_', ' ').humanize + ".", :class => "builder_status_#{state}"
     when 'sleeping', 'checking_for_modifications'
       ''
     else
-      content_tag :div, state + tag(:br) + "unknown state", :class => "builder_status_unknown"
+      content_tag :div, state.humanize + ".", :class => "builder_status_unknown"
     end
   end
 

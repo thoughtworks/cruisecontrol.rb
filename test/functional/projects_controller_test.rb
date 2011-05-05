@@ -77,11 +77,11 @@ class ProjectsControllerTest < ActionController::TestCase
     project = create_project_stub('one', 'success')
     Project.stubs(:all).returns([project])
     
-    project.stubs(:builder_state_and_activity).returns("builder_down")
+    project.stubs(:builder_down?).returns(true)
     get :index
     assert_tag :tag => "button", :content => /Start Builder/
 
-    project.stubs(:builder_state_and_activity).returns("sleeping")
+    project.stubs(:builder_down?).returns(false)
     get :index
     assert_tag :tag => "button", :content => /Build Now/
   end
@@ -167,7 +167,7 @@ class ProjectsControllerTest < ActionController::TestCase
     project.expects(:request_build)
     Project.stubs(:all).returns [ project ]
     post :build, :id => "two"
-    assert_response :success
+    assert_response :redirect
     assert_equal 'two', assigns(:project).name
   end
   
@@ -185,10 +185,12 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   def test_should_disable_build_now_button_if_configured_to_do_so
-    Configuration.stubs(:disable_build_now).returns(true)
-    Project.expects(:all).returns([create_project_stub('one', 'success')])
+    stub_project = create_project_stub('one', 'success')
+    stub_project.stubs(:can_build_now?).returns(false)
+    
+    Project.expects(:all).returns([ stub_project ])
     get :index
-    assert_tag :tag => "form", :attributes => {:"data-disable-build-now" => "true"}
+    assert_tag :tag => "button", :attributes => {:disabled => "disabled"}
   end
 
   def test_should_refuse_build_if_build_now_is_disabled

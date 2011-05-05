@@ -2,19 +2,26 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 document.observe("dom:loaded", function() {
-  $$("#projects .build_button").invoke("observe", "click", function(evt) {
+  $$("#projects .buttons .build_button").invoke("observe", "click", function(evt) {
     evt.stop();
     var button = evt.findElement();
     
-    if (button.readAttribute("data-disable-build-now") === "true") {
-      alert('Build Now button is disabled on this site.');
-    } else {
+    if (button.readAttribute("disabled") !== "disabled") {
       button.disabled = true;
       button.className = 'build_button_disabled';
-      button.update('Wait...');
+      
+      var oldText = button.innerHTML;
+      button.setAttribute("disabled", "disabled");
 
       button.up("form.build_project").request({ evalJS: true, method: 'post' });
     }
+  });
+  
+  $$("#project_build_now .build_button").invoke("observe", "click", function(evt) {
+    evt.stop();
+    var button = evt.findElement();
+    button.setAttribute("disabled", "disabled");
+    button.up("form.build_project").submit();
   });
   
   $$("#projects").each(function(projects) {

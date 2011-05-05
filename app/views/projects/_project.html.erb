@@ -35,20 +35,7 @@
   </td>
 
   <td class="builder_control">
-    <div class="buttons">
-      <%= form_tag(build_project_path(:id => project), :class => "build_project", :"data-disable-build-now" => Configuration.disable_build_now) do %>
-        <div>
-          <button type="submit" class="build_button">
-            <% if project.builder_state_and_activity == 'builder_down' %>
-              Start Builder
-            <% else %>
-              Build Now
-            <% end %>
-          </button>
-        </div>
-      <% end %>
-    </div>
-    <%= display_builder_state(project.builder_state_and_activity) %>
+    <%= render :partial => "builds/build_buttons", :locals => { :project => project } %>
   </td>
 
   <td class="build_details">
