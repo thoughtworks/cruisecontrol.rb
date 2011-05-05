@@ -1,18 +1,20 @@
 # CruiseControl.rb can send email notices whenever build is broken or fixed. To make it happen, you need to tell it how
 # to send email, and who to send it to. Do the following:
 # 
-# 1. Configure SMTP server connection. Open <em>[cruise&nbsp;data]</em>/config/site_config.rb,
+# 1. Configure SMTP server connection. Open <em>[cruise&nbsp;data]</em>/site_config.rb,
 #    read the comments in it and edit according to your situation.
-# 
-# 2. Tell the builder, whom do you want to receive build notices:
+
+# 2. Tell the builder, whom do you want to receive build notices.
 # <pre><code>Project.configure do |project|
 #   ...
 #   project.email_notifier.emails = ['john@doe.com', 'jane@doe.com']
 #   ...
 # end</code></pre>
-#
+# Please note, this setting can be put into project specific cruise_config.rb, usually at ~/.cruise/projects/YourProject/cruise_config.rb
+# Or be put into repository specific cruise_config.rb, ie, YourRepository/cruise_config.rb
+
 # You can also specify who to send the email from, either for the entire site by setting Configuration.email_from
-# in <em>[cruise&nbsp;data]</em>/config/site_config.rb, or on a per project basis, by placing the following line in cruise_config.rb:
+# in <em>[cruise&nbsp;data]</em>//site_config.rb, or on a per project basis, by placing the following line in cruise_config.rb:
 # <pre><code>Project.configure do |project|
 #   ...
 #   project.email_notifier.from = "cruisecontrol@doe.com"
@@ -20,7 +22,7 @@
 # end</code></pre>
 #
 # The emails from CruiseControl.rb can have a lot of details about the build, or just a link to the build page in the dashboard.
-# Usually, you will want the latter. Set the dashboard URL in the <em>[cruise&nbsp;data]</em>/config/site_config.rb as follows:
+# Usually, you will want the latter. Set the dashboard URL in the <em>[cruise&nbsp;data]</em>/site_config.rb as follows:
 #
 # <pre><code>Configuration.dashboard_url = 'http://your.host.name.com:3333'</pre></code>
 class EmailNotifier < BuilderPlugin
