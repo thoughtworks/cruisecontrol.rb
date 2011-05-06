@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
-class CommandLineTest < Test::Unit::TestCase
+class CommandLineTest < ActiveSupport::TestCase
   include FileSandbox
 
   def test_should_write_to_both_files_when_both_files_specified_and_no_block

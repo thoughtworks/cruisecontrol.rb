@@ -1,5 +1,5 @@
 desc 'Continuous build target'
-task :cruise => ['geminstaller'] do
+task :cruise do
   # Add local user gem path, in case rcov was installed with non-root access
   ENV['PATH'] = "#{ENV['PATH']}:#{File.join(Gem.user_dir, 'bin')}"
 

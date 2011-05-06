@@ -1,7 +1,7 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../../test_helper')
+require 'test_helper'
 
 module SourceControl
-  class Subversion::ProjectTest < Test::Unit::TestCase
+  class Subversion::ProjectTest < ActiveSupport::TestCase
 
     def test_revision_should_know_how_to_compare_itself
       small = Subversion::Revision.new(3)

@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/../../../test_helper'
-require "date"
+require 'test_helper'
 
 module SourceControl
   class Mercurial::LogParserTest < Test::Unit::TestCase

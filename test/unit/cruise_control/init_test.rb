@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../../test_helper'
-require File.dirname(__FILE__) + '/../../../lib/cruise_control/init'
+require 'test_helper'
+require Rails.root.join("lib", "cruise_control", "init")
 
 module CruiseControl
   class InitTest < Test::Unit::TestCase

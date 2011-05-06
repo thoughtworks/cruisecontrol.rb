@@ -3,7 +3,7 @@ class Configuration
   @default_polling_interval = 20.seconds
   @sleep_after_build_loop_error = 30.seconds
   @build_request_checking_interval = 5.seconds
-  @dashboard_refresh_interval = 5.seconds
+  @dashboard_refresh_interval = 30.seconds
   @dashboard_url = nil
   @email_from = 'cruisecontrol@thoughtworks.com'
   @disable_build_now = false
@@ -15,24 +15,36 @@ class Configuration
     # published configuration options (mentioned in config/site_config.rb.example)
     attr_accessor :default_polling_interval, :disable_build_now, :email_from,
                   :dashboard_refresh_interval, :serialize_builds,
-                  :serialized_build_timeout, :git_load_new_changesets_timeout
+                  :serialized_build_timeout, :git_load_new_changesets_timeout,
+                  :disable_code_browsing
     attr_reader :dashboard_url
 
     # non-published configuration options (obscure stuff, mostly useful for http://cruisecontrolrb.thoughtworks.com)
     attr_accessor :default_page
     attr_writer :build_request_checking_interval, :sleep_after_build_loop_error
 
+    def data_root=(root)
+      @data_root = Pathname.new(root)
+    end
+
+    def data_root
+      @data_root ||= Pathname.new(CruiseControl::Application::CRUISE_DATA_ROOT)
+    end
+
+    def projects_root
+      self.data_root.join("projects")
+    end
+
+    def plugins_root
+      self.data_root.join("builder_plugins")
+    end
+
     def dashboard_url=(value)
       @dashboard_url = remove_trailing_slash(value)
     end
     
-    def projects_directory=(value)
-      raise "projects directory may no longer be set, projects now live in ~/.cruise/projects by default.\n" +
-            "To configure this, set the CRUISE_DATA_ROOT environment variable"
-    end
-    
     def sleep_after_build_loop_error
-      @sleep_after_build_loop_error #.to_i
+      @sleep_after_build_loop_error
     end
 
     def build_request_checking_interval

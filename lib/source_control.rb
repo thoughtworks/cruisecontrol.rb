@@ -1,40 +1,36 @@
 module SourceControl
 
+  DEFAULT_SCM = "subversion"
+
   class << self
 
     def create(scm_options)
-      raise ArgumentError, "options should include repository" unless scm_options[:repository] 
+      raise ArgumentError, "options should include repository" unless scm_options[:repository]
+      scm_type = scm_options[:source_control]
 
-      scm_options = scm_options.dup
-      scm_type = scm_options.delete(:source_control)
-
-      if scm_type.nil?
-        source_control_class =
-          case scm_options[:repository]
-          when /^git:/ then SourceControl::Git
-          when /^svn:/, /^svn\+ssh:/ then SourceControl::Subversion
-          when /^bzr:/, /^bzr\+ssh:/ then SourceControl::Bazaar
-          else SourceControl::Subversion
-          end
+      source_control_class = if scm_type.nil?
+        class_for simple_detect(scm_options[:repository])
       else
-        scm_type = "subversion" if scm_type == "svn"
-        scm_type = "mercurial" if scm_type == "hg"
-        scm_type = "bazaar" if scm_type == "bzr"
-        
-        source_control_class_name = scm_type.to_s.camelize
-        begin
-          source_control_class = ("SourceControl::" + source_control_class_name).constantize
-        rescue => e
-          raise "#{scm_type.inspect} is not a valid --source-control value [#{e.message}]"
-        end
-
-        unless source_control_class.ancestors.include?(SourceControl::AbstractAdapter)
-          raise "#{scm_type} is not a valid --source-control value " +
-                "[#{source_control_class_name} is not a subclass of SourceControl::AbstractAdapter]"
-        end
+        class_for scm_type
       end
 
-      source_control_class.new(scm_options)
+      unless source_control_class.ancestors.include?(SourceControl::AbstractAdapter)
+        raise "#{scm_type} is not a valid --source-control value " +
+                "[#{source_control_class_name} is not a subclass of SourceControl::AbstractAdapter]"
+      end
+
+      source_control_class.new(scm_options.except(:source_control))
+    rescue NameError => e
+      raise "#{scm_type.inspect} is not a valid --source-control value [#{e.message}]"
+    end
+
+    def simple_detect(url)
+      case url
+      when /^git:/ then "git"
+      when /^svn:/, /^svn\+ssh:/ then "subversion"
+      when /^bzr:/, /^bzr\+ssh:/ then "bazaar"
+      else "subversion"
+      end        
     end
 
     def detect(path)
@@ -52,6 +48,18 @@ module SourceControl
       else raise "More than one type of source control was detected in #{path}"
       end
     end
+
+    private
+
+      def class_for(scm_name)
+        case scm_name
+        when /svn/i, /subversion/i then SourceControl::Subversion
+        when /git/i                then SourceControl::Git
+        when /bzr/i, /bazaar/i     then SourceControl::Bazaar
+        when /hg/i,  /mercurial/i  then SourceControl::Mercurial
+        else scm_name.classify.constantize
+        end
+      end
 
   end
 end

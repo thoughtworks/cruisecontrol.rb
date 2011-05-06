@@ -1,7 +1,6 @@
-require File.dirname(__FILE__) + '/../../test_helper'
-require 'stringio'
+require 'test_helper'
 
-class SourceControl::SubversionTest < Test::Unit::TestCase
+class SourceControl::SubversionTest < ActiveSupport::TestCase
 
   include FileSandbox
   include SourceControl

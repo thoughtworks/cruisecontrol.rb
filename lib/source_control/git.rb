@@ -96,7 +96,8 @@ module SourceControl
     def load_new_changesets_from_origin
       # NOTE: Git network problems may cause CruiseControl.rb to hang unless you install the system_timer gem.
       # See: https://cruisecontrolrb.lighthouseapp.com/projects/9150-cruise-control-rb/tickets/229-sometimes-git-hangs
-      MyTimer.timeout(Configuration.git_load_new_changesets_timeout) do
+      
+      MyTimer.timeout(Configuration.git_load_new_changesets_timeout.to_f) do
         git("fetch", ["origin"])
       end
     rescue Timeout::Error => e

@@ -35,29 +35,7 @@
   </td>
 
   <td class="builder_control">
-    <div class="buttons">
-      <% form_remote_tag(
-             :url => { :action => 'build', :id => project },
-             :before => "$('build_#{project.to_param}').disabled = true; " +
-                        "$('build_#{project.to_param}').className = 'build_button_disabled'; " +
-                        "Element.update('build_#{project.to_param}', 'Wait...')"
-           ) do %>
-        <div>
-          <button 
-              <% if Configuration.disable_build_now -%>
-                onclick="alert('Build Now button is disabled on this site.'); return false;"
-              <% end -%>
-                id="build_<%= project.to_param %>" type="submit" class="build_button" value="txt" title="Build Now">
-            <% if project.builder_state_and_activity == 'builder_down' %>
-              Start Builder
-            <% else %>
-              Build Now
-            <% end %>
-          </button>
-        </div>
-      <% end %>
-    </div>
-    <%= display_builder_state(project.builder_state_and_activity) %>
+    <%= render :partial => "builds/build_buttons", :locals => { :project => project } %>
   </td>
 
   <td class="build_details">

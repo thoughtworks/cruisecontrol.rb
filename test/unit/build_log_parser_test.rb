@@ -1,7 +1,6 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
-
-class BuildLogParserTest < Test::Unit::TestCase
+class BuildLogParserTest < ActiveSupport::TestCase
 
 LOG_OUTPUT_WITH_NO_TEST_FAILURE = <<EOF
 Started

@@ -1,8 +1,6 @@
-require File.dirname(__FILE__) + '/../../test_helper'
-require 'stringio'
+require 'test_helper'
 
-class SourceControl::AbstractAdapterTest < Test::Unit::TestCase
-
+class SourceControl::AbstractAdapterTest < ActiveSupport::TestCase
   include FileSandbox
 
   def test_execute_with_error_log__handles_exceptions

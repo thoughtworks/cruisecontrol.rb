@@ -1,15 +1,23 @@
 *~
 coverage
 __sandbox
+
 public/stylesheets/site.css
-public/documentation
+public/documentation*
+public/builds
+
 log/*
 tmp/**/*
 cruisecontrol.iws
-public/builds
 *.iws
 *.ipr
 *.iml
 .tmtags
 .DS_Store
 tmtags
+.bundle
+vendor/plugins/rails_upgrade
+
+# CCRB isn't intended for deployment onto a fixed platform, so checking in a lockfile (which will try to
+# resolve gems on the current platform) isn't desirable.
+Gemfile.lock

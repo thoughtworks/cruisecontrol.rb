@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
-load "#{File.dirname(__FILE__)}/lib/cruise_control/version.rb"
-load "#{File.dirname(__FILE__)}/lib/cruise_control/init.rb"
+APP_PATH = File.dirname(__FILE__) + "/config/application"
+require File.dirname(__FILE__) + "/config/boot"
+require File.dirname(__FILE__) + "/lib/cruise_control/init"
+
 CruiseControl::Init.new.run

@@ -46,7 +46,7 @@ class BuilderPlugin
     private
     
       def plugins_to_load
-        (Dir[RAILS_ROOT + "/lib/builder_plugins/*"] + Dir[CRUISE_DATA_ROOT + "/builder_plugins/*"]).reject do |plugin_path|
+        (Dir[Rails.root.join('lib', 'builder_plugins', '*')] + Dir[Configuration.plugins_root.join("*")]).reject do |plugin_path|
            # ignore hidden files and directories (they should be considered hidden by Dir[], but just in case)
            File.basename(plugin_path)[0, 1] == '.'
         end
@@ -62,7 +62,7 @@ class BuilderPlugin
         plugin_name = plugin_is_directory ? File.basename(File.dirname(plugin_path)) : plugin_file
 
         CruiseControl::Log.debug("Loading plugin #{plugin_name}")
-        if RAILS_ENV == 'development'
+        if Rails.env == 'development'
           load plugin_path
         else
           if plugin_is_directory then require "#{plugin_name}/init" else require plugin_name end

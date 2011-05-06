@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
-class BuildStatusTest < Test::Unit::TestCase
+class BuildStatusTest < ActiveSupport::TestCase
   include FileSandbox
   
   def setup

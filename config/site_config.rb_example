@@ -1,7 +1,9 @@
-# site_config.rb contains examples of various configuration options for the local installation
-# of CruiseControl.rb.
+# site_config.rb should contain configuration options for the whole local installation of CruiseControl.rb.
+# It should be located at DATA_ROOT/site_config.rb, ie, ~/.cruise/site_config.rb
 
 # YOU MUST RESTART YOUR CRUISE CONTROL SERVER FOR ANY CHANGES MADE HERE TO TAKE EFFECT!!!
+
+# Repository and project specific configuration is defined at various cruise_config.rb
 
 # EMAIL NOTIFICATION
 # ------------------
@@ -66,10 +68,14 @@
 # Amount of time a project will wait for git to load new changesets before failing
 # Configuration.git_load_new_changesets_timeout = 5.minutes
 
+# Disable URLs like /projects/code/[project name]/* - used for browsing source code
+# Configuration.disable_code_browsing = true
+
 # To delete build when there are more than a certain number present, uncomment this line - it will make the dashboard 
 # perform better
 # BuildReaper.number_of_builds_to_keep = 20
 
 # any files that you'd like to override in cruise, keep in ~/.cruise, and copy over when this file is loaded like this
-site_css = CRUISE_DATA_ROOT + "/site.css"
-FileUtils.cp site_css, RAILS_ROOT + "/public/stylesheets/site.css" if File.exists? site_css
+site_css = Configuration.data_root.join('site.css')
+FileUtils.cp site_css, Rails.root.join('public', 'stylesheets', 'site.css') if site_css.exist?
+

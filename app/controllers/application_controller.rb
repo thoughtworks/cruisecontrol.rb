@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   
   def render_not_found
-    render :file => File.join(RAILS_ROOT, 'public/404.html'), :status => 404
+    render :file => Rails.root.join('public', '404.html').to_s, :status => 404
   end
 
   # Scrub sensitive parameters from your log

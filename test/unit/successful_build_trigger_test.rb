@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'test_helper'
 
 class SuccessfulBuildTriggerTest < Test::Unit::TestCase
   include FileSandbox
@@ -9,7 +9,7 @@ class SuccessfulBuildTriggerTest < Test::Unit::TestCase
     
     @triggered_project = create_project('triggered_project')
     @triggering_project = create_project('triggering_project')
-    Project.stubs(:new).with('triggering_project').returns(@triggering_project)
+    Project.stubs(:new).with(:name => 'triggering_project').returns(@triggering_project)
   end
   
   def teardown

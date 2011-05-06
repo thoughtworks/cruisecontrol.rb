@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
-require 'fileutils'
+require 'test_helper'
 
 class MassBuildsLoadSpeedTest < ActionController::IntegrationTest
   include FileUtils

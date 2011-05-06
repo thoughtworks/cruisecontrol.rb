@@ -1,14 +1,11 @@
-require File.dirname(__FILE__) + '/../test_helper'
-require 'projects_controller'
+require 'test_helper'
+
 require 'rexml/document'
 require 'rexml/xpath'
-# Re-raise errors caught by the controller.
-class ProjectsController
-  def rescue_action(e) raise end
-end
 
 class ProjectsControllerTest < ActionController::TestCase
   include FileSandbox
+  include BuildFactory
 
   def test_index_rhtml  
     p1 = create_project_stub('one', 'success')
@@ -51,9 +48,9 @@ class ProjectsControllerTest < ActionController::TestCase
   
   def test_rss_should_exclude_incomplete_build
     Project.expects(:all).returns([
-        create_project_stub('one', 'success', [create_build_stub('1', 'success')]),
-        create_project_stub('two', 'incomplete', [create_build_stub('10', 'failed'), create_build_stub('11', 'incomplete')])
-        ])
+      create_project_stub('one', 'success', [create_build_stub('1', 'success')]),
+      create_project_stub('two', 'incomplete', [create_build_stub('10', 'failed'), create_build_stub('11', 'incomplete')])
+    ])
     post :index, :format => 'rss'
     
     xml = REXML::Document.new(@response.body)
@@ -80,11 +77,11 @@ class ProjectsControllerTest < ActionController::TestCase
     project = create_project_stub('one', 'success')
     Project.stubs(:all).returns([project])
     
-    project.stubs(:builder_state_and_activity).returns("builder_down")
+    project.stubs(:builder_down?).returns(true)
     get :index
     assert_tag :tag => "button", :content => /Start Builder/
 
-    project.stubs(:builder_state_and_activity).returns("sleeping")
+    project.stubs(:builder_down?).returns(false)
     get :index
     assert_tag :tag => "button", :content => /Build Now/
   end
@@ -139,29 +136,14 @@ class ProjectsControllerTest < ActionController::TestCase
 
   def test_code
     in_sandbox do |sandbox|
-      project = Project.new('three')
-      project.path = sandbox.root
-      sandbox.new :file => 'work/app/controller/FooController.rb', :with_contents => "class FooController\nend\n"
-      
-      Project.expects(:find).returns(project)
+      project = create_project "three"
+      sandbox.new :file => 'projects/three/work/app/controller/FooController.rb', :with_contents => "class FooController\nend\n"
     
-      get :code, :id => 'two', :path => ['app', 'controller', 'FooController.rb'], :line => 2
-      
+      get :code, :id => 'three', :path => ['app', 'controller', 'FooController.rb'], :line => 2
+
       assert_response :success
       assert_match /class FooController/, @response.body
     end
-  end
-
-  def test_code_url_not_fully_specified
-    Project.expects(:find).never
-
-    get :code, :path => ['foo'], :line => 1
-    assert_response 404
-    assert_equal 'Project not specified', @response.body
-
-    get :code, :id => 'foo', :line => 1
-    assert_response 404
-    assert_equal 'Path not specified', @response.body
   end
 
   def test_code_non_existant_project
@@ -172,9 +154,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
   def test_code_non_existant_path
     in_sandbox do |sandbox|
-      project = Project.new('project')
-      project.path = sandbox.root
-      Project.expects(:find).with('project').returns(project)
+      project = create_project "project"
 
       get :code, :id => 'project', :path => ['foo.rb'], :line => 1
       assert_response 404
@@ -187,7 +167,7 @@ class ProjectsControllerTest < ActionController::TestCase
     project.expects(:request_build)
     Project.stubs(:all).returns [ project ]
     post :build, :id => "two"
-    assert_response :success
+    assert_response :redirect
     assert_equal 'two', assigns(:project).name
   end
   
@@ -197,12 +177,6 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_response 404
   end
   
-  def test_show_unspecified_project
-    post :show, :format => 'rss'
-    assert_response 404
-    assert_equal 'Project not specified', @response.body
-  end
-
   def test_show_non_existant_project
     Project.expects(:find).with('non_existing_project').returns(nil)
     post :show, :id => "non_existing_project", :format => 'rss'
@@ -211,10 +185,12 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   def test_should_disable_build_now_button_if_configured_to_do_so
-    Configuration.stubs(:disable_build_now).returns(true)
-    Project.expects(:all).returns([create_project_stub('one', 'success')])
+    stub_project = create_project_stub('one', 'success')
+    stub_project.stubs(:can_build_now?).returns(false)
+    
+    Project.expects(:all).returns([ stub_project ])
     get :index
-    assert_tag :tag => "button", :attributes => {:onclick => /return false;/}
+    assert_tag :tag => "button", :attributes => {:disabled => "disabled"}
   end
 
   def test_should_refuse_build_if_build_now_is_disabled
@@ -224,6 +200,26 @@ class ProjectsControllerTest < ActionController::TestCase
     
     assert_response 403
     assert_equal 'Build requests are not allowed', @response.body
+  end
+
+  def test_create_adds_a_new_project
+    in_sandbox do
+      scm = stub("FakeSourceControl")
+
+      FakeSourceControl.expects(:new).returns scm
+      Project.expects(:create).with("new_project", scm).returns stub(:id => "some_project")
+      post :create, :project => { :name => "new_project", :source_control => { :source_control => "fake_source_control", :repository => "file:///foo" } }
+    end
+  end
+
+  def test_create_project_redirects_to_project_documentation
+    in_sandbox do
+      SourceControl.stubs(:create)
+      Project.stubs(:create).returns stub(:id => "new_project")
+
+      post :create, :project => { :source_control => {} }
+      assert_redirected_to getting_started_project_path("new_project")
+    end
   end
 
   def stub_change_set_parser

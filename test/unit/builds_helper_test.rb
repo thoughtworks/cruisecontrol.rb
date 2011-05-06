@@ -1,21 +1,17 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class ProjectsController
   attr_accessor :url
 end
 
-class BuildsHelperTest < Test::Unit::TestCase
+class BuildsHelperTest < ActionView::TestCase
   include FileSandbox
-
   include BuildsHelper
   include ApplicationHelper
-  include ActionView::Helpers::UrlHelper
-  include ActionView::Helpers::TagHelper
-  include ActionView::Helpers::FormTagHelper
   
   def setup
     @work_path = File.expand_path('/Users/jeremy/src/cruisecontrolrb/builds/CruiseControl/work')
-    @project = Project.new('mine', FakeSourceControl.new)
+    @project = Project.new(:name => 'mine', :scm => FakeSourceControl.new)
   end
   
   def test_format_build_log_makes_test_summaries_bold
@@ -124,16 +120,16 @@ Message: NameError: uninitialized constant BuilderStatusTest::BuilderStatus
     assert_equal "", select_builds([])
 
     assert_equal "<select id=\"build\" name=\"build\" onChange=\"this.form.submit();\">" +
-                 "<option value=''>Older Builds...</option>" +
-                 "<option value='1'>1 (1 Jan 06)</option>" +
+                 "<option value=\"\">Older Builds...</option>\n" +
+                 "<option value=\"1\">1 (1 Jan 06)</option>" +
                  "</select>", select_builds([BuildStub.new(1, Date.new(2006,1,1).to_time)])
     
     @build = BuildStub.new(3)
     assert_equal "<select id=\"build\" name=\"build\" onChange=\"this.form.submit();\">" +
-                 "<option value=''>Older Builds...</option>" +
-                 "<option value='1'>1 (1 Jan 06)</option>" +
-                 "<option value='3'>3 (5 Jan 06)</option>" +
-                 "<option value='5'>5 (10 Jan 06)</option>" +
+                 "<option value=\"\">Older Builds...</option>\n" +
+                 "<option value=\"1\">1 (1 Jan 06)</option>\n" +
+                 "<option value=\"3\">3 (5 Jan 06)</option>\n" +
+                 "<option value=\"5\">5 (10 Jan 06)</option>" +
                  "</select>", select_builds([BuildStub.new(1, Date.new(2006,1,1).to_time),
                                              BuildStub.new(3, Date.new(2006,1,5).to_time),
                                              BuildStub.new(5, Date.new(2006,1,10).to_time)])

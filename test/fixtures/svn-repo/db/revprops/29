@@ -1,0 +1,13 @@
+K 10
+svn:author
+V 8
+bguthrie
+K 8
+svn:date
+V 27
+2011-03-31T02:03:31.611432Z
+K 7
+svn:log
+V 106
+Updated passing test to use assert_equal instead of assert, which does not work properly under Ruby 1.9.2.
+END

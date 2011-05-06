@@ -1,8 +1,8 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../test_helper')
+require 'test_helper'
 
 class BuilderStatusTest < Test::Unit::TestCase
   def setup
-    @project = Project.new('project')
+    @project = Project.new(:name => 'project')
     @project.stubs(:path).returns('project_root')
     @builder_status = BuilderStatus.new(@project)
     @mock_build = Object.new

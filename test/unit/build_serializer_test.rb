@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'test_helper'
 
-class BuildSerializerTest < Test::Unit::TestCase
+class BuildSerializerTest < ActiveSupport::TestCase
   def setup
     @project = Object.new
     @serializer = BuildSerializer.new(@project)
@@ -9,7 +9,7 @@ class BuildSerializerTest < Test::Unit::TestCase
   def test_serialize_when_lock_is_available
     lock = AvailableLock.new
     FileLock.expects(:new).
-             with(CRUISE_DATA_ROOT + "/projects/build_serialization.lock").
+             with(Configuration.projects_root.join("build_serialization.lock")).
              returns(lock)
     
     block_yielded = false

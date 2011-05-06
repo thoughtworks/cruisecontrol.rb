@@ -1,0 +1,17 @@
+<h3>Add a new project using the web interface</h3>
+<%= form_for :project, :url => projects_path, :action => :post, :html => { :class => "new_project" } do |p| %>
+  <dl>
+    <dt><%= p.label :name, "Name:" %></dt>
+    <dd><%= p.text_field :name %></dd>
+
+    <%= p.fields_for :source_control do |scm| %>
+    <dt><%= scm.label :repository, "Repository path:" %></dt>
+    <dd><%= scm.text_field :repository %></dd>
+
+    <dt><%= scm.label :source_control, "Type of source control:" %></dt>
+    <dd><%= scm.select :source_control, %w(Git Subversion Mercurial Bazaar) %></dd>
+    <% end %>
+    <dt><%= content_tag("button", "Create", :type => "submit") %></dt>
+    <dd></dd>
+  </dl>
+<% end %>

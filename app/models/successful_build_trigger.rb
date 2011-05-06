@@ -37,7 +37,7 @@ class SuccessfulBuildTrigger
   end
 
   def triggering_project_name=(value)
-    @triggering_project = Project.new(value.to_s)
+    @triggering_project = Project.find(value.to_s)
   end
 
   private

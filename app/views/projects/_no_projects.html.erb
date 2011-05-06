@@ -1,13 +1,15 @@
 <div id="no_projects_help" class="help">
-  <div style="font-size: 2em; font-weight: bold;">Welcome to CruiseControl.rb!</div>
+  <h1>Welcome to CruiseControl.rb!</h1>
   <div style="padding: 1em;">
     <p>
-      There are no projects in the projects directory
-      <small>[<%= h File.join(CRUISE_DATA_ROOT, 'projects') %>]</small> 
-      yet.
+      No projects are currently configured (checked <small><%= h Configuration.projects_root %></small>).
+    </p>
+    <h3>Adding a new project</h3>
+    <p>
+      You can add a new project using the web interface <%= link_to "here", new_project_path %>.
     </p>
     <p>
-      To add a project, open command line in the directory where you unpacked this tool, and type:
+      Alternatively, to add a project using the command line, navigate to the directory where you unpacked this tool, and type:
     </p>
     <pre style="font-family: courier, serif">cruise add [project-name] -r [repository] -s [svn|git|hg|bzr]</pre>
     <p>

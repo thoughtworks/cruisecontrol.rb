@@ -39,7 +39,7 @@
 # and is licensed MIT: (http://www.opensource.org/licenses/mit-license.php)
 
 $verbose = false
-PLUGINS_ROOT = CRUISE_DATA_ROOT + "/builder_plugins"
+PLUGINS_ROOT = Configuration.plugins_root
 
 require 'open-uri'
 require 'fileutils'
@@ -229,7 +229,7 @@ end
 class Repositories
   include Enumerable
   
-  def initialize(cache_file = File.join(CRUISE_DATA_ROOT, "plugin_repositories.txt"))
+  def initialize(cache_file = Configuration.data_root.join("plugin_repositories.txt"))
     @cache_file = File.expand_path(cache_file)
     load!
   end
@@ -488,7 +488,7 @@ EXAMPLES
           end
         end
       else
-        cd CRUISE_DATA_ROOT + "/builder_plugins"
+        cd Configuration.plugins_root
         Dir["*"].select{|p| File.directory?(p)}.each do |name| 
           puts name
         end

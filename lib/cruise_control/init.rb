@@ -41,7 +41,13 @@ module CruiseControl
       
       require File.join(File.dirname(__FILE__), '..', 'platform')
       Platform.running_as_daemon = ARGV.include?('-d') || ARGV.include?('--daemon')
-      load File.join(File.dirname(__FILE__), '..', '..', 'script', 'server')
+      require 'rails/commands/server'
+      
+      Rails::Server.new.tap { |server|
+        require APP_PATH
+        Dir.chdir(Rails.application.root)
+        server.start
+      }
     end
 
     def stop
@@ -62,7 +68,7 @@ module CruiseControl
     def version
       puts <<-EOL
     CruiseControl.rb, version #{CruiseControl::VERSION::STRING}
-    Copyright (C) 2009 ThoughtWorks
+    Copyright (C) 2011 ThoughtWorks
       EOL
     end
   
@@ -80,6 +86,7 @@ module CruiseControl
 
     Available commands:
       start      - starts the web server (port 3333, production environment by default)
+      stop       - stops the web server
       add        - adds a project
       build      - starts the builder for an individual project
 

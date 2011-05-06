@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
 class BuildTest < ActiveSupport::TestCase
   include FileSandbox
@@ -75,7 +75,7 @@ class BuildTest < ActiveSupport::TestCase
   def test_artifacts_directory_method_should_remove_cached_pages
     with_sandbox_project do |sandbox, project|
       project = create_project_stub('one', 'success')
-      FileUtils.expects(:rm_f).with("#{RAILS_ROOT}/public/builds/older/#{project.name}.html")
+      FileUtils.expects(:rm_f).with(Rails.root.join('public', 'builds', 'older', "#{project.name}.html"))
       Build.new(project, 1, true)
     end
   end

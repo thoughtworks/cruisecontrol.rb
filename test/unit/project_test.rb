@@ -1,12 +1,13 @@
-require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+require 'test_helper'
 
 class ProjectTest < ActiveSupport::TestCase
   include FileSandbox
+  include BuildFactory
   include SourceControl
 
   def setup
     @svn = FakeSourceControl.new
-    @project = Project.new("lemmings", @svn)
+    @project = Project.new(:name => "lemmings", :scm => @svn)
   end
 
   def test_default_scheduler
@@ -440,23 +441,26 @@ class ProjectTest < ActiveSupport::TestCase
   end
   
   def test_build_should_generate_new_label_if_same_name_label_exists
-    existing_build1 = stub_build('20')
-    existing_build2 = stub_build('20.1')
-    new_build = stub_build('20.2')
-    new_build_with_interesting_number = stub_build('2')
+    in_sandbox do |sandbox|
+      existing_build1 = stub_build('20')
+      existing_build2 = stub_build('20.1')
+      new_build = stub_build('20.2')
+      new_build_with_interesting_number = stub_build('2')
 
-    project = Project.new('project1', @svn)
-    @svn.stubs(:update)
-    project.stubs(:log_changeset)
-    project.stubs(:builds).returns([existing_build1, existing_build2])
-    project.stubs(:last_build).returns(nil)
-    project.stubs(:new_revisions).returns(nil)
-    
-    Build.expects(:new).with(project, '20.2', true).returns(new_build)
-    project.build(new_revision(20))
+      project = Project.new(:name => 'project1', :scm => @svn)
+      @svn.stubs(:update)
+      project.path = sandbox.root
+      project.stubs(:log_changeset)
+      project.stubs(:builds).returns([existing_build1, existing_build2])
+      project.stubs(:last_build).returns(nil)
+      project.stubs(:new_revisions).returns(nil)
 
-    Build.expects(:new).with(project, '2', true).returns(new_build)
-    project.build(new_revision(2))
+      Build.expects(:new).with(project, '20.2', true).returns(new_build)
+      project.build(new_revision(20))
+
+      Build.expects(:new).with(project, '2', true).returns(new_build)
+      project.build(new_revision(2))
+    end
   end
   
   def test_should_load_configuration_from_work_directory_and_then_root_directory
@@ -639,14 +643,14 @@ class ProjectTest < ActiveSupport::TestCase
 
 
   def test_new_project_should_have_source_control_triggers
-    project = Project.new('foo')
+    project = Project.new(:name => 'foo')
     trigger_classes = project.triggered_by.map(&:class)
     assert_equal [ChangeInSourceControlTrigger], trigger_classes
   end
 
 
   def test_project_triggered_by
-    project = Project.new('foo')
+    project = Project.new(:name => 'foo')
 
     project.triggered_by = []
     assert_equal [], project.triggered_by
@@ -659,19 +663,23 @@ class ProjectTest < ActiveSupport::TestCase
   end
 
   def test_project_triggered_by_should_convert_strings_and_symbols_to_successful_build_triggers
-    project = Project.new('foo', FakeSourceControl.new)
+    in_sandbox do |sandbox|
+      project = create_project 'foo'
+      create_project 'bar'
+      create_project 'baz'
 
-    project.triggered_by = ['foo', 123]
-    project.triggered_by :bar
-    project.triggered_by << :baz
-    assert_equal [SuccessfulBuildTrigger.new(project, 'foo'), 123, SuccessfulBuildTrigger.new(project, 'bar'),
-                  SuccessfulBuildTrigger.new(project, 'baz')],
-                  project.triggered_by
+      project.triggered_by = ['foo', 123]
+      project.triggered_by :bar
+      project.triggered_by << :baz
+      assert_equal [SuccessfulBuildTrigger.new(project, 'foo'), 123, SuccessfulBuildTrigger.new(project, 'bar'),
+                    SuccessfulBuildTrigger.new(project, 'baz')],
+                    project.triggered_by
+    end
   end
 
   def test_builds_are_serialized
     Configuration.stubs(:serialize_builds).returns(true)
-    project = Project.new("test")
+    project = Project.new(:name => "test")
     BuildSerializer.expects(:serialize).yields
     project.expects(:build_without_serialization)
 
@@ -679,7 +687,7 @@ class ProjectTest < ActiveSupport::TestCase
   end
   
   def test_keep_scm_and_path_in_sync
-    assert_equal(@project.path + "/work", @svn.path)
+    assert_equal(@project.path.join("work").to_s, @svn.path)
     @project.path = "foo"
     assert_equal(File.expand_path("foo/work"), @svn.path)
   end
@@ -706,8 +714,8 @@ class ProjectTest < ActiveSupport::TestCase
   
   def test_project_all_should_return_all_existing_projects
     svn = FakeSourceControl.new("bob")
-    one = Project.new("one", @svn)
-    two = Project.new("two", @svn)
+    one = Project.new(:name => "one", :scm => @svn)
+    two = Project.new(:name => "two", :scm => @svn)
     
     in_sandbox do |sandbox|
       sandbox.new :file => "one/cruise_config.rb", :with_content => ""
@@ -718,8 +726,8 @@ class ProjectTest < ActiveSupport::TestCase
 
   def test_project_all_should_always_reload_project_objects
     svn = FakeSourceControl.new("bob")
-    one = Project.new("one", @svn)
-    two = Project.new("two", @svn)
+    one = Project.new(:name => "one", :scm => @svn)
+    two = Project.new(:name => "two", :scm => @svn)
     
     in_sandbox do |sandbox|
       sandbox.new :file => "one/cruise_config.rb", :with_content => ""
