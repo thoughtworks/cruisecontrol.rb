@@ -15,7 +15,7 @@
       <% recent_builds = project.last_five_builds %>
 
       <span class="lead">
-        <%= recent_builds.first ? 'build ' : '<span class="build_status">Never built</span>' %>
+        <%= recent_builds.first ? 'build ' : '<span class="build_status">Never built</span>'.html_safe %>
         <br/>
         <%= link_to image_tag('rss_light.gif'), :action => 'show', :id => project.name, :format => 'rss' %>
       </span>
