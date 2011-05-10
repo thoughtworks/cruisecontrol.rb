@@ -318,4 +318,35 @@ class BuildTest < ActiveSupport::TestCase
     end
   end
 
+  test "Build#command should return the project's build command if it's set" do
+    with_sandbox_project do |sandbox, project|
+      project.build_command = "build_stuff"
+      assert_equal "build_stuff", Build.new(project, "foo").command
+    end
+  end
+
+  test "Build#command should return a Ruby build command that utilizes cc_build.rake if no build_command is given" do
+    with_sandbox_project do |sandbox, project|
+      build_cmd = Build.new(project, "foo").command
+      assert_match /ruby -e/, build_cmd
+      assert_match /cc_build.rake/, build_cmd
+    end    
+  end
+
+  test "Build#bundle_install should perform both a check before a full install" do
+    with_sandbox_project do |sandbox, project|
+      bundle_cmd = Build.new(project, "foo").bundle_install
+      assert_match /check (.*) || (.*) install/, bundle_cmd
+    end        
+  end
+
+  test "Build#bundle_install should use the project's local checkout both for its Gemfile and install location" do
+    with_sandbox_project do |sandbox, project|
+      project.stubs(:local_checkout).returns "foo"
+      bundle_cmd = Build.new(project, "foo").bundle_install
+      assert_match /--gemfile=foo\/Gemfile/, bundle_cmd
+      assert_match /--path=foo\/vendor/, bundle_cmd
+    end    
+  end
+
 end

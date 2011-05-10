@@ -37,25 +37,41 @@ module Platform
   module_function :prompt
 
   def interpreter
-    Config::CONFIG['ruby_install_name']
+    File.join RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name']
   end
   module_function :interpreter
 
-  def create_child_process(project_name, command)
-    if Kernel.respond_to?(:fork)
-      begin
-        pid = fork || safely_exec(command)
+  def gem_cmd
+    File.join RbConfig::CONFIG['bindir'], "gem"
+  end
+  module_function :gem_cmd
 
-        # safely exec
-        Process.detach(pid)
-        pid_file = Rails.root.join('tmp', 'pids', 'builders', "#{project_name}.pid")
-        FileUtils.mkdir_p(File.dirname(pid_file))
-        File.open(pid_file, "w") {|f| f.write pid }
-      rescue NotImplementedError   # Kernel.fork exists but not implemented in Windows
+  def bundle_cmd
+    @bundle_cmd ||= begin
+      gem_which_bundler = `#{Platform.gem_cmd} which bundler`.strip
+      bundler_root = File.expand_path(File.join(File.dirname(gem_which_bundler), ".."))
+      File.join(bundler_root, "bin", "bundle")
+    end
+  end
+  module_function :bundle_cmd
+
+  def create_child_process(project_name, command)
+    Bundler.with_clean_env do
+      if Kernel.respond_to?(:fork)
+        begin
+          pid = fork || safely_exec(command)
+
+          # safely exec
+          Process.detach(pid)
+          pid_file = Rails.root.join('tmp', 'pids', 'builders', "#{project_name}.pid")
+          FileUtils.mkdir_p(File.dirname(pid_file))
+          File.open(pid_file, "w") {|f| f.write pid }
+        rescue NotImplementedError   # Kernel.fork exists but not implemented in Windows
+          Thread.new { system(command) }
+        end
+      else
         Thread.new { system(command) }
       end
-    else
-      Thread.new { system(command) }
     end
   end
   module_function :create_child_process

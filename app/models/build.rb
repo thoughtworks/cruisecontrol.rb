@@ -38,6 +38,9 @@ class Build
     begin
       raise ConfigError.new(@project.error_message) unless @project.config_valid?
       in_clean_environment_on_local_copy do
+        if @project.uses_bundler?
+          execute self.bundle_install, :stdout => build_log, :stderr => build_log
+        end
         execute self.command, :stdout => build_log, :stderr => build_log
       end
       build_status.succeed!(seconds_since(@start))
@@ -162,21 +165,23 @@ EOF
   def rake_task
     project.rake_task
   end
-  
+
+  def bundle_install
+    gemfile = File.join project.local_checkout, "Gemfile"
+    vendor  = File.join project.local_checkout, "vendor"
+    Platform.bundle_cmd + %{ check --gemfile=#{gemfile} } + "||" + Platform.bundle_cmd + %{ install --path=#{vendor} --gemfile=#{gemfile} --no-color }
+  end
+
   def rake
-    # Simply calling rake is this convoluted due to idiosyncrazies of Windows, Debian and JRuby. :(
-    # ABSOLUTE_RAILS_ROOT is set in config/environment.rb, and is necessary because
-    # in_clean_environment_with_local_copy changes current working directory. Replacing it with RAILS_ROOT doesn't
-    # fail any tests, because in test environment (unlike production) Rails.root is already absolute. 
-    # --nosearch flag here prevents CC.rb from building itself when a project has no Rakefile
-    # ARGV.clear at the end prevents Test::Unit's AutoRunner from doing anything silly, like trying to require 'cc:rb'
-    # Some people saw it happening.
+    # Simply calling rake is this convoluted due to idiosyncrasies of Windows, Debian and JRuby.
+    # --nosearch flag here prevents CC.rb from building itself when a project has no Rakefile.
+    # ARGV.clear at the end prevents Test::Unit's AutoRunner from doing anything silly.
     cc_build_path = Rails.root.join('tasks', 'cc_build.rake')
     maybe_trace   = CruiseControl::Log.verbose? ? " << '--trace'" : ""
     
-    %{#{Platform.interpreter} -e "require 'rubygems' rescue nil; require 'rake'; load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
+    Platform.interpreter + %{ -e "require 'rubygems' rescue nil; require 'rake'; load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
   end
-
+  
   def in_clean_environment_on_local_copy(&block)
     old_rails_env = ENV['RAILS_ENV']
 
