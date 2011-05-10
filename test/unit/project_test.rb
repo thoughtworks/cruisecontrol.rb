@@ -804,6 +804,21 @@ class ProjectTest < ActiveSupport::TestCase
       assert File.directory?(project.path), "Project directory does not exist."
     end
   end
+
+  test "Project#uses_bundler? should be false if the use_bundler setting has been overridden to false" do
+    @project.use_bundler = false
+    assert_false @project.uses_bundler?
+  end
+
+  test "Project#use_bundler? should be false if the project does not have a Gemfile" do
+    File.stubs(:exist?).with("Gemfile").returns false
+    assert_false @project.uses_bundler?
+  end
+
+  test "Project#use_bundler should be true if the project has a Gemfile and use_bundler= has not be overridden" do
+    File.stubs(:exist?).with("Gemfile").returns true
+    assert @project.uses_bundler?
+  end
   
   private
   
