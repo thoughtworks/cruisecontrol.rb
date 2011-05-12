@@ -810,14 +810,29 @@ class ProjectTest < ActiveSupport::TestCase
     assert_false @project.uses_bundler?
   end
 
-  test "Project#use_bundler? should be false if the project does not have a Gemfile" do
-    File.stubs(:exist?).with("Gemfile").returns false
+  test "Project#uses_bundler? should be false if the project does not have a Gemfile" do
+    File.stubs(:exist?).with(@project.gemfile).returns false
     assert_false @project.uses_bundler?
   end
 
-  test "Project#use_bundler should be true if the project has a Gemfile and use_bundler= has not be overridden" do
-    File.stubs(:exist?).with("Gemfile").returns true
+  test "Project#uses_bundler? should be true if the project has a Gemfile and use_bundler= has not be overridden" do
+    File.stubs(:exist?).with(@project.gemfile).returns true
     assert @project.uses_bundler?
+  end
+
+  test "Project#uses_bundler? should use overridden Gemfile value for determining if the file exists" do
+    @project.gemfile = "HEY_GUYS_GEMFILE_IS_RIGHT_HERE"
+    File.expects(:exist?).with(File.join(@project.local_checkout, "HEY_GUYS_GEMFILE_IS_RIGHT_HERE"))
+    @project.uses_bundler?
+  end
+  
+  test "Project#gemfile should default to a reasonable Gemfile value" do
+    assert_equal File.join(@project.local_checkout, "Gemfile"), @project.gemfile
+  end
+
+  test "Project#gemfile should include the project's checked-out path if the Gemfile is reset" do
+    @project.gemfile = "little_treasures/HEY_GUYS_GEMFILE_IS_RIGHT_HERE"
+    assert_equal File.join(@project.local_checkout, "little_treasures/HEY_GUYS_GEMFILE_IS_RIGHT_HERE"), @project.gemfile
   end
   
   private
