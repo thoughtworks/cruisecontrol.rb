@@ -167,9 +167,8 @@ EOF
   end
 
   def bundle_install
-    gemfile = File.join project.local_checkout, "Gemfile"
     vendor  = File.join project.local_checkout, "vendor"
-    Platform.bundle_cmd + %{ check --gemfile=#{gemfile} } + "||" + Platform.bundle_cmd + %{ install --path=#{vendor} --gemfile=#{gemfile} --no-color }
+    Platform.bundle_cmd + %{ check --gemfile=#{project.gemfile} } + "||" + Platform.bundle_cmd + %{ install --path=#{vendor} --gemfile=#{project.gemfile} --no-color }
   end
 
   def rake
@@ -179,7 +178,11 @@ EOF
     cc_build_path = Rails.root.join('tasks', 'cc_build.rake')
     maybe_trace   = CruiseControl::Log.verbose? ? " << '--trace'" : ""
     
-    Platform.interpreter + %{ -e "require 'rubygems' rescue nil; require 'rake'; load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
+    if project.uses_bundler?
+      %{BUNDLE_GEMFILE=#{project.gemfile} } + Platform.bundle_cmd + %{ exec rake -e "load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
+    else  
+      Platform.interpreter + %{ -e "require 'rubygems' rescue nil; require 'rake'; load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
+    end
   end
   
   def in_clean_environment_on_local_copy(&block)
