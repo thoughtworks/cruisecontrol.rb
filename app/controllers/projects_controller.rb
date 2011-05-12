@@ -4,8 +4,13 @@ class ProjectsController < ApplicationController
     @projects = Project.all
     
     respond_to do |format|
-      format.html
-      format.js { render :action => 'index_js' }
+      format.html do
+        if request.xhr?
+          render_projects_partial(@projects)
+        else
+          render 'index'
+        end
+      end
       format.rss { render :action => 'index_rss', :layout => false, :format => :xml }
       format.cctray { render :action => 'index_cctray', :layout => false }
     end
@@ -40,11 +45,15 @@ class ProjectsController < ApplicationController
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project
 
     @project.request_build rescue nil
-    @projects = Project.all
 
     respond_to do |format| 
-      format.html { redirect_to :controller => "builds", :action => "show", :project => @project }
-      format.js { render :action => 'index_js' }
+      format.html do
+        if request.xhr?
+          render_projects_partial(Project.all)
+        else
+          redirect_to :controller => "builds", :action => "show", :project => @project
+        end
+      end
     end
   end
   
@@ -68,4 +77,14 @@ class ProjectsController < ApplicationController
     end
   end
 
+
+  private
+
+    def render_projects_partial(projects)
+      if projects.empty?
+        render :partial => 'no_projects'
+      else
+        render :partial => 'project', :collection => projects
+      end
+    end
 end

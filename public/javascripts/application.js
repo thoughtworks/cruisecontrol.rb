@@ -28,7 +28,7 @@ document.observe("dom:loaded", function() {
     var path = projects.readAttribute("data-refresh-path"),
         interval = projects.readAttribute("data-refresh-interval");
     
-    setInterval(function() { new Ajax.Updater('', path, { method: 'get', evalScripts: true }); }, interval);    
+    setInterval(function() { new Ajax.Updater('projects', path, { method: 'get' }); }, interval);    
   });
   
   $$("#build_details .section_header").invoke("observe", "click", function(evt) {
