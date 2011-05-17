@@ -48,7 +48,7 @@ class TimeFormatterTest < ActiveSupport::TestCase
 
   def test_formats_round_trip_local
     time = Time.parse('2009-07-01 12:30:00')
-    assert_equal '2009-07-01T12:30:00.0000000-00:00', TimeFormatter.new(time).round_trip_local
+    assert_equal '2009-07-01T12:30:00.0000000-0700', TimeFormatter.new(time).round_trip_local
   end
 
   def test_raises_with_message_for_unknown_format

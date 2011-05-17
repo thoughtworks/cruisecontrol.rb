@@ -1,7 +1,7 @@
 class DocumentationController < ApplicationController
   caches_page :get
 
-  # TODO Fix this. Fix it hard.
+  # TODO Fix this. Fix it hard. - SHOULD BE CONVERTED TO STATIC DOCUMENTATION.
   def get
     if params[:path].blank?
       render :template => "documentation/index", :layout => "documentation"
