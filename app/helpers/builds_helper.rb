@@ -1,13 +1,13 @@
 module BuildsHelper
 
-  def select_builds(builds)
+  def select_builds(project, builds)
     return "" if builds.blank?
 
     options = [ [ "Older Builds...", nil ] ] + builds.map do |build|
-      [ build_to_text(build, false), build.label ]
+      [ build_to_text(build, false), build_path(project.id, build.label) ]
     end
     
-    select_tag "build", options_for_select(options), :onChange => "this.form.submit();"
+    select_tag "build", options_for_select(options)
   end
   
   def format_build_log(log)

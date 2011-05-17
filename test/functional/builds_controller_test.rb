@@ -46,29 +46,33 @@ class BuildsControllerTest < ActionController::TestCase
     end
   end
 
-  def test_show_only_30_builds
-    with_sandbox_project do |sandbox, project|
-      create_builds *(1..50)
-      Project.stubs(:find).with(project.name).returns(project)
-      
-      get :show, :project => project.name
-      assert_tag :tag => 'a', :content => /30 \(.*\)/
-      assert_no_tag :tag => 'a', :content => /11 \(.*\)/
-    end
-  end
-  
   def test_drop_down_list_for_older_builds
+    old_history_limit = Configuration.build_history_limit
+    Configuration.build_history_limit = 2
+
     with_sandbox_project do |sandbox, project|
-      create_builds *(1..50)
+      create_builds 1, 2, 3
+      b1, b2, b3 = project.builds.reverse
+
       Project.stubs(:find).with(project.name).returns(project)
 
-      get :drop_down, :format => 'js', :project => project.name
-      assert_tag :tag => "option", :parent => {:tag => "select"}, :content => /11 \(.*\)/
-      assert_tag :tag => "option", :content => "Older Builds..."
+      get :show, :project => project.name, :id => "1"
 
-      get :drop_down, :format => 'js', :project => project.name, :build => "11"
-      assert_tag :tag => "option", :content => /11 \(.*\)/
+      assert_select "div.build_link" do
+        assert_select "a[href=?]", build_path(project, b1)
+        assert_select "a[href=?]", build_path(project, b2)
+        assert_select "a[href=?]", build_path(project, b3), false
+      end
+
+      assert_select "select#build" do
+        assert_select "option", "Older Builds..."
+        assert_select "option[value=?]", build_path(project, b3)
+        assert_select "option[value=?]", build_path(project, b2), false
+        assert_select "option[value=?]", build_path(project, b1), false
+      end
     end
+  ensure
+    Configuration.build_history_limit = old_history_limit
   end
 
   def test_show_with_no_build
@@ -228,7 +232,7 @@ class BuildsControllerTest < ActionController::TestCase
       assert assigns(:autorefresh)
     end    
   end
-  
+
   def assert_type(file, type)
     @sandbox.new :file => "build-1/#{file}", :with_content => 'lemon'
 
