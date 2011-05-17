@@ -5,7 +5,7 @@ module SourceControl
         @log = log
         revisions = []
         revision = nil
-        
+
         log.each do |line|
           next if line.blank?
           line.chomp!
@@ -13,21 +13,22 @@ module SourceControl
           when /^commit /
             revisions << revision = Revision.new
             revision.number = line.split[1]
-            
+
           when /^author /
             revision.author, revision.time = read_author_and_time(line)
-            
+
           when /^    /
             (revision.message ||= []) << line.strip
-            
+
           when /^ /
             (revision.changeset ||= []) << line.strip
-            
+
           when /^tree /
           when /^parent /
           when /^committer /
+          when /^encoding /
             # don't care
-            
+
           else
             raise "don't know how to parse #{line}"
           end
