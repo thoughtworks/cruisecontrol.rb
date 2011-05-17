@@ -10,7 +10,8 @@ module ProjectsHelper
   end
 
   def rss_pub_date(build)
-    format_time(build ? build.time : Time.at(0), :rss)
+    time = (build.try(:time) || Time.at(0)).utc
+    I18n.l time, :format => :rss
   end
 
   def rss_link(project, build)

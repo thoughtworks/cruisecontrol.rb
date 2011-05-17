@@ -57,15 +57,16 @@ module BuildsHelper
   end
 
   def display_build_time
+    build_time_text = remove_leading_zero I18n.l(@build.time, :format => :verbose)
+
     if @build.incomplete?
       if @build.latest?
         "building for #{format_seconds(@build.elapsed_time_in_progress, :general)}"
       else
-        "started at #{format_time(@build.time, :verbose)}, and never finished"
+        "started at #{build_time_text}, and never finished"
       end
     else
       elapsed_time_text = elapsed_time(@build, :precise)
-      build_time_text = format_time(@build.time, :verbose)
       elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}"
     end
   end

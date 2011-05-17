@@ -1,8 +1,26 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
 
+  def human_time(time)
+    epoch = Time.at(0)
+    today = Time.now.beginning_of_day
+    this_year = today.beginning_of_year
+
+    format = if time >= epoch && time < this_year
+      "human.before_this_year"
+    elsif time >= this_year && time < today
+      "human.this_year"
+    elsif time >= today && time < ( today + 1.day )
+      "human.today"
+    else
+      "human.future"
+    end
+
+    remove_leading_zero I18n.l(time, :format => format.to_sym)
+  end
+
   def format_time(time, format = :iso)
-    TimeFormatter.new(time).send(format)
+    I18n.l time, :format => format
   end
   
   def format_seconds(total_seconds, format = :general)
@@ -89,6 +107,11 @@ module ApplicationHelper
   private
   
   def build_label(build)
-    "#{build.abbreviated_label} (#{format_time(build.time, :human)})"
-  end    
+    "#{build.abbreviated_label} (#{human_time(build.time)})"
+  end
+
+  def remove_leading_zero(string)
+    string.gsub(/^0(\d:\d\d|\d )/, '\1')
+  end
+
 end

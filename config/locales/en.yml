@@ -2,4 +2,15 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  time:
+    formats:
+      iso: "%Y-%m-%d %H:%M:%S"
+      iso_date: "%Y-%m-%d"
+      verbose: "%I:%M %p on %d %B %Y"
+      rss: "%a, %d %b %Y %H:%M:%S Z" # Must be in GMT to be compliant.
+      round_trip_local: "%Y-%m-%dT%H:%M:%S.0000000%z" # yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK
+      human:
+        future: "%Y-%m-%d %H:%M:%S ?future?"
+        before_this_year: "%d %b %y"
+        this_year: "%d %b"
+        today: "%H:%M"
