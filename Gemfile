@@ -10,10 +10,8 @@ gem "api_cache", "0.2.0"
 gem "xml-simple"
 
 group :test do
-  gem "shoulda", "~> 2.11.0"
   gem "mechanize", "1.0.0"
-  gem "mocha", "0.9.8"
+  gem "mocha", "~> 0.9.10", :require => false
   gem "rack-test", :require => "rack/test"
-  gem "rcov"
 end
 
