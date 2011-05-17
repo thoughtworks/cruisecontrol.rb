@@ -44,7 +44,7 @@ module CruiseControl
       require 'rails/commands/server'
       
       Rails::Server.new.tap { |server|
-        require APP_PATH
+        require ENV_PATH
         Dir.chdir(Rails.application.root)
         server.start
       }
@@ -58,6 +58,7 @@ module CruiseControl
     end
 
     def add
+      require ENV_PATH
       load File.join(File.dirname(__FILE__), '..', '..', 'script', 'add_project')
     end
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-APP_PATH = File.dirname(__FILE__) + "/config/application"
-require File.dirname(__FILE__) + "/config/boot"
-require File.dirname(__FILE__) + "/lib/cruise_control/init"
+ENV_PATH = File.expand_path("../config/environment", __FILE__)
+require File.expand_path("../config/boot", __FILE__)
+require File.expand_path("../lib/cruise_control/init", __FILE__)
 
 CruiseControl::Init.new.run

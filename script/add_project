@@ -64,10 +64,6 @@ end
 puts "Adding project '#{project_name}' (this may take a while)..."
 
 begin 
-
-  require File.dirname(__FILE__) + '/../config/boot'
-  require File.dirname(__FILE__) + '/../config/environment'
-
   source_control = SourceControl.create(scm_options)
 
   Project.create(project_name, source_control)
