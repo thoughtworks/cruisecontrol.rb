@@ -53,25 +53,22 @@ class BuildsController < ApplicationController
   end
   
   private
+  
+  MIME_TYPES = {
+    "html" => "text/html",
+    "js"   => "text/javascript",
+    "css"  => "text/css",
+    "gif"  => "image/gif",
+    "jpg"  => "image/jpeg",
+    "jpeg" => "image/jpeg",
+    "png"  => "image/png",
+    "zip"  => "application/zip"
+  }
+
   def get_mime_type(name)
-    case name.downcase
-    when /\.html$/
-      'text/html'
-    when /\.js$/
-      'text/javascript'
-    when /\.css$/
-      'text/css'
-    when /\.gif$/
-      'image/gif'
-    when /(\.jpg|\.jpeg)$/
-      'image/jpeg'
-    when /\.png$/
-      'image/png'
-    when /\.zip$/
-      'application/zip'
-    else
-      'text/plain'
-    end
+    extension = name.downcase.split(".").last
+    return MIME_TYPES[ extension ]if MIME_TYPES.has_key? extension
+    "text/plain"
   end
 
 end
