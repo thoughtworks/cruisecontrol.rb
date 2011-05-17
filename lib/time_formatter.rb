@@ -30,7 +30,7 @@ class TimeFormatter
   end
 
   def round_trip_local
-    @time.strftime('%Y-%m-%dT%H:%M:%S.0000000-00:00') # yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK)
+    @time.strftime('%Y-%m-%dT%H:%M:%S.0000000%z') # yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK)
   end
 
   def rss

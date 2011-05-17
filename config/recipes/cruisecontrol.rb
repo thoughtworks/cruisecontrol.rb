@@ -7,7 +7,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       stop_ccrb
 
       update_code
-      after_update_code
+      update_symlinks
       symlink
 
       start_ccrb
@@ -35,7 +35,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc 'Update symlink for projects directory'
-    task :after_update_code do
+    task :update_symlinks do
       sudo "chmod -R 775 #{release_path}/tmp"
       sudo "chmod -R 775 #{release_path}/log"
       sudo "mkdir -p #{shared_path}/projects"
