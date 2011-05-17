@@ -1,50 +1,50 @@
 // Place your application-specific JavaScript functions and classes here
 // This file is automatically included by javascript_include_tag :defaults
 
-document.observe("dom:loaded", function() {
-  $$("#projects .buttons .build_button").invoke("observe", "click", function(evt) {
-    evt.stop();
-    var button = evt.findElement();
-    
-    if (button.readAttribute("disabled") !== "disabled") {
-      button.disabled = true;
-      button.className = 'build_button_disabled';
+$(document).ready(function() {
+  $("#projects .buttons .build_button").live("click", function(e) {
+    e.preventDefault();
+    var button = $(this);
+
+    if (button.attr("disabled") !== "disabled") {
+      button.attr("disabled", "disabled");
       
-      var oldText = button.innerHTML;
-      button.setAttribute("disabled", "disabled");
+      var form = button.closest("form.build_project");
 
-      button.up("form.build_project").request({ evalJS: true, method: 'post' });
-    }
-  });
-  
-  $$("#project_build_now .build_button").invoke("observe", "click", function(evt) {
-    evt.stop();
-    var button = evt.findElement();
-    button.setAttribute("disabled", "disabled");
-    button.up("form.build_project").submit();
-  });
-  
-  $$("#projects").each(function(projects) {
-    var path = projects.readAttribute("data-refresh-path"),
-        interval = projects.readAttribute("data-refresh-interval");
-    
-    setInterval(function() { new Ajax.Updater('projects', path, { method: 'get' }); }, interval);    
-  });
-  
-  $$("#build_details .section_header").invoke("observe", "click", function(evt) {
-    evt.stop();
-    var section = evt.findElement().parentNode;
-    
-    if (section.hasClassName("section_open")) {
-      section.removeClassName("section_open").addClassName("section_closed");
-    } else {
-      section.addClassName("section_open").removeClassName("section_closed");
+      $.post(form.attr("action"), form.serialize(), function(resp) {
+        $("#projects").html(resp);
+      });
     }
   });
 
-  $$("button[href]").invoke("observe", "click", function(evt) {
-    evt.stop();
-    var button = evt.findElement();
-    window.location = button.readAttribute("href");
+  $("#project_build_now .build_button").live("click", function(e) {
+    e.preventDefault();
+    var button = $(this);
+    button.attr("disabled", "disabled");
+    button.closest("form.build_project").submit();
+  });
+
+  $("#projects").each(function() {
+    var projects = $(this),
+        path = projects.attr("data-refresh-path"),
+        interval = projects.attr("data-refresh-interval");
+
+    setInterval(function() {
+      $.get(path, function(resp) { projects.html(resp); });
+    }, interval);
+  });
+
+  $("#build_details .section_header").live("click", function(e) {
+    e.preventDefault();
+    $(this).parent().toggleClass("closed");
+  });
+
+  $("button[href]").live("click", function(e) {
+    e.preventDefault();
+    window.location = $(this).attr("href");
+  });
+
+  $("#build").live("change", function() {
+    window.location = $(this).val();
   });
 });

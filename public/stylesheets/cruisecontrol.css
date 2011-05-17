@@ -326,10 +326,9 @@ button:active {
   margin: .4em 0;
 }
 
-#build_details .section_closed .section_header { background-image: url(../images/arrow_closed.png); }
-#build_details .section_open .section_header   { background-image: url(../images/arrow_open.png); }
-
-#build_details .section_closed .section_content { display: none; }
+#build_details .section .section_header   { background-image: url(../images/arrow_open.png); }
+#build_details .section.closed .section_header { background-image: url(../images/arrow_closed.png); }
+#build_details .section.closed .section_content { display: none; }
 
 #builds_list {
   width: 16em;

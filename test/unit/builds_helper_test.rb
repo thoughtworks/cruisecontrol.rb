@@ -1,9 +1,5 @@
 require 'test_helper'
 
-class ProjectsController
-  attr_accessor :url
-end
-
 class BuildsHelperTest < ActionView::TestCase
   include FileSandbox
   include BuildsHelper
@@ -105,34 +101,46 @@ Message: NameError: uninitialized constant BuilderStatusTest::BuilderStatus
     assert_equal expected, failures_and_errors_if_any(log)
   end
   
-  BuildStub = Struct.new :label, :time, :state # failed, incomplete
-  class BuildStub
-    def failed?() @state == 'failed' end
-    def incomplete?() @state == 'incomplete' end
-    def abbreviated_label
-      label
-    end
+  class BuildStub < Struct.new(:label, :time, :state)
+    def failed?;           @state == 'failed'; end
+    def incomplete?;       @state == 'incomplete'; end
+    alias_method :abbreviated_label, :label
+    alias_method :id, :label
   end
   
-  def test_select_builds
-    @build = BuildStub.new(4)
-    
-    assert_equal "", select_builds([])
+  test "BuildsHelper#select_builds with an empty build list should return an empty string" do
+    project = stub(:id => "foo")
+    assert_equal "", select_builds(project, [])
+  end
 
-    assert_equal "<select id=\"build\" name=\"build\" onChange=\"this.form.submit();\">" +
-                 "<option value=\"\">Older Builds...</option>\n" +
-                 "<option value=\"1\">1 (1 Jan 06)</option>" +
-                 "</select>", select_builds([BuildStub.new(1, Date.new(2006,1,1).to_time)])
-    
-    @build = BuildStub.new(3)
-    assert_equal "<select id=\"build\" name=\"build\" onChange=\"this.form.submit();\">" +
-                 "<option value=\"\">Older Builds...</option>\n" +
-                 "<option value=\"1\">1 (1 Jan 06)</option>\n" +
-                 "<option value=\"3\">3 (5 Jan 06)</option>\n" +
-                 "<option value=\"5\">5 (10 Jan 06)</option>" +
-                 "</select>", select_builds([BuildStub.new(1, Date.new(2006,1,1).to_time),
-                                             BuildStub.new(3, Date.new(2006,1,5).to_time),
-                                             BuildStub.new(5, Date.new(2006,1,10).to_time)])
+  test "BuildsHelper#select_builds with a single build should return a select box tag with one build and a default item" do
+    project = stub(:id => "foo")
+
+    expected_html = content_tag("select", :id => "build", :name => "build") do
+      content_tag("option", "Older Builds...", :value => "") + "\n" +
+      content_tag("option", "1 (1 Jan 06)", :value => build_path(project.id, 1))
+    end
+
+    assert_equal expected_html, select_builds(project, [BuildStub.new(1, Date.new(2006,1,1).to_time)])
+  end
+  
+  test "BuildsHelper#select_builds with multiple builds should return a select box tag with each build and a default item" do
+    builds = [
+      BuildStub.new(1, Date.new(2006,1,1).to_time),
+      BuildStub.new(3, Date.new(2006,1,5).to_time),
+      BuildStub.new(5, Date.new(2006,1,10).to_time)
+    ]
+
+    project = stub(:id => "foo")
+
+    expected_html = content_tag("select", :id => "build", :name => "build") do
+      content_tag("option", "Older Builds...", :value => "") + "\n" +
+      content_tag("option", "1 (1 Jan 06)", :value => build_path(project.id, 1)) + "\n" + 
+      content_tag("option", "3 (5 Jan 06)", :value => build_path(project.id, 3)) + "\n" +
+      content_tag("option", "5 (10 Jan 06)", :value => build_path(project.id, 5))
+    end
+
+    assert_equal expected_html, select_builds(project, builds)
   end
 
   def test_should_strip_ansi_color_codes

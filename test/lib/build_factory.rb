@@ -14,7 +14,7 @@ module BuildFactory
   end
   
   def create_builds(*labels)
-    labels.each {|label| create_build(label) }
+    labels.map {|label| create_build(label) }
   end
   
   def the_project
