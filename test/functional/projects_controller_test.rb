@@ -23,7 +23,7 @@ class ProjectsControllerTest < ActionController::TestCase
     test "should render a dashboard with a link to each project" do
       Project.expects(:all).returns([create_project_stub('one', 'success')])
       get :index
-      assert_tag :tag => "a", :attributes => {:href => /\/projects\/one/}, :content => "one"
+      assert_select ".project_name a[href=?]", project_path("one")
     end
     
     test "should render a dashboard with a button to start the builder if the builder is down" do
@@ -32,11 +32,11 @@ class ProjectsControllerTest < ActionController::TestCase
       
       project.stubs(:builder_down?).returns(true)
       get :index
-      assert_tag :tag => "button", :content => /Start Builder/
+      assert_select "button.build_button", /Start Builder/
 
       project.stubs(:builder_down?).returns(false)
       get :index
-      assert_tag :tag => "button", :content => /Build Now/
+      assert_select "button.build_button", /Build Now/
     end
 
     test "should render disabled build buttons if the project cannot build now" do
@@ -45,7 +45,7 @@ class ProjectsControllerTest < ActionController::TestCase
       
       Project.expects(:all).returns([ stub_project ])
       get :index
-      assert_tag :tag => "button", :attributes => {:disabled => "disabled"}
+      assert_select "button.build_button[disabled=disabled]"
     end
   end
 
@@ -54,7 +54,7 @@ class ProjectsControllerTest < ActionController::TestCase
       Project.expects(:all).returns []
       xhr :get, :index
       assert_response :success
-      assert_tag :tag => 'div', :attributes => { :id => 'no_projects_help' }
+      assert_select "div#no_projects_help"
     end
 
     test "renders the projects partial if projects are found" do
@@ -64,8 +64,8 @@ class ProjectsControllerTest < ActionController::TestCase
 
       xhr :get, :index
       assert_response :success
-      assert_tag :tag => 'div', :attributes => { :id => 'project_one' }
-      assert_tag :tag => 'div', :attributes => { :id => 'project_two' }
+      assert_select "div#project_one"
+      assert_select "div#project_two"
     end
   end
 
@@ -236,7 +236,7 @@ class ProjectsControllerTest < ActionController::TestCase
       xhr :post, :build, :id => "two"
 
       assert_response :success
-      assert_tag 'div', :attributes => { :id => 'project_two' }
+      assert_select "div#project_two"
     end
   end
   
