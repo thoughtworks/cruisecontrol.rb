@@ -11,6 +11,24 @@ ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
 
 class ActiveSupport::TestCase
+  class << self
+    def context(name, &block)
+      TestContext.new(self, name, &block)
+    end
+  end
+
+  class TestContext
+    def initialize(context, name, &block)
+      @context = context
+      @name = name
+      instance_eval &block
+    end
+
+    def test(test_name, &block)
+      @context.test("#{@name} #{test_name}", &block)
+    end
+  end
+
   def assert_raise_with_message(types, matcher, message = nil, &block)
     args = [types].flatten + [message]
     exception = assert_raise(*args, &block)
