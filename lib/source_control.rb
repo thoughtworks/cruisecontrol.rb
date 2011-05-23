@@ -1,6 +1,6 @@
 module SourceControl
 
-  DEFAULT_SCM = "subversion"
+  DEFAULT_SCM = "git"
 
   class << self
 
@@ -26,11 +26,11 @@ module SourceControl
 
     def simple_detect(url)
       case url
-      when /^git:/ then "git"
       when /^svn:/, /^svn\+ssh:/ then "subversion"
       when /^bzr:/, /^bzr\+ssh:/ then "bazaar"
-      else "subversion"
-      end        
+      when /^svn/, /^subversion/, /^svn\+ssh:/ then "subversion"
+      else "git"
+      end
     end
 
     def detect(path)

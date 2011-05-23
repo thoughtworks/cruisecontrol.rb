@@ -15,17 +15,17 @@ if ARGV.first and ARGV.first !~ /^-/
 end
 
 ARGV.options do |opts|
-  opts.banner = "usage: add [project-name] -r [repository] -s [svn|git|hg|bzr]"
+  opts.banner = "usage: add [project-name] -r [repository] -s [git|svn|hg|bzr]"
 
   opts.separator ""
 
   opts.on("-r", "--repository repository", String,
-          "Location of the source control repository for the project (eg. svn://rubyforge.org/var/svn/cruisecontrolrb)") do |v|
+          "Location of the source control repository for the project (e.g. git@github.com:thoughtworks/cruisecontrol.rb.git)") do |v|
     scm_options[:repository] = v
   end
 
   opts.on("-s", "--source-control source_control", String,
-          "Specify the source control manager to use (default: subversion)") do |v|
+          "Specify the source control manager to use (default: git)") do |v|
     scm_options[:source_control] = v
   end
   opts.on("-b", "--branch branch", String, "Specify a source control branch to use (Git, Mercurial)") { |v| scm_options[:branch] = v }

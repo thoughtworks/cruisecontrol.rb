@@ -11,9 +11,9 @@ class SourceControlTest < Test::Unit::TestCase
     end
   end 
 
-  def test_create_should_default_to_subversion
+  def test_create_should_default_to_git
     in_sandbox do
-      SourceControl::Subversion.expects(:new).with(:repository => "http://my_repo").returns(:foo)
+      SourceControl::Git.expects(:new).with(:repository => "http://my_repo").returns(:foo)
       assert_equal :foo, SourceControl.create(:repository => "http://my_repo")
     end
   end
