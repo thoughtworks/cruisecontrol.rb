@@ -67,7 +67,7 @@ module BuildsHelper
       end
     else
       elapsed_time_text = elapsed_time(@build, :precise)
-      elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}"
+      elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}".html_safe
     end
   end
 
