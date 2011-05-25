@@ -68,6 +68,22 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_select "div#project_two"
     end
   end
+  
+  context "GET /projects.json" do
+    test "should return an empty JSON list if there are no projects" do
+      Project.stubs(:all).returns []
+      get :index, :format => :json
+      assert_response :success
+      assert_equal [], ActiveSupport::JSON.decode(@response.body)
+    end
+    
+    test "should return a list with a single project if there is one" do
+      Project.expects(:all).returns([create_project_stub('one', 'success')])
+      get :index, :format => :json
+      projects = ActiveSupport::JSON.decode(@response.body)
+      assert_equal 'one', projects.first['name']
+    end
+  end
 
   test "GET /projects.rss renders XML based on retrieved projects" do
     Project.expects(:all).returns([
@@ -126,6 +142,17 @@ class ProjectsControllerTest < ActionController::TestCase
       post :show, :id => "non_existing_project", :format => 'rss'
       assert_response 404
       assert_equal 'Project "non_existing_project" not found', @response.body
+    end
+  end
+  
+  context "GET /projects/:id.json" do
+    test "should include the project's name in the response" do
+      Project.stubs(:find).returns create_project_stub('one', 'success')
+      get :show, :id => 'one', :format => 'json'
+      
+      project = ActiveSupport::JSON.decode(@response.body)
+      assert_response :success
+      assert_equal 'one', project['name']
     end
   end
 
