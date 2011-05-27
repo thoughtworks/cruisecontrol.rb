@@ -1,5 +1,5 @@
 <% @rss_feeds = { 'All projects' => {:controller => 'projects', :action => 'index', :format => 'rss'} } -%>
-<% @projects.each { |p| @rss_feeds["#{p.name} builds"] = project_url(:controller => 'projects', :action => 'show', :id => p, :format => 'rss')} -%>
+<% @projects.each { |p| @rss_feeds["#{p.name} builds"] = project_url(p, :format => 'rss')} -%>
 
 <div id="projects" 
   data-refresh-path="<%= projects_path %>" 
