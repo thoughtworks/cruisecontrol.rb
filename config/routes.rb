@@ -1,5 +1,5 @@
 CruiseControl::Application.routes.draw do
-  match '/' => 'projects#index'
+  match '/' => 'projects#index', :as => :root
   
   resources :projects do  
     member do

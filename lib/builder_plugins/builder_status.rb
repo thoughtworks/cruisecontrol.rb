@@ -57,6 +57,10 @@ class BuilderStatus < BuilderPlugin
       set_status 'error'
     end
   end
+
+  def builder_down?
+    !ProjectBlocker.blocked?(project)
+  end
   
   private
   def existing_status_file
@@ -76,10 +80,6 @@ class BuilderStatus < BuilderPlugin
     status_file = "#{project.path}/builder_status.#{status}"
     FileUtils.touch(status_file)
     File.open(status_file, "w"){|f| f.write message } if message
-  end
-
-  def builder_down?
-    !ProjectBlocker.blocked?(project)
   end
 
 end

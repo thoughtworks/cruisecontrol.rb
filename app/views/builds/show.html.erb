@@ -1,82 +1,110 @@
 <% @rss_feeds = {"#{@project.name} builds" => {:controller => 'projects', :action => 'show', :id => @project, :format => 'rss'}} -%>
 
-<div id="builds_list">
-  <div id="project_build_now" class="builder_control">
-    <%= render :partial => "builds/build_buttons", :locals => { :project => @project } %>
+<div id="build">
+  <div class="left_column">
+    <ul class="builds_list">  
+      <% @builds_for_navigation_list.each do |build| %>
+        <li class="build_link<%= ' selected' if @build.label == build.label %>">
+          <%= link_to_build(@project, build) %>
+        </li>
+      <% end %>
+    </ul>
   </div>
-  
-  <div id="navigate_build">
-    <% prev_build, next_build = @project.previous_build(@build), @project.next_build(@build)%>
-    
-    <%= link_to "&lt; prev".html_safe, build_path(@project.name, prev_build), :accesskey => 'k' unless prev_build.nil? %>
-    <strong><%= @build.abbreviated_label %></strong>
-    <%= link_to "next &gt;".html_safe, build_path(@project.name, next_build), :accesskey => 'j' unless next_build.nil? %>
-    <%= link_to "latest &gt;&gt;".html_safe, project_without_builds_path(@project.name) unless next_build.nil? %>
-  </div>
-  
-  <% @builds_for_navigation_list.each do |build| %>
-    <div class="build_link<%= ' selected' if @build.label == build.label %>">
-      <%= link_to_build(@project, build) %>
-    </div>
-  <% end %>
 
-  <div id="builds_drop_down">
-    <%= select_builds(@project, @builds_for_dropdown) %>
-  </div>  
+  <div class="main_content">
+    <div class="build_header">
+      <h1>
+        <%= h @project.name %> build <%= h @build.abbreviated_label %>
+      </h1>
+
+      <div id="project_build_now" class="builder_control">
+        <%= render :partial => "builds/build_buttons", :locals => { :project => @project } %>
+      </div>
+
+      <div class="build_time">
+        <%= display_build_time %>
+      </div>
+    </div>
+
+    <div class="build_details">
+      <% test_failures   = failures_and_errors_if_any(@build.output) %>
+      <% plugin_errors   = @build.plugin_errors %>
+      <% build_artifacts = @build.additional_artifacts %>
+
+      <ul class="build_nav">
+        <li class="section_name active"><a href="#build_changeset">Build Changeset</a></li>
+        <li class="section_name"><a href="#build_log">Build Log</a></li>
+
+        <% if test_failures.any? %>
+          <li class="section_name"><a href="#test_failures">Test Failures/Errors</a></li>
+        <% end %>
+
+        <% if plugin_errors.present? %>
+          <li class="section_name"><a href="#plugin_errors">Plugin Errors</a></li>
+        <% end %>
+
+        <% if build_artifacts.any? %>
+          <li class="section_name"><a href="#build_artifacts">Build Artifacts</a></li>
+        <% end %>
+
+        <li class="section_name"><a href="#project_settings">Project Settings</a></li>
+      </ul>
+
+      <div class="sections">
+        <div class="section active" id="build_changeset">
+          <a name="build_changeset"></a>
+          <div class="section_content terminal_output"><%= format_changeset_log(@build.changeset) %></div>
+        </div>
+
+        <% if test_failures.any? %>
+          <div class="section" id="test_failures">
+            <a name="test_failures"></a>
+            <div class="section_content">
+              <ul>
+                <% test_failures.each do |failure| %>
+                  <li class="test_failure <%= failure.type.underscore %>">
+                    <div class="test_name"><%= failure.test_name %></div>
+                    <div class="stacktrace"><%= link_to_code(failure.stacktrace).html_safe %></div>
+                    <div class="message terminal_output"><%= failure.message %></div>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+      
+        <% if plugin_errors.present? %>
+          <div class="section" id="plugin_errors">
+            <a name="plugin_errors"></a>
+            <div class="section_content terminal_output"><%= h plugin_errors %></div>
+          </div>
+        <% end %>
+
+        <div class="section" id="build_log">
+          <a name="build_log"></a>
+          <div class="section_content terminal_output"><%= format_build_log(@build.output) %></div>
+          <%= link_to "See unformatted build log&hellip;".html_safe, 
+                  build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %>
+        </div>
+
+        <% unless @build.additional_artifacts.empty? %>
+          <div class="section" id="build_artifacts">
+            <a name="build_artifacts"></a>
+            <div class="section_content">
+              <% @build.additional_artifacts.each do |artifact| %>
+                <div class="artifact">
+                  <%= link_to artifact, build_artifact_path(:project => @project.name, :build => @build.label, :path => artifact) %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      
+        <div class="section" id="project_settings">
+          <a name="project_settings"></a>
+          <div class="section_content terminal_output"><%= format_project_settings(@build.project_settings) %></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<br />
-
-<div id="build_details">
-  <h1>
-    <%= h @project.name %> build <%= h @build.abbreviated_label %>
-    <% if @build.failed? %><span class="error">FAILED</span><% end %>
-    <% if @build.incomplete? %> (INCOMPLETE)<% end %>    
-  </h1>
-  <div class="build_time">
-    <%= display_build_time %>
-  </div>
-
-  <br/>
-
-  <div class="section">
-    <div class="section_header">Build Changeset</div>
-    <div class="section_content"><%= format_changeset_log(@build.changeset) %></div>
-  </div>
-
-  <% test_failures = failures_and_errors_if_any(@build.output) %>
-  <% if test_failures %>
-    <div class="section">
-      <div class="section_header">Test Failures and Errors</div>
-      <div class="section_content"><%= test_failures %></div>
-    </div>
-  <% end %>
-
-  <% plugin_errors = @build.plugin_errors %>
-  <% unless plugin_errors.empty? %>
-    <div class="section">
-      <div class="section_header">Plugin Errors</div>
-      <div class="section_content"><%= h plugin_errors %></div>
-    </div>
-  <% end %>
-
-  <div class="section <%= @build.incomplete? ? '' : 'closed' %>">
-    <div class="section_header">Build Log</div>
-    <div class="section_content"><div class="logfile"><%= format_build_log(@build.output) %></div><div><%= link_to "See unformatted build log&hellip;".html_safe, build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %></div></div>
-  </div>
-
-  <% unless @build.additional_artifacts.empty? %>
-    <div class="section">
-      <div class="section_header">Custom Build Artifacts</div>
-      <div class="section_content"><% @build.additional_artifacts.each do |artifact| %><div class="artifact"><%= link_to artifact, build_artifact_path(:project => @project.name, :build => @build.label, :path => artifact) %></div><% end %></div>
-    </div>
-  <% end %>
-  
-  <div class="section closed">
-    <div class="section_header">Project Settings</div>
-    <div class="section_content"><%= format_project_settings(@build.project_settings) %></div>
-  </div>
-
-
-</div>
-

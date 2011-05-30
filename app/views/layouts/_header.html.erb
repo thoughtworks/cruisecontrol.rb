@@ -1,11 +1,18 @@
 <div class="header">
   <ul class="main_menu">
     <li class="menu_item">
-      <%= link_to_unless_current 'All Projects', projects_path %>
+      <%= link_to 'All Projects', root_path, :class => current_page?(root_path) ? 'current' : '' %>
     </li>
     <li class="menu_item">
-      <%= link_to_unless_current 'Add Project', new_project_path %>
+      <%= link_to 'Add Project', new_project_path, :class => current_page?(new_project_path) ? 'current' : '' %>
     </li>
+
+    <% if current_page?(:controller => "builds", :action => "show") %>
+      <li class="menu_item">
+        <%= link_to @project.name, project_path(@project), :class => 'current' %>
+      </li>
+    <% end %>
+
     <li class="menu_item">
       <%= link_to 'Help', document_root_path %>
     </li>

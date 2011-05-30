@@ -209,7 +209,7 @@ class Project
   end
   
   def builder_down?
-    self.builder_state_and_activity == 'builder_down'
+    BuilderStatus.new(self).builder_down?
   end
   
   def can_build_now?
@@ -218,6 +218,10 @@ class Project
   
   def building?
     self.builder_state_and_activity == 'building'
+  end
+  
+  def sleeping?
+    !builder_down? && self.builder_state_and_activity == 'sleeping'
   end
   
   def builder_error_message
