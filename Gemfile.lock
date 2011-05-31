@@ -49,8 +49,8 @@ GEM
       nokogiri (>= 1.2.1)
     mime-types (1.16)
     mocha (0.9.12)
-    nokogiri (1.4.2)
-    nokogiri (1.4.2-java)
+    nokogiri (1.4.4)
+    nokogiri (1.4.4-java)
       weakling (>= 0.0.3)
     polyglot (0.3.1)
     rack (1.2.3)
@@ -82,6 +82,7 @@ GEM
 PLATFORMS
   java
   ruby
+  x86-mingw32
 
 DEPENDENCIES
   api_cache (= 0.2.0)
@@ -89,7 +90,7 @@ DEPENDENCIES
   jruby-openssl
   mechanize (= 1.0.0)
   mocha (~> 0.9.10)
-  nokogiri (= 1.4.2)
+  nokogiri (= 1.4.4)
   rack (~> 1.2.1)
   rack-test
   rails (~> 3.0.7)
