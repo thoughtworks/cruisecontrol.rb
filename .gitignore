@@ -6,8 +6,8 @@ public/stylesheets/site.css
 public/documentation*
 public/builds
 
-log/*
-tmp/**/*
+log/
+tmp/
 cruisecontrol.iws
 *.iws
 *.ipr
@@ -16,8 +16,10 @@ cruisecontrol.iws
 .DS_Store
 tmtags
 .bundle
+dist/
 vendor/plugins/rails_upgrade
+vendor/ruby/
+vendor/jruby/
+server_jar/target/
 
-# These are unpacked using `bundle install --local --path vendor`
-vendor/ruby
-vendor/jruby
+config/ccrb.properties

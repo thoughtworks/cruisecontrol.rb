@@ -1,0 +1,127 @@
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+    <!-- Use -e to specify Rails environment, e.g. script/jetty_rails -e mingle_production -->
+    <!-- <context-param>
+        <param-name>rails.env</param-name>
+        <param-value>development</param-value>
+    </context-param> -->
+
+    <context-param>
+        <param-name>rack.multithreaded</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <!-- Putting this in the webapp root confuses the hell out of Rails3 + JRuby-Rack -->
+    <!-- Changing this value will cause a lot of pain -->
+    <!-- Easier to change this value than convince rails+JRuby-Rack that the public path is elsewhere -->
+    <context-param>
+        <param-name>public.root</param-name>
+        <param-value>/public</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>rails.root</param-name>
+        <param-value></param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>gem.path</param-name>
+        <param-value>/vendor/jruby/1.8</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>gem.home</param-name>
+        <param-value>/gems</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>jruby.min.runtimes</param-name>
+        <param-value>1</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>jruby.max.runtimes</param-name>
+        <param-value>1</param-value>
+    </context-param>
+
+    <filter>
+      <filter-name>RackFilter</filter-name>
+      <filter-class>org.jruby.rack.RackFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+      <filter-name>RackFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <listener>
+      <listener-class>org.jruby.rack.rails.RailsServletContextListener</listener-class>
+    </listener>
+    
+    
+    <!-- set cache headers for static content and general security stuff -->
+    <servlet>
+        <servlet-name>default</servlet-name>
+        <servlet-class>org.mortbay.jetty.servlet.DefaultServlet</servlet-class>
+        <init-param>
+          <param-name>relativeResourceBase</param-name>
+          <!-- see comment above on public.root -->
+          <param-value>/public</param-value>
+        </init-param>
+        <init-param>
+          <param-name>acceptRanges</param-name>
+          <param-value>true</param-value>
+        </init-param>
+        <init-param>
+          <param-name>dirAllowed</param-name>
+          <param-value>false</param-value>
+        </init-param>
+        <init-param>
+          <param-name>welcomeServlets</param-name>
+          <param-value>false</param-value>
+        </init-param>
+        <init-param>
+          <param-name>redirectWelcome</param-name>
+          <param-value>false</param-value>
+        </init-param>
+        <init-param>
+          <param-name>maxCacheSize</param-name>
+          <param-value>256000000</param-value>
+        </init-param>
+        <init-param>
+          <param-name>maxCachedFileSize</param-name>
+          <param-value>10000000</param-value>
+        </init-param>
+        <init-param>
+          <param-name>maxCachedFiles</param-name>
+          <param-value>1000</param-value>
+        </init-param>
+        <init-param>
+          <param-name>cacheType</param-name>
+          <param-value>both</param-value>
+        </init-param>
+        <init-param>
+          <param-name>gzip</param-name>
+          <param-value>true</param-value>
+        </init-param>
+        <init-param>
+          <param-name>useFileMappedBuffer</param-name>
+          <param-value>true</param-value>
+        </init-param>
+        <init-param>
+          <param-name>cacheControl</param-name>
+          <param-value>max-age=36000,public</param-value>
+        </init-param>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+</web-app>
+
