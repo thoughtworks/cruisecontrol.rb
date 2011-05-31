@@ -1,0 +1,24 @@
+#!/bin/sh
+
+RAILS_ROOT=$(cd `dirname $0`/.. && pwd)
+
+unset GEM_HOME
+unset GEM_PATH
+
+export GEM_HOME=$RAILS_ROOT/vendor/jruby/1.8
+export GEM_PATH=$GEM_HOME
+export PATH=$GEM_HOME/bin:$PATH
+
+mkdir -p $GEM_HOME
+
+cd $RAILS_ROOT
+
+jruby=`which jruby`
+# git clean vendor/jruby -fdx
+
+if [ -z $jruby ]; then
+  jruby="$RAILS_ROOT/script/jruby"
+fi
+
+$jruby -S gem install --no-ri --no-rdoc $RAILS_ROOT/vendor/cache/bundler-1.0.10.gem
+$jruby -S $GEM_PATH/bin/bundle install --path $RAILS_ROOT/vendor --local

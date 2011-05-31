@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resource"/>
+	<classpathentry kind="lib" path="target/dist/luau-main.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="LUAU_HOME/vendor/java/jetty/servlet-api-2.5-20081211.jar"/>
+	<classpathentry kind="var" path="LUAU_HOME/vendor/java/logging/slf4j-api-1.6.1.jar"/>
+	<classpathentry kind="var" path="LUAU_HOME/vendor/java/logging/log4j-1.2.16.jar"/>
+	<classpathentry kind="var" path="LUAU_HOME/vendor/java/jetty/jetty-start-6.1.26.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
