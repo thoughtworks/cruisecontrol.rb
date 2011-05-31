@@ -1,0 +1,34 @@
+#!/bin/sh
+
+RAILS_ROOT=$(cd `dirname $0`/.. && pwd)
+
+JAVA_OPTS="$JAVA_OPTS -client"
+
+# force 32 bit if JVM supports it available
+is_32_bit=$(java -help | grep '\-d32')
+if [ -n "$is_32_bit" ]; then
+  JAVA_OPTS="-d32 $JAVA_OPTS"
+fi
+
+MAIN_JAR=$RAILS_ROOT/server_jar/target/dist/ccrb-main.jar
+
+if [ ! -f $MAIN_JAR ]; then
+  rake server_jar:clean server_jar:compile server_jar:main_jar
+fi
+
+CP=$MAIN_JAR
+for i in $RAILS_ROOT/vendor/java/**/*.jar; do
+  CP=$CP:$i
+done
+
+JAVA_OPTS="$JAVA_OPTS \
+    -Djruby.compile.mode=OFF \
+    -Dccrb.jetty.web.xml=$RAILS_ROOT/server_jar/jetty-config/WEB-INF/web.local.xml \
+    -Dccrb.jetty.xml.config=$RAILS_ROOT/server_jar/jetty-config/etc/jetty.xml \
+    -Dccrb.jetty.war.location=file://$RAILS_ROOT \
+    -Dlog4j.configuration=file://$RAILS_ROOT/config/log4j.properties
+    "
+
+export RAILS_ENV=${RAILS_ENV:-production}
+cd $RAILS_ROOT
+exec java $JAVA_OPTS -cp $CP -Xmx500m -Xss1024k com.thoughtworks.studios.webapp.Main
