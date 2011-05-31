@@ -1,0 +1,29 @@
+#!/bin/sh
+
+unset GEM_HOME
+unset GEM_PATH
+
+RAILS_ROOT=$(cd `dirname $0`/.. && pwd)
+
+export GEM_HOME=$RAILS_ROOT/vendor/jruby/1.8
+export GEM_PATH=$GEM_HOME
+export PATH=$GEM_HOME/bin:$PATH
+
+JAVA_OPTS="$JAVA_OPTS -client"
+
+# force 32 bit if JVM supports it available
+is_32_bit=$(java -help | grep '\-d32')
+if [ -n "$is_32_bit" ]; then
+  JAVA_OPTS="-d32 $JAVA_OPTS"
+fi
+
+JAVA_OPTS=" $JAVA_OPTS \
+            -Djruby.compile.mode=OFF \
+          "
+
+CP=$MAIN_JAR
+for i in $RAILS_ROOT/vendor/java/**/*.jar; do
+  CP=$CP:$i
+done
+
+exec java $JAVA_OPTS -Xmx500m -Xss1024k -cp $CP org.jruby.Main "$@"

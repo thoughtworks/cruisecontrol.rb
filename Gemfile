@@ -16,3 +16,6 @@ group :test do
   gem "rack-test", :require => "rack/test"
 end
 
+platform :jruby do
+  gem 'jruby-openssl'
+end
