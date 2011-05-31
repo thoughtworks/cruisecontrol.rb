@@ -18,6 +18,6 @@ tmtags
 .bundle
 vendor/plugins/rails_upgrade
 
-# CCRB isn't intended for deployment onto a fixed platform, so checking in a lockfile (which will try to
-# resolve gems on the current platform) isn't desirable.
-Gemfile.lock
+# These are unpacked using `bundle install --local --path vendor`
+vendor/ruby
+vendor/jruby
