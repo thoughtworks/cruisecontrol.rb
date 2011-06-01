@@ -110,7 +110,7 @@ module CommandLine
     stdout_opt, stderr_opt = redirects(options)
 
     capture_info_command = (block_given? && options[:stdout]) ?
-        "echo [output captured and therefore not logged] >> #{options[:stdout]} && " :
+        "echo '[output captured and therefore not logged]' >> #{options[:stdout]} && " :
         ''
 
     stdout_prompt_command = options[:stdout] ?
