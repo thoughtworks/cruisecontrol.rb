@@ -37,12 +37,13 @@ module Platform
   module_function :prompt
 
   def interpreter
-    File.join RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name']
+    return File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name']) unless defined?(JRUBY_VERSION)
+    "jruby"
   end
   module_function :interpreter
 
   def gem_cmd
-    File.join RbConfig::CONFIG['bindir'], "gem"
+    "#{Platform.interpreter} -S gem"
   end
   module_function :gem_cmd
 
