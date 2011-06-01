@@ -1,0 +1,3 @@
+#!/bin/sh
+HERE=$(cd `dirname $0` && pwd)
+exec $HERE/jruby -S rake --trace "$@"
