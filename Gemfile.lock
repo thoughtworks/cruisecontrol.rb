@@ -1,5 +1,5 @@
 GEM
-  remote: http://rubygems.org
+  remote: http://rubygems.org/
   specs:
     abstract (1.0.0)
     actionmailer (3.0.7)
@@ -38,6 +38,9 @@ GEM
     httparty (0.6.1)
       crack (= 0.1.8)
     i18n (0.5.0)
+    jquery-rails (1.0.9)
+      railties (~> 3.0)
+      thor (~> 0.14)
     jruby-openssl (0.7.4)
       bouncy-castle-java
     mail (2.2.19)
@@ -87,6 +90,7 @@ PLATFORMS
 DEPENDENCIES
   api_cache (= 0.2.0)
   httparty (= 0.6.1)
+  jquery-rails
   jruby-openssl
   mechanize (= 1.0.0)
   mocha (~> 0.9.10)

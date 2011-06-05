@@ -10,6 +10,8 @@ gem "api_cache", "0.2.0"
 gem "xml-simple"
 gem "rake", "0.8.7"
 
+gem "jquery-rails"
+
 group :test do
   gem "mechanize", "1.0.0"
   gem "mocha", "~> 0.9.10", :require => false
