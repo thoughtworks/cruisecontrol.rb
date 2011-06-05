@@ -1,10 +1,11 @@
 class TextileTemplateHandler < ActionView::TemplateHandlers::ERB
   extend ActiveSupport::Memoizable
   
-  def source
-    RedCloth.new(File.read(filename)).to_html
+  def compile(template)
+    html = RedCloth.new(template.source).to_html
+    t = ActionView::Template.new(html, template.identifier, template.handler, {})
+    super(t)
   end
-  memoize :source
 end
 
 ActionView::Template.register_template_handler :red, TextileTemplateHandler

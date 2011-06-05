@@ -9,6 +9,7 @@ gem "nokogiri", "1.4.4"
 gem "api_cache", "0.2.0"
 gem "xml-simple"
 gem "rake", "0.8.7"
+gem "RedCloth"
 
 gem "jquery-rails"
 
