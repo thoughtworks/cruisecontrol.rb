@@ -2,6 +2,8 @@ GEM
   remote: http://rubygems.org/
   specs:
     RedCloth (4.2.7)
+    RedCloth (4.2.7-java)
+    RedCloth (4.2.7-x86-mingw32)
     abstract (1.0.0)
     actionmailer (3.0.7)
       actionpack (= 3.0.7)
@@ -56,6 +58,7 @@ GEM
     nokogiri (1.4.4)
     nokogiri (1.4.4-java)
       weakling (>= 0.0.3)
+    nokogiri (1.4.4-x86-mingw32)
     polyglot (0.3.1)
     rack (1.2.3)
     rack-mount (0.6.14)
