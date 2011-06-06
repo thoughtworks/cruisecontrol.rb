@@ -16,7 +16,7 @@ class ProjectsMigration
       if script_version(script) > current_data_version
         CruiseControl::Log.info "Executing migration script #{script}. This may take some time..."
         clear_cached_pages
-        execute "ruby #{File.join(migrate_scripts_directory, script)} #{@data_dir}"
+        execute "#{Platform.interpreter} #{File.join(migrate_scripts_directory, script)} #{@data_dir}"
         set_data_version(script_version(script))
         CruiseControl::Log.info "Finished #{script}."
       end

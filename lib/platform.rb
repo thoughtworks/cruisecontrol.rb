@@ -38,7 +38,7 @@ module Platform
 
   def interpreter
     return File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name']) unless defined?(JRUBY_VERSION)
-    "jruby"
+    "#{Rails.root}/script/jruby"
   end
   module_function :interpreter
 
