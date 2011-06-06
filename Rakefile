@@ -8,7 +8,7 @@ require 'rake/rdoctask'
 
 require 'rake/packagetask'
 require 'rake/gempackagetask'
-
+include Rake::DSL if defined?(Rake::DSL)
 CruiseControl::Application.load_tasks
 
 PKG_NAME      = 'cruisecontrol'

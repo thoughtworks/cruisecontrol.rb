@@ -10,7 +10,7 @@ module CruiseControl
   def self.reconnect
     require 'active_record' unless defined? ActiveRecord
     configurations = ActiveRecord::Base.configurations
-    if configurations and configurations.has_key?("test") and configurations["test"]["adapter"] == 'mysql'
+    if configurations and configurations.has_key?("test") and configurations["test"]["adapter"] =~ /mysql/
       ActiveRecord::Base.establish_connection(:test)
     end
   end
@@ -45,7 +45,9 @@ namespace :cc do
         
         # perform standard Rails database cleanup/preparation tasks if they are defined in project
         # this is necessary because there is no up-to-date development database on a continuous integration box
-        if Rake.application.lookup('db:test:purge')
+        if Rake.application.lookup('db:test:load')
+          CruiseControl::invoke_rake_task 'db:test:load'
+        elsif Rake.application.lookup('db:test:purge')
           CruiseControl::invoke_rake_task 'db:test:purge'
         end
         if Rake.application.lookup('db:migrate')
