@@ -1,17 +1,17 @@
 CruiseControl::Application.routes.draw do
   match '/' => 'projects#index'
   
-  resources :projects do  
+  resources :projects, :constraints => { :id => /.*/ } do
     member do
-      post :build
-      get :getting_started
+      post :build, :constraints => { :id => /.*/ }
+      get :getting_started, :constraints => { :id => /.*/ }
     end
   end
 
-  match 'builds/older/:project' => 'builds#drop_down', :as => :builds_drop_down
-  match 'builds/:project/:build/*path' => 'builds#artifact', :as => :build_artifact, :build => /[^\/]+/
-  match 'builds/:project/:build' => 'builds#show', :as => :build, :build => /[^\/]+/
-  match 'builds/:project' => 'builds#show', :as => :project_without_builds
+  match 'builds/older/:project' => 'builds#drop_down', :as => :builds_drop_down, :project => /[^\/]+/
+  match 'builds/:project/:build/*path' => 'builds#artifact', :as => :build_artifact, :build => /[^\/]+/, :project => /[^\/]+/
+  match 'builds/:project/:build' => 'builds#show', :as => :build, :build => /[^\/]+/, :project => /[^\/]+/
+  match 'builds/:project' => 'builds#show', :as => :project_without_builds, :project => /[^\/]+/
 
   match 'projects/code/:id/*path' => 'projects#code', :as => :code
 
