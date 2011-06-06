@@ -84,7 +84,8 @@ module Platform
 
   def kill_child_process(project_name)
     pid = File.read(project_pid_file(project_name)).chomp
-    Kernel.system("kill -9 #{pid}")
+    kill_tree = File.join(RAILS_ROOT, 'script', 'killtree')
+    Kernel.system("#{kill_tree} #{pid}")
   end
   module_function :kill_child_process
 
