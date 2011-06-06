@@ -15,7 +15,7 @@ class BuildLogParser
   STACK_TRACE_REGEX = /\[([\s\S]*?)\]\:/
 
   def initialize(log)
-    @log = log
+    @log = File.exist?(log) ? File.read(log) : log
   end
 
   def errors

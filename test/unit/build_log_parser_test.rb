@@ -221,6 +221,9 @@ Finished in 0.007491 seconds
 4 examples, 2 failures, 1 pending
 EOF
 
+LOG_OUTPUT_FILE_SHORT = File.join(File.dirname(__FILE__), 'build_log', 'short.log')
+LOG_OUTPUT_FILE_LONG  = File.join(File.dirname(__FILE__), 'build_log', 'long.log')
+
   def test_should_not_find_test_failures_with_a_build_with_test_errors_on_windows
     assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS_ON_WINDOWS).failures.empty?
   end
@@ -240,6 +243,16 @@ EOF
 
   def test_should_find_test_failures_on_unix
     failures = BuildLogParser.new(LOG_OUTPUT_WITH_TEST_FAILURE_ON_UNIX).failures
+    assert_equal [expected_first_test_failure_on_unix, expected_second_test_failure], failures
+  end
+  
+  def test_should_find_test_failures_in_short_log_file
+    failures = BuildLogParser.new(LOG_OUTPUT_FILE_SHORT).failures
+    assert_equal [expected_first_test_failure_on_unix, expected_second_test_failure], failures
+  end
+  
+  def test_should_find_test_failures_in_long_log_file
+    failures = BuildLogParser.new(LOG_OUTPUT_FILE_LONG).failures
     assert_equal [expected_first_test_failure_on_unix, expected_second_test_failure], failures
   end
         
@@ -415,5 +428,8 @@ EOF
    def test_should_find_rspec_complex_failures
     failures = BuildLogParser.new(COMPLEX_RSPEC_FAILURE).failures
     assert_equal 2, failures.length
+  end
+  
+  def test_
   end
 end

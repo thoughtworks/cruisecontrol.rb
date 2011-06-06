@@ -44,7 +44,7 @@
     <div class="section_content"><%= format_changeset_log(@build.changeset) %></div>
   </div>
 
-  <% test_failures = failures_and_errors_if_any(@build.output) %>
+  <% test_failures = failures_and_errors_if_any(@build.artifact('build.log')) %>
   <% if test_failures %>
     <div class="section">
       <div class="section_header">Test Failures and Errors</div>
