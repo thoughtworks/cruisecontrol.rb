@@ -406,3 +406,13 @@ form.new_project dd {
   float: left;
   width: 300px;
 }
+.kill_build_button{
+  background:#FF0000;
+  background:-moz-linear-gradient(top, #FF5757 0%, #FF0000 100%);
+  background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#FF5757), to(#FF0000));
+}
+.kill_build_button:hover {
+  background:#FF0000;
+  background:-moz-linear-gradient(top, #FF5757 0%, #FF0000 100%);
+  background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#FF5757), to(#FF0000));
+}

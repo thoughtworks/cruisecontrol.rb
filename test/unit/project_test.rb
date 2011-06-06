@@ -373,6 +373,14 @@ class ProjectTest < ActiveSupport::TestCase
     end       
   end
 
+  def test_kill_build_should_kill_build
+    in_sandbox do |sandbox|
+      @project.path = sandbox.root
+      Platform.expects(:kill_child_process).with(@project.name)
+      @project.kill_build
+    end
+  end
+
   def test_request_build_should_generate_build_requested_file_and_notify_listeners
     @project.stubs(:builder_state_and_activity).returns('sleeping')
     in_sandbox do |sandbox|

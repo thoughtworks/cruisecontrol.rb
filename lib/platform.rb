@@ -64,7 +64,7 @@ module Platform
 
           # safely exec
           Process.detach(pid)
-          pid_file = Rails.root.join('tmp', 'pids', 'builders', "#{project_name}.pid")
+          pid_file = project_pid_file(project_name)
           FileUtils.mkdir_p(File.dirname(pid_file))
           File.open(pid_file, "w") {|f| f.write pid }
         rescue NotImplementedError   # Kernel.fork exists but not implemented in Windows
@@ -76,6 +76,17 @@ module Platform
     end
   end
   module_function :create_child_process
+
+  def project_pid_file(project_name)
+    Rails.root.join('tmp', 'pids', 'builders', "#{project_name}.pid")
+  end
+  module_function :project_pid_file
+
+  def kill_child_process(project_name)
+    pid = File.read(project_pid_file(project_name)).chomp
+    Kernel.system("kill -9 #{pid}")
+  end
+  module_function :kill_child_process
 
   def safely_exec(command)
     if running_as_daemon?
