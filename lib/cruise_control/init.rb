@@ -67,6 +67,7 @@ module CruiseControl
     end
   
     def version
+      require 'lib/cruise_control/version'
       puts <<-EOL
     CruiseControl.rb, version #{CruiseControl::VERSION::STRING}
     Copyright (C) 2011 ThoughtWorks
@@ -75,6 +76,7 @@ module CruiseControl
   
     def help
       command = ARGV.shift
+      require 'lib/cruise_control/version'
 
       ARGV.clear << '--help'
       if command.nil?
