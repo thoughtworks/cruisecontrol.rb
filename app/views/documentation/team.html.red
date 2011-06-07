@@ -1,11 +1,10 @@
 h1. The Team
 
 CruiseControl.rb has been the product of a lot of hard work from some very bright and committed people.
-This page is a small recognition of their efforts.  
+This page is a small recognition of their efforts.
 
 We appreciate you!
 
-<br/>
 h1. Version 1.4 Team:
 
 * *Alexey Verkhovsky* [averkhov at thoughtworks.com]  
