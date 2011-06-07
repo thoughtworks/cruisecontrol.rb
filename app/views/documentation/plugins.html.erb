@@ -26,6 +26,6 @@
     <h1><%= @plugin_title + " Plugin" %></h1>
     <%= render_plugin_doc @file || '' %>
   <% else %>
-    <%= render :partial => 'about_plugins' %>
+    <%= raw render :partial => 'about_plugins' %>
   <% end %>
 </div>

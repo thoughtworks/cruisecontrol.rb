@@ -2,12 +2,12 @@ module DocumentationHelper
   def render_plugin_doc(file)
     if File.directory?(file)
       if File.exists?(file + '/README')
-        render :inline => markup(File.read(file + '/README')), :layout => true
+        render :inline => markup(File.read(file + '/README'))
       else
-        render :text => "this plugin has no README", :layout => true
+        render :text => "this plugin has no README", :layout => false
       end
-    elsif File.exists?(file) 
-      render :inline => markup(comments(File.read(file))), :layout => true
+    elsif File.exists?(file)
+      render :inline => markup(comments(File.read(file)))
     end
   end
   
