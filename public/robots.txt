@@ -1,3 +1,5 @@
 # crawlers, go away
 User-agent: *
-Disallow: /
+Disallow: /projects/
+Disallow: /builds/
+Allow: /documentation/
