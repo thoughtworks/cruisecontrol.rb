@@ -50,8 +50,8 @@ module Platform
   def bundle_cmd
     @bundle_cmd ||= begin
       gem_which_bundler = `#{Platform.gem_cmd} which bundler`.strip
-      bundler_root = File.expand_path(File.join(File.dirname(gem_which_bundler), ".."))
-      File.join(bundler_root, "bin", "bundle")
+      gem_bin_dir = File.expand_path(File.join(File.dirname(gem_which_bundler), "..", '..', '..', 'bin'))
+      File.join(gem_bin_dir, 'bundle')
     end
   end
   module_function :bundle_cmd

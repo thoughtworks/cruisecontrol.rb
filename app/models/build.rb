@@ -168,7 +168,7 @@ EOF
 
   def bundle_install
     vendor  = File.join project.local_checkout, "vendor"
-    Platform.bundle_cmd + %{ check --gemfile=#{project.gemfile} } + "||" + Platform.bundle_cmd + %{ install --path=#{vendor} --gemfile=#{project.gemfile} --no-color }
+    "BUNDLE_GEMFILE=#{project.gemfile} #{Platform.bundle_cmd} check --gemfile=#{project.gemfile} || BUNDLE_GEMFILE=#{project.gemfile} #{Platform.bundle_cmd} install --path=#{vendor} --gemfile=#{project.gemfile} --no-color"
   end
 
   def rake
@@ -179,9 +179,9 @@ EOF
     maybe_trace   = CruiseControl::Log.verbose? ? " << '--trace'" : ""
     
     if project.uses_bundler?
-      %{BUNDLE_GEMFILE=#{project.gemfile} } + Platform.bundle_cmd + %{ exec rake -e "load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
+      %{BUNDLE_GEMFILE=#{project.gemfile} #{Platform.bundle_cmd} exec rake -e "load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
     else  
-      Platform.interpreter + %{ -e "require 'rubygems' rescue nil; require 'rake'; load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
+      %{#{Platform.interpreter} -e "require 'rubygems' rescue nil; require 'rake'; load '#{cc_build_path}'; ARGV << '--nosearch'#{maybe_trace} << 'cc:build'; Rake.application.run; ARGV.clear"}
     end
   end
   
