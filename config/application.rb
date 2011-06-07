@@ -55,6 +55,7 @@ module CruiseControl
       # get rid of cached pages between runs
       FileUtils.rm_rf Rails.root.join('public', 'builds')
       FileUtils.rm_rf Rails.root.join('public', 'documentation')
+      FileUtils.rm_rf Rails.root.join('public', 'documentation.html')
 
       BuilderPlugin.load_all
     end
