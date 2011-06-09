@@ -1,15 +1,21 @@
 <div class="buttons">
   <%= form_tag(build_project_path(:id => project), :class => "build_project") do %>
-  
-    <% if project.builder_down? %>    
+
+    <% if project.builder_down? %>
       <button type="submit" name="build_now" class="build_button">Start Builder</button>
     <% elsif project.can_build_now? %>
       <button type="submit" name="build_now" class="build_button">Build Now</button>
     <% else %>
       <button type="submit" name="build_now" class="build_button" disabled="disabled">Build Now</button>
     <% end %>
-    
+
   <% end %>
-  
+
+  <% unless project.builder_down? %>
+    <%= form_tag(kill_build_project_path(:id => project), :class => "build_project") do %>
+      <button type="submit" name="build_now" class="kill_build_button">Kill Builder</button>
+    <% end %>
+  <% end %>
+
   <%= display_builder_state(project.builder_state_and_activity) %>
 </div>

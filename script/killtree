@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+def kill_tree(pid)
+  child_parent_processes = `ps -eo pid,ppid | grep #{pid}`
+  child_parent_processes = child_parent_processes.split("\n").map{|child_and_parent| child_and_parent.strip.gsub(/\s+/, " ").split(" ")}
+  child_parent_processes.each do |child, parent|
+    if parent == pid
+      kill_tree(child)
+    end
+  end
+  system "kill -9 #{pid}"
+end
+
+kill_tree(ARGV[0])

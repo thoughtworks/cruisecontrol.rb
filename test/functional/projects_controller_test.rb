@@ -220,9 +220,29 @@ class ProjectsControllerTest < ActionController::TestCase
       Configuration.stubs(:disable_build_now).returns(true)
 
       post :build, :id => 'one'
-      
+
       assert_response 403
       assert_equal 'Build requests are not allowed', @response.body
+    end
+  end
+
+  context "POST /projects/:id/kill_build" do
+    test "should kill the running builder" do
+      project = create_project_stub('two')
+      Project.expects(:find).with('two').returns(project)
+      project.expects(:kill_build)
+      post :kill_build, :id => "two"
+      assert_response :redirect
+    end
+  end
+
+  context "XHR POST /projects/:id/kill_build" do
+    test "should kill the running builder" do
+      project = create_project_stub('two')
+      Project.expects(:find).with('two').returns(project)
+      project.expects(:kill_build)
+      xhr :post, :kill_build, :id => "two"
+      assert_response :success
     end
   end
 
