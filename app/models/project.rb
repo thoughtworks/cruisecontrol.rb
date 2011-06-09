@@ -360,7 +360,11 @@ class Project
       source_control.update(revision)
     end
   end
-  
+
+  def kill_build
+    Platform.kill_child_process(self.name)
+  end
+
   def build(revision = source_control.latest_revision, reasons = [])
     if Configuration.serialize_builds
       BuildSerializer.serialize(self) { build_without_serialization(revision, reasons) }

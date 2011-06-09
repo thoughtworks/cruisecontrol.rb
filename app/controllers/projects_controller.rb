@@ -56,7 +56,21 @@ class ProjectsController < ApplicationController
       end
     end
   end
-  
+
+  def kill_build
+    @project = Project.find(params[:id])
+    @project.kill_build rescue nil
+    respond_to do |format|
+      format.html do
+        if request.xhr?
+          render_projects_partial(Project.all)
+        else
+          redirect_to :action => 'index'
+        end
+      end
+    end
+  end
+
   def code
     if Configuration.disable_code_browsing
       render :text => "Code browsing disabled" and return
