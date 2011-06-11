@@ -29,8 +29,7 @@ and "Bazaar":http://bazaar-vcs.org/, thanks to generous contributions from the c
 
 h2. Why does CC.rb report my build as passing even though it failed?
 
-Are you using ruby 1.8.6?  It contains a bug where the process exit code is reported as '0' instead of '1' and so CC.rb 
-doesn't know the build failed.  Downgrading to 1.8.5 or upgrading to 1.8.6 patchlevel 110+ solves the problem.
+Are you using ruby 1.8.7? CC.rb is not supported with versions of ruby < 1.8.7. Upgrading to 1.8.7 or higher is recommended.
 
 
 Have other questions?  Ask us on our <%= link_to_users_mailing_list 'mailing list' %>.
