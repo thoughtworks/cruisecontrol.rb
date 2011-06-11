@@ -31,4 +31,12 @@ module DocumentationHelper
   def link_to_developers_mailing_list(text)
     link_to text, "http://rubyforge.org/mailman/listinfo/cruisecontrolrb-developers"
   end
+  
+  def link_to_issue_tracker(text)
+    link_to text, 'https://github.com/thoughtworks/cruisecontrol.rb/issues'
+  end
+  
+  def link_to_issue_tracker_signup(text)
+    link_to text, 'https://github.com/signup/free'
+  end
 end

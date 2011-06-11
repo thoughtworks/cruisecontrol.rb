@@ -4,7 +4,7 @@ CruiseControl.rb currently ships with support for <a href="#subversion">Subversi
 <a href="#git">Git</a>, <a href="#mercurial">Mercurial</a> and <a href="bazaar">Bazaar</a>. By default 
 you should not need to configure any settings for your SCM of choice, though you may choose to if you wish.
 
-h1. <a name="subversion">Configuring Subversion</a>
+h1(#subversion). Configuring Subversion
 
 Subversion may be explicitly configured in your cruise_config.rb file as follows:
 
@@ -19,7 +19,7 @@ Subversion accepts the following configuration options:
 * <code>:check_externals</code> tells CC.rb to trigger a build if externals change; true by default
 * <code>:path</code> is the location of an empty directory to check your project out into
 
-h1. <a name="git">Configuring Git</a>
+h1(#git). Configuring Git
 
 Git may be explicitly configured in your cruise_config.rb file as follows:
 
@@ -34,7 +34,7 @@ Git accepts the following configuration options:
 * <code>:branch</code> to build a particular branch of your Git repository
 * <code>:path</code> is the location of an empty directory to check your project out into
 
-h1. <a name="mercurial">Configuring Mercurial</a>
+h1(#mercurial). Configuring Mercurial
 
 Mercurial may be explicitly configured in your cruise_config.rb file as follows:
 
@@ -48,7 +48,7 @@ Mercurial accepts the following configuration options:
 * <code>:branch</code> to build a particular branch of your Mercurial repository
 * <code>:path</code> is the location of an empty directory to check your project out into
 
-h1. <a name="bazaar">Configuring Bazaar</a>
+h1(#bazaar). Configuring Bazaar
 
 Bazaar may be explicitly configured in your cruise_config.rb file as follows:
 

@@ -2,8 +2,7 @@
 
 h1. Contributing
 
-<em>Contributing to CruiseControl.rb boosts your self-esteem, improves your karma, looks good on your CV and generally
-makes the world a happier place.</em>
+_Contributing to CruiseControl.rb boosts your self-esteem, improves your karma, looks good on your CV and generally makes the world a happier place._
 
 You can help in four different ways:
 * <a href="#report">report bugs</a>
@@ -11,13 +10,12 @@ You can help in four different ways:
 * <a href="#patches">fix bugs and submit patches</a>
 * <a href="#documentation">improve documentation</a>
 
-h2. <a name="report">Report bugs</a>
+h2(#report). Report bugs
 
-CruiseControl.rb uses a public "bug tracker":http://cruisecontrolrb.lighthouseapp.com to keep track of bugs,
-patches, ideas and development stories.
+CruiseControl.rb uses a public <%= link_to_issue_tracker "bug tracker" %> to keep track of bugs, patches, ideas and development stories.
 
 Before you can submit a bug, you need to
-"create a Lighthouse account":http://cruisecontrolrb.lighthouseapp.com/users/new for yourself. This way we protect
+<%= link_to_issue_tracker_signup 'create a github account' %>. This way we protect
 the tracker against spam and make sure that we can get in touch with you if we have questions (or answers).
 
 Please try to be as specific as possible about the symptoms and likely root causes of the problem, include
@@ -29,7 +27,7 @@ Also, please try to make sure that the problem is in CruiseControl.rb, not in yo
 quite embarrassing to go through a long chain of emails, and learn at the end of it that it was your problem and you
 could have easily figured it out yourself.
 
-h2. <a name="plugins">Create plugins</a>
+h2(#plugins). Create plugins
 
 CruiseControl.rb design philosophy can be summarized as "be simple, and people will come to you". Of course, many
 an open-source project started this way, and ended up as a truckload of half-heartedly implemented features. We have no
@@ -63,10 +61,10 @@ write a listener for those events.
 <code>Project#notify()</code>
 method.</p>
 
-For an example of a working plugin, look at <em>[cruise]</em>/lib/builder_plugins/email_notifier.rb or
-<em>[cruise]</em>/lib/builder_plugins/jabber_notifier. Note that a plugin can be implemented as a single file, or a
+For an example of a working plugin, look at *$cruise*/lib/builder_plugins/email_notifier.rb or
+*$cruise*/lib/builder_plugins/jabber_notifier. Note that a plugin can be implemented as a single file, or a
 directory (containing init.rb). Either way, the file or directory name should match the class name of the listener
-class, and the plugin should be placed in <em>[cruise]</em>/lib/builder_plugins directory.
+class, and the plugin should be placed in *$cruise*/lib/builder_plugins directory.
 
 It would be good to have more documentation here, as well as some guarantees about published API for plugins, but it's
 too early to make such commitments. Let's build some great plugins, and see what kind of API evolves in the process.
@@ -91,14 +89,14 @@ At the moment, we only have one kind of a scheduler: a PollingScheduler, which s
 to check if source control has new revisions. You can write your own scheduler and inject it into the project through
 a configuration file: <code>project.scheduler = AstrologyAwareScheduler.new(current_phase_of_the_moon)</code>
 
-h2. <a name="patches">Submit patches</a>
+h2(#patches). Submit patches
 
 We absolutely love receiving bug reports. Who doesn't, after all? But what can make us really happy is a bug
 report coming with a patch that fixes the bug and adds unit tests to prevent it from ever happening again.
 Contributing a well packaged patch that is accepted into the codebase places your name for posterity in
 CruiseControl.rb Eternal Hall of Fame, aka the CHANGELOG.
 
-<em>Official Standard Procedure for the Submission of Patches</em> is hereby defined as follows:
+_Official Standard Procedure for the Submission of Patches_ is hereby defined as follows:
 
 1. Check out the latest source from the git repository:<br/>
 
@@ -120,7 +118,7 @@ p(hint). Your tests should not leave any by-products in the file system. If you 
 
 6. Create a patch with <code>git-format-patch</code>
 
-7. Login to "Lighthouse":http://cruisecontrolrb.lighthouseapp.com
+7. Login to <%= link_to_issue_tracker 'github' %> 
 
 8. Create a new issue, prefix the summary with the word [PATCH].
 
@@ -129,17 +127,17 @@ p(hint). Your tests should not leave any by-products in the file system. If you 
 
 Also, when we're ready to apply the patch, we'll send you an e-mail that looks like "this":contributors_agreement which we'll need a reply to for legal reasons.
 
-h2. <a name="documentation">Improve documentation</a>
+h2(#documentation). Improve documentation
 
 Believe it or not, we value contributions to end user documentation as much as (if not more than) we value patches.
 
 Documentation for CruiseControl.rb is included in the release package, as files under
-the <em>[cruise]</em>/app/views/documentation directory. When you connect to CruiseControl.rb dashboard running on your computer
+the *$cruise*/app/views/documentation directory. When you connect to CruiseControl.rb dashboard running on your computer
 and click the Documentation link in the top right corner, its the content of those files that you see.
 
 Packaging documentation with release makes sure that you are always looking at documentation for the same version
 that you are running. It also makes it easy to submit documentation patches. Simply follow the aforementioned 
-<em>Procedure</em> for source code patches.
+_Procedure_ for source code patches.
 
 The *.red files are written in a mixture of "Textile":http://hobix.com/textile and HTML markup. The best way to edit
 these files is to run CruiseControl.rb dashboard from your local checked out copy of the trunk, in development mode:

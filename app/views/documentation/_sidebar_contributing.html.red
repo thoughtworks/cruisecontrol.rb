@@ -11,11 +11,8 @@ h2. Maillists
 
 h2. Bugs and patches
 
-* "Browse bug tracker":http://cruisecontrolrb.lighthouseapp.com
+* <%= link_to_issue_tracker 'Browse bug tracker' %>
 
-<small><em>
-Note: to submit a bug or a patch to our bug tracker, you need to
-"create a LightHouse account":http://cruisecontrolrb.lighthouseapp.com/users/new  
-</em></small>
+<small>_Note: to submit a bug or a patch to our bug tracker, you need to create <%= link_to_issue_tracker_signup 'create a github account' %>_</small>
 
 </div>

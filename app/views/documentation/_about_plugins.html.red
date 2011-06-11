@@ -5,11 +5,11 @@ Click on one of the above plugins to see the docs about that plugin.
 
 h2. Installing / uninstalling a plugin
 
-All installed plugins are found in the <em>[cruise&nbsp;data]</em>/builder_plugins/ directory.
+All installed plugins are found in the *$cruise_data*/builder_plugins/ directory.
 To install a plugin, all you need to do is move it into this directory and restart CC.rb.  To uninstall, 
 simply delete it.
 
-For your convenience, additional plugins are distributed in <em>[cruise]</em>/lib/builder_plugins. You should see them
+For your convenience, additional plugins are distributed in *$cruise*/lib/builder_plugins. You should see them
 appear in the list at the top of this page.
 
 h2. Writing a plugin
