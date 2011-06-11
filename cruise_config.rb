@@ -3,5 +3,4 @@
 
 Project.configure do |project|
   project.email_notifier.emails = ["cruisecontrolrb@thoughtworks.com"] if Socket.gethostname =~ /cruisecontrolrb.thoughtworks.com/
-  project.bundler_args << "--local"
 end
