@@ -221,126 +221,6 @@ Finished in 0.007491 seconds
 4 examples, 2 failures, 1 pending
 EOF
 
-  def test_should_not_find_test_failures_with_a_build_with_test_errors_on_windows
-    assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS_ON_WINDOWS).failures.empty?
-  end
-
-  def test_should_not_find_test_failures_with_a_build_with_test_errors_on_unix
-    assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS_ON_UNIX).failures.empty?
-  end
-
-  def test_should_find_no_test_failures_with_successful_build
-    assert BuildLogParser.new(LOG_OUTPUT_WITH_NO_TEST_FAILURE).failures.empty?
-  end
-  
-  def test_should_find_test_failures_on_windows
-    failures = BuildLogParser.new(LOG_OUTPUT_WITH_TEST_FAILURE_ON_WINDOWS).failures
-    assert_equal [expected_first_test_failure_on_windows, expected_second_test_failure], failures
-  end
-
-  def test_should_find_test_failures_on_unix
-    failures = BuildLogParser.new(LOG_OUTPUT_WITH_TEST_FAILURE_ON_UNIX).failures
-    assert_equal [expected_first_test_failure_on_unix, expected_second_test_failure], failures
-  end
-        
-  def test_should_correctly_parse_mocha_test_failures
-    failures = BuildLogParser.new(LOG_OUTPUT_WITH_MOCK_TEST_FAILURE).failures
-    assert_equal [expected_mock_test_failure], failures
-  end
-        
-  def test_should_not_find_test_errors_with_a_build_with_test_failures_on_windows
-    assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_FAILURE_ON_WINDOWS).errors.empty?
-  end
-
-  def test_should_not_find_test_errors_with_a_build_with_test_failures_on_unix
-    assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_FAILURE_ON_UNIX).errors.empty?
-  end
-
-  def test_should_find_no_test_errors_with_successful_build
-    assert BuildLogParser.new(LOG_OUTPUT_WITH_NO_TEST_ERRORS).errors.empty?
-  end
-
-  def test_should_find_test_errors_with_unsuccessful_build_on_windows
-    assert_equal [expected_test_error_on_windows], BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS_ON_WINDOWS).errors
-  end
-
-  def test_should_find_test_errors_with_unsuccessful_build_on_unix
-    assert_equal [expected_test_error_on_unix], BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS_ON_UNIX).errors
-  end
-
-  def test_should_find_no_rspec_failures_with_successful_build
-    assert BuildLogParser.new(LOG_OUTPUT_OF_SUCCESSFUL_RSPEC_RUN).failures_and_errors.empty?
-  end
-
-  def test_should_find_rspec_failures
-    failures = BuildLogParser.new(LOG_OUTPUT_WITH_RSPEC_FAILURE).failures
-    assert_equal [expected_rspec_failure], failures
-  end
-
-  def test_should_find_rspec_errors
-    errors = BuildLogParser.new(LOG_OUTPUT_WITH_RSPEC_ERROR).errors
-    assert_equal [expected_rspec_error], errors
-  end
-
-  def test_should_process_multiple_errors_and_failures
-    failures_and_errors = BuildLogParser.new(LOG_OUTPUT_WITH_VARIETY_OF_RSPEC_STUFF).failures_and_errors
-    assert_equal [expected_rspec_failure, expected_rspec_error], failures_and_errors
-  end
-
-  def expected_test_error_on_windows
-    TestErrorEntry.create_error("test_should_fail_due_to_comparing_same_objects_with_different_data(BuildLogParserTest)",
-                                "NameError: undefined local variable or method `expectedFirstTestFixture' for #<BuildLogParserTest:0x3f65a60>",
-                                "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/rails/actionpack/lib/action_controller/test_process.rb:456:in `method_missing'\n" +
-                                "    ./test/unit/test_failure_parser_test.rb:75:in `test_should_fail_due_to_comparing_same_objects_with_different_data'\n" +
-                                "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
-                                "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
-  end
-
-  def expected_test_error_on_unix
-    TestErrorEntry.create_error("test_should_fail_due_to_comparing_same_objects_with_different_data(BuildLogParserTest)",
-                                "NameError: undefined local variable or method `expectedFirstTestFixture' for #<BuildLogParserTest:0x3f65a60>",
-                                "    /home/user_name/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/rails/actionpack/lib/action_controller/test_process.rb:456:in `method_missing'\n" +
-                                "    ./test/unit/test_failure_parser_test.rb:75:in `test_should_fail_due_to_comparing_same_objects_with_different_data'\n" +
-                                "    /home/user_name/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
-                                "    /home/user_name/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
-  end
-
-  def expected_first_test_failure_on_windows
-    TestErrorEntry.create_failure("test_should_fail(SubversionLogParserTest)",
-                                  "<1> expected but was\n<\"abc\">.",
-                                  "./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'\n" +
-                                  "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
-                                  "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
-  end
-
-  def expected_first_test_failure_on_unix
-    TestErrorEntry.create_failure("test_should_fail(SubversionLogParserTest)",
-                                  "<1> expected but was\n<\"abc\">.",
-                                  "./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'\n" +
-                                  "     /home/user_name/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
-                                  "     /home/user_name/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
-  end
-
-  def expected_second_test_failure
-    TestErrorEntry.create_failure("test_should_check_force_build(PollingSchedulerTest)",
-                                  "#<Mocha::Mock:0x-245ea224>.force_build_if_requested - expected calls: 1, actual calls: 2",
-                                  "./test/unit/polling_scheduler_test.rb:44")
-  end
-
-  def expected_mock_test_failure
-    TestErrorEntry.create_failure("test_should_check_force_build(PollingSchedulerTest)",
-                                  "#<Mocha::Mock:0x-245ec74a>.force_build_if_requested - expected calls: 1, actual calls: 2",
-                                  "./test/unit/polling_scheduler_test.rb:44")
-  end
-
-  def expected_rspec_failure
-    TestErrorEntry.create_failure('foo should fail', "expected: 2,\n     got: 1 (using ==)", "./fail_spec.rb:7:")
-  end
-
-  def expected_rspec_error
-    TestErrorEntry.create_error('foo should err', "RuntimeError in 'foo should err'\noops", "./foo_spec.rb:20:in `blow_up'\n./err_spec.rb:7:")
-  end
-
 COMPLEX_RSPEC_ERROR = <<-EOF
 Running SeleniumFastSpecSuite
 Starting GameServer with RAILS_ENV=selenium_test
@@ -407,13 +287,142 @@ rake aborted!
 Failure
 EOF
 
-  def test_should_find_rspec_complex_errors
-    errors = BuildLogParser.new(COMPLEX_RSPEC_ERROR).errors
-    assert_equal 2, errors.length
+
+  context "#failures" do
+    test "should not find test failures with a build with test errors on windows" do
+      assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS_ON_WINDOWS).failures.empty?
+    end
+
+    test "should not find test failures with a build with test errors on unix" do
+      assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS_ON_UNIX).failures.empty?
+    end
+
+    test "should find no test failures with a successful build" do
+      assert BuildLogParser.new(LOG_OUTPUT_WITH_NO_TEST_FAILURE).failures.empty?
+    end
+
+    test "should find test failures on windows" do
+      failures = BuildLogParser.new(LOG_OUTPUT_WITH_TEST_FAILURE_ON_WINDOWS).failures
+      assert_equal [expected_first_test_failure_on_windows, expected_second_test_failure], failures
+    end
+
+    test "should find test failures on unix" do
+      failures = BuildLogParser.new(LOG_OUTPUT_WITH_TEST_FAILURE_ON_UNIX).failures
+      assert_equal [expected_first_test_failure_on_unix, expected_second_test_failure], failures
+    end
+          
+    test "should correctly parse mocha test failures" do
+      failures = BuildLogParser.new(LOG_OUTPUT_WITH_MOCK_TEST_FAILURE).failures
+      assert_equal [expected_mock_test_failure], failures
+    end
+
+    test "should find RSpec failures" do
+      failures = BuildLogParser.new(LOG_OUTPUT_WITH_RSPEC_FAILURE).failures
+      assert_equal [expected_rspec_failure], failures
+    end
+
+    test "should find RSpec complex failures" do
+      failures = BuildLogParser.new(COMPLEX_RSPEC_FAILURE).failures
+      assert_equal 2, failures.length
+    end
   end
 
-   def test_should_find_rspec_complex_failures
-    failures = BuildLogParser.new(COMPLEX_RSPEC_FAILURE).failures
-    assert_equal 2, failures.length
+  context "#errors" do
+    test "should not find test errors with a build with test failures on windows" do
+      assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_FAILURE_ON_WINDOWS).errors.empty?
+    end
+
+    test "should not find test errors with a build with test failures on unix" do
+      assert BuildLogParser.new(LOG_OUTPUT_WITH_TEST_FAILURE_ON_UNIX).errors.empty?
+    end
+
+    test "should find no test errors with successful build" do
+      assert BuildLogParser.new(LOG_OUTPUT_WITH_NO_TEST_ERRORS).errors.empty?
+    end
+
+    test "should find test errors with unsuccessful build on Windows" do
+      assert_equal [expected_test_error_on_windows], BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS_ON_WINDOWS).errors
+    end
+
+    test "should find test errors with unsuccessful build on Unix" do
+      assert_equal [expected_test_error_on_unix], BuildLogParser.new(LOG_OUTPUT_WITH_TEST_ERRORS_ON_UNIX).errors
+    end
+
+    test "should find RSpec errors" do
+      errors = BuildLogParser.new(LOG_OUTPUT_WITH_RSPEC_ERROR).errors
+      assert_equal [expected_rspec_error], errors
+    end
+
+    test "should find RSpec complex errors" do
+      errors = BuildLogParser.new(COMPLEX_RSPEC_ERROR).errors
+      assert_equal 2, errors.length
+    end
   end
+
+  context "#failures_and_errors" do
+    test "should find no RSpec failures with a successful build" do
+      assert BuildLogParser.new(LOG_OUTPUT_OF_SUCCESSFUL_RSPEC_RUN).failures_and_errors.empty?
+    end
+
+    test "should process multiple errors and failures" do
+      failures_and_errors = BuildLogParser.new(LOG_OUTPUT_WITH_VARIETY_OF_RSPEC_STUFF).failures_and_errors
+      assert_equal [expected_rspec_failure, expected_rspec_error], failures_and_errors
+    end
+  end
+
+  private
+
+    def expected_test_error_on_windows
+      TestErrorEntry.create_error("test_should_fail_due_to_comparing_same_objects_with_different_data(BuildLogParserTest)",
+                                  "NameError: undefined local variable or method `expectedFirstTestFixture' for #<BuildLogParserTest:0x3f65a60>",
+                                  "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/rails/actionpack/lib/action_controller/test_process.rb:456:in `method_missing'\n" +
+                                  "    ./test/unit/test_failure_parser_test.rb:75:in `test_should_fail_due_to_comparing_same_objects_with_different_data'\n" +
+                                  "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
+                                  "    C:/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
+    end
+
+    def expected_test_error_on_unix
+      TestErrorEntry.create_error("test_should_fail_due_to_comparing_same_objects_with_different_data(BuildLogParserTest)",
+                                  "NameError: undefined local variable or method `expectedFirstTestFixture' for #<BuildLogParserTest:0x3f65a60>",
+                                  "    /home/user_name/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/rails/actionpack/lib/action_controller/test_process.rb:456:in `method_missing'\n" +
+                                  "    ./test/unit/test_failure_parser_test.rb:75:in `test_should_fail_due_to_comparing_same_objects_with_different_data'\n" +
+                                  "    /home/user_name/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
+                                  "    /home/user_name/projects/cruisecontrol.rb/builds/ccrb/work/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
+    end
+
+    def expected_first_test_failure_on_windows
+      TestErrorEntry.create_failure("test_should_fail(SubversionLogParserTest)",
+                                    "<1> expected but was\n<\"abc\">.",
+                                    "./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'\n" +
+                                    "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
+                                    "     C:/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
+    end
+
+    def expected_first_test_failure_on_unix
+      TestErrorEntry.create_failure("test_should_fail(SubversionLogParserTest)",
+                                    "<1> expected but was\n<\"abc\">.",
+                                    "./test/unit/subversion_log_parser_test.rb:125:in `test_should_fail'\n" +
+                                    "     /home/user_name/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `__send__'\n" +
+                                    "     /home/user_name/projects/cruisecontrol.rb/config/../vendor/plugins/mocha/lib/mocha/test_case_adapter.rb:19:in `run'")
+    end
+
+    def expected_second_test_failure
+      TestErrorEntry.create_failure("test_should_check_force_build(PollingSchedulerTest)",
+                                    "#<Mocha::Mock:0x-245ea224>.force_build_if_requested - expected calls: 1, actual calls: 2",
+                                    "./test/unit/polling_scheduler_test.rb:44")
+    end
+
+    def expected_mock_test_failure
+      TestErrorEntry.create_failure("test_should_check_force_build(PollingSchedulerTest)",
+                                    "#<Mocha::Mock:0x-245ec74a>.force_build_if_requested - expected calls: 1, actual calls: 2",
+                                    "./test/unit/polling_scheduler_test.rb:44")
+    end
+
+    def expected_rspec_failure
+      TestErrorEntry.create_failure('foo should fail', "expected: 2,\n     got: 1 (using ==)", "./fail_spec.rb:7:")
+    end
+
+    def expected_rspec_error
+      TestErrorEntry.create_error('foo should err', "RuntimeError in 'foo should err'\noops", "./foo_spec.rb:20:in `blow_up'\n./err_spec.rb:7:")
+    end
 end

@@ -1,13 +1,12 @@
 class ProjectsMigration
   include CommandLine
-  include FileUtils
 
   def initialize(data_dir = ::Configuration.data_root)
     @data_dir = data_dir
     if File.exists? data_dir and not File.directory? data_dir
       raise "#{data_dir} is not a directory"
     else
-      mkdir_p data_dir
+      FileUtils.mkdir_p data_dir
     end
   end
 
@@ -61,7 +60,7 @@ class ProjectsMigration
   def clear_cached_pages
     cached_assets_in_public = [ 'documentation', 'index.html']
     cached_assets_in_public.each do |asset|
-      rm_rf Rails.root.join('public', asset)
+      FileUtils.rm_rf Rails.root.join('public', asset)
     end
   end
 

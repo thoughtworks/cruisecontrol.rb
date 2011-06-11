@@ -2,11 +2,11 @@ require 'test_helper'
 
 class ApplicationHelperTest < ActionView::TestCase
   
-  def setup
+  setup do
     @helper = Object.new.extend(ApplicationHelper)
   end
 
-  context "ApplicationHelper#format_time" do
+  context "#format_time" do
     test "should pass whatever format argument it's given to I18n.l" do
       I18n.expects(:l).with(:time, :format => :human)
       @helper.format_time(:time, :human)
@@ -18,34 +18,40 @@ class ApplicationHelperTest < ActionView::TestCase
     end
   end
 
-  def test_format_seconds_sends_to_duration_formatter
-    duration_formatter = mock()
-    duration_formatter.expects(:precise)
-    DurationFormatter.expects(:new).with(0).returns(duration_formatter)
-    @helper.format_seconds(0, :precise)
+  context "#format_seconds" do
+    test "should use a duration formatter" do
+      duration_formatter = mock()
+      duration_formatter.expects(:precise)
+      DurationFormatter.expects(:new).with(0).returns(duration_formatter)
+      @helper.format_seconds(0, :precise)
+    end
+
+    test "should use the general format by default" do
+      duration_formatter = mock()
+      duration_formatter.expects(:general)
+      DurationFormatter.expects(:new).with(0).returns(duration_formatter)
+      @helper.format_seconds(0)
+    end  
   end
 
-  def test_format_seconds_defaults_to_general
-    duration_formatter = mock()
-    duration_formatter.expects(:general)
-    DurationFormatter.expects(:new).with(0).returns(duration_formatter)
-    @helper.format_seconds(0)
+  context "#format_changeset_log" do
+    test "should strip html tags" do
+      @helper.extend(ERB::Util)
+      assert_equal "&lt;hr /&gt;some changeset&lt;script&gt;alert('bad')&lt;/script&gt;",
+       @helper.format_changeset_log("<hr />some changeset<script>alert('bad')</script>")
+    end
   end
 
-  def test_format_changeset_log_strips_html_tags
-    @helper.extend(ERB::Util)
-    assert_equal "&lt;hr /&gt;some changeset&lt;script&gt;alert('bad')&lt;/script&gt;",
-     @helper.format_changeset_log("<hr />some changeset<script>alert('bad')</script>")
-  end
-  
-  def test_build_link_includes_title
-    @helper.extend(ERB::Util)
-    project = stub(:name => "name")
-    build = stub(:label => "label", :status => "status", :changeset => "changeset")
-    @helper.stubs(:build_path).with(:project => "name", :build => "label").returns("build_path")
-    @helper.expects(:link_to).with("text", "build_path", {:class => "status", :title => "changeset"})
-    @helper.build_link("text", project, build)
-  end
+  context "#build_link" do
+    test "should include the title of the project" do
+      @helper.extend(ERB::Util)
+      project = stub(:name => "name")
+      build = stub(:label => "label", :status => "status", :changeset => "changeset")
+      @helper.stubs(:build_path).with(:project => "name", :build => "label").returns("build_path")
+      @helper.expects(:link_to).with("text", "build_path", {:class => "status", :title => "changeset"})
+      @helper.build_link("text", project, build)
+    end
+  end  
 
   context "ApplicationHelper#human_time" do
     test "should include the year when the time occurred before this year" do
