@@ -167,8 +167,10 @@ EOF
   end
 
   def bundle_install
-    vendor  = File.join project.local_checkout, "vendor"
-    "BUNDLE_GEMFILE=#{project.gemfile} #{Platform.bundle_cmd} check --gemfile=#{project.gemfile} || BUNDLE_GEMFILE=#{project.gemfile} #{Platform.bundle_cmd} install --path=#{vendor} --gemfile=#{project.gemfile} --no-color"
+    [ 
+      bundle("check", "--gemfile=#{project.gemfile}"),
+      bundle("install", project.bundler_args)
+    ].join(" || ")
   end
 
   def rake
@@ -230,5 +232,11 @@ EOF
     revision, rebuild_number = label.split('.')
     [revision[0..6], rebuild_number].compact.join('.')
   end
+
+  private
+    
+    def bundle(*args)
+      ( [ "BUNDLE_GEMFILE=#{project.gemfile}", Platform.bundle_cmd ] + args.flatten ).join(" ")
+    end
 
 end

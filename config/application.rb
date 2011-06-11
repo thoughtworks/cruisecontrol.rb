@@ -1,10 +1,10 @@
 require File.expand_path('../boot', __FILE__)
+require File.expand_path('../../lib/cruise_control/version', __FILE__)
 
-# require 'rails/all'
 require "action_controller/railtie"
 require "action_mailer/railtie"
 require "rails/test_unit/railtie"
-require 'lib/cruise_control/version'
+
 require 'fileutils'
 
 # If you have a Gemfile, require the gems listed there, including any gems

@@ -342,10 +342,12 @@ class BuildTest < ActiveSupport::TestCase
 
   test "Build#bundle_install should use the project's local checkout both for its Gemfile and install location" do
     with_sandbox_project do |sandbox, project|
-      project.stubs(:local_checkout).returns "foo"
+      project.bundler_args = ["--some-args"]
       bundle_cmd = Build.new(project, "foo").bundle_install
-      assert_match /--gemfile=foo\/Gemfile/, bundle_cmd
-      assert_match /--path=foo\/vendor/, bundle_cmd
+      assert_match /bundle check/, bundle_cmd
+      assert_match /--gemfile=#{project.gemfile}/, bundle_cmd
+      assert_match /bundle install/, bundle_cmd
+      assert_match /--some-args/, bundle_cmd
     end    
   end
 

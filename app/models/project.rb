@@ -2,7 +2,7 @@
 # each time a build is triggered and yielded back to be configured by cruise_config.rb.
 class Project
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
-  attr_accessor :source_control, :scheduler, :use_bundler, :gemfile
+  attr_accessor :source_control, :scheduler, :use_bundler, :gemfile, :bundler_args
 
   alias_method :id, :name
   
@@ -100,6 +100,8 @@ class Project
     @config_file_content = ''
     @error_message = ''
     @triggers = [ ChangeInSourceControlTrigger.new(self) ]
+    @bundler_args = %W(--path=#{self.gem_install_path} --gemfile=#{self.gemfile} --no-color)
+
     self.source_control = attrs[:scm] if attrs[:scm]
 
     instantiate_plugins
@@ -516,6 +518,10 @@ class Project
 
   def uses_bundler?
     @use_bundler != false && File.exist?(self.gemfile)
+  end
+
+  def gem_install_path
+    File.join(self.local_checkout, "vendor")
   end
 
   def gemfile
