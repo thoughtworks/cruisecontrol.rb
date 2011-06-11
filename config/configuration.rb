@@ -29,7 +29,7 @@ class Configuration
     end
 
     def data_root
-      @data_root ||= Pathname.new(CruiseControl::Application::CRUISE_DATA_ROOT)
+      @data_root ||= CruiseControl.data_root
     end
 
     def projects_root

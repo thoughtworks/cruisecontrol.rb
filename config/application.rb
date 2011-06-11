@@ -38,16 +38,11 @@ module CruiseControl
     @data_root ||= Pathname.new( ENV['CRUISE_DATA_ROOT'] || File.join(CruiseControl.home_directory, ".cruise") )
   end
   
-  class Application < Rails::Application  
-    unless defined? CRUISE_DATA_ROOT
-      CRUISE_DATA_ROOT = CruiseControl.data_root.to_s
-      puts "cruise data root = '#{CRUISE_DATA_ROOT}'"
-    end
-    
+  class Application < Rails::Application      
     # Add additional load paths for your own custom dirs
     config.autoload_paths << Rails.root.join('lib')
-    config.autoload_paths << File.join(CRUISE_DATA_ROOT, 'builder_plugins')
     config.autoload_paths << Rails.root.join('lib', 'builder_plugins')
+    config.autoload_paths << CruiseControl.data_root.join('builder_plugins')
     
     config.after_initialize do
       require Rails.root.join('config', 'configuration')
@@ -60,4 +55,9 @@ module CruiseControl
       BuilderPlugin.load_all
     end
   end
+end
+
+unless defined? CRUISE_DATA_ROOT
+  CRUISE_DATA_ROOT = CruiseControl.data_root.to_s
+  puts "cruise data root = '#{CRUISE_DATA_ROOT}'"
 end
