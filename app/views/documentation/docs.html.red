@@ -10,24 +10,23 @@ p(hint). Hint: "Martin Fowler":http://martinfowler.com/ explains the how and why
 
 h1. Feature list
 
-* Can be installed in 10 minutes.
+* Can be installed in 10 minutes. "More...":/documentation/getting_started#install-prerequisites
 
 * Works out of the box with a regular "Ruby":http://www.ruby-lang.org/en/ or "Ruby on Rails":http://rubyonrails.org
-  project. No configuration necessary.
+  project. No configuration necessary. "More...":/documentation/manual
 
 * Works with Java Ant, .NET NAnt and any build tool that can be invoked through command line and returns a non-zero exit code if
-  the build fails.
+  the build fails. "More...":/documentation/manual#changing_the_build_command
 
-* Web-based dashboard, convenient, useful and pretty.
+* Web-based dashboard, convenient, useful and pretty. "More...":/
 
-* When a build is broken or fixed, notifies users via email, instant messaging or
-  "CCTray":http://ccnet.sourceforge.net/CCNET/CCTray.html.
+* When a build is broken or fixed, notifies users via email, instant messaging, "CCMenu":http://ccmenu.sf.net or "CCTray":http://ccnet.sourceforge.net/CCNET/CCTray.html. "More...":/documentation/getting_notified
 
-* RSS feed to track the build status of your favourite projects.
+* RSS feed to track the build status of your favourite projects. "More...":/documentation/getting_notified#other
 
 * Jump to the code causing a build error in one click.
 
-* Displays custom build artifacts. No configuration necessary.
+* Displays custom build artifacts. No configuration necessary. "More...":/documentation/manual#handling_custom_build_artifacts
 
 * Extendable through builder plugins, custom build schedulers and other configuration options.
 

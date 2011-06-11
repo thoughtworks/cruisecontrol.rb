@@ -39,9 +39,9 @@ The *dashboard* is a web application allows you to monitor the status of project
 Each installation of CruiseControl.rb may have multiple projects and multiple builders (one per project). There may
 also be multiple installations of CruiseControl.rb per computer.
 
-h1. Prerequisites
+h1(#install-prerequisites). Prerequisites
 
-* "Ruby":http://www.ruby-lang.org/en/ 1.8.6. (Note: at the time of this writing CruiseControl.rb does not work with Ruby 1.8.7 or 1.9).
+* "Ruby":http://www.ruby-lang.org/en/ 1.8.7. (Note: at the time of this writing CruiseControl.rb does not work with Ruby 1.8.6).
 * A supported SCM tool, such as:
 ** "Subversion":http://subversion.tigris.org/ client 1.4 or later
 ** "Git":http://git-scm.com/
@@ -53,7 +53,7 @@ h1. Assumptions and limitations
 
 * Dashboard and all builders need to run on the same computer.
 
-h1. Installation
+h1(#installation). Installation
 
 Follow these directions or watch our "5 minute install":/documentation/screencasts screencast.
 

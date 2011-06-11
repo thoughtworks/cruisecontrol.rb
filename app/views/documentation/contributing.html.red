@@ -46,11 +46,10 @@ CruiseControl.rb has a few of these.
 
 h3. Dashboard plugins
 
-Dashboard is a regular Rails (1.x) application that can be extended through regular
+Dashboard is a regular Rails (3.0) application that can be extended through regular
 Rails
-"plugins":http://www.agilewebdevelopment.com/plugins/index
-"infrastructure.":http://www.tutorialized.com/tutorial/HOWTO-Make-a-Rails-Plugin-From-Scratch/19055
-"Enough said.":http://nubyonrails.com/articles/2006/05/04/the-complete-guide-to-rails-plugins-part-i
+"plugins":http://www.railsplugins.org/
+"infrastructure.":http://guides.rubyonrails.org/plugins.html
 
 h3. Builder plugins
 
@@ -98,7 +97,7 @@ CruiseControl.rb Eternal Hall of Fame, aka the CHANGELOG.
 
 _Official Standard Procedure for the Submission of Patches_ is hereby defined as follows:
 
-1. Check out the latest source from the git repository:<br/>
+1. Check out the latest source from the git repository:
 
 <pre><code>git clone git://github.com/thoughtworks/cruisecontrol.rb.git</code></pre>
 

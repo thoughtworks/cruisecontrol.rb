@@ -2,11 +2,11 @@ h1. Getting Notified
 
 Let's admit it, the main duty of continuous integration tool is to -annoy- notify developers when the build is broken. CruiseControl.rb is capable of delivering carefully measured doses of annoyance on demand, through a variety of communication channels, including email, instant messaging, RSS feeds etc, etc.
 
-h2. E-mail
+h2(#email). E-mail
 
 <%= render_plugin_doc 'lib/builder_plugins/email_notifier.rb' %>
 
-h2. CCMenu (on OSX)
+h2(#ccmenu). CCMenu (on OSX)
 
 "CCMenu":http://ccmenu.sourceforge.net/ displays the project status of CruiseControl continuous integration servers as an item in the Mac OS X menu bar. Or in other words, CCMenu is to OS X what CCTray is to Windows.
 
@@ -16,7 +16,7 @@ Keep in mind, when adding a project, the server name is something like http://lo
 
 !/images/documentation/ccmenu.png!
 
-h2. CCTray (on Windows)
+h2(#cctray). CCTray (on Windows)
 
 "CCTray":http://confluence.public.thoughtworks.org/display/CCNET/CCTray is a utility developed as part of CruiseControl.NET project
 that displays an icon in the bottom right corner of the screen. The icon changes its color to red when a build fails,
@@ -30,7 +30,7 @@ your project, click OK again, close the Settings dialog. Voila, you are monitori
 At the time of this writing, CC.rb was tested to work with CCTray 1.2.1
 <small>("download":http://downloads.sourceforge.net/ccnet/CruiseControl.NET-CCTray-1.2.1-Setup.exe?modtime=1170786355&big_mirror=0)</small>
 
-h2. Monitoring by other means
+h2(#other). Monitoring by other means
 
 Dashboard has RSS feeds both for the entire site and each project individually. This is useful for watching the build status of projects that 
 you are not actively working on. 
