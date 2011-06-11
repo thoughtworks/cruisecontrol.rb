@@ -27,6 +27,7 @@ h2. Quick links
 
 h2. Friends of CC.rb
 
-<a href="http://studios.thoughtworks.com/"><img src="images/mingle_v_v_small.gif"></a>
+<a href="http://studios.thoughtworks.com/"><img src="images/mingle.gif"></a>
+<a href="http://studios.thoughtworks.com/"><img src="images/go.gif"></a>
 
 </div>
