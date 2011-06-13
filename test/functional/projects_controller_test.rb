@@ -12,7 +12,6 @@ class ProjectsControllerTest < ActionController::TestCase
       p1 = create_project_stub('one', 'success')
       p2 = create_project_stub('two', 'failed', [create_build_stub('1', 'failed')])
       Project.expects(:all).returns([p1, p2])
-      stub_change_set_parser
       
       get :index
       assert_response :success
@@ -23,7 +22,7 @@ class ProjectsControllerTest < ActionController::TestCase
     test "should render a dashboard with a link to each project" do
       Project.expects(:all).returns([create_project_stub('one', 'success')])
       get :index
-      assert_select ".project_name a[href=?]", project_path("one")
+      assert_select ".project .name a[href=?]", project_path("one")
     end
     
     test "should render a dashboard with a button to start the builder if the builder is down" do
@@ -50,14 +49,14 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   context "XHR GET /projects" do
-    test "renders the no_projects partial if there are no projects" do
+    test "should render the no_projects partial if there are no projects" do
       Project.expects(:all).returns []
       xhr :get, :index
       assert_response :success
       assert_select "div#no_projects_help"
     end
 
-    test "renders the projects partial if projects are found" do
+    test "should render the projects partial if projects are found" do
       p1 = create_project_stub('one', 'success')
       p2 = create_project_stub('two', 'failed', [create_build_stub('1', 'failed')])
       Project.expects(:all).returns([p1, p2])
@@ -66,6 +65,22 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_response :success
       assert_select "div#project_one"
       assert_select "div#project_two"
+    end
+  end
+  
+  context "GET /projects.json" do
+    test "should return an empty JSON list if there are no projects" do
+      Project.stubs(:all).returns []
+      get :index, :format => :json
+      assert_response :success
+      assert_equal [], ActiveSupport::JSON.decode(@response.body)
+    end
+    
+    test "should return a list with a single project if there is one" do
+      Project.expects(:all).returns([create_project_stub('one', 'success')])
+      get :index, :format => :json
+      projects = ActiveSupport::JSON.decode(@response.body)
+      assert_equal 'one', projects.first['name']
     end
   end
 
@@ -126,6 +141,17 @@ class ProjectsControllerTest < ActionController::TestCase
       post :show, :id => "non_existing_project", :format => 'rss'
       assert_response 404
       assert_equal 'Project "non_existing_project" not found', @response.body
+    end
+  end
+  
+  context "GET /projects/:id.json" do
+    test "should include the project's name in the response" do
+      Project.stubs(:find).returns create_project_stub('one', 'success')
+      get :show, :id => 'one', :format => 'json'
+      
+      project = ActiveSupport::JSON.decode(@response.body)
+      assert_response :success
+      assert_equal 'one', project['name']
     end
   end
 
@@ -280,12 +306,6 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_redirected_to getting_started_project_path("new_project")
       end
     end
-  end
-
-  def stub_change_set_parser
-    mock = Object.new
-    SourceControl::Subversion::ChangesetLogParser.stubs(:new).returns(mock)
-    mock.expects(:parse_log).returns([])
   end
 
 end

@@ -23,7 +23,7 @@ module BuildsHelper
       line = $3
       if path.index(@work_path) == 0
         path = path[@work_path.size..-1]
-        link_to match, "/projects/code/#{h @project.name}#{path}?line=#{line}##{line}"
+        link_to(match, "/projects/code/#{h @project.name}#{path}?line=#{line}##{line}")
       else
         match
       end
@@ -41,10 +41,7 @@ module BuildsHelper
   end
   
   def failures_and_errors_if_any(log)
-    errors = BuildLogParser.new(log).failures_and_errors
-    return nil if errors.empty?
-    
-    link_to_code(errors.collect{|error| format_test_error_output(error)}.join)
+    BuildLogParser.new(log).failures_and_errors
   end
   
   def format_test_error_output(test_error)

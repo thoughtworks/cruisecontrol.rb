@@ -1,11 +1,13 @@
-<h1>Getting started with your new project</h1>
+<div id="getting_started">
+  <h1>Getting started with your new project</h1>
 
-Now that you've created a project, you should use the CCRB API to configure your project. Projects are configured 
-using a <code>cruise_config.rb</code> file that gets version-controlled and placed in the root of your project. '
-A typical <code>cruise_config.rb</code> file looks like this:
+  <div class="main_content">
+    <p>
+      Now that you've created a project, you should use the CCRB API to configure your project. Projects are configured using a <code>cruise_config.rb</code> file that gets version-controlled and placed in the root of your project. A typical <code>cruise_config.rb</code> file looks like this:
+    </P>
 
-<pre>
-<%= @config_example %>
-</pre>
+    <div class="terminal_output"><%= @config_example %></div>
 
-To see the builds for your new project, go <%= link_to "here", project_path(@project) %>.
+    <p>To see the builds for your new project, go <%= link_to "here", project_path(@project) %>.</p>
+  </div>
+</div>

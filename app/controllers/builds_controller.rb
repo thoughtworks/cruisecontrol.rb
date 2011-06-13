@@ -68,7 +68,7 @@ class BuildsController < ApplicationController
       builds = project.builds.reverse
       partition_point = Configuration.build_history_limit
 
-      return builds[0...partition_point], builds[partition_point..-1]
+      return builds[0...partition_point], builds[partition_point..-1] || []
     end
 
 end

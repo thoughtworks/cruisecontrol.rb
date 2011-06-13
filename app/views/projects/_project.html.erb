@@ -1,59 +1,32 @@
 <div id="project_<%= project.name %>" class="project build_<%= project.last_complete_build_status %>">
-<table class="project_pane">
-<tr>
-
-  <td class="project_summary">
-
-    <div>
-      <span class="project_name">
-        <%= link_to project.name, :action => 'show', :id => project.name %>
-      </span>
+  <div class="upper">
+    <div class="name"><%= link_to project.name, project_path(project), :id => project.name %></div>
+    <div class="builder_control">
+      <%= render :partial => "builds/build_buttons", :locals => { :project => project } %>
+    </div>
+  </div>
+  
+  <div class="lower">
+    <div class="rss">
+      <%= link_to image_tag('rss_light.gif'), :action => 'show', :id => project.name, :format => 'rss' %>
+    </div>
+    
+    <% status = project.sleeping? ? project.last_complete_build_status : project.builder_state_and_activity %>
+    
+    <div class="project_status <%= status %>">
+      <%= status.titleize %>
     </div>
 
-    <div class="recent_builds">
-      <% recent_builds = project.last_five_builds %>
+    <div class="status <%= project.last_complete_build_status %>">
+      <%= project.last_complete_build_status.humanize %>
+    </div>
 
-      <span class="lead">
-        <%= recent_builds.first ? 'build ' : '<span class="build_status">Never built</span>'.html_safe %>
-        <br/>
-        <%= link_to image_tag('rss_light.gif'), :action => 'show', :id => project.name, :format => 'rss' %>
-      </span>
-
-      <% unless recent_builds.empty? %>
-        <div class="builds_list">
-          <% recent_builds.each do |build| %>
-            <% if build == recent_builds.first %>
-                <div class="build_summary"><%= link_to_build_with_elapsed_time(project, build) %></div>
-            <% else %>
-                <div class="build_summary"><%= link_to_build(project, build) %></div>
-            <% end %>
-          <% end %>
-        </div>
+    <div class="builder_status">
+      <% if project.previously_built? %>
+        <%= link_to_build_with_elapsed_time(project, project.last_complete_build) %>
       <% end %>
     </div>
-  </td>
-
-  <td class="builder_control">
-    <%= render :partial => "builds/build_buttons", :locals => { :project => project } %>
-  </td>
-
-  <td class="build_details">
-    <% latest_build = recent_builds.first %>
-    <% if latest_build %>
-      <% if latest_build.incomplete? %>
-        <div>
-          Now building: <%= latest_build.abbreviated_label %>
-          for <%= format_seconds(latest_build.elapsed_time_in_progress, :general) %>
-        </div>
-      <% end %>
-      <%= show_revisions_in_build(revisions_in_build(latest_build)) %>
-      <br />
-      <% if latest_build.brief_error %>
-        <div><%= link_to latest_build.brief_error, {:action => 'show', :id => project.name}, {:class => "failed"} %></div>
-      <% end %>
-      <div class="error_message"><%= simple_format(project.builder_error_message) %></div>
-    <% end %>   
-  </td>
-</tr>
-</table>
+  </div>
+  
+  <div class="clear"></div>
 </div>

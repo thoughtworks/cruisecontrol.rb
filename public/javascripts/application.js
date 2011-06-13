@@ -34,17 +34,57 @@ $(document).ready(function() {
     }, interval);
   });
 
-  $("#build_details .section_header").live("click", function(e) {
-    e.preventDefault();
-    $(this).parent().toggleClass("closed");
+  var sectionNames = $("#build .build_details .build_nav .section_name");
+  var sections = $("#build .build_details .sections");
+
+  function selectTab(tabName) {
+    sectionNames.filter(".active").removeClass("active");
+    sectionNames.find("a[href$='" + tabName + "']").closest(".section_name").addClass("active");
+    sections.find(".section.active").removeClass("active");
+    sections.find("#" + tabName).addClass("active");
+  }
+
+  function currentTab() {
+    return window.location.hash ? window.location.hash.substring(1) : null;
+  }
+
+  if (currentTab()) {
+    selectTab(currentTab());
+  }
+
+  $(window).bind("hashchange", function(e) {
+    selectTab(currentTab());
   });
+
+  $("#build .build_details .section_name a").click(function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    location.hash = $(this).attr("href");
+    return false;
+  });
+
+  if ($("#build").length === 1) {
+    var buildsList   = $("#build .left_column");
+    var buildDetails = $("#build .sections");
+    var newWidth = null;
+
+    function adjustBuildWidth() {
+      buildDetails.width(0);
+      newWidth = $(window).width() - buildsList.width() - 40;
+      buildDetails.width( newWidth );
+    }
+
+    $(window).resize(adjustBuildWidth);
+    adjustBuildWidth();
+  }
 
   $("button[href]").live("click", function(e) {
     e.preventDefault();
     window.location = $(this).attr("href");
   });
 
-  $("#build").live("change", function() {
+  $("#select_build").live("change", function(evt) {
+    evt.preventDefault();
     window.location = $(this).val();
   });
 });

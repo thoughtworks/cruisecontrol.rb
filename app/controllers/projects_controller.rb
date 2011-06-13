@@ -13,6 +13,7 @@ class ProjectsController < ApplicationController
       end
       format.rss { render :action => 'index_rss', :layout => false, :format => :xml }
       format.cctray { render :action => 'index_cctray', :layout => false }
+      format.json { render :json => @projects.map { |p| project_to_attributes(p) } }
     end
   end
 
@@ -35,6 +36,7 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to :controller => "builds", :action => "show", :project => @project }
       format.rss { render :action => 'show_rss', :layout => false }
+      format.json { render :json => project_to_attributes(@project) }
     end
   end
 
@@ -100,5 +102,9 @@ class ProjectsController < ApplicationController
       else
         render :partial => 'project', :collection => projects
       end
+    end
+    
+    def project_to_attributes(project)
+      { 'name' => project.name }
     end
 end

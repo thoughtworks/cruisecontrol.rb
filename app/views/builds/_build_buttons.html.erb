@@ -1,4 +1,8 @@
 <div class="buttons">
+  <% if project.building? %>
+    <%= image_tag 'spinner.gif', :class => "spinner" %>
+  <% end %>
+
   <%= form_tag(build_project_path(:id => project), :class => "build_project") do %>
 
     <% if project.builder_down? %>
@@ -16,6 +20,4 @@
       <button type="submit" name="build_now" class="kill_build_button">Kill Builder</button>
     <% end %>
   <% end %>
-
-  <%= display_builder_state(project.builder_state_and_activity) %>
 </div>

@@ -65,10 +65,6 @@ class BuildsControllerTest < ActionController::TestCase
         assert_template 'show'
         assert_equal project, assigns(:project)
         assert_equal '24', assigns(:build).label
-        
-        assert_select "#navigate_build a[href=#{build_path(project.name, 25)}]", "next &gt;"
-        assert_select "#navigate_build a[href=#{build_path(project.name, 23)}]", "&lt; prev"
-        assert_select "#navigate_build a[href=#{project_without_builds_path(project.name)}]", "latest &gt;&gt;"
       end
     end
 
@@ -85,13 +81,13 @@ class BuildsControllerTest < ActionController::TestCase
 
           get :show, :project => project.name, :id => "1"
 
-          assert_select "div.build_link" do
+          assert_select ".build_link" do
             assert_select "a[href=?]", build_path(project, b1)
             assert_select "a[href=?]", build_path(project, b2)
             assert_select "a[href=?]", build_path(project, b3), false
           end
 
-          assert_select "select#build" do
+          assert_select "select#select_build" do
             assert_select "option", "Older Builds..."
             assert_select "option[value=?]", build_path(project, b3)
             assert_select "option[value=?]", build_path(project, b2), false

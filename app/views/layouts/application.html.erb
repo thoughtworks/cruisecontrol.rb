@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title>CruiseControl.rb<%= @title ? " - " + @title : '' %></title>
-  <%= stylesheet_link_tag 'cruisecontrol', :media => 'all' %>
+  <%= tag :link, :rel => "stylesheet/less", :text => "text/css", :href => "/stylesheets/cruisecontrol.less" %>
   <%= stylesheet_link_tag 'site', :media => 'all' if Rails.root.join("public", "stylesheets", "site.css").exist? %>
   
 
@@ -16,7 +16,9 @@
       <%= auto_discovery_link_tag :rss, url_path(url), {:title => title} %>
     <% end -%>
   <% end -%>
-  <%= javascript_include_tag :all %>
+  <%= javascript_include_tag "jquery-1.6.1" %>
+  <%= javascript_include_tag "less-1.1.0" %>
+  <%= javascript_include_tag "application" %>
 </head>
 
 <body>
