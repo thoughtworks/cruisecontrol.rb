@@ -13,7 +13,11 @@
 
   <% unless project.builder_down? %>
     <%= form_tag(kill_build_project_path(:id => project), :class => "build_project") do %>
-      <button type="submit" name="build_now" class="kill_build_button">Kill Builder</button>
+      <% unless Configuration.disable_build_now %>
+        <button type="submit" name="build_now" class="kill_build_button">Kill Builder</button>
+      <% else %>
+        <button type="submit" name="build_now" class="kill_build_button" disabled="disabled">Kill Builder</button>
+      <% end %>
     <% end %>
   <% end %>
 

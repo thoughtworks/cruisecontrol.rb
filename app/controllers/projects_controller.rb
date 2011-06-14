@@ -1,4 +1,5 @@
 class ProjectsController < ApplicationController
+  before_filter :disable_build_triggers, :only => [:build, :kill_build]
 
   def index
     @projects = Project.all
@@ -39,8 +40,6 @@ class ProjectsController < ApplicationController
   end
 
   def build
-    render :text => 'Build requests are not allowed', :status => 403 and return if Configuration.disable_build_now
-
     @project = Project.find(params[:id])
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project
 
