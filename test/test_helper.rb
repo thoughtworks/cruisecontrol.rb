@@ -5,7 +5,6 @@ require 'rails/test_help'
 require 'mocha'
 require 'ostruct'
 require 'stringio'
-require 'xmlsimple'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
