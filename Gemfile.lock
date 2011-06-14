@@ -1,9 +1,6 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    RedCloth (4.2.7)
-    RedCloth (4.2.7-java)
-    RedCloth (4.2.7-x86-mingw32)
     abstract (1.0.0)
     actionmailer (3.0.7)
       actionpack (= 3.0.7)
@@ -85,7 +82,6 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
-  RedCloth (= 4.2.7)
   api_cache (= 0.2.0)
   httparty (= 0.6.1)
   jquery-rails (= 1.0.9)
