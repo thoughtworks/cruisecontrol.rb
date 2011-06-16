@@ -193,10 +193,12 @@ EOF
   
   def in_clean_environment_on_local_copy(&block)
     old_rails_env = ENV['RAILS_ENV']
+    old_bundle_gemfile = ENV['BUNDLE_GEMFILE']
 
     Bundler.with_clean_env do
       begin
         ENV['RAILS_ENV'] = nil
+        ENV['BUNDLE_GEMFILE'] = nil
 
         # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
         ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
@@ -212,6 +214,7 @@ EOF
         end
       ensure
         ENV['RAILS_ENV'] = old_rails_env
+        ENV['BUNDLE_GEMFILE'] = old_bundle_gemfile
       end
     end
   end
