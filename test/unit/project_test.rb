@@ -885,7 +885,19 @@ class ProjectTest < ActiveSupport::TestCase
       assert_equal File.join(@project.local_checkout, "little_treasures/HEY_GUYS_GEMFILE_IS_RIGHT_HERE"), @project.gemfile
     end
   end
-    
+
+  context "#environment" do
+    test "should return empty Hash when no environment variables specified" do
+      assert_equal({}, @project.environment)
+    end
+
+    test "should allow assiging environment variables" do
+      @project.environment["CC_DB_PREFIX"] = "master_"
+      @project.environment["CC_HBASE_ENABLED"] = "false"
+      assert_equal({ "CC_DB_PREFIX" => "master_", "CC_HBASE_ENABLED" => "false" }, @project.environment)
+    end
+  end
+
   private
   
     def stub_build(label)

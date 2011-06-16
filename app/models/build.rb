@@ -189,10 +189,17 @@ EOF
   
   def in_clean_environment_on_local_copy(&block)
     old_rails_env = ENV['RAILS_ENV']
+    old_environment = project.environment.keys.each_with_object({}) do |key, env|
+      env[key] = ENV[key]
+    end
 
     Bundler.with_clean_env do
       begin
         ENV['RAILS_ENV'] = nil
+
+        project.environment.each do |key, value|
+          ENV[key] = value
+        end
 
         # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
         ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
@@ -208,6 +215,10 @@ EOF
         end
       ensure
         ENV['RAILS_ENV'] = old_rails_env
+
+        old_environment.each do |key, value|
+          ENV[key] = value
+        end
       end
     end
   end
