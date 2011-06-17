@@ -1,9 +1,6 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    RedCloth (4.2.7)
-    RedCloth (4.2.7-java)
-    RedCloth (4.2.7-x86-mingw32)
     abstract (1.0.0)
     actionmailer (3.0.7)
       actionpack (= 3.0.7)
@@ -51,12 +48,8 @@ GEM
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    mechanize (1.0.0)
-      nokogiri (>= 1.2.1)
     mime-types (1.16)
     mocha (0.9.12)
-    nokogiri (1.5.0.beta.4)
-    nokogiri (1.5.0.beta.4-java)
     polyglot (0.3.1)
     rack (1.2.3)
     rack-mount (0.6.14)
@@ -77,6 +70,8 @@ GEM
       rake (>= 0.8.7)
       thor (~> 0.14.4)
     rake (0.8.7)
+    rcov (0.9.9)
+    rcov (0.9.9-java)
     thor (0.14.6)
     treetop (1.4.9)
       polyglot (>= 0.3.1)
@@ -89,17 +84,15 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
-  RedCloth
   api_cache (= 0.2.0)
   httparty (= 0.6.1)
-  jquery-rails
+  jquery-rails (= 1.0.9)
   jruby-openssl
-  mechanize (= 1.0.0)
-  mocha (~> 0.9.10)
-  nokogiri (~> 1.5.0.beta.4)
-  rack (~> 1.2.1)
+  mocha (= 0.9.12)
+  rack (= 1.2.3)
   rack-test
-  rails (~> 3.0.7)
+  rails (= 3.0.7)
   rake (= 0.8.7)
-  tzinfo (~> 0.3.23)
-  xml-simple
+  rcov (= 0.9.9)
+  tzinfo (= 0.3.27)
+  xml-simple (= 1.0.16)

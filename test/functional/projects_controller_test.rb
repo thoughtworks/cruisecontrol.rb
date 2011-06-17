@@ -247,7 +247,16 @@ class ProjectsControllerTest < ActionController::TestCase
 
       post :build, :id => 'one'
 
-      assert_response 403
+      assert_response :forbidden
+      assert_equal 'Build requests are not allowed', @response.body
+    end
+    
+    test "should refuse to kill build and render a 403 if the configuration does not permit build now" do
+      Configuration.stubs(:disable_build_now).returns(true)
+
+      post :kill_build, :id => 'one'
+
+      assert_response :forbidden
       assert_equal 'Build requests are not allowed', @response.body
     end
   end

@@ -1,3 +1,5 @@
+require 'redcloth'
+
 class TextileTemplateHandler < ActionView::TemplateHandlers::ERB
   extend ActiveSupport::Memoizable
   

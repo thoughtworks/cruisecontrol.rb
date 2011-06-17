@@ -1,11 +1,25 @@
 * HEAD
-  - site_config option to disable code browsing 
+  - Upgrade to using Ruby on Rails 3.0 and Rack 1.2.
+  - Complete UI refresh.
+  - Improved compatibility with MRI 1.8.7, 1.9.2 and JRuby. Removed support for Ruby 1.8.6.
+  - Defaults to using Git as the SCN tool of choice.
+  - Added "just do the right thing" support for Bundler (http://gembundler.com).
+  - Internal dependencies are now managed using Bundler.
+  - Plugins are now versioned and stored in the CruiseControl.rb-contrib project on Github.
+  - Added a "kill build" button for killing builds that go astray.
+  - Adding a ScheduledBuildTrigger that allows more fine-grained control over build scheduling.
+  - Improved documentation for contributors and CC.rb developers.
+  - Improved online documentation for end users.
+  - Added a site_config option to disable code browsing.
   - Fixed TLS incompatibility with various Ruby versions
-  - Improved plugin loading and documentation.
-  - CruiseControl.rb-contrib project on Github.
-  - Rails 2.3/Rack support.
+  - Improved timezone support for cctray feeds.
+  - Use jQuery 1.6.1 instead of prototype.js
   - Storing and passing to plugins a full revision GUID. Displaying in web UI only first 7 characters thereof.
-  - [bug] Occasionally, cleaning up old builds resulted in phantom unfinished builds. Not anymore.
+  - Occasionally, cleaning up old builds resulted in phantom unfinished builds. Not anymore.
+  - Prevent 'git fetch origin' from hanging by ensuring that it's killed within 5 minutes (see Configuration#git_load_new_changesets_timeout).
+  - Allow forcing of builds on a schedule even if there are no SCM changes (Project#scheduler.polling_interval and Project#scheduler.always_build).
+  - Added the ability for Git's log parser to handle encoding as part of the commit object. This brings CC.rb into complete compliance with git master's object format.
+  - Improved plugin loading.
 ------------------------------------------------------------------------------------------------------------------------
 * 1.4.0
   - support for Git, Bazaar and Mercurial (distributed source control systems) [Ben Burkert, Brett Adam, Biju Philip Chacko, Chris Johnston, johnf(https://cruisecontrolrb.lighthouseapp.com/projects/9150/tickets/236-add-bazaar-support)]

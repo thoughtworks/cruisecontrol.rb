@@ -1,36 +1,28 @@
-desc 'Continuous build target'
-task :cruise do
-  # Add local user gem path, in case rcov was installed with non-root access
-  ENV['PATH'] = "#{ENV['PATH']}:#{File.join(Gem.user_dir, 'bin')}"
-
-  puts
-  puts "[CruiseControl] Build environment:"
-  puts "[CruiseControl]   #{`cat /etc/issue`}"
-  puts "[CruiseControl]   #{`uname -a`}"
-  puts "[CruiseControl]   #{`ruby -v`}"
-  `gem env`.each_line {|line| print "[CruiseControl]   #{line}"}
-  puts "[CruiseControl]   Local gems:"
-  `gem list`.each_line {|line| print "[CruiseControl]     #{line}"}
-  puts
-    
-  out = ENV['CC_BUILD_ARTIFACTS']
-  mkdir_p out unless File.directory? out if out
-
-  if RUBY_VERSION == '1.8.7' || RUBY_VERSION =~ /^1.9/
-    puts '!!!!!! Skipping rcov on Ruby 1.8.7 and 1.9'
-    Rake::Task["test:units"].invoke
-    Rake::Task["test:functionals"].invoke
-    # TODO: Why were there no integration tests under 1.8.7?  Do they not work?
-    # Rake::Task["test:integration"].invoke
-  else
-    ENV['SHOW_ONLY'] = 'models,lib,helpers'
-    Rake::Task["test:units:rcov"].invoke
-    mv 'coverage/units', "#{out}/unit test coverage" if out
+namespace :cruise do
   
-    ENV['SHOW_ONLY'] = 'controllers'
-    Rake::Task["test:functionals:rcov"].invoke
-    mv 'coverage/functionals', "#{out}/functional test coverage" if out
+  task :info do
+    # Add local user gem path, in case rcov was installed with non-root access
+    ENV['PATH'] = "#{ENV['PATH']}:#{File.join(Gem.user_dir, 'bin')}"
+
+    puts
+    puts "[CruiseControl] Build environment:"
+    puts "[CruiseControl]   #{`cat /etc/issue`}"
+    puts "[CruiseControl]   #{`uname -a`}"
+    puts "[CruiseControl]   #{`ruby -v`}"
+    `gem env`.each_line {|line| print "[CruiseControl]   #{line}"}
+    puts "[CruiseControl]   Local gems:"
+    `gem list`.each_line {|line| print "[CruiseControl]     #{line}"}
+    puts
+  end
   
-    Rake::Task["test:integration"].invoke
+  desc "Continuous build target"
+  task :all => [:info, 'rcov'] do
+    out = ENV['CC_BUILD_ARTIFACTS']
+    mkdir_p out unless File.directory? out if out
+    mv 'reports/rcov', "#{out}" if out
   end
 end
+
+
+desc 'Continuous build target'
+task :cruise => ['cruise:all']

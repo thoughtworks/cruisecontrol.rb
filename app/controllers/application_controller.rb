@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
     render :file => Rails.root.join('public', '404.html').to_s, :status => 404
   end
 
-  # Scrub sensitive parameters from your log
-  # filter_parameter_logging :password
+  def disable_build_triggers
+    return unless Configuration.disable_build_now
+    render :text => 'Build requests are not allowed', :status => :forbidden
+  end
 end

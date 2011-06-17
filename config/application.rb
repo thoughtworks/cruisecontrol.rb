@@ -54,6 +54,8 @@ module CruiseControl
 
       BuilderPlugin.load_all
     end
+
+    config.action_view.javascript_expansions[:defaults] = ['rails', 'jquery', 'jquery_ujs']
   end
 end
 
