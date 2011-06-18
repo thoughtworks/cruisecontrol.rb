@@ -235,11 +235,20 @@ Why wouldn't we want our project to be triggered by a change to it's source code
 
 h1(#environment_variables). Environment variables
 
+CC.rb can set any custom environment variables that your build requires.  Every project can be configured to build with different environment variables.  For example:
+
+  Project.configure do |project|
+    project.environment['DB_HOST'] = 'db.example.com'
+    project.environment['DB_PORT'] = '1234'
+  end
+
+h2(#ccrb_environment_variables). Special environment variables
+
 CC.rb sets some environment variables when it runs your build, and you can use them inside your build process to tweak it or its output. Currently
 there are just three:
-* CC_BUILD_REVISION - this is the revision number of the current build, it looks like "5" or "56236"
-* CC_BUILD_LABEL - usually this is the same as CC_BUILD_REVISION, but if there is more than one build of a particular revision, it will have a ".n" after it, so it might look like "323", "323.2", "4236.20", etc.
-* CC_BUILD_ARTIFACTS - this is the directory which the dashboard looks in.  Any files you copy into here will be available from the dashboard.
+* <code>CC_BUILD_REVISION</code> - this is the revision number of the current build, it looks like "5" or "56236"
+* <code>CC_BUILD_LABEL</code> - usually this is the same as CC_BUILD_REVISION, but if there is more than one build of a particular revision, it will have a ".n" after it, so it might look like "323", "323.2", "4236.20", etc.
+* <code>CC_BUILD_ARTIFACTS</code> - this is the directory which the dashboard looks in.  Any files you copy into here will be available from the dashboard.
 
 h1(#remote_builds). Remote builds
 

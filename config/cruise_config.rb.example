@@ -27,4 +27,8 @@ Project.configure do |project|
   # no matter whether there are source control changes or not; no matter what is the project.scheduler.always_build setting.
   # project.triggered_by ScheduledBuildTrigger.new(project, :build_interval => 1.day, :start_time => 2.minutes.from_now)
 
+  # Set environment variables passed into the build
+  # project.environment['DB_HOST'] = 'db.example.com'
+  # project.environment['DB_PORT'] = '1234'
+
 end
