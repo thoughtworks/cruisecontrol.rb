@@ -14,7 +14,9 @@
     
     <% status = project.sleeping? ? project.last_complete_build_status : project.builder_state_and_activity %>
     <div class="builder_status">
-      <% if project.previously_built? %>
+      <% if project.building? %>
+        <%= link_to_build(project, project.last_build) %>
+      <% elsif project.previously_built? %>
         <%= link_to_build_with_elapsed_time(project, project.last_complete_build) %>
       <% end %>
     </div>
