@@ -10,10 +10,11 @@ h2. <code>--trace</code> option
 
 The most important troubleshooting feature of CruiseControl.rb is re-starting it with <code>--trace</code> option, like this:
 
-<pre><code>    > kill [pid of dashboard or builder process]
-    > ./cruise build your_project --trace</code>
-       ... or even ...
-    > ./cruise start your_project --trace</code></pre>
+  $ kill [pid of dashboard or builder process]
+  $ ./cruise build your_project --trace
+     ... or even ...
+  $ ./cruise start your_project --trace
+    
 
 This option turns on verbose logging, and makes CC.rb builders a lot more talkative. What's even more important, it also
 invokes Rake with <code>--trace</code> option, too, so that the build.log will have some more details, including complete 

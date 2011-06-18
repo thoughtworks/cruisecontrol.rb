@@ -30,20 +30,19 @@ For the complete list, look at the project.rb file in the codebase.
 Look at the existing plugins for examples of what you can do.  For example, this plugin would simply print a message
 to the console when the build failed.
 
-<code><pre>
-class MinimalConsoleLogger
-  def initialize(project)
+
+  class MinimalConsoleLogger
+    def initialize(project)
+    end
+
+    def build_loop_failed(error)
+      puts "Build loop failed"
+      puts "#{error.class}: #{error.message}"
+      ...
+    end
   end
 
-  def build_loop_failed(error)
-    puts "Build loop failed"
-    puts "#{error.class}: #{error.message}"
-    ...
-  end
-end
-
-Project.plugin :minimal_console_logger
-</pre></code>
+  Project.plugin :minimal_console_logger
 
 That's it.  That's all the code you need.  Make sure you add your plugin to the project at the end of your file.
 Aside from that, the "magic" is just in naming your methods the names of project events. Your method with the same

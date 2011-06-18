@@ -99,7 +99,7 @@ _Official Standard Procedure for the Submission of Patches_ is hereby defined as
 
 1. Check out the latest source from the git repository:
 
-<pre><code>git clone git://github.com/thoughtworks/cruisecontrol.rb.git</code></pre>
+  git clone git://github.com/thoughtworks/cruisecontrol.rb.git
 
 2. Run the build, make sure that it passes: <code>rake</code>
 

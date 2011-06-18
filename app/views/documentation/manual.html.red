@@ -59,9 +59,8 @@ in CC.rb is about 3 to 5 lines of very simple Ruby.
 When you first add a project, a configuration file called <code>cruise_config.rb</code> is created for you in the 
 *$cruise_data*/projects/your_project/ directory. It contains a number of comments, but two lines are important:
 
-<pre><code>Project.configure do |project|
-end
-</code></pre>
+  Project.configure do |project|
+  end
 
 Every cruise_config.rb must have these two lines, and all your other configuration goes between them. It's recommended that you check
 this file into version control, and if you do then changes made to the configuration will be automatically be picked up by CC.rb the
@@ -80,14 +79,13 @@ p(hint). Hint: configuration examples below include lines like '...'. This repre
 Since configuration files are written in a real programming language (Ruby), you can modularize them, use
 logical statements, and generally do whatever makes sense. For example, consider the following snippet:
 
-<pre><code>Project.configure do |project|
-  case project.name
-  when 'MyProject.Quick' then project.rake_task = 'test:units'
-  when 'MyProject.BigBertha' then project.rake_task = 'cruise:all_tests'
-  else raise "Don't know what to build for project #{project.name.inspect}"
+  Project.configure do |project|
+    case project.name
+    when 'MyProject.Quick' then project.rake_task = 'test:units'
+    when 'MyProject.BigBertha' then project.rake_task = 'cruise:all_tests'
+    else raise "Don't know what to build for project #{project.name.inspect}"
+    end
   end
-end
-</code></pre>
 
 p(hint). Hint: Use code like above to source-control configuration of multiple CruiseControl.rb projects building the same codebase.
 
@@ -111,12 +109,11 @@ h1(#changing_the_build_command). Changing the build command or Rake task
 <code>cruise</code> may be the task for a quick build, but you may also want to run a long build with all acceptance
 tests included. This can be done by assigning the <code>project.rake_task</code> attribute in cruise_config.rb:
 
-<pre><code>Project.configure do |project|
-  ...
-  project.rake_task = 'big_bertha_build'
-  ...
-end
-</code></pre>
+  Project.configure do |project|
+    ...
+    project.rake_task = 'big_bertha_build'
+    ...
+  end
 
 p(hint). Hint: Be careful when defining additional build tasks. If two builds share the same <code>RAILS_ENV</code> value
          then they will operate against the same database, which means that if two builds run simultaneously there is
@@ -139,12 +136,11 @@ really, any command that can return a success or failure status code.
 A custom build command can be set with the <code>project.build_command</code> attribute. Modify cruise_config.rb file like
 this:
 
-<pre><code>Project.configure do |project|
-  ...
-  project.build_command = 'my_build_script.sh'
-  ...
-end
-</code></pre>
+  Project.configure do |project|
+    ...
+    project.build_command = 'my_build_script.sh'
+    ...
+  end
 
 If <code>project.build_command</code> is set, CC.rb will invoke the specified command from the project's work directory
 (*$cruise_data*/projects/your_project/work/) and examine the exit code to determine whether the
@@ -175,23 +171,21 @@ h1(#build_scheduling). Build scheduling
 By default, the builder polls Subversion every 10 seconds for new revisions. This can be changed by adding the
 following line to cruise_config.rb:
 
-
-<pre><code>Project.configure do |project|
-  ...
-  project.scheduler.polling_interval = 5.minutes
-  ...
-end
-</code></pre>
+  Project.configure do |project|
+    ...
+    project.scheduler.polling_interval = 5.minutes
+    ...
+  end
 
 What if you want a scheduler with some interesting logic? Well, a default scheduler can be substituted by placing
 your own scheduler implementation into the plugins directory and configuring it as follows:
 
-<pre><code>Project.configure do |project|
-  ...
-  project.scheduler = MyCustomScheduler.new(project)
-  ...
-end
-</code></pre>
+  Project.configure do |project|
+    ...
+    project.scheduler = MyCustomScheduler.new(project)
+    ...
+  end
+
 
 After initializing everything, and loading the project (this step includes evaluation of cruise_config.rb), the
 builder invokes project.scheduler.run. A builder must be able to detect when its configuration has changed, or when a 
@@ -213,23 +207,17 @@ when (surprise) it detects a change in a project's source control.
 
 However, you can add additional triggers or replace a trigger entirely.  For example, you can have one project's successful build trigger another project's build with our SuccessfulBuildTrigger.
 
-<pre><code>
   project.triggered_by SuccessfulBuildTrigger.new(project, 'indie')
-</code></pre>
 
 or, in short hand:
 
-<pre><code>
   project.triggered_by 'indie'
-</code></pre>
 
 Why would you want one build to trigger another?  In this instance, maybe our project depends on indie and we want to know if a change to indie breaks our project.
 
 These examples, *added* a SuccessfulBuildTrigger.  We could also *replace* the default trigger by writing
 
-<pre><code>
   project.triggered_by = [SuccessfulBuildTrigger.new(project, "fast_build")]
-</code></pre>
 
 Why wouldn't we want our project to be triggered by a change to it's source code?  In this case, maybe we've separated our project into a fast and slow build.  We could use this to only trigger a slow build if the fast one passes.
 
@@ -254,17 +242,13 @@ h1(#remote_builds). Remote builds
 
 CC.rb can run builds on remote servers.  This is done by sshing to the server in your build command.  For example:
 
-<pre><code>
   project.build_command = 'ssh user@server ./run_remotely.sh $CC_BUILD_REVISION'
-</code></pre>
 
 run_remotely.sh might look something like:
 
-<pre><code>
   #/bin/bash
   svn up -r$1
   rake test:integration
-</code></pre>
 
 Of course you will need to checkout the code on the remote server before running the first build.
 
@@ -277,9 +261,7 @@ h1(#performing_a_clean_checkout). Performing a clean checkout for each build
 CC.rb supports clean checkouts, though they are not the default behavior.  To enable them, you must use the <code>do_clean_checkout</code>
 flag together with an optional frequency. Acceptable values are <code>:always</code>, <code>:never</code>, and <code>:every => [duration]</code>.
 
-<pre><code>
   project.do_clean_checkout :every => 6.hours
-</code></pre>
 
 h1(#troubleshooting_and_support). Troubleshooting and support
 
