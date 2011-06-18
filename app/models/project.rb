@@ -100,7 +100,7 @@ class Project
     @config_file_content = ''
     @error_message = ''
     @triggers = [ ChangeInSourceControlTrigger.new(self) ]
-    @bundler_args = %W(--path=#{self.gem_install_path} --gemfile=#{self.gemfile} --local --no-color)
+    @bundler_args = %W(--path=#{self.gem_install_path} --gemfile=#{self.gemfile} --no-color)
 
     self.source_control = attrs[:scm] if attrs[:scm]
 
