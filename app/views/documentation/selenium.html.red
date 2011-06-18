@@ -37,9 +37,8 @@ h2. Artifacts Destination
 You may want to copy Selenium reports to build artifacts directory, so that you can check the test result via Dashboard.
 Selenium on Rails puts the reports in <code>$RAILS_ROOT/log/selenium</code> directory. You can copy them to build 
 artifacts directory (please check "What should I do with custom build artifacts?" section in our 
-"manual":http://cruisecontrolrb.thoughtworks.com/documentation/manual page). You just need do following in your
-<code>cruise</code> Rake task:
-
+"manual":http://cruisecontrolrb.thoughtworks.com/documentation/manual page). You just need do following in
+your <code>cruise</code> Rake task:
 
   task :cruise do
     out = ENV['CC_BUILD_ARTIFACTS']
