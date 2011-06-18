@@ -352,6 +352,24 @@ class BuildTest < ActiveSupport::TestCase
         ENV['RAILS_ENV'] = 'test'
       end
     end
+
+    test "should pass project environment variables to the block" do
+      begin
+        cc_db_prefix, ENV["CC_DB_PREFIX"] = ENV["CC_DB_PREFIX"], "test_"
+        with_sandbox_project do |sandbox, project|
+          project.environment["CC_DB_PREFIX"] = "master_"
+          build = Build.new(project, 1)
+
+          build.in_clean_environment_on_local_copy do
+            assert_equal "master_", ENV["CC_DB_PREFIX"]
+          end
+
+          assert_equal "test_", ENV["CC_DB_PREFIX"]
+        end
+      ensure
+        ENV["CC_DB_PREFIX"] = cc_db_prefix
+      end
+    end
   end  
 
   context "#abbreviated_label" do

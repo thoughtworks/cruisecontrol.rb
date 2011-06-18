@@ -531,7 +531,11 @@ class Project
   def gemfile
     File.join(self.local_checkout, @gemfile || "Gemfile")
   end
-  
+
+  def environment
+    @environment ||= {}
+  end
+
   private
   
   # sorts a array of builds in order of revision number and rebuild number 
