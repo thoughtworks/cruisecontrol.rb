@@ -31,4 +31,7 @@ Project.configure do |project|
   # project.environment['DB_HOST'] = 'db.example.com'
   # project.environment['DB_PORT'] = '1234'
 
+  # Set any args for bundler here
+  # Defaults to '--path=#{project.gem_install_path} --gemfile=#{project.gemfile} --no-color'
+  # project.bundler_args = "--path=#{project.gem_install_path} --gemfile=#{project.gemfile} --no-color --local"
 end
