@@ -1,5 +1,28 @@
 module BuildsHelper
 
+  def file_mtime(path)
+    file = @build.artifact(path)
+    return if File.symlink?(file)
+
+    mtime = File.mtime(file)
+    if (mtime.to_i > Time.now.to_i - 24*60*60)
+      mtime.strftime("%I:%M:%S %p")
+    else
+      mtime.strftime("%d-%m-%Y")
+    end
+  end
+  
+  def file_size(path)
+    file = @build.artifact(path)
+    File.size(file)
+  end
+  
+  def file_type(path)
+    file = @build.artifact(path)
+    return 'directory' if File.directory?(file)
+    Rack::Mime::MIME_TYPES[File.extname(file)] || 'unknown'
+  end
+
   def select_builds(project, builds)
     return "" if builds.blank?
 

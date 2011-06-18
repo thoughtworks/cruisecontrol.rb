@@ -323,6 +323,7 @@ class BuildTest < ActiveSupport::TestCase
 
         build = Build.new(project, 1)
         assert_equal(%w(coverage foo foo.txt), build.additional_artifacts.sort)
+        assert_equal ["coverage/functionals", "coverage/index.html", "coverage/units"], build.files_in('coverage')
       end
     end
   end

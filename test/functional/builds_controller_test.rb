@@ -127,7 +127,22 @@ class BuildsControllerTest < ActionController::TestCase
         assert_equal 'text/html', @response.headers['Content-Type']
       end
     end
-  
+    
+    test "should render a directory list if the file is a directory" do
+      with_sandbox_project do |sandbox, project|
+        create_build 1
+        Project.expects(:find).with(project.name).returns(project)
+        
+        sandbox.new :file => "build-1/dir/foo.txt"
+        sandbox.new :file => "build-1/dir/foo.html"
+        
+        get :artifact, :project => project.name, :build => '1', :path => 'dir'
+        assert_response :ok
+        assert_select 'table td a', :text => 'dir/foo.txt'
+        assert_select 'table td a', :text => 'dir/foo.html'
+      end
+    end
+      
     [ 
       [ 'foo.jpg',  'image/jpeg'      ],
       [ 'foo.jpeg', 'image/jpeg'      ],
@@ -135,7 +150,7 @@ class BuildsControllerTest < ActionController::TestCase
       [ 'foo.gif',  'image/gif'       ],
       [ 'foo.html', 'text/html'       ],
       [ 'foo.css',  'text/css'        ],
-      [ 'foo.js',   'text/javascript' ],
+      [ 'foo.js',   'application/javascript' ],
       [ 'foo.txt',  'text/plain'      ],
       [ 'foo',      'text/plain'      ],
       [ 'foo.asdf', 'text/plain'      ]
@@ -177,7 +192,7 @@ class BuildsControllerTest < ActionController::TestCase
 
         get :artifact, :project => project.name, :build => '1', :path => 'foo'
 
-        assert_redirected_to 'http://test.host/builds/my_project/1/foo/index.html'
+        assert_redirected_to 'http://test.host/builds/my_project/1/artifacts/foo/index.html'
       end
     end
 
