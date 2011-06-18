@@ -7,7 +7,7 @@ RAILS_ROOT=$(cd `dirname $0`/.. && pwd)
 
 export GEM_HOME=$RAILS_ROOT/vendor/jruby/1.8
 export GEM_PATH=$GEM_HOME
-export PATH=$GEM_HOME/bin:$PATH
+export PATH=$GEM_HOME/bin:$PATH:$RAILS_ROOT/script
 
 JAVA_OPTS="$JAVA_OPTS -client"
 
