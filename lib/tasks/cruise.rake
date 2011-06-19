@@ -5,13 +5,20 @@ namespace :cruise do
     ENV['PATH'] = "#{ENV['PATH']}:#{File.join(Gem.user_dir, 'bin')}"
 
     puts
-    puts "[CruiseControl] Build environment:"
-    puts "[CruiseControl]   #{`cat /etc/issue`}"
+    puts "[CruiseControl] === Build environment ==="  if File.exist?('/etc/issue')
+    puts "[CruiseControl]   #{`cat /etc/issue`}"      if File.exist?('/etc/issue')
+
+    puts "[CruiseControl] === System information ==="
     puts "[CruiseControl]   #{`uname -a`}"
+
+    puts "[CruiseControl] === Ruby information ==="
     puts "[CruiseControl]   #{`ruby -v`}"
-    `ruby -S gem env`.each_line {|line| print "[CruiseControl]   #{line}"}
-    puts "[CruiseControl]   Local gems:"
-    `ruby -S gem list`.each_line {|line| print "[CruiseControl]     #{line}"}
+
+    puts "[CruiseControl] === Gem information ==="
+    `ruby -S gem env`.each_line  {|line| print "[CruiseControl]    #{line}"}
+
+    puts "[CruiseControl] === Local gems ==="
+    `ruby -S gem list`.each_line {|line| print "[CruiseControl]    #{line}"}
     puts
   end
   
