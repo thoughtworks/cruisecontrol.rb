@@ -39,9 +39,9 @@ class Build
       raise ConfigError.new(@project.error_message) unless @project.config_valid?
       in_clean_environment_on_local_copy do
         if @project.uses_bundler?
-          execute self.bundle_install, :stdout => build_log, :stderr => build_log
+          execute self.bundle_install, :stdout => build_log, :stderr => build_log, :env => project.environment
         end
-        execute self.command, :stdout => build_log, :stderr => build_log
+        execute self.command, :stdout => build_log, :stderr => build_log, :env => project.environment
       end
       build_status.succeed!(seconds_since(@start))
     rescue => e
@@ -128,6 +128,10 @@ EOF
     build_status.timestamp
   end
 
+  def files_in(path)
+    Dir["#{artifacts_directory}/#{path}/*"].collect {|f| f.gsub("#{artifacts_directory}/", '') }
+  end
+  
   def artifacts_directory
     Dir["#{@project.path}/build-#{label}*"].sort.first || File.join(@project.path, "build-#{label}")
   end

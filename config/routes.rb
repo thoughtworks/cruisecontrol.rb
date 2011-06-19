@@ -10,7 +10,7 @@ CruiseControl::Application.routes.draw do
   end
 
   match 'builds/older/:project' => 'builds#drop_down', :as => :builds_drop_down, :project => /[^\/]+/
-  match 'builds/:project/:build/*path' => 'builds#artifact', :as => :build_artifact, :build => /[^\/]+/, :project => /[^\/]+/
+  match 'builds/:project/:build/artifacts/*path' => 'builds#artifact', :as => :build_artifact, :build => /[^\/]+/, :project => /[^\/]+/
   match 'builds/:project/:build' => 'builds#show', :as => :build, :build => /[^\/]+/, :project => /[^\/]+/
   match 'builds/:project' => 'builds#show', :as => :project_without_builds, :project => /[^\/]+/
 

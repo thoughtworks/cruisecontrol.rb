@@ -47,8 +47,8 @@
       <% build_artifacts = @build.additional_artifacts %>
 
       <ul class="build_nav">
-        <li class="section_name active"><a href="#build_changeset">Build Changeset</a></li>
-        <li class="section_name"><a href="#build_log">Build Log</a></li>
+        <li class="section_name active"><a href="#build_log">Build Log</a></li>
+        <li class="section_name"><a href="#build_changeset">Build Changeset</a></li>
 
         <% if test_failures.any? %>
           <li class="section_name"><a href="#test_failures">Test Failures/Errors</a></li>
@@ -66,7 +66,14 @@
       </ul>
 
       <div class="sections">
-        <div class="section active" id="build_changeset">
+        <div class="section active" id="build_log">
+          <a name="build_log"></a>
+          <div class="section_content terminal_output"><%= format_build_log(@build.output) %></div>
+          <%= link_to "See unformatted build log&hellip;".html_safe, 
+                  build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %>
+        </div>
+        
+        <div class="section" id="build_changeset">
           <a name="build_changeset"></a>
           <div class="section_content terminal_output"><%= format_changeset_log(@build.changeset) %></div>
         </div>
@@ -94,13 +101,6 @@
             <div class="section_content terminal_output"><%= h plugin_errors %></div>
           </div>
         <% end %>
-
-        <div class="section" id="build_log">
-          <a name="build_log"></a>
-          <div class="section_content terminal_output"><%= format_build_log(@build.output) %></div>
-          <%= link_to "See unformatted build log&hellip;".html_safe, 
-                  build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %>
-        </div>
 
         <% unless @build.additional_artifacts.empty? %>
           <div class="section" id="build_artifacts">

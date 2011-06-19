@@ -1,32 +1,32 @@
 <div id="project_<%= project.name %>" class="project build_<%= project.last_complete_build_status %>">
-  <div class="upper">
+
+  <div class='clearfix'>
     <div class="name"><%= link_to project.name, project_path(project), :id => project.name %></div>
     <div class="builder_control">
       <%= render :partial => "builds/build_buttons", :locals => { :project => project } %>
     </div>
   </div>
   
-  <div class="lower">
+  <div class='clearfix lower'>
     <div class="rss">
       <%= link_to image_tag('rss_light.gif'), :action => 'show', :id => project.name, :format => 'rss' %>
     </div>
     
     <% status = project.sleeping? ? project.last_complete_build_status : project.builder_state_and_activity %>
+    <div class="builder_status">
+      <% if project.building? %>
+        <%= link_to_build(project, project.last_build) %>
+      <% elsif project.previously_built? %>
+        <%= link_to_build_with_elapsed_time(project, project.last_complete_build) %>
+      <% end %>
+    </div>
     
     <div class="project_status <%= status %>">
       <%= status.titleize %>
     </div>
-
+    
     <div class="status <%= project.last_complete_build_status %>">
       <%= project.last_complete_build_status.humanize %>
     </div>
-
-    <div class="builder_status">
-      <% if project.previously_built? %>
-        <%= link_to_build_with_elapsed_time(project, project.last_complete_build) %>
-      <% end %>
-    </div>
   </div>
-  
-  <div class="clear"></div>
 </div>

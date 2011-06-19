@@ -30,13 +30,12 @@ class BuildsController < ApplicationController
     render :text => "Build #{params[:build].inspect} not found", :status => 404 and return unless @build
 
     path = @build.artifact(params[:path])
-
+    
     if File.directory? path
       if File.exists?(File.join(path, 'index.html'))
         redirect_to request.fullpath + '/index.html'
       else
-        # TODO: generate an index from directory contents
-        render :text => "this should be an index of #{params[:path]}"
+        render :template => 'builds/show_dir_index'
       end
     elsif File.exists? path
       send_file(path, :type => get_mime_type(path), :disposition => 'inline', :stream => false)
@@ -59,9 +58,7 @@ class BuildsController < ApplicationController
     }
 
     def get_mime_type(name)
-      extension = name.downcase.split(".").last
-      return MIME_TYPES[ extension ]if MIME_TYPES.has_key? extension
-      "text/plain"
+      Rack::Mime::MIME_TYPES[File.extname(name)] || "text/plain"
     end
 
     def partitioned_build_lists(project)

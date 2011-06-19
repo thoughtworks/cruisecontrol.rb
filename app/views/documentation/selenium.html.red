@@ -23,9 +23,9 @@ the server in your build script, execute Selenium tests, then shutdown the serve
 For Rails applications, Selenium tests often written with "Selenium on Rails":http://www.openqa.org/selenium-on-rails .
 In order to run the tests in continuous integration build, you just need:
 
-* <code>mongrel_rails start -d -etest</code>
-* <code>rake test:acceptance</code>
-* <code>mongrel_rails stop</code>
+ $ script/rails server --daemon --environment test
+ $ rake test:acceptance
+ $ kill -9 $(cat tmp/pids/server.pid)
 
 If you don't have "mongrel":http://mongrel.rubyforge.org installed, or if you are in Windows (which does not 
 support <code>-d</code> option of mongrel_rails), or if you are not using Selenium on Rails, you have to figure
@@ -37,12 +37,10 @@ h2. Artifacts Destination
 You may want to copy Selenium reports to build artifacts directory, so that you can check the test result via Dashboard.
 Selenium on Rails puts the reports in <code>$RAILS_ROOT/log/selenium</code> directory. You can copy them to build 
 artifacts directory (please check "What should I do with custom build artifacts?" section in our 
-"manual":http://cruisecontrolrb.thoughtworks.com/documentation/manual page). You just need do following in your
-<code>cruise</code> Rake task:
+"manual":http://cruisecontrolrb.thoughtworks.com/documentation/manual page). You just need do following in
+your <code>cruise</code> Rake task:
 
-<pre><code>
-task :cruise do
-  out = ENV['CC_BUILD_ARTIFACTS']
-  system "mv log/selenium/* #{out}/"
-end
-</code></pre>
+  task :cruise do
+    out = ENV['CC_BUILD_ARTIFACTS']
+    system "mv log/selenium/* #{out}/"
+  end

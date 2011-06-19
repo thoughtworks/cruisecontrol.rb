@@ -8,9 +8,9 @@ h1(#subversion). Configuring Subversion
 
 Subversion may be explicitly configured in your cruise_config.rb file as follows:
 
-<pre><code>Project.configure do |project|
-  project.source_control = SourceControl::Subversion.new :option => value...
-end</code></pre>
+  Project.configure do |project|
+    project.source_control = SourceControl::Subversion.new :option => value...
+  end
 
 Subversion accepts the following configuration options:
 
@@ -23,9 +23,9 @@ h1(#git). Configuring Git
 
 Git may be explicitly configured in your cruise_config.rb file as follows:
 
-<pre><code>Project.configure do |project|
-  project.source_control = SourceControl::Git.new :option => value...
-end</code></pre>
+  Project.configure do |project|
+    project.source_control = SourceControl::Git.new :option => value...
+  end
 
 Git accepts the following configuration options:
 
@@ -38,9 +38,9 @@ h1(#mercurial). Configuring Mercurial
 
 Mercurial may be explicitly configured in your cruise_config.rb file as follows:
 
-<pre><code>Project.configure do |project|
-  project.source_control = SourceControl::Mercurial.new :option => value...
-end</code></pre>
+  Project.configure do |project|
+    project.source_control = SourceControl::Mercurial.new :option => value...
+  end
 
 Mercurial accepts the following configuration options:
 
@@ -52,9 +52,9 @@ h1(#bazaar). Configuring Bazaar
 
 Bazaar may be explicitly configured in your cruise_config.rb file as follows:
 
-<pre><code>Project.configure do |project|
-  project.source_control = SourceControl::Bazaar.new :option => value...
-end</code></pre>
+  Project.configure do |project|
+    project.source_control = SourceControl::Bazaar.new :option => value...
+  end
 
 Bazaar accepts the following configuration options:
 

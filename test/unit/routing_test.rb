@@ -21,7 +21,7 @@ class RoutingTest < ActionController::TestCase
   end
 
   def test_build_artifacts
-    assert_routing 'builds/CruiseControl/1.2/this/stuff.rb', 
+    assert_routing 'builds/CruiseControl/1.2/artifacts/this/stuff.rb', 
       :controller => 'builds', 
       :action => 'artifact', 
       :project => 'CruiseControl', 

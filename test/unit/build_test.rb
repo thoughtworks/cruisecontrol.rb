@@ -159,11 +159,12 @@ class BuildTest < ActiveSupport::TestCase
         build = Build.new(project, 123, true)
     
         expected_build_log = File.join(expected_build_directory, 'build.log')
-        expected_redirect_options = {
+        expected_options = {
             :stdout => expected_build_log,
-            :stderr => expected_build_log
+            :stderr => expected_build_log,
+            :env => {}
           }
-        build.expects(:execute).with(build.rake, expected_redirect_options).returns("hi, mom!")
+        build.expects(:execute).with(build.rake, expected_options).returns("hi, mom!")
 
         BuildStatus.any_instance.expects(:'succeed!').with(4)
         BuildStatus.any_instance.expects(:'fail!').never
@@ -192,14 +193,15 @@ class BuildTest < ActiveSupport::TestCase
         build = Build.new(project, 123, true)
     
         expected_build_log = File.join(expected_build_directory, 'build.log')
-        expected_redirect_options = {
+        expected_options = {
           :stdout => expected_build_log,
-          :stderr => expected_build_log
+          :stderr => expected_build_log,
+          :env => {}
         }
 
         error = RuntimeError.new("hello")
-        build.expects(:execute).with(build.rake, expected_redirect_options).raises(error)
-        BuildStatus.any_instance.expects(:'fail!').with(0, "hello")  
+        build.expects(:execute).with(build.rake, expected_options).raises(error)
+        BuildStatus.any_instance.expects(:'fail!').with(0, "hello")
         build.run
       end
     end
@@ -213,12 +215,13 @@ class BuildTest < ActiveSupport::TestCase
         build = Build.new(project, 123, true)
 
         expected_build_log = File.join(expected_build_directory, 'build.log')
-        expected_redirect_options = {
+        expected_options = {
           :stdout => expected_build_log,
-          :stderr => expected_build_log
+          :stderr => expected_build_log,
+          :env => {}
         }
     
-        build.expects(:execute).with(build.rake, expected_redirect_options).raises(CommandLine::ExecutionError)
+        build.expects(:execute).with(build.rake, expected_options).raises(CommandLine::ExecutionError)
         build.run
         
         log = SandboxFile.new(Dir["build-123-failed.in*s/build.log"].first).content
@@ -234,6 +237,34 @@ class BuildTest < ActiveSupport::TestCase
         build.run
         
         assert_equal "", build.error
+      end
+    end
+    
+    test "should pass project environment variables to execute" do
+      begin
+        cc_db_prefix, ENV["CC_DB_PREFIX"] = ENV["CC_DB_PREFIX"], "test_"
+        with_sandbox_project do |sandbox, project|
+          project.environment["CC_DB_PREFIX"] = "master_"
+        
+          expected_build_directory = File.join(sandbox.root, 'build-123')
+    
+          Time.expects(:now).at_least(2).returns(Time.at(0), Time.at(3.2))
+          build = Build.new(project, 123, true)
+    
+          expected_build_log = File.join(expected_build_directory, 'build.log')
+          expected_options = {
+              :stdout => expected_build_log,
+              :stderr => expected_build_log,
+              :env => {'CC_DB_PREFIX', 'master_'}
+            }
+          build.expects(:execute).with(build.rake, expected_options).returns("hi, mom!")
+
+          BuildStatus.any_instance.expects(:'succeed!').with(4)
+          BuildStatus.any_instance.expects(:'fail!').never
+          build.run
+        end
+      ensure
+        ENV["CC_DB_PREFIX"] = cc_db_prefix
       end
     end
   end
@@ -292,6 +323,7 @@ class BuildTest < ActiveSupport::TestCase
 
         build = Build.new(project, 1)
         assert_equal(%w(coverage foo foo.txt), build.additional_artifacts.sort)
+        assert_equal ["coverage/functionals", "coverage/index.html", "coverage/units"], build.files_in('coverage')
       end
     end
   end

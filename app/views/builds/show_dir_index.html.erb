@@ -1,0 +1,17 @@
+<h3>Listing <%= params[:path] %> </h3>
+<table>
+  <tr>
+    <th>File</th>
+    <th>Last Modified</th>
+    <th>Size</th>
+    <th>Type</th>
+  </tr>
+  <% @build.files_in(params[:path]).each do |f| %>
+  <tr>
+    <td><%= link_to f, f %></td>
+    <td><%= file_mtime(f) %></td>
+    <td><%= file_size(f) %> bytes</td>
+    <td><%= file_type(f) %></td>
+  </tr>
+  <% end %>
+</table>
