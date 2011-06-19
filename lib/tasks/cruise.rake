@@ -9,9 +9,9 @@ namespace :cruise do
     puts "[CruiseControl]   #{`cat /etc/issue`}"
     puts "[CruiseControl]   #{`uname -a`}"
     puts "[CruiseControl]   #{`ruby -v`}"
-    `gem env`.each_line {|line| print "[CruiseControl]   #{line}"}
+    `ruby -S gem env`.each_line {|line| print "[CruiseControl]   #{line}"}
     puts "[CruiseControl]   Local gems:"
-    `gem list`.each_line {|line| print "[CruiseControl]     #{line}"}
+    `ruby -S gem list`.each_line {|line| print "[CruiseControl]     #{line}"}
     puts
   end
   
