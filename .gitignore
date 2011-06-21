@@ -20,6 +20,7 @@ dist/
 vendor/plugins/rails_upgrade
 vendor/ruby/
 vendor/jruby/
+vendor/bundle
 server_jar/target/
 
 config/ccrb.properties

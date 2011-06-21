@@ -1,8 +1,8 @@
 require 'rake'
 require 'pathname'
-require Pathname.new(__FILE__).expand_path.dirname.join('lib', 'cruise_control', 'version')
+require File.expand_path('../config/application', __FILE__)
 
-Gem::Specification.new do |s|
+GEMSPEC = Gem::Specification.new do |s|
   s.name = 'cruisecontrolrb'
   s.summary = 'CruiseControl for Ruby. Keep it simple.'
   s.version = CruiseControl::VERSION::STRING
@@ -15,9 +15,11 @@ Gem::Specification.new do |s|
   s.email = 'cruisecontrolrb-developers@rubyforge.org'
   s.homepage = 'http://cruisecontrolrb.thoughtworks.com'
   s.has_rdoc = false
+  s.bindir = "."
+  s.executables << "cruise"
 
   s.files = FileList[
-    '[A-Z]*', 
+    '[a-zA-Z0-9]*', 
     'app/**/*.rb', 
     'bin/**/*',
     'config/**/*',
@@ -28,7 +30,8 @@ Gem::Specification.new do |s|
     'script/**/*',
     'server_jar/**/*',
     'tasks/**/*',
-    "vendor/#{RUBY_ENGINE}/**/*"
+    "vendor/bundle/**/*",
+    ".bundle/*"
   ]
 
   s.test_files = FileList['test/**/*']

@@ -84,6 +84,7 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
+  abstract (= 1.0.0)
   api_cache (= 0.2.0)
   httparty (= 0.6.1)
   jquery-rails (= 1.0.9)
