@@ -72,6 +72,7 @@ class SourceControl::GitTest < ActiveSupport::TestCase
     in_sandbox do
       git = new_git(:repository => "git:/my_repo", :branch => "mybranch")
       git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_project_directory => false)
+      git.stubs(:current_branch).returns('master')
       git.expects(:git).with("branch", ["--track", 'mybranch', 'origin/mybranch'])
       git.expects(:git).with("checkout", ["-q", 'mybranch'])
       git.checkout
@@ -82,6 +83,27 @@ class SourceControl::GitTest < ActiveSupport::TestCase
     in_sandbox do
       git = new_git(:repository => "git:/my_repo", :branch => "master")
       git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_project_directory => false)
+      git.stubs(:current_branch).returns('master')
+      git.checkout
+    end
+  end
+
+  def test_checkout_with_master_branch_explicitly_specified_when_master_is_not_default_should_perform_git_branch_and_checkout
+    in_sandbox do
+      git = new_git(:repository => "git:/my_repo", :branch => "master")
+      git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_project_directory => false)
+      git.stubs(:current_branch).returns('mybranch')
+      git.expects(:git).with("branch", ["--track", 'master', 'origin/master'])
+      git.expects(:git).with("checkout", ["-q", 'master'])
+      git.checkout
+    end
+  end
+
+  def test_checkout_with_default_branch_explicitly_specified_should_not_perform_git_branch_and_checkout
+    in_sandbox do
+      git = new_git(:repository => "git:/my_repo", :branch => "mybranch")
+      git.expects(:git).with("clone", ["git:/my_repo", '.'], :execute_in_project_directory => false)
+      git.stubs(:current_branch).returns('mybranch')
       git.checkout
     end
   end
