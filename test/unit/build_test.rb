@@ -384,6 +384,23 @@ class BuildTest < ActiveSupport::TestCase
         ENV['RAILS_ENV'] = 'test'
       end
     end
+
+    test "should not pass BUNDLE_GEMFILE to the block" do
+      begin
+        bundle_gemfile, ENV["BUNDLE_GEMFILE"] = ENV["BUNDLE_GEMFILE"], "GemfileOld"
+        with_sandbox_project do |sandbox, project|
+          build = Build.new(project, 1)
+
+          build.in_clean_environment_on_local_copy do
+            assert_equal nil, ENV["BUNDLE_GEMFILE"]
+          end
+
+          assert_equal "GemfileOld", ENV["BUNDLE_GEMFILE"]
+        end
+      ensure
+        ENV["BUNDLE_GEMFILE"] = bundle_gemfile
+      end
+    end
   end  
 
   context "#abbreviated_label" do

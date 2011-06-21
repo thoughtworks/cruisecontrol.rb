@@ -68,14 +68,6 @@ a:hover {
   .rounded_corners;
 }
 
-
-.clearfix:after {
-   content: ".";
-   visibility: hidden;
-   display: block;
-   height: 0;
-   clear: both;
-}
 /* default layout classes */
 
 .header {
@@ -181,6 +173,7 @@ a:hover {
   }
 
   .project {
+    position: relative;
     margin: 10px;
     background: url(../images/stripes.png) bottom left repeat;
 
@@ -189,19 +182,21 @@ a:hover {
     &.build_success       { .build_color(@success-color);     }
     &.build_failed        { .build_color(@failure-color);     }
     &.build_never_built    { .build_color(@never-built-color); }
+        
+    .name, .status, .builder_control, .rss, .project_status, .builder_status, .builder_control {
+      position: absolute;
+    }
 
     .name {
-      float: left;
       font-size: 24px;
       top: 4px;
       left: 4px;
     }
     
-    .builder_control {
-      float: right;
-    }
-    
     .status {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
       width: 90px;
       border-bottom-right-radius: 4px;
       
@@ -224,28 +219,29 @@ a:hover {
       bottom: 0px;
       left: 6px;
     }
+
+    .builder_status  { 
+      bottom: 2px;
+      left: 28px;
+    }
+
+    .project_status  { 
+      bottom: 2px;
+      left: 240px;
+    }
+
+    .upper {
+      clear: both;
+      width: 100%;
+      height: 36px;
+    }
     
     .lower {
-      padding: 2px;
-      div {
-        float: left;
-
-      }
-      .status {
-        float: right;
-      }
-      .builder_status {
-        min-width: 240px;
-      }
+      height: 24px;
+      background: url(../images/stripes.png) bottom left repeat;
     }
     
-    .clear {
-      clear: both;
-      display: block;
-      font-size: 0;
-      height: 0;
-      line-height: 0;
-    }
+    .clear { clear: both; }
   }
 }
 
@@ -552,6 +548,7 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
   margin: 10px;
 
   form.new_project_form {
+    position: relative;
     .rounded_corners;
     border: 2px solid @border-color;
     background: url(../images/stripes.png) bottom left repeat;
@@ -590,7 +587,9 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
     }
 
     button[type="submit"] {
-      float: right;
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
     }
   }
 }

@@ -9,18 +9,18 @@ export GEM_HOME=$RAILS_ROOT/vendor/jruby/1.8
 export GEM_PATH=$GEM_HOME
 export PATH=$GEM_HOME/bin:$PATH:$RAILS_ROOT/script
 
-JAVA_OPTS="$JAVA_OPTS -client"
+JAVA_OPTS_NEW="$JAVA_OPTS -client"
 
 # force 32 bit if JVM supports it available
 is_32_bit_os=$(uname -a | grep -v x86_64)
 if [ -n "$is_32_bit_os" ]; then
   is_32_bit=$(java -help | grep '\-d32')
   if [ -n "$is_32_bit" ]; then
-    JAVA_OPTS="-d32 $JAVA_OPTS"
+    JAVA_OPTS_NEW="-d32 $JAVA_OPTS_NEW"
   fi
 fi
 
-JAVA_OPTS=" $JAVA_OPTS \
+JAVA_OPTS_NEW=" $JAVA_OPTS_NEW \
             -Djruby.compile.mode=OFF \
           "
 
@@ -29,4 +29,4 @@ for i in $RAILS_ROOT/vendor/java/**/*.jar; do
   CP=$CP:$i
 done
 
-exec java $JAVA_OPTS -Xmx500m -Xss1024k -cp $CP org.jruby.Main "$@"
+exec java $JAVA_OPTS_NEW -Xmx500m -Xss1024k -cp $CP org.jruby.Main "$@"

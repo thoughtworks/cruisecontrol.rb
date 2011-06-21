@@ -1,5 +1,4 @@
 class Configuration
-  @default_page = {:controller => 'projects', :action => 'index'}
   @default_polling_interval = 20.seconds
   @sleep_after_build_loop_error = 30.seconds
   @build_request_checking_interval = 5.seconds
@@ -21,7 +20,6 @@ class Configuration
     attr_reader :dashboard_url
 
     # non-published configuration options (obscure stuff, mostly useful for http://cruisecontrolrb.thoughtworks.com)
-    attr_accessor :default_page
     attr_writer :build_request_checking_interval, :sleep_after_build_loop_error
 
     def data_root=(root)
