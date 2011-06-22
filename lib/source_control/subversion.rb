@@ -66,7 +66,7 @@ module SourceControl
       latest_revision = self.latest_revision
       if latest_revision > Revision.new(revision_number)
         reasons << "New revision #{latest_revision.number} detected"
-        reasons << revisions_since(revision_number)
+        reasons.concat(revisions_since(revision_number))
         result = false
       end
 
@@ -134,6 +134,8 @@ module SourceControl
     Info = Struct.new :revision, :last_changed_revision, :last_changed_author
 
     class ExternalReasons < Struct.new :external, :reasons
+      delegate :concat, :to => :reasons
+
       def <<(reason)
         if reason.is_a? String
           reasons << "#{reason} in external '#{external}'"

@@ -55,7 +55,7 @@ module SourceControl
       if _new_revisions.empty?
         return true
       else
-        reasons << _new_revisions
+        reasons.concat(_new_revisions)
         return false
       end
     end

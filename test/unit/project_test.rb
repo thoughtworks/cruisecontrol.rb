@@ -117,7 +117,7 @@ class ProjectTest < ActiveSupport::TestCase
 
         @project.stubs(:builds).returns([OpenStruct.new(:successful? => false, :failed? => false)])
         @project.stubs(:config_modified?).returns(false)
-        @svn.stubs(:up_to_date?).with{|reasons| reasons << [revision]}.returns(false)
+        @svn.stubs(:up_to_date?).with{ |reasons| reasons << revision }.returns(false)
         @svn.stubs(:latest_revision).returns(revision)
         @svn.expects(:update).with(revision)
 

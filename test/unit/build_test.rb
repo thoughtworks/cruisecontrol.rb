@@ -255,7 +255,7 @@ class BuildTest < ActiveSupport::TestCase
           expected_options = {
               :stdout => expected_build_log,
               :stderr => expected_build_log,
-              :env => {'CC_DB_PREFIX', 'master_'}
+              :env => {'CC_DB_PREFIX' => 'master_'}
             }
           build.expects(:execute).with(build.rake, expected_options).returns("hi, mom!")
 

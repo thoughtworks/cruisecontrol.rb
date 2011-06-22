@@ -41,7 +41,7 @@ class SourceControl::GitTest < ActiveSupport::TestCase
 
       reasons = []
       assert_false git.up_to_date?(reasons)
-      assert_equal [[:new_revision]], reasons
+      assert_equal [:new_revision], reasons
     end
   end
 

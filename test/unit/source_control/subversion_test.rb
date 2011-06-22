@@ -190,8 +190,7 @@ class SourceControl::SubversionTest < ActiveSupport::TestCase
       svn.expects(:revisions_since).with(1).returns([Subversion::Revision.new(2), Subversion::Revision.new(4)])
       svn.expects(:externals).returns([])
       assert !svn.up_to_date?(reasons = [])
-      assert_equal ["New revision 4 detected",
-                    [Subversion::Revision.new(2), Subversion::Revision.new(4)]], reasons
+      assert_equal [ "New revision 4 detected", Subversion::Revision.new(2), Subversion::Revision.new(4) ], reasons
     end
   end
 
@@ -234,7 +233,7 @@ class SourceControl::SubversionTest < ActiveSupport::TestCase
       b_svn.expects(:externals).returns({})
 
       assert !svn.up_to_date?(reasons = [], 14)
-      assert_equal ["New revision 30 detected in external 'b'", [Subversion::Revision.new(24)]], reasons
+      assert_equal ["New revision 30 detected in external 'b'", Subversion::Revision.new(24)], reasons
     end
   end
 
