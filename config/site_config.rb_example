@@ -1,7 +1,7 @@
 # site_config.rb should contain configuration options for the whole local installation of CruiseControl.rb.
 # It should be located at DATA_ROOT/site_config.rb, ie, ~/.cruise/site_config.rb
 
-# YOU MUST RESTART YOUR CRUISE CONTROL SERVER FOR ANY CHANGES MADE HERE TO TAKE EFFECT!!!
+# YOU MUST RESTART YOUR CRUISE CONTROL SERVER FOR ANY CHANGES MADE HERE TO TAKE EFFECT!
 
 # Repository and project specific configuration is defined at various cruise_config.rb
 
@@ -53,10 +53,9 @@
 # build page in the notification message.
 # Configuration.dashboard_url = 'http://my.cruisecontrolrb.host/'
 
-# If you don't want to allow triggering and killing builds through dashboard Build Now button. Useful when you host CC.rb as a
-# public web site (such as http://cruisecontrolrb.thoughtworks.com/projects - try clicking on Build Now button there
-# and see what happens):
-# Configuration.disable_build_now = true
+# Disallow triggering, killing, and creating builds through the dashboard. Useful when you host CC.rb as a
+# public web site (such as http://cruisecontrolrb.thoughtworks.com/projects):
+# Configuration.disable_admin_ui = true
 
 # If you want to only allow one project to build at a time, uncomment this line
 # by default, cruise allows multiple projects to build at a time

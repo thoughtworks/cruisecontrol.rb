@@ -46,6 +46,17 @@ class ProjectsControllerTest < ActionController::TestCase
       get :index
       assert_select "button.build_button[disabled=disabled]"
     end
+    
+    test "should render an Add Project tab in the menu header" do
+      get :index
+      assert_select "a[href=?]", new_project_path
+    end
+    
+    test "should not render the Add Project tab if the admin UI is disabled in the site configuration" do
+      Configuration.stubs(:disable_admin_ui).returns true
+      get :index
+      assert_select "a[href=?]", new_project_path, :count => 0
+    end
   end
 
   context "XHR GET /projects" do
@@ -243,7 +254,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     test "should refuse to build and render a 403 if the configuration does not permit build now" do
-      Configuration.stubs(:disable_build_now).returns(true)
+      Configuration.stubs(:disable_admin_ui).returns(true)
 
       post :build, :id => 'one'
 
@@ -252,7 +263,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
     
     test "should refuse to kill build and render a 403 if the configuration does not permit build now" do
-      Configuration.stubs(:disable_build_now).returns(true)
+      Configuration.stubs(:disable_admin_ui).returns(true)
 
       post :kill_build, :id => 'one'
 

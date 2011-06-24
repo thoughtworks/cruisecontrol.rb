@@ -215,7 +215,11 @@ class Project
   end
   
   def can_build_now?
-    !(building? || builder_down? || Configuration.disable_build_now)
+    !(building? || builder_down? || Configuration.disable_admin_ui)
+  end
+
+  def can_kill_builder?
+    !Configuration.disable_admin_ui
   end
   
   def building?

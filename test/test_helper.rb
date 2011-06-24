@@ -73,6 +73,7 @@ class ActiveSupport::TestCase
       :building? => false, 
       :sleeping? => true, 
       :can_build_now? => true,
+      :can_kill_builder? => true,
       :previously_built? => false, 
       :builder_down? => false
     )

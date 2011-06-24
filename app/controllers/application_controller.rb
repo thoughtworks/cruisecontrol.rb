@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   end
 
   def disable_build_triggers
-    return unless Configuration.disable_build_now
+    return unless Configuration.disable_admin_ui
     render :text => 'Build requests are not allowed', :status => :forbidden
   end
 end

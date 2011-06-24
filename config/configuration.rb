@@ -5,7 +5,7 @@ class Configuration
   @dashboard_refresh_interval = 30.seconds
   @dashboard_url = nil
   @email_from = 'cruisecontrol@thoughtworks.com'
-  @disable_build_now = false
+  @disable_admin_ui = false
   @serialize_builds = false
   @serialized_build_timeout = 3.hour
   @git_load_new_changesets_timeout = 5.minutes
@@ -13,7 +13,7 @@ class Configuration
 
   class << self
     # published configuration options (mentioned in config/site_config.rb.example)
-    attr_accessor :default_polling_interval, :disable_build_now, :email_from,
+    attr_accessor :default_polling_interval, :disable_admin_ui, :email_from,
                   :dashboard_refresh_interval, :serialize_builds,
                   :serialized_build_timeout, :git_load_new_changesets_timeout,
                   :disable_code_browsing, :build_history_limit
@@ -28,6 +28,11 @@ class Configuration
 
     def data_root
       @data_root ||= CruiseControl.data_root
+    end
+
+    def disable_build_now=(flag)
+      puts "DEPRECATED: Please use Configuration.disable_admin_ui instead of disable_build_now to disable administration features in the UI."
+      @disable_admin_ui = flag
     end
 
     def projects_root
