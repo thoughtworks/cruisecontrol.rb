@@ -120,7 +120,7 @@ class BuildsControllerTest < ActionController::TestCase
 
         Project.expects(:find).with(project.name).returns(project)
 
-        get :artifact, :project => project.name, :build => '1', :path => ['rcov', 'index.html']
+        get :artifact, :project => project.name, :build => '1', :path => 'rcov/index.html'
 
         assert_response :success
         assert_equal 'apple pie', @response.body
@@ -228,6 +228,32 @@ class BuildsControllerTest < ActionController::TestCase
         
         get :show, :project => project.name, :build => '2'
         assert assigns(:autorefresh)
+      end
+    end
+
+    test "should return the artifact with a content-disposition of inline" do
+      with_sandbox_project do |sandbox, project|
+        create_build 1
+        sandbox.new :file => "build-1/file.txt"
+        Project.expects(:find).with(project.name).returns(project)
+
+        get :artifact, :project => project.name, :build => '1', :path => "file.txt"
+
+        assert_response :success
+        assert_match /inline/, response.headers['Content-Disposition']
+      end
+    end
+
+    test "should allow an artifact to be requested as an attachment" do
+      with_sandbox_project do |sandbox, project|
+        create_build 1
+        sandbox.new :file => "build-1/file.txt"
+        Project.expects(:find).with(project.name).returns(project)
+
+        get :artifact, :project => project.name, :build => '1', :path => "file.txt", :attachment => ""
+        
+        assert_response :success
+        assert_match /attachment/, response.headers['Content-Disposition']
       end
     end
   end

@@ -68,9 +68,24 @@
       <div class="sections">
         <div class="section active" id="build_log">
           <a name="build_log"></a>
+          <% if @build.output_exceeds_max_file_display_length? %>
+            <p>
+              The size of the file you're viewing now is <%= number_to_human_size(@build.build_log.size) %>, which is too big to display in the dashboard;
+              CC.rb is configured to truncate any files longer than <%= number_to_human_size(Configuration.max_file_display_length) %>. 
+              You can override this value in <code>site_config.rb</code> by setting <code>max_file_display_length</code>
+              to your desired value in bytes (e.g. <code>50.kilobytes</code>), or <code>nil</code> to allow files of any length.
+            </p>
+
+            <p>File path: <code><%= @build.build_log.expand_path %></code><br/></p>
+          <% end %>
+
+          <p>
+            <%= button_tag "Download full log", :href => build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log', :attachment => 1) %>
+            or
+            <%= link_to "View full log", build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %>
+          </p>
+
           <div class="section_content terminal_output"><%= format_build_log(@build.output) %></div>
-          <%= link_to "See unformatted build log&hellip;".html_safe, 
-                  build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %>
         </div>
         
         <div class="section" id="build_changeset">

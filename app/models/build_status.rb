@@ -39,7 +39,7 @@ class BuildStatus
   end
   
   def fail!(elapsed_time, error = nil)
-    File.open(error_message_file, "w+") { |f| f.write error } unless error.nil?
+    error_message_file.open("w+") { |f| f.write error } unless error.nil?
     FileUtils.mv @artifacts_directory, "#{@artifacts_directory}-#{FAILED}.in#{elapsed_time}s"
   end
   
@@ -76,7 +76,7 @@ class BuildStatus
   end
   
   def error_message_file
-    File.join(@artifacts_directory, "error.log")
+    Pathname.new(@artifacts_directory).join("error.log")
   end
   
   private

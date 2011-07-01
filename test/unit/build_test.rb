@@ -103,20 +103,57 @@ class BuildTest < ActiveSupport::TestCase
   context "#output" do
     test "should include the log file if it exists" do
       with_sandbox_project do |sandbox, project|
-        build_log = "#{project.path}/build-1/build.log"
-        File.expects(:file?).with(build_log).returns(true)
-        File.expects(:readable?).with(build_log).returns(true)
-        File.expects(:size).with(build_log).returns(14)
-        File.expects(:read).with(build_log).returns(['line 1', 'line 2'])
-        assert_equal ['line 1', 'line 2'], Build.new(project, 1).output
+        sandbox.new :file => "build-1/build.log", :with_content => "some content"
+        assert_equal "some content", Build.new(project, 1).output
       end
     end
 
     test "should return an empty string if the log file does not exist" do
       with_sandbox_project do |sandbox, project|
-        File.expects(:file?).with("#{project.path}/build-1/build.log").returns(true)
         assert_equal "", Build.new(project, 1).output
       end
+    end
+
+    test "should truncate the output if it exceeds the configured display limit" do
+      with_sandbox_project do |sandbox, project|
+        Configuration.stubs(:max_file_display_length).returns 1.kilobyte
+        sandbox.new :file => "build-1/build.log", :with_content => "X" * ( 1.kilobyte + 1.byte )
+        assert_equal 1.kilobyte, Build.new(project, 1).output.length
+      end
+    end
+
+    test "should not truncate the output if the configured display limit is nil" do
+      with_sandbox_project do |sandbox, project|
+        Configuration.stubs(:max_file_display_length).returns nil
+        sandbox.new :file => "build-1/build.log", :with_content => "X" * ( 1.kilobyte + 1.byte )
+        assert_equal 1.kilobyte + 1.byte, Build.new(project, 1).output.length
+      end      
+    end
+  end
+
+  context "#exceeds_max_file_display_length?" do
+    test "should return false if the file does not exist" do
+      assert_equal false, Build.new(stub, 1).exceeds_max_file_display_length?(stub(:exist? => false))
+    end
+
+    test "should return false if the configured max file display length is nil" do
+      Configuration.stubs(:max_file_display_length).returns nil
+      assert_equal false, Build.new(stub, 1).exceeds_max_file_display_length?(stub(:exist? => true))
+    end
+
+    test "should return false if the given file size is equal to the configured max file display length" do
+      Configuration.stubs(:max_file_display_length).returns 1.kilobyte
+      assert_equal false, Build.new(stub, 1.kilobytes).exceeds_max_file_display_length?(stub(:exist? => true, :size => 1.kilobyte))
+    end
+
+    test "should return false if the given file size is less than the configured max file display length" do
+      Configuration.stubs(:max_file_display_length).returns 1.kilobyte
+      assert_equal false, Build.new(stub, 1.kilobytes).exceeds_max_file_display_length?(stub(:exist? => true, :size => 10.bytes))
+    end
+
+    test "should return true if the given file size exceeds the configured max file display length" do
+      Configuration.stubs(:max_file_display_length).returns 1.kilobyte
+      assert_equal true, Build.new(stub, 1.kilobytes).exceeds_max_file_display_length?(stub(:exist? => true, :size => 2.kilobytes))
     end
   end
   

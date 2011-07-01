@@ -38,7 +38,8 @@ class BuildsController < ApplicationController
         render :template => 'builds/show_dir_index'
       end
     elsif File.exists? path
-      send_file(path, :type => get_mime_type(path), :disposition => 'inline', :stream => false)
+      disposition = params.has_key?("attachment") ? "attachment" : "inline"
+      send_file(path, :type => get_mime_type(path), :disposition => disposition, :stream => false)
     else
       render_not_found
     end

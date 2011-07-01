@@ -10,13 +10,14 @@ class Configuration
   @serialized_build_timeout = 3.hour
   @git_load_new_changesets_timeout = 5.minutes
   @build_history_limit = 30
+  @max_file_display_length = 100.kilobytes
 
   class << self
     # published configuration options (mentioned in config/site_config.rb.example)
     attr_accessor :default_polling_interval, :disable_admin_ui, :email_from,
                   :dashboard_refresh_interval, :serialize_builds,
                   :serialized_build_timeout, :git_load_new_changesets_timeout,
-                  :disable_code_browsing, :build_history_limit
+                  :disable_code_browsing, :build_history_limit, :max_file_display_length
     attr_reader :dashboard_url
 
     # non-published configuration options (obscure stuff, mostly useful for http://cruisecontrolrb.thoughtworks.com)

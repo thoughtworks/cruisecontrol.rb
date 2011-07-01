@@ -32,16 +32,17 @@ class Build
   end
   
   def run
-    build_log = artifact 'build.log'
-    File.open(artifact('cruise_config.rb'), 'w') {|f| f << @project.config_file_content }
+    build_log = artifact('build.log')
+    build_log_path = build_log.expand_path.to_s
+    artifact('cruise_config.rb').open('w') {|f| f << @project.config_file_content }
 
     begin
       raise ConfigError.new(@project.error_message) unless @project.config_valid?
       in_clean_environment_on_local_copy do
         if @project.uses_bundler?
-          execute self.bundle_install, :stdout => build_log, :stderr => build_log, :env => project.environment
+          execute self.bundle_install, :stdout => build_log_path, :stderr => build_log_path, :env => project.environment
         end
-        execute self.command, :stdout => build_log, :stderr => build_log, :env => project.environment
+        execute self.command, :stdout => build_log_path, :stderr => build_log_path, :env => project.environment
       end
       build_status.succeed!(seconds_since(@start))
     rescue => e
@@ -56,10 +57,11 @@ Try to remove this project, then re-add it with correct APP_ROOT, e.g.
 rm -rf #{project.path}
 ./cruise add #{project.name} svn://my.svn.com/#{project.name}/trunk
 EOF
-        File.open(build_log, 'a'){|f| f << msg }
+        build_log.open('a') { |f| f << msg }
       end
 
-      File.open(build_log, 'a'){|f| f << e.message }
+      build_log.open('a') { |f| f << e.message }
+
       CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
       if e.is_a?(CommandLine::ExecutionError) # i.e., the build returned a non-zero status code
         fail!
@@ -108,8 +110,12 @@ EOF
     @changeset ||= contents_for_display(artifact('changeset.log'))
   end
 
+  def build_log
+    artifact('build.log')
+  end
+
   def output
-    @output ||= contents_for_display(artifact('build.log'))
+    @output ||= contents_for_display(build_log)
   end
   
   def project_settings
@@ -147,19 +153,21 @@ EOF
   end
   
   def artifact(path)
-    File.join(artifacts_directory, path)
+    Pathname.new(artifacts_directory).join(path)
+  end
+
+  def exceeds_max_file_display_length?(file)
+    file.exist? && Configuration.max_file_display_length.present? && file.size > Configuration.max_file_display_length
+  end
+
+  def output_exceeds_max_file_display_length?
+    exceeds_max_file_display_length?(artifact('build.log'))
   end
 
   def contents_for_display(file)
-    return '' unless File.file?(file) && File.readable?(file)
-    file_size_kbytes = File.size(file) / 1024
-    if file_size_kbytes < 100
-      File.read(file)
-    else
-      contents = File.read(file, 100 * 1024)
-      response = "#{file} is #{file_size_kbytes} kbytes - too big to display in the dashboard, the output is truncated\n\n\n"
-      response += contents
-    end
+    return '' unless file.file? && file.readable?
+
+    file.read(Configuration.max_file_display_length)
   end
 
   def command

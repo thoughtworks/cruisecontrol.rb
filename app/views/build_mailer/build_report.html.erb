@@ -23,6 +23,11 @@ CHANGES
 
 BUILD LOG
 ---------
+<% if @build.output_exceeds_max_file_display_length? %>
+The output below has been truncated to <%= number_to_human_size(Configuration.max_file_display_length) %>.
+View <%= link_to "the full log", build_artifact_path(:project => @build.project.name, :build => @build.label, :path => 'build.log') %> for the rest.
+<% end %>
+
 <%= @build.output %>
 
 PROJECT SETTINGS
