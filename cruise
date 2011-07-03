@@ -3,5 +3,6 @@
 ENV_PATH = File.expand_path("../config/environment", __FILE__)
 require File.expand_path("../config/boot", __FILE__)
 require File.expand_path("../lib/cruise_control/init", __FILE__)
+require File.expand_path('../lib/cruise_control/version', __FILE__)
 
 CruiseControl::Init.new.run

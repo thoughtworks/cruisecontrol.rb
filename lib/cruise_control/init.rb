@@ -67,7 +67,6 @@ module CruiseControl
     end
   
     def version
-      require 'lib/cruise_control/version'
       puts <<-EOL
     CruiseControl.rb, version #{CruiseControl::VERSION::STRING}
     Copyright (C) 2011 ThoughtWorks
@@ -76,25 +75,24 @@ module CruiseControl
   
     def help
       command = ARGV.shift
-      require 'lib/cruise_control/version'
 
       ARGV.clear << '--help'
       if command.nil?
         puts <<-EOL
-    Usage: cruise <command> [options] [args]
+Usage: cruise <command> [options] [args]
 
-    CruiseControl.rb command-line client, version #{CruiseControl::VERSION::STRING}
-    Type 'cruise help <command>' for help on a specific command.
-    Type 'cruise --version' to see the version number.
+CruiseControl.rb command-line client, version #{CruiseControl::VERSION::STRING}
+Type 'cruise help <command>' for help on a specific command.
+Type 'cruise --version' to see the version number.
 
-    Available commands:
-      start      - starts the web server (port 3333, production environment by default)
-      stop       - stops the web server
-      add        - adds a project
-      build      - starts the builder for an individual project
+Available commands:
+  start      - starts the web server (port 3333, production environment by default)
+  stop       - stops the web server
+  add        - adds a project
+  build      - starts the builder for an individual project
 
-    CruiseControl.rb is a Continous Integration Server.
-    For additional information, see http://cruisecontrolrb.thoughtworks.com/
+CruiseControl.rb is a Continous Integration Server.
+For additional information, see http://cruisecontrolrb.thoughtworks.com/
         EOL
       elsif method_for_command(command)
         self.send(method_for_command(command))
