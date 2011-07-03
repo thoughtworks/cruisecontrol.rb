@@ -8,7 +8,8 @@ def kill_tree(pid)
       kill_tree(child)
     end
   end
-  system "kill -9 #{pid}"
+
+  system "kill -INT #{pid}"
 end
 
 kill_tree(ARGV[0])

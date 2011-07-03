@@ -60,9 +60,6 @@ module Platform
 
           # safely exec
           Process.detach(pid)
-          pid_file = project_pid_file(project_name)
-          FileUtils.mkdir_p(File.dirname(pid_file))
-          File.open(pid_file, "w") {|f| f.write pid }
         rescue NotImplementedError   # Kernel.fork exists but not implemented in Windows
           Thread.new { system(command) }
         end
@@ -78,9 +75,13 @@ module Platform
   end
   module_function :project_pid_file
 
-  def kill_child_process(project_name)
-    pid = File.read(project_pid_file(project_name)).chomp
-    kill_tree = File.join(RAILS_ROOT, 'script', 'killtree')
+  def kill_project_builder(project_name)
+    kill_child_process project_pid_file(project_name).read.chomp
+  end
+  module_function :kill_project_builder
+
+  def kill_child_process(pid)
+    kill_tree = Rails.root.join('script', 'killtree')
     Kernel.system("#{kill_tree} #{pid}")
   end
   module_function :kill_child_process

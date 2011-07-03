@@ -45,11 +45,22 @@ def write_to_log_and_console(message, severity = :info)
   (puts message unless CRUISE_OPTIONS[:verbose]) rescue nil 
 end
 
+def startup(project)
+  Platform.project_pid_file(project.name).tap do |f|
+    f.dirname.mkpath
+    f.open("w") {|f| f.write Process.pid }
+  end
+
+  ProjectBlocker.block(project)
+end
+
 def cleanup(project)
-  write_to_log_and_console "Builder for project '#{CRUISE_OPTIONS[:project_name]}' exited"
   if project
     ProjectBlocker.release(project) rescue nil
+    Platform.project_pid_file(project.name).delete
   end
+
+  write_to_log_and_console "Builder for project '#{CRUISE_OPTIONS[:project_name]}' exited"
 end
 
 def load_project(path)
@@ -65,10 +76,7 @@ project = nil
 
 begin
   project = load_project(project_path)
-
-  # this will create builder.pid file in project's CC directory and grab an exclusive lock on it, or else
-  # blow up saying that something else is already locking it
-  ProjectBlocker.block(project)
+  startup(project)
 
   write_to_log_and_console "Builder for project '#{project.name}' started"
   puts "Logging to: #{File.expand_path(CRUISE_OPTIONS[:log_file_name])}"

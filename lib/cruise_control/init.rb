@@ -51,9 +51,24 @@ module CruiseControl
     end
 
     def stop
-      pid_file = File.join("tmp", "pids", "server.pid")
-      if File.exist?(pid_file)
-        exec "mongrel_rails stop -P #{pid_file}"
+      require ENV_PATH
+
+      stop_builders
+      stop_server
+    end
+
+    def stop_server
+      pid_file = Rails.root.join("tmp", "pids", "server.pid")
+
+      if pid_file.exist?
+        exec "kill -KILL #{pid_file.read.chomp}"
+        pid_file.delete
+      end
+    end
+
+    def stop_builders
+      Rails.root.join("tmp", "pids", "builders").children.each do |pid_file|
+        Platform.kill_child_process(pid_file.read.chomp)
       end
     end
 

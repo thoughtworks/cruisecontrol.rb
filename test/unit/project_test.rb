@@ -527,7 +527,7 @@ class ProjectTest < ActiveSupport::TestCase
     test "should be able to kill a build on demand" do
       in_sandbox do |sandbox|
         @project.path = sandbox.root
-        Platform.expects(:kill_child_process).with(@project.name)
+        Platform.expects(:kill_project_builder).with(@project.name)
         @project.kill_build
       end
     end

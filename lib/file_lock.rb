@@ -11,10 +11,10 @@ class FileLock
   def lock
     if @@lock_files.include?(@lock_file_name)
       raise AlreadyLockedError, "Already holding a lock on #@locked_object_description"
-      
     end
     
     lock_file = File.open(@lock_file_name, 'w')
+
     locked = lock_file.flock(File::LOCK_EX | File::LOCK_NB)
     if locked
       @@lock_files[@lock_file_name] = lock_file

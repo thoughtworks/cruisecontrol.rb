@@ -372,7 +372,7 @@ class Project
   end
 
   def kill_build
-    Platform.kill_child_process(self.name)
+    Platform.kill_project_builder(self.name)
   end
 
   def build(revision = source_control.latest_revision, reasons = [])
