@@ -29,6 +29,8 @@ module CruiseControl
     end
   
     def start
+      require ENV_PATH
+
       unless ARGV.include?('-p') || ARGV.include?('--port')
         ARGV << '-p'
         ARGV << DEFAULT_PORT.to_s
@@ -38,13 +40,22 @@ module CruiseControl
         ARGV << '-e'
         ARGV << 'production'
       end
+
+      unless ARGV.include?('-c') || ARGV.include?('--config')
+        ARGV << '-c'
+        ARGV << Rails.root.join('config.ru').to_s
+      end
+
+      unless ARGV.include?('-P') || ARGV.include?('--pid')
+        ARGV << '-P'
+        ARGV << Rails.root.join('tmp', 'pids', 'server.pid').to_s
+      end
       
       require File.join(File.dirname(__FILE__), '..', 'platform')
       Platform.running_as_daemon = ARGV.include?('-d') || ARGV.include?('--daemon')
       require 'rails/commands/server'
       
       Rails::Server.new.tap { |server|
-        require ENV_PATH
         Dir.chdir(Rails.application.root)
         server.start
       }

@@ -38,7 +38,7 @@ module CruiseControl
     @data_root ||= Pathname.new( ENV['CRUISE_DATA_ROOT'] || File.join(CruiseControl.home_directory, ".cruise") )
   end
   
-  class Application < Rails::Application      
+  class Application < Rails::Application
     # Add additional load paths for your own custom dirs
     config.autoload_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join('lib', 'builder_plugins')

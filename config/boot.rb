@@ -1,6 +1,9 @@
-require 'rubygems'
-
 # Set up gems listed in the Gemfile.
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
 
-require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
+require 'rubygems'
+
+ENV['GEM_PATH'] = File.expand_path('../../vendor/unpacked', __FILE__)
+Gem.clear_paths
+  
+require 'bundler/setup'

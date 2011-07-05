@@ -20,7 +20,7 @@ GEMSPEC = Gem::Specification.new do |s|
 
   s.files = FileList[
     '[a-zA-Z0-9]*', 
-    'app/**/*.rb', 
+    'app/**/*',
     'bin/**/*',
     'config/**/*',
     'daemon/**/*',
@@ -31,6 +31,7 @@ GEMSPEC = Gem::Specification.new do |s|
     'server_jar/**/*',
     'tasks/**/*',
     "vendor/bundle/**/*",
+    "vendor/unpacked/**/*",
     ".bundle/*"
   ]
 
