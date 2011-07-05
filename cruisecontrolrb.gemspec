@@ -18,6 +18,8 @@ GEMSPEC = Gem::Specification.new do |s|
   s.bindir = "."
   s.executables << "cruise"
 
+  s.add_dependency "bundler", "1.0.12"
+
   s.files = FileList[
     '[a-zA-Z0-9]*', 
     'app/**/*',
@@ -31,7 +33,6 @@ GEMSPEC = Gem::Specification.new do |s|
     'server_jar/**/*',
     'tasks/**/*',
     "vendor/bundle/**/*",
-    "vendor/unpacked/**/*",
     ".bundle/*"
   ]
 
