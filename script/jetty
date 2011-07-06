@@ -16,7 +16,7 @@ fi
 MAIN_JAR=$RAILS_ROOT/server_jar/target/dist/ccrb-main.jar
 
 if [ ! -f $MAIN_JAR ]; then
-  rake server_jar:clean server_jar:compile server_jar:main_jar
+  script/jrake server_jar:clean server_jar:compile server_jar:main_jar
 fi
 
 CP=$MAIN_JAR
