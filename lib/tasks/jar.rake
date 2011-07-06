@@ -101,12 +101,12 @@ namespace :server_jar do
                  :dir => "#{Rails.root}/public"
 
       zipfileset :prefix => "WEB-INF/rails/gems/gems",
-                 :dir => "#{Rails.root}/vendor/jruby/1.8/gems",
+                 :dir => "#{Bundler.bundle_path}/gems",
                  :includesfile => "#{TARGET_DIR}/gem_paths.files.txt",
                  :excludes => "*/test/**,*/spec/**"
 
       zipfileset :prefix => "WEB-INF/rails/gems/specifications",
-                 :dir => "#{Rails.root}/vendor/jruby/1.8/specifications",
+                 :dir => "#{Bundler.bundle_path}/specifications",
                  :includesfile => "#{TARGET_DIR}/gem_specs.files.txt"
     end
 
