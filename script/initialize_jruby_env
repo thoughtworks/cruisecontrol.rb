@@ -14,11 +14,11 @@ mkdir -p $GEM_HOME
 cd $RAILS_ROOT
 
 jruby=`which jruby`
-# git clean vendor/jruby -fdx
+git clean vendor/jruby -fdx
 
 if [ -z $jruby ]; then
   jruby="$RAILS_ROOT/script/jruby"
 fi
 
-$jruby -S gem install --no-ri --no-rdoc $RAILS_ROOT/vendor/cache/bundler-1.0.10.gem
+$jruby -S gem install --no-ri --no-rdoc $RAILS_ROOT/vendor/cache/bundler-1.0.12.gem
 $jruby -S $GEM_PATH/bin/bundle install --path $RAILS_ROOT/vendor --local
