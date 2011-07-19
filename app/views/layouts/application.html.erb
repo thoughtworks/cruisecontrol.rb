@@ -8,7 +8,7 @@
   
 
   <% if @autorefresh %>
-    <meta http-equiv="refresh" content="5">
+    <meta http-equiv="refresh" content="<%= Configuration.dashboard_refresh_interval.to_i * 1000 %>">
     <meta http-equiv="cache-control" content="no-cache">
   <% end %>
   <% if @rss_feeds -%>
