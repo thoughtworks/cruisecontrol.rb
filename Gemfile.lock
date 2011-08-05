@@ -32,7 +32,6 @@ GEM
     arel (2.0.10)
     bouncy-castle-java (1.5.0146.1)
     builder (2.1.2)
-    bundler (1.0.12)
     crack (0.1.8)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -87,7 +86,7 @@ PLATFORMS
 DEPENDENCIES
   abstract (= 1.0.0)
   api_cache (= 0.2.0)
-  bundler (= 1.0.12)
+  bundler (~> 1.0.12)
   httparty (= 0.6.1)
   jquery-rails (= 1.0.9)
   jruby-openssl
