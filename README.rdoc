@@ -1,12 +1,13 @@
-== {CruiseControl.rb}[http://cruisecontrolrb.thoughtworks.com]
+= CruiseControl.rb: Simple Continuous Integration
 
-=== What's this?
+=== Introduction
 
-{CruiseControl.rb}[http://cruisecontrolrb.thoughtworks.com] is a continuous integration tool. Its basic purpose in life is to alert members of a software project when one of them checks into a source control system something that breaks the build.
+{CruiseControl.rb}[http://cruisecontrolrb.thoughtworks.com] is a {continuous integration}[http://martinfowler.com/articles/continuousIntegration.html] server. It keeps everyone in your team informed about the health and progress of your project.
 
-CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ruby.
+CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ruby and maintained in their spare time by developers at {ThoughtWorks}[http://www.thoughtworks.com], a software development consultancy.
 
-=== Stuff
+=== Links
+
 * Documentation: http://cruisecontrolrb.thoughtworks.com/documentation
 * Download: https://github.com/thoughtworks/cruisecontrol.rb (click the Downloads button)
 * Source: http://github.com/thoughtworks/cruisecontrol.rb
@@ -14,12 +15,15 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ru
 * Mailing Lists: http://rubyforge.org/mail/?group_id=2918
 
 === The quick how-to
-  $ ./cruise add [project-name] -r [repository] -s [svn|git|hg|bzr]
+
   $ ./cruise start
 
-This should start cruise on port 3333.
+This should start CC.rb on port 3333. To add new projects, there's a GUI interface, or you can use the command line:
+
+  $ ./cruise add [project-name] -r [repository] -s [svn|git|hg|bzr]
 
 === License:
+
 * Apache Software License 2.0
 
 (C) ThoughtWorks Inc. 2007 - 2011
