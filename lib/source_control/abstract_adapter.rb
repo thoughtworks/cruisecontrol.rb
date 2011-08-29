@@ -26,8 +26,14 @@ module SourceControl
     end
 
     def clean_checkout(revision = nil, stdout = $stdout)
-      FileUtils.rm_rf(path)
-      checkout(revision, stdout)
+      new_path = "#{path}.new"
+      begin
+        checkout(revision, stdout, new_path)
+        FileUtils.rm_rf(path)
+        FileUtils.mv(new_path, path) if File.directory?(new_path)
+      ensure
+        FileUtils.rm_rf(new_path)
+      end
     end
 
     def error_log

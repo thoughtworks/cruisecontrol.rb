@@ -53,6 +53,15 @@ module SourceControl
       end
     end
 
+    def test_checkout_to_a_given_directory
+      bzr = Bazaar.new(:repository => '/tmp/bzr_repo')
+      in_sandbox do |sandbox|
+        bzr.expects(:bzr).with('branch', ['/tmp/bzr_repo', 'somewhere'], :execute_in_project_directory => false)
+        FileUtils.mkdir File.join(sandbox.root, "somewhere")
+        assert_nothing_raised { bzr.checkout(nil, $stdout, 'somewhere') }
+      end
+    end
+
     # TODO tests for other public methods of this class
 
   end

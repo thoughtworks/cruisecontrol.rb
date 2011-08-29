@@ -117,7 +117,8 @@ EOF
   def test_should_parse_INFO_XML_OUTPUT
     expected_result = {:revision => 328,
                        :last_changed_revision => 328,
-                       :last_changed_author => 'stellsmi'}
+                       :last_changed_author => 'stellsmi',
+                       :url => 'svn://rubyforge.org/var/svn/cruisecontrolrb'}
 
     assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT)
   end
@@ -125,7 +126,8 @@ EOF
   def test_should_parse_INFO_XML_OUTPUT_WITH_WORKING_COPY
     expected_result = {:revision => 328,
                        :last_changed_revision => 328,
-                       :last_changed_author => 'stellsmi'}
+                       :last_changed_author => 'stellsmi',
+                       :url => 'svn://rubyforge.org/var/svn/cruisecontrolrb/README'}
 
     assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT_WITH_WORKING_COPY)
   end
@@ -133,7 +135,8 @@ EOF
   def test_should_parse_INFO_XML_OUTPUT_WITH_LOCK
     expected_result = {:revision => 328,
                        :last_changed_revision => 328,
-                       :last_changed_author => 'stellsmi'}
+                       :last_changed_author => 'stellsmi',
+                       :url => 'svn://rubyforge.org/var/svn/cruisecontrolrb'}
 
     assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT_WITH_LOCK)
   end
@@ -141,7 +144,8 @@ EOF
   def test_should_parse_INFO_XML_OUTPUT_WITH_CONFLICT
     expected_result = {:revision => 328,
                        :last_changed_revision => 328,
-                       :last_changed_author => 'stellsmi'}
+                       :last_changed_author => 'stellsmi',
+                       :url => 'svn://rubyforge.org/var/svn/cruisecontrolrb/README'}
 
     assert_info_equal expected_result, parse_info(INFO_XML_OUTPUT_WITH_CONFLICT)
   end

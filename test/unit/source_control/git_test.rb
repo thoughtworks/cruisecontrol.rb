@@ -108,6 +108,15 @@ class SourceControl::GitTest < ActiveSupport::TestCase
     end
   end
 
+  def test_checkout_should_perform_clone_to_a_given_directory
+    in_sandbox do |sandbox|
+      git = new_git(:repository => "git:/my_repo")
+      git.expects(:git).with("clone", ["git:/my_repo", "somewhere"], :execute_in_project_directory => false)
+      FileUtils.mkdir File.join(sandbox.root, "somewhere")
+      git.checkout(nil, $stdout, "somewhere")
+    end
+  end
+
   def test_checkout_should_blow_up_when_repository_was_not_given_to_the_ctor
     in_sandbox do
       git = Git.new(:repository => nil)

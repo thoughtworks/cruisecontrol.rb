@@ -96,6 +96,14 @@ class SourceControl::SubversionTest < ActiveSupport::TestCase
     svn.checkout
   end
 
+  def test_checkout_to_a_different_path
+    svn = new_subversion(:repository => 'http://foo.com/svn/project')
+    svn.expects(:svn).with("co", ["http://foo.com/svn/project", "somewhere"],
+                           :execute_in_project_directory => false)
+
+    svn.checkout(nil, $stdout, "somewhere")
+  end
+
 # TODO: rewrite once "SourceControl::AbstractAdapter#execute_with_error_log" is fixed  
 #  def test_should_write_error_info_to_log_when_svn_server_not_available
 #    in_sandbox do |sandbox|
@@ -144,7 +152,7 @@ class SourceControl::SubversionTest < ActiveSupport::TestCase
   end
 
   def test_checkout_requires_repository_location
-    assert_raise_with_message(RuntimeError, 'Repository location is not specified') { Subversion.new.checkout('.') }
+    assert_raise_with_message(BuilderError, "'.' is not a working copy") { Subversion.new.checkout('.') }
   end
 
   def test_new_does_not_allow_random_params
@@ -159,7 +167,7 @@ class SourceControl::SubversionTest < ActiveSupport::TestCase
       assert File.directory?("project")
 
       svn = Subversion.new(:repository => 'http://foo.com/svn/project', :path => "project")
-      svn.expects(:svn).with("co", ["http://foo.com/svn/project", "project", "--revision", 5],
+      svn.expects(:svn).with("co", ["http://foo.com/svn/project", "project.new", "--revision", 5],
                              :execute_in_project_directory => false)
 
       svn.clean_checkout(Subversion::Revision.new(5))
@@ -176,7 +184,7 @@ class SourceControl::SubversionTest < ActiveSupport::TestCase
       end
 
       io = StringIO.new
-      svn.clean_checkout(Subversion::Revision.new(5), io)
+      svn.checkout(Subversion::Revision.new(5), io)
 
       assert_equal "hello world\n", io.string
     end
@@ -257,6 +265,15 @@ class SourceControl::SubversionTest < ActiveSupport::TestCase
       assert svn.up_to_date?(reasons = [], 14)
       assert_equal [], reasons
     end
+  end
+
+  def test_repository_detected_by_svn_info_if_not_provided
+    info = Struct.new(:url).new
+    info.url = 'svn://example.org/repo'
+
+    svn = new_subversion
+    svn.expects(:info).returns(info)
+    assert_equal svn.repository, info.url
   end
 
   def numbers(revisions)

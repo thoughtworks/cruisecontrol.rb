@@ -56,6 +56,15 @@ module SourceControl
       end
     end
 
+    def test_checkout_to_a_given_directory
+      hg = Mercurial.new(:repository => '/tmp/hg_repo') 
+      in_sandbox do |sandbox|
+        hg.expects(:hg).with('clone', ['/tmp/hg_repo', 'somewhere'], :execute_in_project_directory => false)
+        FileUtils.mkdir File.join(sandbox.root, "somewhere")
+        assert_nothing_raised { hg.checkout(nil, $stdout, "somewhere") }
+      end
+    end
+
     def test_checkout_should_switch_to_a_specified_branch
       mercurial_with_checkout_data = Mercurial.new(:repository => '/tmp/hg_repo', :branch => 'a_branch') 
       in_sandbox do
