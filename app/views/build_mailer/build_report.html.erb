@@ -3,7 +3,7 @@
 
 CHANGES
 -------
-<%= @build.changeset %>
+<%= raw @build.changeset %>
 
 <% unless @failures_and_errors.empty? -%>
 TEST FAILURES AND ERRORS
@@ -19,7 +19,7 @@ See <%= "#{@build.url}" %> for details.
 
 CHANGES
 -------
-<%= @build.changeset %>
+<%= raw @build.changeset %>
 
 BUILD LOG
 ---------
@@ -28,9 +28,9 @@ The output below has been truncated to <%= number_to_human_size(Configuration.ma
 View <%= link_to "the full log", build_artifact_path(:project => @build.project.name, :build => @build.label, :path => 'build.log') %> for the rest.
 <% end %>
 
-<%= @build.output %>
+<%= raw @build.output %>
 
 PROJECT SETTINGS
 ----------------
-<%= @build.project_settings %>
+<%= raw @build.project_settings %>
 <% end -%>
