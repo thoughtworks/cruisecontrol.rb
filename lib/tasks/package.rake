@@ -1,4 +1,4 @@
-load Rails.root.join("cruisecontrolrb.gemspec")
+gem_spec = load(Rails.root.join("cruisecontrolrb.gemspec"))
 
 task :package => ["package:gem"]
 
@@ -13,10 +13,6 @@ namespace :package do
 
   def package_dir
     "pkg"
-  end
-
-  def gem_spec
-    GEMSPEC
   end
 
   task :gem => :prepare do
