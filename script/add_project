@@ -2,75 +2,84 @@
 
 ENV["RAILS_ENV"] ||= 'add_project'
 
-require 'optparse'
+require 'trollop'
 
-scm_options = {:interactive => true}
-trace = false
+SCMS = %w(git svn hg bzr)
 
-if ARGV.first and ARGV.first !~ /^-/
-  project_name = ARGV.shift
-  if ARGV.first and ARGV.first !~ /^-/
-    scm_options[:repository] = ARGV.shift
+def options_for_scm(scm)
+  case scm
+  when "svn"
+    Trollop::options do
+      banner "usage: add svn [project-name] [scm options]"
+      opt :repository, "SVN Repository URL", :type => String, :required => true
+      opt :username, "SVN Username", :type => String
+      opt :password, "SVN Password", :type => String
+      opt :interactive, "Enable interactive mode", :default => false
+      opt :check_externals, "Tells CC.rb to trigger a build if externals change", :default => true
+      opt :path, "The location of an empty directory to check your project out into", :type => String
+    end
+  when "hg"
+    Trollop::options do
+      banner "usage: add hg [project-name] [scm options]"
+      opt :repository, "Hg Repository URL", :type => String, :required => true
+      opt :branch, "Branch for CC.rb to build", :type => String
+      opt :path, "The location of an empty directory to check your project out into", :type => String
+    end
+  when "bzr"
+    Trollop::options do
+      banner "usage: add bzr [project-name] [scm options]"
+      opt :repository, "Bzr Repository URL", :type => String, :required => true
+      opt :path, "The location of an empty directory to check your project out into", :type => String
+    end
+  when "git"
+    Trollop::options do
+      banner "usage: add git [project-name] [scm options]"
+      opt :repository, "Git Repository URL", :type => String, :required => true
+      opt :branch, "Branch for CC.rb to build", :type => String
+      opt :path, "The location of an empty directory to check your project out into", :type => String
+      opt :watch_for_changes_in, "Tell CC.rb to only monitor for changes in this subdirectory", :type => String
+    end
+  else
+    Trollop::die "unknown scm #{scm.inspect}. Available options: (#{SCMS.join(", ")})"
   end
 end
 
-ARGV.options do |opts|
-  opts.banner = "usage: add [project-name] -r [repository] -s [git|svn|hg|bzr]"
+global_opts = Trollop::options do
+  banner "usage: add [svn|git|hg|bzr] [project-name]"
+  opt :trace, 'Print out exception stack traces', :short => '-t'
+  stop_on SCMS
+end
 
-  opts.separator ""
+cmd = ARGV.shift
+if ARGV.first and ARGV.first !~ /^-/
+  project_name = ARGV.shift
+end
+scm_options = { :source_control => cmd }
+scm_options.merge options_for_scm(cmd)
 
-  opts.on("-r", "--repository repository", String,
-          "Location of the source control repository for the project (e.g. git@github.com:thoughtworks/cruisecontrol.rb.git)") do |v|
-    scm_options[:repository] = v
-  end
+unless project_name and scm_options[:repository]
+  STDERR.puts "Project name and repository location are mandatory"
+  STDERR.puts
+  exit(-1)
+end
 
-  opts.on("-s", "--source-control source_control", String,
-          "Specify the source control manager to use (default: git)") do |v|
-    scm_options[:source_control] = v
-  end
-  opts.on("-b", "--branch branch", String, "Specify a source control branch to use (Git, Mercurial)") { |v| scm_options[:branch] = v }
-  opts.on("--username username", String, "Specify a username for source control") { |v| scm_options[:username] = v }
-  opts.on("--password password", String, "Specify a password for source control") { |v| scm_options[:password] = v }
-  opts.on('-t', '--trace', 'Print out exception stack traces') { trace = true }
-
-  opts.separator ""
-
-  opts.on("-u", "--url url", String,
-          "[deprecated, use -r|--repository instead] URL of the source control repository") do |v|
-    scm_options[:repository] = v
-  end
-
-  opts.separator ""
-
-  opts.on("-h", "--help", "Show this help message.") { puts opts; exit }
-
-  args = opts.parse!
-
-  unless project_name and scm_options[:repository]
-    STDERR.puts "Project name and repository location are mandatory"
-    STDERR.puts
-    puts opts
-    exit(-1)
-  end
-
-  # Project Name can only contain alphanumeric characters
-  if project_name.match /[^-_a-zA-Z0-9]/
-    STDERR.puts "'#{project_name}' is not a valid project name. Project name should only contain alphanumeric " +
-        'characters, dashes and underscores, and no whitespace.'
-    exit(-1)
-  end
+# Project Name can only contain alphanumeric characters
+if project_name.match /[^-_a-zA-Z0-9]/
+  STDERR.puts "'#{project_name}' is not a valid project name. Project name should only contain alphanumeric " +
+  'characters, dashes and underscores, and no whitespace.'
+  exit(-1)
 end
 
 puts "Adding project '#{project_name}' (this may take a while)..."
 
-begin 
+begin
   source_control = SourceControl.create(scm_options)
 
   Project.create(project_name, source_control)
-  
+
   if source_control.repository =~ /^svn\+ssh\:\/\//
     puts "IMPORTANT!!! - It looks like you are connecting to your repository with an svn+ssh connection.  " +
-         "For cruise to build this project, you need to have set up authentication caching for ssh, see this article"
+    "For cruise to build this project, you need to have set up authentication caching for ssh, see this article"
     puts "   http://subversion.tigris.org/faq.html#ssh-auth-cache"
     puts
   end
