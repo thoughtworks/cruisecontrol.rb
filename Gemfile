@@ -11,6 +11,7 @@ gem "xml-simple", '1.0.16', :require => 'xmlsimple'
 gem "rake", "0.8.7"
 gem "jquery-rails", '1.0.9'
 gem "abstract", "1.0.0"
+gem "trollop"
 
 group :development do
   gem "rcov", '0.9.9'
