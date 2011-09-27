@@ -40,8 +40,6 @@ module CruiseControl
   end
   
   class Application < Rails::Application
-    include Rake::DSL
-    
     # Add additional load paths for your own custom dirs
     config.autoload_paths << Rails.root.join('lib')
     config.autoload_paths << Rails.root.join('lib', 'builder_plugins')

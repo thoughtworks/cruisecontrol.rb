@@ -1,23 +1,18 @@
-gem_spec = load(Rails.root.join("cruisecontrolrb.gemspec"))
-
 task :package => ["package:gem"]
 
 namespace :package do
-  def gem_file
-    if gem_spec.platform == Gem::Platform::RUBY
-      "#{gem_spec.full_name}.gem"
-    else
-      "#{gem_spec.full_name}-#{gem_spec.platform}.gem"
-    end
-  end
-
   def package_dir
     "pkg"
   end
 
+  def gem_file
+    Pathname.glob("*.gem").first
+  end
+
+  desc "Package CruiseControl.rb as a gem."
   task :gem => :prepare do
-    Gem::Builder.new(gem_spec).build
-    verbose(true) { mv gem_file, "#{package_dir}/#{gem_file}" }
+    system "gem build cruisecontrolrb.gemspec"
+    verbose(true) { gem_file.rename(package_dir) }
   end
 
   desc "Remove all existing packaged files."
@@ -26,7 +21,19 @@ namespace :package do
   end
 
   desc "Install all dependencies using Bundler's deployment mode."
-  task :prepare => :clean do
-    system "bundle install --deployment"
+  task :prepare => :clean
+
+  namespace :gem do
+    task :test => "package:gem" do
+      system "rvm gemset create ccrb-test"
+      system "rvm gemset use ccrb-test"
+      system "rvm --force gemset empty ccrb-test"
+
+      puts Pathname.glob("#{package_dir}/*.gem").inspect
+      gem_file = Pathname.glob("#{package_dir}/*.gem").first
+      system "gem install #{gem_file}"
+      system "cruise start"
+      system "rvm gemset use ccrb"
+    end
   end
 end

@@ -14,21 +14,26 @@ Gem::Specification.new do |s|
   s.homepage = 'http://cruisecontrolrb.thoughtworks.com'
   s.has_rdoc = false
 
-  s.add_dependency "rails", "3.0.7"
-  s.add_dependency "tzinfo", "0.3.27"
-  s.add_dependency "rack", "1.2.3"
-  s.add_dependency "bundler"
+  [ [ "rails", "3.0.7" ],
+    [ "tzinfo", "0.3.27" ],
+    [ "rack", "1.2.3" ],
+    [ "bundler", nil ],
+    [ "httparty", "0.6.1" ],
+    [ "api_cache", "0.2.0" ],
+    [ "xml-simple", '1.0.16' ],
+    [ "rake", "0.8.7" ],
+    [ "jquery-rails", '1.0.9' ],
+    [ "abstract", "1.0.0" ],
+  ].each do |gem, version|
+    s.add_dependency gem, version
+  end
 
-  s.add_dependency "httparty", "0.6.1"
-  s.add_dependency "api_cache", "0.2.0"
-  s.add_dependency "xml-simple", '1.0.16'
-  s.add_dependency "rake"
-  s.add_dependency "jquery-rails", '1.0.9'
-  s.add_dependency "abstract", "1.0.0"
-
-  s.add_development_dependency "rcov", '0.9.9'
-  s.add_development_dependency "mocha", "0.9.12"
-  s.add_development_dependency "rack-test"
+  [ [ "rcov", '0.9.9' ],
+    [ "mocha", "0.9.12" ],
+    [ "rack-test", nil ],
+  ].each do |gem, version|
+    s.add_development_dependency gem, version
+  end
 
   s.bindir = "."
   s.executables << "cruise"
