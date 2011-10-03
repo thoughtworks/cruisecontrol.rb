@@ -40,9 +40,9 @@ module CruiseControl
   
   class Application < Rails::Application
     # Add additional load paths for your own custom dirs
-    config.autoload_paths << Rails.root.join('lib')
-    config.autoload_paths << Rails.root.join('lib', 'builder_plugins')
-    config.autoload_paths << CruiseControl.data_root.join('builder_plugins')
+    config.autoload_paths << Rails.root.join('lib').to_s
+    config.autoload_paths << Rails.root.join('lib', 'builder_plugins').to_s
+    config.autoload_paths << CruiseControl.data_root.join('builder_plugins').to_s
     
     config.after_initialize do
       require Rails.root.join('config', 'configuration')
