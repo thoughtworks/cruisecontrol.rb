@@ -23,22 +23,22 @@ module RailsInAWar
       task @name do
         mkdir_p @dest_dir
         
-        return if Dir["#{@src_dir}/**/*.java"].empty?
-
-        create_sources_file
-        create_classpath_file
-        create_options_file
-
-        javac = ['javac']
-        javac << "@#{options_file}"
-        javac << '-classpath'
-        javac << "@#{classpath_file}"
-        javac << '-sourcepath'
-        javac << @src_dir
-        javac << '-d'
-        javac << @dest_dir
-        javac << "@#{sources_file}"
-        sh(javac.join(' '))
+        if !Dir["#{@src_dir}/**/*.java"].empty?
+          create_sources_file
+          create_classpath_file
+          create_options_file
+  
+          javac = ['javac']
+          javac << "@#{options_file}"
+          javac << '-classpath'
+          javac << "@#{classpath_file}"
+          javac << '-sourcepath'
+          javac << @src_dir
+          javac << '-d'
+          javac << @dest_dir
+          javac << "@#{sources_file}"
+          sh(javac.join(' '))
+        end
       end
     end
     
