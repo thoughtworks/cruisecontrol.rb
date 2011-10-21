@@ -44,7 +44,19 @@ class BuildsController < ApplicationController
       render_not_found
     end
   end
-  
+
+  def latest_successful
+    render :text => 'Project not specified', :status => 404 and return unless params[:project]
+
+    @project = Project.find(params[:project])
+    render :text => "Project #{params[:project].inspect} not found", :status => 404 and return unless @project
+    @build = @project.builds.find_all(&:successful?).last
+    render :text => "No successful build found", :status => 404 and return unless @build
+
+    redirect_to build_path(@project, @build) +
+                (params[:path] ? "/#{params[:path]}" : "")
+  end
+
   private
 
     MIME_TYPES = {
