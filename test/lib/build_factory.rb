@@ -10,7 +10,7 @@ module BuildFactory
   end
 
   def create_build(label, status = :success)
-    @sandbox.new :file => "build-#{label}/build_status.#{status}"
+    @sandbox.new :directory => "build-#{label}-#{status}"
   end
   
   def create_builds(*labels)
