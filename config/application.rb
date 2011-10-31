@@ -6,6 +6,7 @@ require "action_mailer/railtie"
 require "rails/test_unit/railtie"
 
 require 'fileutils'
+require 'xmlsimple'
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
