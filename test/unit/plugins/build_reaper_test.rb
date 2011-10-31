@@ -26,7 +26,7 @@ class BuildReaperTest < Test::Unit::TestCase
     
     @reaper.delete_all_builds_but 4
     
-    assert_equal %w(build-6 build-7 build-8 build-9), Dir["*"].sort
+    assert_equal %w(build-6-success build-7-success build-8-success build-9-success), Dir["*"].sort
   end
   
   def test_should_delete_no_builds
@@ -34,6 +34,6 @@ class BuildReaperTest < Test::Unit::TestCase
     
     @reaper.delete_all_builds_but 2
     
-    assert_equal %w(build-1), Dir["*"]
+    assert_equal %w(build-1-success), Dir["*"]
   end
 end
