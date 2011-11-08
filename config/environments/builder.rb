@@ -1,3 +1,4 @@
+CRUISE_OPTIONS = { :verbose => false }
 CruiseControl::Application.configure do
   config.cache_classes = true
   config.paths.log = CRUISE_OPTIONS[:log_file_name] || 'log/builder_WITHOUT_A_NAME.log'
