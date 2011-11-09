@@ -1,5 +1,6 @@
 CruiseControl::Application.routes.draw do
   match '/' => 'projects#index', :as => :root
+  match 'projects/code/:id/*path' => 'projects#code', :as => :code
   
   resources :projects, :constraints => { :id => /.*/ } do
     member do
@@ -15,8 +16,6 @@ CruiseControl::Application.routes.draw do
   match 'builds/:project/:build/artifacts/*path' => 'builds#artifact', :as => :build_artifact, :build => /[^\/]+/, :project => /[^\/]+/
   match 'builds/:project/:build' => 'builds#show', :as => :build, :build => /[^\/]+/, :project => /[^\/]+/
   match 'builds/:project' => 'builds#show', :as => :project_without_builds, :project => /[^\/]+/
-
-  match 'projects/code/:id/*path' => 'projects#code', :as => :code
 
   match 'documentation/plugins' => 'documentation#plugins', :as => :plugin_doc_list
   match 'documentation/plugins/:type/:name' => 'documentation#plugins', :as => :plugin_doc, :name => /[^\/]+/
