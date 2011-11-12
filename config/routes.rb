@@ -1,7 +1,7 @@
 CruiseControl::Application.routes.draw do
   match '/' => 'projects#index', :as => :root
   
-  resources :projects  do
+  resources :projects do
     member do
       post :build, :constraints => { :id => /.*/ }
       post :kill_build, :constraints => { :id => /.*/ }
