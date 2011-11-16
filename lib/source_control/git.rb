@@ -33,7 +33,7 @@ module SourceControl
 
     def clean_checkout(revision = nil, stdout = $stdout)
       # We're forcing (-f) the clean incase git clean.requireForce is set to true
-      git('clean', ['-d', '-f'])
+      git('clean', ['-q', '-d', '-f'])
     end
 
     def latest_revision

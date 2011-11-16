@@ -129,7 +129,7 @@ class SourceControl::GitTest < ActiveSupport::TestCase
   def test_clean_checkout_should_perform_git_clean
     in_sandbox do
       git = new_git(:repository => "git:/my_repo")
-      git.expects(:git).with("clean", ['-d', '-f'])
+      git.expects(:git).with("clean", ['-q', '-d', '-f'])
       git.clean_checkout
     end
   end
