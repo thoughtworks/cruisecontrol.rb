@@ -125,6 +125,14 @@ class SourceControl::GitTest < ActiveSupport::TestCase
       assert_raise(RuntimeError) { git.checkout }
     end
   end
+  
+  def test_clean_checkout_should_perform_git_clean
+    in_sandbox do
+      git = new_git(:repository => "git:/my_repo")
+      git.expects(:git).with("clean", ['-d', '-f'])
+      git.clean_checkout
+    end
+  end
 
   def test_latest_revision_should_call_git_log_and_send_it_to_parser
     in_sandbox do
