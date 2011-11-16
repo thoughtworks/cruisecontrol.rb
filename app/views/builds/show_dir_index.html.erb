@@ -10,7 +10,7 @@
   <tr>
     <td><%= link_to f, f %></td>
     <td><%= file_mtime(f) %></td>
-    <td><%= file_size(f) %> bytes</td>
+    <td><%= file_size(f) rescue 0 %> bytes</td>
     <td><%= file_type(f) %></td>
   </tr>
   <% end %>
