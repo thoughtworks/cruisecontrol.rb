@@ -32,7 +32,9 @@ module SourceControl
     end
 
     def clean_checkout(revision = nil, stdout = $stdout)
-      # We're forcing (-f) the clean incase git clean.requireForce is set to true
+      # (-f) Forcing the clean incase git clean.requireForce is set to true
+      # (-d) Directory clean
+      # (-q) Quiet, prevent git from writing unnecessary information to stdout/stderr 
       git('clean', ['-q', '-d', '-f'])
     end
 
