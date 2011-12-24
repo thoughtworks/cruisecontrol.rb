@@ -31,9 +31,11 @@ module SourceControl
       git("reset", ['--hard', revision.number]) if revision
     end
 
-    # TODO implement clean_checkout as "git clean -d" - much faster
     def clean_checkout(revision = nil, stdout = $stdout)
-      super(revision, stdout)
+      # (-f) Forcing the clean incase git clean.requireForce is set to true
+      # (-d) Directory clean
+      # (-q) Quiet, prevent git from writing unnecessary information to stdout/stderr 
+      git('clean', ['-q', '-d', '-f'])
     end
 
     def latest_revision
