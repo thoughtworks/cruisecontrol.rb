@@ -12,23 +12,23 @@ class ProjectsControllerTest < ActionController::TestCase
       p1 = create_project_stub('one', 'success')
       p2 = create_project_stub('two', 'failed', [create_build_stub('1', 'failed')])
       Project.expects(:all).returns([p1, p2])
-      
+
       get :index
       assert_response :success
       assert_template "index"
       assert_equal %w(one two), assigns(:projects).map { |p| p.name }
     end
-  
+
     test "should render a dashboard with a link to each project" do
       Project.expects(:all).returns([create_project_stub('one', 'success')])
       get :index
       assert_select ".project .name a[href=?]", project_path("one")
     end
-    
+
     test "should render a dashboard with a button to start the builder if the builder is down" do
       project = create_project_stub('one', 'success')
       Project.stubs(:all).returns([project])
-      
+
       project.stubs(:builder_down?).returns(true)
       get :index
       assert_select "button.build_button", /Start Builder/
@@ -41,21 +41,21 @@ class ProjectsControllerTest < ActionController::TestCase
     test "should render disabled build buttons if the project cannot build now" do
       stub_project = create_project_stub('one', 'success')
       stub_project.stubs(:can_build_now?).returns(false)
-      
+
       Project.expects(:all).returns([ stub_project ])
       get :index
       assert_select "button.build_button[disabled=disabled]"
     end
-    
+
     test "should render an Add Project tab in the menu header" do
       get :index
-      assert_select "a[href=?]", new_project_path
+      assert_select "li>a[href=?]", new_project_path
     end
-    
+
     test "should not render the Add Project tab if the admin UI is disabled in the site configuration" do
-      Configuration.stubs(:disable_admin_ui).returns true
+      Configuration.stubs(:disable_admin_ui).returns(true)
       get :index
-      assert_select "a[href=?]", new_project_path, :count => 0
+      assert_select "li>a[href=?]", new_project_path, :count => 0
     end
   end
 
@@ -78,7 +78,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_select "div#project_two"
     end
   end
-  
+
   context "GET /projects.json" do
     test "should return an empty JSON list if there are no projects" do
       Project.stubs(:all).returns []
@@ -86,7 +86,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal [], ActiveSupport::JSON.decode(@response.body)
     end
-    
+
     test "should return a list with a single project if there is one" do
       Project.expects(:all).returns([create_project_stub('one', 'success')])
       get :index, :format => :json
@@ -120,7 +120,7 @@ class ProjectsControllerTest < ActionController::TestCase
         create_project_stub('two', 'incomplete', [create_build_stub('10', 'failed'), create_build_stub('11', 'incomplete')])
       ])
       post :index, :format => 'rss'
-      
+
       xml = REXML::Document.new(@response.body)
       assert_equal "two build 10 failed", REXML::XPath.first(xml, '/rss/channel/item[2]/title').text
     end
@@ -132,7 +132,7 @@ class ProjectsControllerTest < ActionController::TestCase
       get :show, :id => 'one', :format => 'rss'
       assert_response :success
       assert_template 'show_rss'
-      
+
       xml = REXML::Document.new(@response.body)
       assert_equal "one build 10 success", REXML::XPath.first(xml, '/rss/channel/item[1]/title').text
     end
@@ -154,12 +154,12 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal 'Project "non_existing_project" not found', @response.body
     end
   end
-  
+
   context "GET /projects/:id.json" do
     test "should include the project's name in the response" do
       Project.stubs(:find).returns create_project_stub('one', 'success')
       get :show, :id => 'one', :format => 'json'
-      
+
       project = ActiveSupport::JSON.decode(@response.body)
       assert_response :success
       assert_equal 'one', project['name']
@@ -177,11 +177,11 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_response :success
       assert_template 'index_cctray'
       assert_equal %w(one two), assigns(:projects).map { |p| p.name }
-      
+
       xml = REXML::Document.new(@response.body)
 
       first_project = REXML::XPath.first(xml, '/Projects/Project[1]]')
-      second_project = REXML::XPath.first(xml, '/Projects/Project[2]]')  
+      second_project = REXML::XPath.first(xml, '/Projects/Project[2]]')
 
       assert_equal 'one', first_project.attributes['name']
       assert_equal 'Success', first_project.attributes['lastBuildStatus']
@@ -212,7 +212,7 @@ class ProjectsControllerTest < ActionController::TestCase
       in_sandbox do |sandbox|
         project = create_project "three"
         sandbox.new :file => 'projects/three/work/app/controller/FooController.rb', :with_contents => "class FooController\nend\n"
-      
+
         get :code, :id => 'three', :path => ['app', 'controller', 'FooController.rb'], :line => 2
 
         assert_response :success
@@ -246,7 +246,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_equal 'two', assigns(:project).name
     end
-    
+
     test "should render a 404 if the requested project does not exist" do
       Project.expects(:find).with('non_existing_project').returns(nil)
       post :build, :id => "non_existing_project"
@@ -261,7 +261,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_response :forbidden
       assert_equal 'Build requests are not allowed', @response.body
     end
-    
+
     test "should refuse to kill build and render a 403 if the configuration does not permit build now" do
       Configuration.stubs(:disable_admin_ui).returns(true)
 
@@ -305,7 +305,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_select "div#project_two"
     end
   end
-  
+
   context "POST /projects" do
     test "should create a new project" do
       in_sandbox do
