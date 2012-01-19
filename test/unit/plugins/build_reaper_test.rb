@@ -36,4 +36,10 @@ class BuildReaperTest < Test::Unit::TestCase
     
     assert_equal %w(build-1-success), Dir["*"]
   end
+
+  def test_should_only_delete_builds_if_configured
+    @reaper.expects(:delete_all_builds_but).never
+    
+    @reaper.build_finished(nil)
+  end
 end
