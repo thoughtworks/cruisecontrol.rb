@@ -326,6 +326,22 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_redirected_to getting_started_project_path("new_project")
       end
     end
+
+    test "should display an error if Project Name is blank" do
+      in_sandbox do
+        source_control = { :repository => 'path', :source_control => 'fake_source_control' }
+        post :create, :project => { :project_name => "", :source_control => source_control}
+        assert_match /Project Name/, flash[:notice]
+        assert_redirected_to new_project_path
+      end
+    end
+    test "should display an error if Repostory path is blank" do
+      in_sandbox do
+        post :create, :project => {:project_name => 'My Cool Project', :source_control => {}}
+        assert_match /Repository/, flash[:notice]
+        assert_redirected_to new_project_path
+      end
+    end
   end
 
 end

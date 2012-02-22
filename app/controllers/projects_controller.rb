@@ -23,6 +23,8 @@ class ProjectsController < ApplicationController
     project = Project.create(params[:project][:name], scm)
 
     redirect_to getting_started_project_path(project.id)
+  rescue ArgumentError => e
+    redirect_to new_project_path, :flash => {:notice => e.message}
   end
 
   def getting_started
