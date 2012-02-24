@@ -76,32 +76,33 @@ module CommandLine
   private
 
   def e(cmd, options, &proc)
-    full_cmd = full_cmd(cmd, options, &proc)
-    
-    options[:env].each{|k,v| ENV[k]=v}
-    begin
-      CruiseControl::Log.debug "#{Platform.prompt} #{format_for_printing(cmd)}" if options[:stdout].nil?
-      result = IO.popen(full_cmd, options[:mode]) do |io|
-        if proc
-          proc.call(io)
-        else
-          io.each_line do |line|
-            STDOUT.puts line if options[:stdout].nil?
+    Bundler.with_clean_env do
+      full_cmd = full_cmd(cmd, options, &proc)
+      options[:env].each{|k,v| ENV[k]=v}
+      begin
+        CruiseControl::Log.debug "#{Platform.prompt} #{format_for_printing(cmd)}" if options[:stdout].nil?
+        result = IO.popen(full_cmd, options[:mode]) do |io|
+          if proc
+            proc.call(io)
+          else
+            io.each_line do |line|
+              STDOUT.puts line if options[:stdout].nil?
+            end
           end
         end
+       exit_status = $CHILD_STATUS
+        raise "$CHILD_STATUS is nil" unless exit_status
+        verify_exit_code(exit_status, cmd, full_cmd, options)
+        return result
+      rescue Errno::ENOENT => e
+        if options[:stderr]
+          File.open(options[:stderr], "a") {|io| io.write(e.message)}
+        else
+          STDERR.puts e.message
+          STDERR.puts e.backtrace.map { |line| "    #{line}" }
+        end
+       raise ExecutionError.new(cmd, full_cmd, options[:dir], nil, e.message)
       end
-      exit_status = $CHILD_STATUS
-      raise "$CHILD_STATUS is nil" unless exit_status
-      verify_exit_code(exit_status, cmd, full_cmd, options)
-      return result
-    rescue Errno::ENOENT => e
-      if options[:stderr]
-        File.open(options[:stderr], "a") {|io| io.write(e.message)}
-      else
-        STDERR.puts e.message
-        STDERR.puts e.backtrace.map { |line| "    #{line}" }
-      end
-      raise ExecutionError.new(cmd, full_cmd, options[:dir], nil, e.message)
     end
   end
   module_function :e
