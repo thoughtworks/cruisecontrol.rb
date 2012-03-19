@@ -113,7 +113,7 @@ EOF
   def build_log
     artifact('build.log')
   end
-
+  
   def output
     @output ||= contents_for_display(build_log)
   end
@@ -132,6 +132,12 @@ EOF
 
   def time
     build_status.timestamp
+  end
+  
+  def coverage
+    if coverage_file = artifact('coverage_percent.txt')
+      coverage_file.read.to_f
+    end
   end
 
   def files_in(path)
