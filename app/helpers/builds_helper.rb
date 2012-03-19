@@ -40,7 +40,7 @@ module BuildsHelper
   def link_to_changeset
     if review_changeset_url = Configuration.review_changeset_url
       content_tag('p') do
-        button_tag('Review changeset', :href => review_changeset_url.sub('%{changeset}', @build.revision.to_s)
+        button_tag('Review changeset', :href => review_changeset_url.sub('%{changeset}', @build.revision.to_s))
       end
     end
   end
