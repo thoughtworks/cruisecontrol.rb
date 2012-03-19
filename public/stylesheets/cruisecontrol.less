@@ -9,6 +9,7 @@
 @success-color: #AEF5AF;
 @failure-color: #FFB3B3;
 @never-built-color: #d7d7d7;
+@warn-color: #f5b778;
 
 @spinner: url(../images/spinner.gif);
 @spinner-error: url(../images/spinner_error.gif);
@@ -184,7 +185,7 @@ a:hover {
     &.build_failed        { .build_color(@failure-color);     }
     &.build_never_built    { .build_color(@never-built-color); }
         
-    .name, .status, .builder_control, .rss, .project_status, .builder_status, .builder_control {
+    .name, .status, .builder_control, .rss, .project_status, .builder_status, .coverage_status, .builder_control {
       position: absolute;
     }
 
@@ -230,6 +231,14 @@ a:hover {
       bottom: 2px;
       left: 240px;
     }
+    
+    .coverage_status {
+      bottom: 2px;
+    }
+    
+    .coverage_status.good         { background-color: darken(@success-color, 15%); }
+    .coverage_status.fair         { background-color: darken(@warn-color, 15%); }
+    .coverage_status.bad          { background-color: darken(@failure-color, 15%); }
 
     .upper {
       clear: both;

@@ -278,6 +278,11 @@ class Project
     previously_built? ? last_complete_build.status : 'never_built'
   end
   
+  def last_complete_build_coverage
+    return 0 unless build = last_complete_build
+    last_complete_build.coverage
+  end
+  
   def previously_built?
     not last_complete_build.nil?
   end

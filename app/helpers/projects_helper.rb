@@ -60,5 +60,14 @@ module ProjectsHelper
     else 'Unknown'
     end
   end
-
+  
+  def coverage_status(coverage)
+    if coverage > 90
+      'good'
+    elsif coverage > 60
+      'fair'
+    else
+      'bad'
+    end
+  end
 end
