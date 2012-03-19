@@ -62,7 +62,9 @@ module ProjectsHelper
   end
   
   def coverage_status(coverage)
-    if coverage > 90
+    if coverage.nil?
+      'none'
+    elsif coverage > 90
       'good'
     elsif coverage > 75
       'fair'
