@@ -100,6 +100,14 @@ module BuildsHelper
       result_text.html_safe
     end
   end
+  
+  def coverage_status_icon(build)
+    if coverage = build.coverage
+      image_tag("coverage_#{coverage_status(coverage)}.png")
+    else
+      image_tag('coverage_none.png')
+    end
+  end
 
   private
 

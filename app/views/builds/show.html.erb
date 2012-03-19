@@ -8,6 +8,7 @@
       </li>
       <% @builds_for_navigation_list.each do |build| %>
         <li class="build_link<%= ' selected' if @build.label == build.label %>">
+          <%= coverage_status_icon(build) %>
           <%= link_to_build(@project, build) %>
         </li>
       <% end %>
