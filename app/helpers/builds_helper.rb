@@ -94,9 +94,10 @@ module BuildsHelper
         "started at #{build_time_text}, and never finished"
       end
     else
-      coverage_text = @build.coverage ? ', coverage %0.1f' % @build.coverage : ''
       elapsed_time_text = elapsed_time(@build, :precise)
-      elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}#{coverage_text}".html_safe
+      result_text = elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}#{coverage_text}"
+      result_text << ", covered #{format_percent(@build.coverage)}" if @build.coverage
+      result_text.html_safe
     end
   end
 
