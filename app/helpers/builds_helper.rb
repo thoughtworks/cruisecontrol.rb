@@ -95,7 +95,7 @@ module BuildsHelper
       end
     else
       elapsed_time_text = elapsed_time(@build, :precise)
-      result_text = elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}#{coverage_text}"
+      result_text = elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}"
       result_text << ", covered #{format_percent(@build.coverage)}" if @build.coverage
       result_text.html_safe
     end
