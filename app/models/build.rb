@@ -135,7 +135,7 @@ EOF
   end
   
   def coverage
-    if coverage_file = artifact('coverage_percent.txt')
+    if (coverage_file = artifact('coverage_percent.txt')) && coverage_file.exist?
       coverage_file.read.to_f
     end
   end
