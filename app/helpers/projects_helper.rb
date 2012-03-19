@@ -64,7 +64,7 @@ module ProjectsHelper
   def coverage_status(coverage)
     if coverage > 90
       'good'
-    elsif coverage > 60
+    elsif coverage > 75
       'fair'
     else
       'bad'
