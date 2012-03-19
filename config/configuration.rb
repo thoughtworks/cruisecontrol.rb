@@ -12,6 +12,7 @@ class Configuration
   @git_load_new_changesets_timeout = 5.minutes
   @build_history_limit = 30
   @max_file_display_length = 100.kilobytes
+  @review_changeset_url = nil
 
   class << self
     # published configuration options (mentioned in config/site_config.rb.example)
@@ -19,7 +20,7 @@ class Configuration
                   :dashboard_refresh_interval, :serialize_builds,
                   :serialized_build_timeout, :git_load_new_changesets_timeout,
                   :disable_code_browsing, :build_history_limit, :max_file_display_length,
-                  :disable_add_project
+                  :disable_add_project, :review_changeset_url
     attr_reader :dashboard_url
 
     # non-published configuration options (obscure stuff, mostly useful for http://cruisecontrolrb.thoughtworks.com)

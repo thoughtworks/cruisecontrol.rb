@@ -37,6 +37,14 @@ module BuildsHelper
     strip_ansi_colors(highlight_test_count(link_to_code(h(log))))
   end
   
+  def link_to_changeset
+    if review_changeset_url = Configuration.review_changeset_url
+      content_tag('p') do
+        button_tag('Review changeset', :href => review_changeset_url.sub('%{changeset}', @build.revision.to_s)
+      end
+    end
+  end
+  
   def link_to_code(log)
     return log if Configuration.disable_code_browsing
     @work_path ||= File.expand_path(@project.path + '/work')
