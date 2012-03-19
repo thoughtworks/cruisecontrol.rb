@@ -103,9 +103,9 @@ module BuildsHelper
   
   def coverage_status_icon(build)
     if coverage = build.coverage
-      image_tag("coverage_#{coverage_status(coverage)}.png")
+      image_tag("coverage_#{coverage_status(coverage)}.png", :class => 'coverage_status')
     else
-      image_tag('coverage_none.png')
+      image_tag('coverage_none.png', :class => 'coverage_status')
     end
   end
 
