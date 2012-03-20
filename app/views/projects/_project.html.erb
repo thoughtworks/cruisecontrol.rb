@@ -21,7 +21,7 @@
     <% if 'success' == status %>
       <% coverage = project.last_successful_build_coverage %>
       <div class="coverage_status coverage_<%= coverage_status(coverage) %>">
-        Cov <%= format_percent(project.last_complete_build_coverage) %>
+        Cov <%= format_percent(project.last_successful_build_coverage) %>
       </div>
     <% end %>
 
