@@ -103,7 +103,7 @@ module BuildsHelper
   
   def coverage_icon(build)
     coverage = build.coverage
-    content_tag('div', coverage.to_s, :class => "coverage_icon coverage_#{coverage_status(coverage)}")
+    content_tag('div', format_percent(coverage), :class => "coverage_icon coverage_#{coverage_status(coverage)}")
   end
   
   def coverage_status_icon(build)

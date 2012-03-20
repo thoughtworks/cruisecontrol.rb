@@ -27,8 +27,8 @@ module ApplicationHelper
     DurationFormatter.new(total_seconds).send(format)
   end
   
-  def format_percent(percent)
-    '%0.1f%' % percent.to_f
+  def format_percent(percent, precision = 1)
+    "%0.#{precision}f" % percent.to_f
   end
   
   def setting_row(label, value, help = '&nbsp;')
