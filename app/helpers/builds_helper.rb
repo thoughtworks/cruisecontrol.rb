@@ -96,14 +96,15 @@ module BuildsHelper
     else
       elapsed_time_text = elapsed_time(@build, :precise)
       result_text = elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}"
-      result_text << ", covered #{format_percent(@build.coverage)}" if @build.coverage
+      result_text << ", covered #{format_percent(@build.coverage)}%" if @build.coverage
       result_text.html_safe
     end
   end
   
   def coverage_icon(build)
     coverage = build.coverage
-    content_tag('div', format_percent(coverage), :class => "coverage_icon coverage_#{coverage_status(coverage)}")
+    coverage_text = coverage ? format_percent(coverage) : ''
+    content_tag('div', coverage_text, :class => "coverage_icon coverage_#{coverage_status(coverage)}")
   end
   
   def coverage_status_icon(build)
