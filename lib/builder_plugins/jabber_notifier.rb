@@ -52,6 +52,9 @@ class JabberNotifier
       if Configuration.dashboard_url
         message += ". See #{build.url}"
       end
+      if build.successful?
+        message << coverage_delta_text(build.project)
+      end
       CruiseControl::Log.debug("Jabber notifier: sending 'build #{status}' notice")
       notify(message)
     end
@@ -97,6 +100,15 @@ class JabberNotifier
     request.to = subscriber
     @client.send(request)
     @client.send(request.set_type(:unsubscribed))
+  end
+  
+  private
+  
+  def coverage_delta_text(project)
+    delta = project.last_coverage_delta
+    return '' if 0 == delta
+    text = if delta > 0 ? "Yay! Coverage increased by " : "Boo! Coverage decreased by "
+    text << ("%0.1f" % delta)
   end
 end
 

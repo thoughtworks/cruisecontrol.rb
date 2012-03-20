@@ -61,6 +61,10 @@ module ProjectsHelper
     end
   end
   
+  def coverage_delta(project)
+    '%+0.1f' % project.last_coverage_delta
+  end
+  
   def coverage_status(coverage)
     if coverage.nil?
       'none'
