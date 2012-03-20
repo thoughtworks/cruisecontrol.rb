@@ -11,11 +11,6 @@
 @never-built-color: #d7d7d7;
 @warn-color: #f5b778;
 
-.coverage_good         { background-color: darken(@success-color, 15%); }
-.coverage_fair         { background-color: darken(@warn-color, 10%); }
-.coverage_bad          { background-color: darken(@failure-color, 15%); }
-.coverage_none         { background-color: transparent; }
-
 @spinner: url(../images/spinner.gif);
 @spinner-error: url(../images/spinner_error.gif);
 
@@ -51,6 +46,11 @@ code {
     color: #444;
     padding: 16px 0px 4px 20px;
   }
+  
+  .coverage_good         { background-color: darken(@success-color, 15%); }
+  .coverage_fair         { background-color: darken(@warn-color, 10%); }
+  .coverage_bad          { background-color: darken(@failure-color, 15%); }
+  .coverage_none         { background-color: transparent; }
 }
 
 img { border-style: none; }
