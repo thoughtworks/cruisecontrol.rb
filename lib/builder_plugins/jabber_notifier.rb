@@ -107,7 +107,7 @@ class JabberNotifier
   def coverage_delta_text(project)
     delta = project.last_coverage_delta
     return '' if 0 == delta
-    text = if delta > 0 ? "Yay! Coverage increased by " : "Boo! Coverage decreased by "
+    text = delta > 0 ? "Yay! Coverage increased by " : "Boo! Coverage decreased by "
     text << ("%0.1f" % delta)
   end
 end
