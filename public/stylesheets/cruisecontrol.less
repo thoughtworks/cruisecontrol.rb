@@ -11,7 +11,7 @@
 @never-built-color: #d7d7d7;
 @warn-color: #f5b778;
 
-@coverage-good-color: darken(@success-color, 15%);
+@coverage-good-color: 
 @coverage-fair-color: darken(@warn-color, 10%);
 @coverage-bad-color: darken(@failure-color, 15%);
 @coverage-none-color: transparent;
@@ -76,7 +76,7 @@ a:hover {
 }
 
 .coverage_good         { background-color: @coverage-good-color; }
-.coverage_fair         { background-color: @coverage-warn-color; }
+.coverage_fair         { background-color: @coverage-fair-color; }
 .coverage_bad          { background-color: @coverage-bad-color; }
 .coverage_none         { background-color: @coverage-none-color; }
 
