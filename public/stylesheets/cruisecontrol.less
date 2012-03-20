@@ -148,13 +148,6 @@ a:hover {
   color: #C00;
 }
 
-#build, #projects {
-  .coverage_good         { background-color: darken(@success-color, 15%); }
-  .coverage_fair         { background-color: darken(@warn-color, 10%); }
-  .coverage_bad          { background-color: darken(@failure-color, 15%); }
-  .coverage_none         { background-color: transparent; }
-}
-
 /* build status stuff */
 
 .build_status { 
@@ -243,6 +236,11 @@ a:hover {
       right: 100px;
       border-bottom-right-radius: 0px;
     }
+
+    .coverage_good         { background-color: darken(@success-color, 15%); }
+    .coverage_fair         { background-color: darken(@warn-color, 10%); }
+    .coverage_bad          { background-color: darken(@failure-color, 15%); }
+    .coverage_none         { background-color: transparent; }
     
     .upper {
       clear: both;
@@ -423,6 +421,11 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
           text-align: center;
           .rounded_corners(1px);
         }
+        
+        .coverage_good         { background-color: darken(@success-color, 15%); }
+        .coverage_fair         { background-color: darken(@warn-color, 10%); }
+        .coverage_bad          { background-color: darken(@failure-color, 15%); }
+        .coverage_none         { background-color: transparent; }
         
         img.coverage_icon {
             display: block;
