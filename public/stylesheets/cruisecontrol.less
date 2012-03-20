@@ -46,11 +46,6 @@ code {
     color: #444;
     padding: 16px 0px 4px 20px;
   }
-  
-  .coverage_good         { background-color: darken(@success-color, 15%); }
-  .coverage_fair         { background-color: darken(@warn-color, 10%); }
-  .coverage_bad          { background-color: darken(@failure-color, 15%); }
-  .coverage_none         { background-color: transparent; }
 }
 
 img { border-style: none; }
@@ -151,6 +146,13 @@ a:hover {
 .error_message {
   font-weight: bold;
   color: #C00;
+}
+
+#build, #projects {
+  .coverage_good         { background-color: darken(@success-color, 15%); }
+  .coverage_fair         { background-color: darken(@warn-color, 10%); }
+  .coverage_bad          { background-color: darken(@failure-color, 15%); }
+  .coverage_none         { background-color: transparent; }
 }
 
 /* build status stuff */
