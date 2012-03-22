@@ -39,14 +39,20 @@ class JabberNotifier
   end
  
   def build_fixed(fixed_build, previous_build)
-    notify_of_build_outcome(fixed_build)
+    notify_of_build_outcome(fixed_build, true)
   end
   
-  def notify_of_build_outcome(build)
+  def notify_of_build_outcome(build, fixed = nil)
     if @subscribers.empty?
       CruiseControl::Log.debug("Jabber notifier: no subscribers registered")
     else
-      status = build.failed? ? "broken" : "fixed"
+      status = if build.failed?
+        'broken'
+      elsif fixed
+        'fixed'
+      else
+        'successful'
+      end
       message = "#{build.project.name} Build #{build.label} - #{status.upcase}"
       if Configuration.dashboard_url
         message += ". See #{build.url}"
@@ -107,7 +113,7 @@ class JabberNotifier
     delta = project.last_coverage_delta
     return '' if 0 == delta
     text = delta > 0 ? "Yay! Coverage increased by " : "Boo! Coverage decreased by "
-    text << ("%0.1f" % delta)
+    text << ("%0.1f%" % delta)
   end
 end
 
