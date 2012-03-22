@@ -139,6 +139,18 @@ EOF
       coverage_file.read.to_f
     end
   end
+  
+  def coverage_status_change
+    return unless coverage = self.coverage
+    return unless previous_coverage = project.previous_successful_build_coverage
+    status, previous_status = Coverage.status(coverage), Coverage.status(previous_coverage)
+    return if status == previous_status
+    [previous_status, status]
+  end
+  
+  def coverage_status_changed?
+    !!coverage_status_change
+  end
 
   def files_in(path)
     Dir["#{artifacts_directory}/#{path}/*"].collect {|f| f.gsub("#{artifacts_directory}/", '') }

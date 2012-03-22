@@ -33,7 +33,7 @@ class JabberNotifier
   end
  
   def build_finished(build)
-    if build.failed?
+    if build.failed? || (build.successful? && build.coverage_status_changed?)
       notify_of_build_outcome(build)
     end
   end
@@ -42,7 +42,6 @@ class JabberNotifier
     notify_of_build_outcome(fixed_build)
   end
   
- 
   def notify_of_build_outcome(build)
     if @subscribers.empty?
       CruiseControl::Log.debug("Jabber notifier: no subscribers registered")
