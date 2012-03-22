@@ -58,6 +58,7 @@ class JabberNotifier
         message += ". See #{build.url}"
       end
       if build.successful?
+        message << " \n"
         message << coverage_delta_text(build.project)
       end
       CruiseControl::Log.debug("Jabber notifier: sending 'build #{status}' notice")
