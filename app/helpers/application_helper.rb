@@ -76,7 +76,8 @@ module ApplicationHelper
   end
 
   def format_changeset_log(log)
-    h(log.strip) if log.present?
+    log = "" if log.blank?
+    h(log.strip)
   end
   
   def elapsed_time(build, format = :general)
