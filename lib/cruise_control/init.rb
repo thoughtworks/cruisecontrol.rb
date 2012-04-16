@@ -29,6 +29,7 @@ module CruiseControl
     end
   
     def start
+      ENV["RAILS_ENV"] ||= "production"
       require ENV_PATH
 
       unless ARGV.include?('-p') || ARGV.include?('--port')
@@ -62,6 +63,7 @@ module CruiseControl
     end
 
     def stop
+      ENV["RAILS_ENV"] ||= "production"
       require ENV_PATH
 
       stop_builders
@@ -84,6 +86,7 @@ module CruiseControl
     end
 
     def add
+      ENV["RAILS_ENV"] = "add_project"
       require ENV_PATH
       load File.join(File.dirname(__FILE__), '..', '..', 'script', 'add_project')
     end
