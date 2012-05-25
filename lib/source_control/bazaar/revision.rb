@@ -1,8 +1,7 @@
 module SourceControl
   class Bazaar
 
-  # FIXME: Mercurial revision is almost same as Subversion revision; and Git is not much different. Remove redundancy.
-  class Revision < AbstractRevision
+    class Revision < AbstractRevision
 
       attr_reader :number, :author, :time, :message, :changeset
 
@@ -12,11 +11,13 @@ module SourceControl
       end
 
       def to_s
-        <<-EOL
-Revision #{number} committed by #{author} on #{time.strftime('%Y-%m-%d %H:%M:%S') if time}
-#{message}
-#{changeset ? changeset.collect { |entry| entry.to_s }.join("\n") : nil}
-        EOL
+        output = "Revision #{number}"
+        output << " committed by #{author}" if author
+        output << " on #{time.strftime('%Y-%m-%d %H:%M:%S')}" if time
+        output << "\n\n#{message}" if message
+        output << "\n\n#{changeset.map(&:to_s).join("\n")}" if changeset
+        output << "\n"
+        output
       end
 
       def <=>(other)
@@ -24,7 +25,9 @@ Revision #{number} committed by #{author} on #{time.strftime('%Y-%m-%d %H:%M:%S'
       end
 
       def ==(other)
-        @number == other.number
+        [:class, :number, :author, :time, :message, :changeset].all? do |p|
+          other.send(p) == self.send(p)
+        end
       end
 
       def to_i

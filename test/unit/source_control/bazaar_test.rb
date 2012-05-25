@@ -24,7 +24,7 @@ module SourceControl
         Bazaar::LogParser.expects(:new).returns(parser)
 
         @bazaar.expects(:bzr).with("pull")
-        @bazaar.expects(:bzr).with("log", ['-v', '-r', '-1']).returns("log_result")
+        @bazaar.expects(:bzr).with("log", ['-v', '-r', '-1', '--xml']).returns("log_result")
         assert_equal("foo", @bazaar.latest_revision)
       end
     end
