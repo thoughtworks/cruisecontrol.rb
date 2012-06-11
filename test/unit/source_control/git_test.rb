@@ -130,6 +130,8 @@ class SourceControl::GitTest < ActiveSupport::TestCase
     in_sandbox do
       git = new_git(:repository => "git:/my_repo")
       git.expects(:git).with("clean", ['-q', '-d', '-f'])
+      git.expects(:latest_revision).returns(:foo)
+      git.expects(:update).with(:foo)
       git.clean_checkout
     end
   end
