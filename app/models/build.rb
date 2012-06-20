@@ -39,9 +39,12 @@ class Build
     begin
       raise ConfigError.new(@project.error_message) unless @project.config_valid?
       in_clean_environment_on_local_copy do
+
         if @project.uses_bundler?
-          execute self.bundle_install, :stdout => build_log_path, :stderr => build_log_path, :env => project.environment
+          # If your project uses Gemfile with ruby1.9 sintax it will fail (since CC.rb uses 1.8.7)
+          # execute self.bundle_install, :stdout => build_log_path, :stderr => build_log_path, :env => project.environment
         end
+
         execute self.command, :stdout => build_log_path, :stderr => build_log_path, :env => project.environment
       end
       build_status.succeed!(seconds_since(@start))
