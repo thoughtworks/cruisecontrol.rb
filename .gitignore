@@ -26,3 +26,6 @@ server_jar/target/
 config/ccrb.properties
 pkg
 reports
+
+.rbenv-version
+.rvmrc
