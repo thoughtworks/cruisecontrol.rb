@@ -34,7 +34,7 @@ module BuildsHelper
   end
   
   def format_build_log(log)
-    strip_ansi_colors(highlight_test_count(link_to_code(h(log))))
+    highlight_test_count(link_to_code(convert_ansi_colors(log)))
   end
   
   def link_to_changeset
@@ -125,4 +125,9 @@ module BuildsHelper
   def strip_ansi_colors(log)
     log.gsub(/\e\[\d+m/, '')
   end
+  
+  def convert_ansi_colors(log)
+    AnsiColors.ansi_escaped(log).html_safe
+  end
+  
 end
