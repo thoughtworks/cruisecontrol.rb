@@ -3,7 +3,7 @@ source "http://rubygems.org"
 gem "rails", "3.0.7"
 gem "tzinfo", "0.3.27"
 gem "rack", "1.2.3"
-gem "bundler", "~> 1.0.12"
+gem "bundler"#, "~> 1.0.12"
 
 gem "httparty", "0.6.1"
 gem "api_cache", "0.2.0"
