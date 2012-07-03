@@ -4,9 +4,12 @@
       <%= link_to project.name, project_path(project), :id => project.name %>
     </div>
 
+<!--
+    TODO(mariozaizar) performance issues.
     <div class="commit-avatar">
       <%#= last_commit_avatar project -%>
     </div>
+-->
 
     <div class="builder_control">
       <%= render :partial => "builds/build_buttons", :locals => { :project => project } %>
