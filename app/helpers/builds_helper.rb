@@ -11,12 +11,12 @@ module BuildsHelper
       mtime.strftime("%d-%m-%Y")
     end
   end
-  
+
   def file_size(path)
     file = @build.artifact(path)
     File.size(file)
   end
-  
+
   def file_type(path)
     file = @build.artifact(path)
     return 'directory' if File.directory?(file)
@@ -29,18 +29,18 @@ module BuildsHelper
     options = [ [ "Older Builds...", nil ] ] + builds.map do |build|
       [ build_to_text(build, false), build_path(project.id, build.label) ]
     end
-    
+
     select_tag "build", options_for_select(options)
   end
-  
+
   def format_build_log(log)
     strip_ansi_colors(highlight_test_count(link_to_code(h(log))))
   end
-  
+
   def link_to_code(log)
     return log if Configuration.disable_code_browsing
     @work_path ||= File.expand_path(@project.path + '/work')
-    
+
     log.gsub(/(\#\{RAILS_ROOT\}\/)?([\w\.-]*\/[ \w\/\.-]+)\:(\d+)/) do |match|
       path = File.expand_path($2, @work_path)
       line = $3
@@ -52,7 +52,7 @@ module BuildsHelper
       end
     end
   end
-  
+
   def format_project_settings(settings)
     settings = settings.strip
     if settings.empty?
@@ -62,11 +62,11 @@ module BuildsHelper
       h(settings)
     end
   end
-  
+
   def failures_and_errors_if_any(log)
     BuildLogParser.new(log).failures_and_errors
   end
-  
+
   def format_test_error_output(test_error)
     message = test_error.message
 
