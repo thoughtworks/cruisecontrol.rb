@@ -2,13 +2,19 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 $(document).ready(function() {
+
+  // After 5 seconds hide the footer
+  setTimeout(function() {
+    $('.footer').hide('slow');
+  }, 5000);
+
   $("#projects .buttons .build_button").live("click", function(e) {
     e.preventDefault();
     var button = $(this);
 
     if (button.attr("disabled") !== "disabled") {
       button.attr("disabled", "disabled");
-      
+
       var form = button.closest("form.build_project");
 
       $.post(form.attr("action"), form.serialize(), function(resp) {
