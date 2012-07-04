@@ -56,10 +56,18 @@ module BuildsHelper
   def format_project_settings(settings)
     settings = settings.strip
     if settings.empty?
-      "This project has no custom configuration. Maybe it doesn't need it.<br/>" +
-      "Otherwise, #{link_to('the manual', document_path('manual'))} can tell you how."
+      "This project has no custom configuration. Maybe it doesn't need it."
     else
       h(settings)
+    end
+  end
+
+  def format_build_script(script)
+    script = script.strip
+    if script.empty?
+      "This project has no `build.sh` file. Maybe it doesn't need it."
+    else
+      h(script)
     end
   end
 
