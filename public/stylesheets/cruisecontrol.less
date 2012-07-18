@@ -3,6 +3,10 @@
 @cruise-dark-blue: #2C5DA3;
 @cruise-orange: #f5b778;
 
+@cruise-light-red: #FF6666;
+@cruise-red: #C00;
+@cruise-dark-red: #97342c;
+
 @background-color: #e7e7e7;
 @border-color: #d7d7d7;
 
@@ -309,6 +313,22 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
   color: #777;
   cursor: default;
   box-shadow: none;
+}
+
+.kill_all_build_button {
+  float: right;
+  background: @cruise-light-red;
+  background: -moz-linear-gradient(top, @cruise-light-red 0%, @cruise-red 100%);
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(@cruise-light-red), to(@cruise-red));
+  border: 1px solid @cruise-red;
+  border-bottom: 1px solid @cruise-dark-red;
+  margin: 0 10px;
+
+  &:hover{
+    background: -moz-linear-gradient(top, @cruise-light-red 0%, @cruise-dark-red 100%);
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(@cruise-light-red), to(@cruise-dark-red));
+    border: 1px solid @cruise-dark-red;
+  }
 }
 
 .builder_control {
