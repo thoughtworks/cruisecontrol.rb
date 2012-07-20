@@ -1,0 +1,18 @@
+<link href="tablecloth/tablecloth.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="tablecloth/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="tablecloth/jquery.csvToTable.js"></script>
+
+<div id="CSVTable"></div>
+
+<script>
+  $('#CSVTable').CSVToTable('release_tag.log',
+    {
+      headers: ['Tag', 'Revision No', 'Tagged Date']
+    }
+  );
+
+</script>
+
+<script type="text/javascript" src="tablecloth/tablecloth.js"></script>
+
+

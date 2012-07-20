@@ -6,7 +6,7 @@ class Build
   class ConfigError < StandardError; end
 
   attr_reader :project, :label
-  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|release_note.log|changeset.log|cruise_config.rb|plugin_errors.log)$/
+  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|release_note.log|release_label.log|changeset.log|cruise_config.rb|plugin_errors.log)$/
 
   def initialize(project, label, initialize_artifacts_directory=false)
     @project, @label = project, label.to_s
@@ -79,6 +79,23 @@ EOF
         ENV['RELEASE_NOTE_FROM'] = from_revision 
         ENV['RELEASE_NOTE_TO'] = to_revision
         execute "rake send_release_note --TRACE" , :stdout => release_note_log_path, :stderr => release_note_log_path, :env => project.environment
+        return true
+      end
+    rescue => e
+      CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
+      return false
+    end
+  end
+
+  def add_release_label(to_revision , label)
+    return false if ( to_revision.nil? or label.to_s.strip.empty? )
+    release_label_log = artifact('release_label.log')
+    release_label_log_path = release_label_log.expand_path.to_s
+    begin
+      in_clean_environment_on_local_copy do
+        ENV['RELEASE_REVISION'] = to_revision 
+        ENV['RELEASE_LABEL'] = label
+        execute "rake add_release_tag --TRACE" , :stdout => release_label_log_path, :stderr => release_label_log_path, :env => project.environment
         return true
       end
     rescue => e
