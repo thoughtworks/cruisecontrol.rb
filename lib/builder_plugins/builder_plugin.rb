@@ -113,6 +113,10 @@ class BuilderPlugin
   def build_finished(build)
   end
   
+  # Called by Project immediately after the release not is generated.
+  def release_note_generated(build , message , email)
+  end
+  
   # Called by Project after the completion of a build if the previous build was successful and this one is a failure.
   def build_broken(build, previous_build)
   end

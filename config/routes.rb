@@ -5,6 +5,7 @@ CruiseControl::Application.routes.draw do
   resources :projects do
     member do
       post :build, :constraints => { :id => /.*/ }
+      post :release_note, :constraints => { :id => /.*/ }
       post :kill_build, :constraints => { :id => /.*/ }
       get :getting_started, :constraints => { :id => /.*/ }
     end

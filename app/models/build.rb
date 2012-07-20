@@ -6,7 +6,7 @@ class Build
   class ConfigError < StandardError; end
 
   attr_reader :project, :label
-  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|changeset.log|cruise_config.rb|plugin_errors.log)$/
+  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|release_note.log|changeset.log|cruise_config.rb|plugin_errors.log)$/
 
   def initialize(project, label, initialize_artifacts_directory=false)
     @project, @label = project, label.to_s
@@ -70,6 +70,22 @@ EOF
       end
     end
   end
+
+  def generate_release_note(from_revision , to_revision)
+    release_note_log = artifact('release_note.log')
+    release_note_log_path = release_note_log.expand_path.to_s
+    begin
+      in_clean_environment_on_local_copy do
+        ENV['RELEASE_NOTE_FROM'] = from_revision 
+        ENV['RELEASE_NOTE_TO'] = to_revision
+        execute "rake send_release_note --TRACE" , :stdout => release_note_log_path, :stderr => release_note_log_path, :env => project.environment
+        return true
+      end
+    rescue => e
+      CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
+      return false
+    end
+  end
   
   def brief_error
     return error unless error.blank?
@@ -116,6 +132,10 @@ EOF
 
   def output
     @output ||= contents_for_display(build_log)
+  end
+
+  def release_note_output
+    @release_note_output ||= contents_for_display(artifact('release_note.txt'))
   end
   
   def project_settings
@@ -164,6 +184,10 @@ EOF
     exceeds_max_file_display_length?(artifact('build.log'))
   end
 
+  def release_note_output_exceeds_max_file_display_length?
+    exceeds_max_file_display_length?(artifact('release_note.txt'))
+  end
+
   def contents_for_display(file)
     return '' unless file.file? && file.readable?
 
@@ -173,7 +197,7 @@ EOF
   def command
     project.build_command or rake
   end
-  
+
   def rake_task
     project.rake_task
   end

@@ -1,0 +1,26 @@
+<div id="release_note_popup" style="display:none" >
+  <%= form_tag(release_note_project_path(:id => project), :id => "release_note_form" , :class => "build_project" ) do %>
+
+      <dl>
+         
+          <dt><label for="from">From Revision No</label></dt>
+          <dd><input type="text" id="from" name="from"></input></dd>
+
+          <dt><label for="to">To Revision No</label></dt>
+          <dd><input type="text" id="to" name="to" ></input></dd>
+
+          <dt><label for="email">Send Release Note To Email</label></dt>
+          <dd><input type="text" id="email" name="email" ></input></dd>
+
+          <dt><label for="message">Message</label></dt>
+          <dd><textarea cols="80" rows="7" id="message" name="message"></textarea></dd>
+      </dl>
+
+
+
+      <button type="submit" id="generate_release_note" name="generate_release_note" class="build_button">Generate</button>
+
+  <% end %>
+</div>
+
+

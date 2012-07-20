@@ -323,6 +323,15 @@ class Project
   def build_requested?
     File.file?(build_requested_flag_file)
   end
+
+  def generate_release_note(from_revision , to_revision , message , email )
+    build = Build.new(self, source_control.latest_revision.number )
+    if build.generate_release_note(from_revision , to_revision)
+      message_header = "Commits after #{from_revision} upto #{to_revision}\n\n"
+      message.insert(0 , message_header)
+      notify(:release_note_generated, build , message , email )
+    end
+  end
   
   def request_build
     if builder_state_and_activity == 'builder_down'
@@ -382,7 +391,7 @@ class Project
       build_without_serialization(revision, reasons)
     end
   end
-        
+
   def build_without_serialization(revision, reasons)
     return if revision.nil? # this will only happen in the case that there are no revisions yet
 

@@ -17,6 +17,17 @@ $(document).ready(function() {
     }
   });
 
+  $("#generate_release_note").live("click", function(e) {
+    e.preventDefault();
+    $('#release_note_popup').dialog('close');
+    var button = $(this);
+    var form = $("#release_note_form");
+
+    $.post(form.attr("action"), form.serialize(), function(resp) {
+      $("#projects").html(resp);
+    });
+    
+  });
   $("#project_build_now .build_button").live("click", function(e) {
     e.preventDefault();
     var button = $(this);
@@ -33,6 +44,11 @@ $(document).ready(function() {
       $.get(path, function(resp) { projects.html(resp); });
     }, interval);
   });
+
+  $("#release_label_checkbox").click(function(){
+      $("#release_label").disabled = $(this).is(":checked");
+  });
+
 
   var sectionNames = $("#build .build_details .build_nav .section_name");
   var sections = $("#build .build_details .sections");

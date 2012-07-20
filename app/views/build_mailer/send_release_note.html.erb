@@ -1,0 +1,17 @@
+<%= @message %>
+
+
+<% unless @failures_and_errors.empty? -%>
+TEST FAILURES AND ERRORS
+-----------------------
+<%= @failures_and_errors %>
+
+<% end -%>
+
+<% if @build.release_note_output_exceeds_max_file_display_length? %>
+The output below has been truncated to <%= number_to_human_size(Configuration.max_file_display_length) %>.
+View <%= link_to "the full log", build_artifact_path(:project => @build.project.name, :build => @build.label, :path => 'release_note.log') %> for the rest.
+<% end %>
+
+<%= raw @build.release_note_output %>
+

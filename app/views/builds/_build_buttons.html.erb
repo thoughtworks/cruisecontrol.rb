@@ -3,6 +3,10 @@
     <%= image_tag 'spinner.gif', :class => "spinner" %>
   <% end %>
 
+  <button id="release_note" >Release Note</button>
+
+  <%= render :partial => "builds/release_note_form", :locals => { :project => project } %>
+
   <%= form_tag(build_project_path(:id => project), :class => "build_project") do %>
 
     <% if project.builder_down? %>
@@ -25,3 +29,12 @@
     <% end %>
   <% end %>
 </div>
+<script>
+  $('#release_note_popup').dialog({ autoOpen: false , width : 'auto' });
+
+  $("#release_note").live("click", function(e) {
+    $('#release_note_popup').dialog('open');
+  });
+
+
+</script>
