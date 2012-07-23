@@ -328,7 +328,7 @@ class Project
     build = Build.new(self, source_control.latest_revision.number )
     if build.generate_release_note(from_revision , to_revision)
       notify(:release_tagged , to_revision , release_label , build) if build.add_release_label(to_revision , release_label)
-      message_header = "Commits after #{from_revision} upto #{to_revision}\n\n"
+      message_header = "Commits from #{from_revision} upto #{to_revision}\n\n"
       message.insert(0 , message_header)
       notify(:release_note_generated, build , message , email )
     end
