@@ -17,6 +17,9 @@ class BuildsController < ApplicationController
     @builds_for_navigation_list, @builds_for_dropdown = partitioned_build_lists(@project)
 
     @autorefresh = @build.incomplete?
+
+    brakeman_csv = File.join(@build.work_directory, 'tmp/brakeman.csv')
+    @brakeman = BrakemanCharts.new(brakeman_csv)
   end
 
   def artifact
