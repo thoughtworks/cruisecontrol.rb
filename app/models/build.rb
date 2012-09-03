@@ -126,6 +126,7 @@ EOF
   end
 
   def build_script
+    @build_script ||= contents_for_display(work('script/build'))
     @build_script ||= contents_for_display(work('build.sh'))
   end
 
