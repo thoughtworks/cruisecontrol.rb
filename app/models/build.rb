@@ -128,6 +128,7 @@ EOF
   def build_script
     @build_script = contents_for_display(work('script/build')) if @build_script.blank?
     @build_script = contents_for_display(work('build.sh')) if @build_script.blank?
+    @build_script = '' if @build_script.blank?
   end
 
   def error
