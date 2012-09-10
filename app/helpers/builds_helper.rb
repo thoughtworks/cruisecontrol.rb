@@ -63,8 +63,7 @@ module BuildsHelper
   end
 
   def format_build_script(script)
-    script = script.strip
-    if script.empty?
+    if script.blank?
       "This project has no `build.sh` or `script/build` scripts. Maybe it doesn't need it."
     else
       h(script)
