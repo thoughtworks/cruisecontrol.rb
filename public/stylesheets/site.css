@@ -1,0 +1,34 @@
+/* this is a copy of /Users/mariozaizar/.cruise/site.css, please make any changes to it there */
+
+.cc_logo{
+ /*   background: url(https://www.billfloat.com/images/BillFloat_Logo_130x61.png) no-repeat 0 0 transparent !important;*/
+    height: 75px !important;
+}
+
+.cc_logo img{
+    display:none;
+}
+
+.main_menu{
+    top: 39px !important;
+}
+
+.header{
+    background: #FFF !important;
+}
+
+.tw_logo{
+    display: none;
+}
+
+#projects .project.build_success{
+    background: #AEF5AF;
+}
+
+#projects .project.build_failed{
+    background: #FFB3B3;
+}
+
+#projects .project.build_never_built{
+    background: #D7D7D7;
+}
