@@ -212,6 +212,11 @@ EOF
 
         # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
         ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
+        # set OS variable so that custom build tasks can access db username and password
+        ENV['CC_DB_USERNAME'] = Configuration.db_username
+        ENV['CC_DB_PASSWORD'] = Configuration.db_password
+        # set OS variable so that custom build tasks can access the project name
+        ENV['CC_PROJECT_NAME'] = self.project.name
         # set OS variablea CC_BUILD_LABEL & CC_BUILD_REVISION so that custom build tasks can use them
         ENV['CC_BUILD_LABEL'] = self.label
         ENV['CC_BUILD_REVISION'] = self.revision

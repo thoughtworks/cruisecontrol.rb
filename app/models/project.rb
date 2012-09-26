@@ -128,6 +128,7 @@ class Project
       retried_after_update = false
       begin
         load_and_remember config_tracker.central_config_file
+        load_and_remember config_tracker.config_file_inside_config_folder
       rescue Exception 
         if retried_after_update
           raise

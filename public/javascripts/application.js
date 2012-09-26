@@ -87,4 +87,20 @@ $(document).ready(function() {
     evt.preventDefault();
     window.location = $(this).val();
   });
+
+  function showOrHideBranchField(source_control_type) {
+    sourceControlsWithBranches = ['Git', 'Mercurial']
+    if($.inArray(source_control_type, sourceControlsWithBranches) != -1) {
+      $('#project_source_control_branch').show('fast');
+    }
+    else {
+      $('#project_source_control_branch').hide('fast'); 
+    }
+  }
+
+  debugger ;
+  showOrHideBranchField($('#project_source_control_source_control').first().val());
+  $('#project_source_control_source_control').change(function() {
+    showOrHideBranchField(this.value); 
+  });
 });
