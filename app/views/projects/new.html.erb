@@ -14,6 +14,9 @@
   
       <dt><%= scm.label :source_control, "Type of source control:" %></dt>
       <dd><%= scm.select :source_control, %w(Git Subversion Mercurial Bazaar) %></dd>
+
+      <dt><%= scm.label :branch, "Repository branch:" %></dt>
+      <dd><%= scm.text_field :branch, :placeholder => "Repository branch" %></dd>
       <% end %>
 
       <%= content_tag("button", "Create", :type => "submit") %></dt>
