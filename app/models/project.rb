@@ -17,6 +17,7 @@ class Project
     end
     
     def create(project_name, scm, dir=Configuration.projects_root)
+      raise ArgumentError, "Project Name is required" if project_name.blank?
       Project.new(:name => project_name, :scm => scm).tap do |project|
         raise "Project named #{project.name.inspect} already exists in #{dir}" if Project.all(dir).include?(project)
         begin
