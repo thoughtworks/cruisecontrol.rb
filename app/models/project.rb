@@ -24,7 +24,7 @@ class Project
           checkout_local_copy(project)
           write_config_example(project)
         rescue
-          FileUtils.rm_rf "#{dir}/#{project.name}"
+          FileUtils.rm_rf "#{dir}/#{project.name}" unless project.name.strip.empty?
           raise
         end
       end
