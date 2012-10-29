@@ -31,8 +31,8 @@ module CruiseControl
     end
   end
   
-  def self.require_site_config_if_needed
-    require self.data_root.join('site_config') if self.data_root.join('site_config.rb').exist?
+  def self.require_site_config_if_needed    
+  	require self.data_root.join('config', 'site_config') if self.data_root.join('config', 'site_config.rb').exist?
   end
   
   def self.data_root
