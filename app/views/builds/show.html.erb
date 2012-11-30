@@ -77,7 +77,7 @@
         <% coverage_report = File.join(@build.work_directory, 'coverage/index.html') -%>
         <% if File.exist?(coverage_report) -%>
           <li class="section_name">
-            <a href="<%= coverage_report %>">Code Coverage Report</a>
+            <a href="file://<%= coverage_report %>">Code Coverage Report</a>
           </li>
         <% end -%>
       </ul>
