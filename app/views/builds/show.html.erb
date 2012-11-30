@@ -71,8 +71,15 @@
         </li>
 
         <li class="section_name">
-          <a href="#brakeman_report">Brakeman Report</a>
+          <a href="#brakeman_report">Security Report</a>
         </li>
+
+        <% coverage_report = File.join(@build.work_directory, 'coverage/index.html') -%>
+        <% if File.exist?(coverage_report) -%>
+          <li class="section_name">
+            <a href="<%= coverage_report %>">Code Coverage Report</a>
+          </li>
+        <% end -%>
       </ul>
 
       <div class="sections">
