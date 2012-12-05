@@ -61,7 +61,6 @@ a:hover {
 
 .terminal_output {
   font-family: courier, monospace;
-  overflow-x: scroll;
   background-color: #555;
   color: white;
   padding: 14px;
@@ -494,7 +493,8 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
           margin-right: 16px;
 
           .terminal_output {
-            white-space: pre;
+            white-space: pre-line;
+            word-wrap: break-word;
           }
 
           &.active {
