@@ -30,6 +30,16 @@
   </div>
 
   <%= render :partial => '/layouts/footer' %>
+  
+  <style>
+    .builder_status>a.success, li.build_link a.success, #build .left_column .builds_list .build_link.selected a.success {
+        background-color: #3f3;
+    }
+
+    li.build_link a.failed, #build .left_column .builds_list .build_link.selected a.failed {
+        background-color: #f33;
+    }
+  </style>
 
 </body>
 </html>

@@ -1,2 +1,3 @@
 Pulls merged from stuff added to main project:
 - Add word wrap to terminal output (johnkelly)
+- GREEN for success; RED for failed (IndieBosco)
