@@ -113,7 +113,7 @@ EOF
   def build_log
     artifact('build.log')
   end
-
+  
   def output
     @output ||= contents_for_display(build_log)
   end
@@ -132,6 +132,24 @@ EOF
 
   def time
     build_status.timestamp
+  end
+  
+  def coverage
+    if (coverage_file = artifact('coverage_percent.txt')) && coverage_file.exist?
+      coverage_file.read.to_f
+    end
+  end
+  
+  def coverage_status_change
+    return unless coverage = self.coverage
+    return unless previous_coverage = project.previous_successful_build_coverage
+    status, previous_status = Coverage.status(coverage), Coverage.status(previous_coverage)
+    return if status == previous_status
+    [previous_status, status]
+  end
+  
+  def coverage_status_changed?
+    !!coverage_status_change
   end
 
   def files_in(path)

@@ -9,6 +9,7 @@
 @success-color: #AEF5AF;
 @failure-color: #FFB3B3;
 @never-built-color: #d7d7d7;
+@warn-color: #f5b778;
 
 @spinner: url(../images/spinner.gif);
 @spinner-error: url(../images/spinner_error.gif);
@@ -60,11 +61,20 @@ a:hover {
 }
 
 .terminal_output {
-  font-family: courier, monospace;
-  background-color: #555;
-  color: white;
+  font-family: monaco, courier, monospace;
+  font-size : 10px;
+  overflow-x: scroll;
+  background-color: black;
+  color: #ccc;
   padding: 14px;
   .rounded_corners;
+  
+  .ansi_none { color: #ccc; font-weight: normal; }
+  .ansi_1    { font-weight: bold; }
+  .ansi_31   { color: rgb(194,54,33); }
+  .ansi_32   { color: rgb(37,188,36); }
+  .ansi_33   { color: rgb(137,137,39); }
+  .ansi_36   { color: rgb(51, 187, 200); }
 }
 
 /* default layout classes */
@@ -182,7 +192,7 @@ a:hover {
     &.build_failed        { .build_color(@failure-color);     }
     &.build_never_built    { .build_color(@never-built-color); }
         
-    .name, .status, .builder_control, .rss, .project_status, .builder_status, .builder_control {
+    .name, .status, .builder_control, .rss, .project_status, .builder_status, .coverage_status, .builder_control {
       position: absolute;
     }
 
@@ -192,7 +202,7 @@ a:hover {
       left: 4px;
     }
     
-    .status {
+    .status, .coverage_status {
       position: absolute;
       bottom: 0px;
       right: 0px;
@@ -228,7 +238,17 @@ a:hover {
       bottom: 2px;
       left: 240px;
     }
+    
+    .coverage_status {
+      right: 100px;
+      border-bottom-right-radius: 0px;
+    }
 
+    .coverage_good         { background-color: darken(@success-color, 15%); }
+    .coverage_fair         { background-color: darken(@warn-color, 10%); }
+    .coverage_bad          { background-color: darken(@failure-color, 15%); }
+    .coverage_none         { background-color: transparent; }
+    
     .upper {
       clear: both;
       width: 100%;
@@ -395,6 +415,34 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
           color: @cruise-dark-blue;
           font-weight: bold;
         }
+        
+        div.coverage_icon {
+          float: left;
+          clear: left;
+          width: 28px;
+          height: 13px;
+          margin: 8px 6px 0px 6px;
+          font-size : 9px;
+          color: white;
+          padding-top: 2px;
+          text-align: center;
+          .rounded_corners(1px);
+        }
+        
+        .coverage_good         { background-color: darken(@success-color, 15%); }
+        .coverage_fair         { background-color: darken(@warn-color, 10%); }
+        .coverage_bad          { background-color: darken(@failure-color, 15%); }
+        .coverage_none         { background-color: transparent; }
+        
+        img.coverage_icon {
+            display: block;
+            float:left;
+            clear: left;
+            width: 28px;
+            height: 11px;
+            margin: 9px 6px 0px 6px;
+        }
+        
       }
 
       li:first-child.selected a {

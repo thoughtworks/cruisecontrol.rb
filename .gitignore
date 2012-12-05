@@ -21,8 +21,10 @@ vendor/plugins/rails_upgrade
 vendor/ruby/
 vendor/jruby/
 vendor/bundle
+vendor/cache
 server_jar/target/
 
 config/ccrb.properties
 pkg
 reports
+config/thin.yml
