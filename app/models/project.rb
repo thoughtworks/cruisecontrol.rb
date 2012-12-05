@@ -17,6 +17,7 @@ class Project
     end
     
     def create(project_name, scm, dir=Configuration.projects_root)
+      raise ArgumentError, "Project Name is required" if project_name.blank?
       Project.new(:name => project_name, :scm => scm).tap do |project|
         raise "Project named #{project.name.inspect} already exists in #{dir}" if Project.all(dir).include?(project)
         begin
@@ -24,7 +25,7 @@ class Project
           checkout_local_copy(project)
           write_config_example(project)
         rescue
-          FileUtils.rm_rf "#{dir}/#{project.name}"
+          FileUtils.rm_rf "#{dir}/#{project.name}" unless project.name.strip.empty?
           raise
         end
       end
@@ -128,6 +129,7 @@ class Project
       retried_after_update = false
       begin
         load_and_remember config_tracker.central_config_file
+        load_and_remember config_tracker.config_file_inside_config_folder
       rescue Exception 
         if retried_after_update
           raise
@@ -345,6 +347,16 @@ class Project
   def build_requested?
     File.file?(build_requested_flag_file)
   end
+
+  def generate_release_note(from_revision , to_revision , message , email, release_label)
+    build = Build.new(self, source_control.latest_revision.number )
+    if build.generate_release_note(from_revision , to_revision)
+      notify(:release_tagged , to_revision , release_label , build) if build.add_release_label(to_revision , release_label)
+      message_header = "Commits from #{from_revision} upto #{to_revision}\n\n"
+      message.insert(0 , message_header)
+      notify(:release_note_generated, build , message , email )
+    end
+  end
   
   def request_build
     if builder_state_and_activity == 'builder_down'
@@ -404,7 +416,7 @@ class Project
       build_without_serialization(revision, reasons)
     end
   end
-        
+
   def build_without_serialization(revision, reasons)
     return if revision.nil? # this will only happen in the case that there are no revisions yet
 

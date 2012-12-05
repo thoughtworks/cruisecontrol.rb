@@ -6,7 +6,7 @@ class Build
   class ConfigError < StandardError; end
 
   attr_reader :project, :label
-  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|changeset.log|cruise_config.rb|plugin_errors.log)$/
+  IGNORE_ARTIFACTS = /^(\..*|build_status\..+|build.log|release_note.log|release_label.log|changeset.log|cruise_config.rb|plugin_errors.log)$/
 
   def initialize(project, label, initialize_artifacts_directory=false)
     @project, @label = project, label.to_s
@@ -70,6 +70,39 @@ EOF
       end
     end
   end
+
+  def generate_release_note(from_revision , to_revision)
+    release_note_log = artifact('release_note.log')
+    release_note_log_path = release_note_log.expand_path.to_s
+    begin
+      in_clean_environment_on_local_copy do
+        ENV['RELEASE_NOTE_FROM'] = from_revision 
+        ENV['RELEASE_NOTE_TO'] = to_revision
+        execute "rake send_release_note --TRACE" , :stdout => release_note_log_path, :stderr => release_note_log_path, :env => project.environment
+        return true
+      end
+    rescue => e
+      CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
+      return false
+    end
+  end
+
+  def add_release_label(to_revision , label)
+    return false if ( to_revision.nil? or label.to_s.strip.empty? )
+    release_label_log = artifact('release_label.log')
+    release_label_log_path = release_label_log.expand_path.to_s
+    begin
+      in_clean_environment_on_local_copy do
+        ENV['RELEASE_REVISION'] = to_revision 
+        ENV['RELEASE_LABEL'] = label
+        execute "rake add_release_tag --TRACE" , :stdout => release_label_log_path, :stderr => release_label_log_path, :env => project.environment
+        return true
+      end
+    rescue => e
+      CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
+      return false
+    end
+  end
   
   def brief_error
     return error unless error.blank?
@@ -116,6 +149,10 @@ EOF
   
   def output
     @output ||= contents_for_display(build_log)
+  end
+
+  def release_note_output
+    @release_note_output ||= contents_for_display(artifact('release_note.txt'))
   end
   
   def project_settings
@@ -182,6 +219,10 @@ EOF
     exceeds_max_file_display_length?(artifact('build.log'))
   end
 
+  def release_note_output_exceeds_max_file_display_length?
+    exceeds_max_file_display_length?(artifact('release_note.txt'))
+  end
+
   def contents_for_display(file)
     return '' unless file.file? && file.readable?
 
@@ -191,7 +232,7 @@ EOF
   def command
     project.build_command or rake
   end
-  
+
   def rake_task
     project.rake_task
   end
@@ -230,6 +271,11 @@ EOF
 
         # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
         ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
+        # set OS variable so that custom build tasks can access db username and password
+        ENV['CC_DB_USERNAME'] = Configuration.db_username
+        ENV['CC_DB_PASSWORD'] = Configuration.db_password
+        # set OS variable so that custom build tasks can access the project name
+        ENV['CC_PROJECT_NAME'] = self.project.name
         # set OS variablea CC_BUILD_LABEL & CC_BUILD_REVISION so that custom build tasks can use them
         ENV['CC_BUILD_LABEL'] = self.label
         ENV['CC_BUILD_REVISION'] = self.revision
