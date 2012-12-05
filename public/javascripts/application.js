@@ -8,7 +8,7 @@ $(document).ready(function() {
 
     if (button.attr("disabled") !== "disabled") {
       button.attr("disabled", "disabled");
-      
+
       var form = button.closest("form.build_project");
 
       $.post(form.attr("action"), form.serialize(), function(resp) {
@@ -103,7 +103,7 @@ $(document).ready(function() {
     evt.preventDefault();
     window.location = $(this).val();
   });
-
+  
   function showOrHideBranchField(source_control_type) {
     sourceControlsWithBranches = ['Git', 'Mercurial']
     if($.inArray(source_control_type, sourceControlsWithBranches) != -1) {

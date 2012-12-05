@@ -38,6 +38,12 @@ module SourceControl
       git('clean', ['-q', '-d', '-f'])
     end
 
+    def latest_commiter_email
+      load_new_changesets_from_origin
+      git_output = git('log', ['-1', '--pretty=format:%ce', "origin/#{current_branch}"])
+      git_output.to_s
+    end
+
     def latest_revision
       load_new_changesets_from_origin
       git_output = git('log', ['-1', '--pretty=raw', '--stat', "origin/#{current_branch}"])
