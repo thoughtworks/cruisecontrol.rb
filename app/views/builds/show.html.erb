@@ -2,7 +2,7 @@
 
 <div id="build">
   <div class="left_column">
-    <ul class="builds_list">  
+    <ul class="builds_list">
       <li class="build_link builder_control">
         <%= render :partial => 'builds/build_buttons', :locals => { :project => @project } %>
       </li>
@@ -63,7 +63,24 @@
           <li class="section_name"><a href="#build_artifacts">Build Artifacts</a></li>
         <% end %>
 
-        <li class="section_name"><a href="#project_settings">Project Settings</a></li>
+        <li class="section_name">
+          <a href="#project_settings">Project Settings</a>
+        </li>
+
+        <li class="section_name">
+          <a href="#build_script">Build Script</a>
+        </li>
+
+        <li class="section_name">
+          <a href="#brakeman_report">Security Report</a>
+        </li>
+
+        <% coverage_report = File.join(@build.artifacts_directory, 'coverage/index.html') -%>
+        <% if File.exist?(coverage_report) -%>
+          <li class="section_link">
+            <%= link_to 'Coverage Report', build_artifact_path(:project => @project.name, :build => @build.label, :path => 'coverage/index.html') %>
+          </li>
+        <% end -%>
       </ul>
 
       <div class="sections">
@@ -72,7 +89,7 @@
           <% if @build.output_exceeds_max_file_display_length? %>
             <p>
               The size of the file you're viewing now is <%= number_to_human_size(@build.build_log.size) %>, which is too big to display in the dashboard;
-              CC.rb is configured to truncate any files longer than <%= number_to_human_size(Configuration.max_file_display_length) %>. 
+              CC.rb is configured to truncate any files longer than <%= number_to_human_size(Configuration.max_file_display_length) %>.
               You can override this value in <code>site_config.rb</code> by setting <code>max_file_display_length</code>
               to your desired value in bytes (e.g. <code>50.kilobytes</code>), or <code>nil</code> to allow files of any length.
             </p>
@@ -88,7 +105,7 @@
 
           <div class="section_content terminal_output"><%= format_build_log(@build.output) %></div>
         </div>
-        
+
         <div class="section" id="build_changeset">
           <a name="build_changeset"></a>
           <%= link_to_changeset %>
@@ -111,7 +128,7 @@
             </div>
           </div>
         <% end %>
-      
+
         <% if plugin_errors.present? %>
           <div class="section" id="plugin_errors">
             <a name="plugin_errors"></a>
@@ -131,11 +148,29 @@
             </div>
           </div>
         <% end %>
-      
+
         <div class="section" id="project_settings">
           <a name="project_settings"></a>
           <div class="section_content terminal_output"><%= format_project_settings(@build.project_settings) %></div>
         </div>
+
+        <div class="section" id="build_script">
+          <a name="build_script"></a>
+          <div class="section_content terminal_output"><%= format_build_script(@build.build_script) %></div>
+        </div>
+
+        <div class="section" id="brakeman_report">
+          <a name="brakeman_report"></a>
+          <div class="section_content">
+            <% if @brakeman.valid? -%>
+              <p><%= image_tag @brakeman.warning_chart -%></p>
+              <p><%= image_tag @brakeman.scanned_chart -%></p>
+            <% else %>
+              <div class="section_content terminal_output">Please execute: bundle exec brakeman --quiet --summary --output tmp/brakeman.csv;</div>
+            <% end %>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

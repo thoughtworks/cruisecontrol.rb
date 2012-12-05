@@ -6,7 +6,6 @@
   <%= tag :link, :rel => "stylesheet/less", :type => "text/css", :href => path_to_stylesheet('cruisecontrol.less') %>
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/cupertino/jquery-ui.css" />
   <%= stylesheet_link_tag 'site', :media => 'all' if Rails.root.join("public", "stylesheets", "site.css").exist? %>
-  
 
   <% if @autorefresh %>
     <meta http-equiv="refresh" content="<%= Configuration.dashboard_refresh_interval.to_i %>">
@@ -29,8 +28,13 @@
 
   <div id="content">
     <%= yield %>
-  </div>
 
+    <% if Project.all.any? -%>
+      <%= form_for :project, :url => projects_kill_all_builders_path, :action => :post do |p| %>
+        <button type="submit" name="kill_all" class="kill_all_build_button">Kill all Builders</button>
+      <% end -%>
+    <% end -%>
+  </div>
   <%= render :partial => '/layouts/footer' %>
   
   <style>

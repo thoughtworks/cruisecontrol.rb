@@ -24,3 +24,9 @@ platform :jruby do
   gem 'jruby-openssl'
 end
 
+gem "googlecharts"
+
+group :development do
+  gem 'powder'
+end
+

@@ -27,4 +27,10 @@ server_jar/target/
 config/ccrb.properties
 pkg
 reports
+<<<<<<< HEAD
 config/thin.yml
+=======
+
+.rbenv-version
+.rvmrc
+>>>>>>> crowdint/master

@@ -3,6 +3,10 @@
 @cruise-dark-blue: #2C5DA3;
 @cruise-orange: #f5b778;
 
+@cruise-light-red: #FF6666;
+@cruise-red: #C00;
+@cruise-dark-red: #97342c;
+
 @background-color: #e7e7e7;
 @border-color: #d7d7d7;
 
@@ -14,8 +18,8 @@
 @spinner: url(../images/spinner.gif);
 @spinner-error: url(../images/spinner_error.gif);
 
-.rounded_corners (@radius: 4px) { 
-  border-radius: @radius; 
+.rounded_corners (@radius: 4px) {
+  border-radius: @radius;
   -webkit-border-radius: @radius;
   -moz-border-radius: @radius;
 }
@@ -50,7 +54,7 @@ code {
 
 img { border-style: none; }
 
-a, a:link, a:visited { 
+a, a:link, a:visited {
   color: @cruise-blue;
   text-decoration: none;
 }
@@ -87,8 +91,8 @@ a:hover {
   border-bottom: 1px solid #ccc;
 
   position: relative;
-  
-  .cc_logo { 
+
+  .cc_logo {
     margin: 10px 0 0 1.5em;
   }
 
@@ -99,7 +103,7 @@ a:hover {
 
     color: @cruise-blue;
     padding: 0 1.5em 0 0.5em;
-    
+
     .menu_item {
       list-style-type: none;
       float: left;
@@ -140,11 +144,11 @@ a:hover {
   text-align: right;
   padding: 2em 1em 0 0;
   clear: both;
-  
+
   .version {
     padding-right: 1.5em;
   }
-  
+
   a, a:visited {
     color: @cruise-blue;
   }
@@ -157,8 +161,26 @@ a:hover {
 
 /* build status stuff */
 
-.build_status { 
-  font-weight: bold; 
+.commit-avatar{
+  float: right;
+  left: -100px;
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  clear: both;
+  margin: 0px;
+  padding: none;
+  background:  #FFF;
+
+  img{
+    width: 60px;
+    height: 60px;
+  }
+}
+
+.build_status {
+  font-weight: bold;
 }
 .build_failed .build_status, .build_never_built .build_status { text-transform: uppercase; }
 .build_success .build_status { color: #0A0; }
@@ -191,7 +213,7 @@ a:hover {
     &.build_success       { .build_color(@success-color);     }
     &.build_failed        { .build_color(@failure-color);     }
     &.build_never_built    { .build_color(@never-built-color); }
-        
+    
     .name, .status, .builder_control, .rss, .project_status, .builder_status, .coverage_status, .builder_control {
       position: absolute;
     }
@@ -208,7 +230,7 @@ a:hover {
       right: 0px;
       width: 90px;
       border-bottom-right-radius: 4px;
-      
+
       background-color: @cruise-blue;
       color: white;
       padding: 3px;
@@ -219,22 +241,22 @@ a:hover {
     .status.failed      { background-color: darken(@failure-color, 15%);     }
     .status.never_built { background-color: darken(@never-built-color, 15%); }
 
-    .builder_control { 
+    .builder_control {
       top: 3px;
-      right: 3px; 
+      right: 3px;
     }
-          
-    .rss { 
+
+    .rss {
       bottom: 0px;
       left: 6px;
     }
 
-    .builder_status  { 
+    .builder_status  {
       bottom: 2px;
       left: 28px;
     }
 
-    .project_status  { 
+    .project_status  {
       bottom: 2px;
       left: 240px;
     }
@@ -254,12 +276,12 @@ a:hover {
       width: 100%;
       height: 36px;
     }
-    
+
     .lower {
       height: 24px;
       background: url(../images/stripes.png) bottom left repeat;
     }
-    
+
     .clear { clear: both; }
   }
 }
@@ -281,7 +303,7 @@ button {
   line-height: 1;
   padding: 6px 8px;
   text-align: center;
-  
+
   &:hover {
     background: @cruise-light-blue;
     background: -moz-linear-gradient(top, @cruise-light-blue 0%, @cruise-dark-blue 100%);
@@ -298,7 +320,7 @@ button {
     -webkit-box-shadow: inset 0 0 5px 2px @cruise-dark-blue, 0 1px 0 0 @cruise-light-blue;
     box-shadow: inset 0 0 5px 2px @cruise-dark-blue, 0 1px 0 0 @cruise-light-blue;
   }
-  
+
 }
 
 button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled="disabled"]:active {
@@ -312,9 +334,25 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
   box-shadow: none;
 }
 
+.kill_all_build_button {
+  float: right;
+  background: @cruise-light-red;
+  background: -moz-linear-gradient(top, @cruise-light-red 0%, @cruise-red 100%);
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(@cruise-light-red), to(@cruise-red));
+  border: 1px solid @cruise-red;
+  border-bottom: 1px solid @cruise-dark-red;
+  margin: 0 10px;
+
+  &:hover{
+    background: -moz-linear-gradient(top, @cruise-light-red 0%, @cruise-dark-red 100%);
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(@cruise-light-red), to(@cruise-dark-red));
+    border: 1px solid @cruise-dark-red;
+  }
+}
+
 .builder_control {
-  .builder_status_builder_down, 
-  .builder_status_unknown, 
+  .builder_status_builder_down,
+  .builder_status_unknown,
   .builder_status_source_control_error,
   .builder_status_timed_out {
     font-weight: bold;
@@ -324,8 +362,8 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
     background-position: left;
     background-repeat: no-repeat;
   }
-  
-  .builder_status_building, 
+
+  .builder_status_building,
   .builder_status_build_requested,
   .builder_status_queued {
     font-weight: bold;
@@ -362,7 +400,7 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
 .help {
   padding-left: .7em;
   color: #666;
-  
+
   a {
     color: #333;
   }
@@ -450,7 +488,7 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
       }
 
       li:last-child {
-        border-bottom: 1px solid #bbb;        
+        border-bottom: 1px solid #bbb;
       }
 
       li.old_build_selector {
@@ -496,7 +534,7 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
         list-style-type: none;
         margin: 8px;
 
-        .section_name {
+        .section_name, .section_link {
           list-style-type: none;
 
           a {
@@ -551,7 +589,7 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
         }
 
         #test_failures {
-          .test_failure { 
+          .test_failure {
             list-style-type: none;
             background-color: #eee;
             padding: 8px;
@@ -572,7 +610,7 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
 .code {
   margin: 16px;
   .terminal_output;
-  
+
   a {
     color: white;
   }
@@ -581,7 +619,7 @@ button[disabled="disabled"], button[disabled="disabled"]:hover, button[disabled=
     color: #bbb;
     margin-right: 2em;
     width: 4em;
-    
+
     &:hover {
       background-color: #feb;
     }

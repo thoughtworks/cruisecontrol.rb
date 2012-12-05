@@ -1,21 +1,21 @@
-# A Project represents a particular CI build of a particular codebase. An instance is created 
+# A Project represents a particular CI build of a particular codebase. An instance is created
 # each time a build is triggered and yielded back to be configured by cruise_config.rb.
 class Project
   attr_reader :name, :plugins, :build_command, :rake_task, :config_tracker, :path, :settings, :config_file_content, :error_message
   attr_accessor :source_control, :scheduler, :use_bundler, :gemfile, :bundler_args
 
   alias_method :id, :name
-  
+
   class << self
     attr_accessor_with_default :plugin_names, []
     attr_accessor :current_project
-    
+
     def all(dir=Configuration.projects_root)
       load_all(dir).map do |project_dir|
         load_project project_dir
       end
     end
-    
+
     def create(project_name, scm, dir=Configuration.projects_root)
       raise ArgumentError, "Project Name is required" if project_name.blank?
       Project.new(:name => project_name, :scm => scm).tap do |project|
@@ -30,7 +30,7 @@ class Project
         end
       end
     end
-    
+
     def plugin(plugin_name)
       self.plugin_names << plugin_name unless Rails.env == 'test' or self.plugin_names.include? plugin_name
     end
@@ -48,9 +48,9 @@ class Project
       raise 'No project is currently being created' if current_project.nil?
       yield current_project
     end
-    
+
     def find(project_name, dir=Configuration.projects_root)
-      # TODO: sanitize project_name to prevent a query injection attack here      
+      # TODO: sanitize project_name to prevent a query injection attack here
       path = dir.join(project_name)
       return nil unless File.directory?(path)
       load_project(path)
@@ -61,13 +61,13 @@ class Project
         project.path = dir
       end
     end
-    
+
     private
-    
+
       def load_all(dir)
         Dir["#{dir}/*"].find_all {|child| File.directory?(child)}.sort
       end
-    
+
       def save_project(project, dir)
         project.path = File.join(dir, project.name)
         FileUtils.mkdir_p project.path
@@ -88,7 +88,7 @@ class Project
         end
       end
   end
-  
+
   def initialize(attrs = {})
     attrs = attrs.with_indifferent_access
 
@@ -107,7 +107,7 @@ class Project
 
     instantiate_plugins
   end
-  
+
   def source_control=(scm_adapter)
     scm_adapter.path = local_checkout
     @source_control = scm_adapter
@@ -130,7 +130,7 @@ class Project
       begin
         load_and_remember config_tracker.central_config_file
         load_and_remember config_tracker.config_file_inside_config_folder
-      rescue Exception 
+      rescue Exception
         if retried_after_update
           raise
         else
@@ -177,7 +177,7 @@ class Project
   def ==(another)
     another.is_a?(Project) and another.name == self.name
   end
-  
+
   def config_valid?
     @settings == @config_file_content
   end
@@ -211,11 +211,11 @@ class Project
   def builder_state_and_activity
     BuilderStatus.new(self).status
   end
-  
+
   def builder_down?
     BuilderStatus.new(self).builder_down?
   end
-  
+
   def can_build_now?
     !(building? || builder_down? || Configuration.disable_admin_ui)
   end
@@ -223,38 +223,38 @@ class Project
   def can_kill_builder?
     !Configuration.disable_admin_ui
   end
-  
+
   def building?
     self.builder_state_and_activity == 'building'
   end
-  
+
   def sleeping?
     !builder_down? && self.builder_state_and_activity == 'sleeping'
   end
-  
+
   def builder_error_message
     BuilderStatus.new(self).error_message
   end
-  
+
   def last_build
     builds.last
   end
-  
+
   def create_build(label)
     Build.new(self, label, true)
   end
-  
-  def previous_build(current_build)  
+
+  def previous_build(current_build)
     all_builds = builds
     index = get_build_index(all_builds, current_build.label)
-    
+
     if index > 0
       return all_builds[index-1]
-    else  
+    else
       return nil
     end
   end
-  
+
   def next_build(current_build)
     all_builds = builds
     index = get_build_index(all_builds, current_build.label)
@@ -265,7 +265,7 @@ class Project
       return all_builds[index + 1]
     end
   end
-  
+
   def last_complete_build
     builds.reverse.find { |build| !build.incomplete? }
   end
@@ -274,7 +274,7 @@ class Project
     # this could be optimized a lot
     builds.find { |build| build.label == label }
   end
-    
+
   def last_complete_build_status
     return "failed" if BuilderStatus.new(self).fatal?
     previously_built? ? last_complete_build.status : 'never_built'
@@ -310,7 +310,7 @@ class Project
   def last_five_builds
     last_builds(5)
   end
-  
+
   def last_builds(n)
     builds.reverse[0..(n-1)]
   end
@@ -328,7 +328,7 @@ class Project
         notify(:build_loop_failed, e) rescue nil
         @build_loop_failed = true
         raise
-      end 
+      end
     ensure
       notify(:sleeping) unless @build_loop_failed rescue nil
     end
@@ -339,11 +339,11 @@ class Project
     if builds.empty?
       reasons << "This is the first build"
       true
-    else 
+    else
       @triggers.any? {|t| t.build_necessary?(reasons) }
     end
   end
-  
+
   def build_requested?
     File.file?(build_requested_flag_file)
   end
@@ -363,7 +363,7 @@ class Project
       BuilderStarter.begin_builder(name)
       10.times do
         sleep 1.second.to_i
-        break if builder_state_and_activity != 'builder_down' 
+        break if builder_state_and_activity != 'builder_down'
       end
     end
     unless build_requested?
@@ -371,7 +371,7 @@ class Project
       create_build_requested_flag_file
     end
   end
-  
+
   def config_modified?
     if config_tracker.config_modified?
       notify :configuration_modified
@@ -380,21 +380,21 @@ class Project
       false
     end
   end
-  
+
   def build_if_requested
     if build_requested?
       remove_build_requested_flag_file
       build(source_control.latest_revision, ['Build was manually requested.', source_control.latest_revision.to_s])
     end
   end
-  
+
   def force_build(message = 'Build was forced')
     build(source_control.latest_revision, [message, source_control.latest_revision.to_s])
   end
-  
+
   def update_project_to_revision(build, revision)
     if do_clean_checkout?
-      File.open(build.artifact('source_control.log'), 'w') do |f| 
+      File.open(build.artifact('source_control.log'), 'w') do |f|
         start = Time.now
         f << "checking out build #{build.label}, this could take a while...\n"
         source_control.clean_checkout(revision, f)
@@ -421,10 +421,10 @@ class Project
     return if revision.nil? # this will only happen in the case that there are no revisions yet
 
     notify(:build_initiated)
-    previous_build = last_build    
-    
+    previous_build = last_build
+
     build = Build.new(self, create_build_label(revision.number), true)
-    
+
     begin
       log_changeset(build.artifacts_directory, reasons)
       update_project_to_revision(build, revision)
@@ -433,7 +433,7 @@ class Project
         build.abort
         throw :reload_project
       end
-    
+
       notify(:build_started, build)
       build.run
       notify(:build_finished, build)
@@ -457,9 +457,9 @@ class Project
     unless BuilderPlugin.known_event? event
       raise "You attempted to notify the project of the #{event} event, but the plugin architecture does not understand this event. Add a method to BuilderPlugin, and document it."
     end
-    
+
     errors = []
-    results = @plugins.collect do |plugin| 
+    results = @plugins.collect do |plugin|
       begin
         plugin.send(event, *event_parameters) if plugin.respond_to? event
       rescue => plugin_error
@@ -477,7 +477,7 @@ class Project
         errors << "#{plugin.class}: #{plugin_error.message}"
       end
     end
-    
+
     if errors.empty?
       return results.compact
     else
@@ -489,7 +489,7 @@ class Project
       raise error_message
     end
   end
-  
+
   def log_changeset(artifacts_directory, reasons)
     File.open(File.join(artifacts_directory, 'changeset.log'), 'w') do |f|
       reasons.each { |reason| f << reason.to_s << "\n" }
@@ -503,7 +503,7 @@ class Project
   def to_param
     self.name
   end
-  
+
   # possible values for this is :never, :always, :every => 1.hour, :every => 2.days, etc
   def do_clean_checkout(how_often = :always)
     unless how_often == :always || how_often == :never || (how_often[:every].is_a?(Integer))
@@ -511,7 +511,7 @@ class Project
     end
     @clean_checkout_when = how_often
   end
-  
+
   def do_clean_checkout?
     case @clean_checkout_when
     when :always then true
@@ -575,8 +575,8 @@ class Project
   end
 
   private
-  
-  # sorts a array of builds in order of revision number and rebuild number 
+
+  # sorts a array of builds in order of revision number and rebuild number
   def order_by_label(builds)
     if source_control.creates_ordered_build_labels?
       builds.sort_by do |build|
@@ -588,7 +588,7 @@ class Project
       builds.sort_by(&:time)
     end
   end
-    
+
   def create_build_label(revision_number)
     revision_number = revision_number.to_s
     build_labels = builds.map { |b| b.label }
@@ -600,11 +600,11 @@ class Project
     when [revision_number] then "#{revision_number}.1"
     else
       rebuild_numbers = related_builds.map { |label| label.split('.')[1] }.compact
-      last_rebuild_number = rebuild_numbers.sort_by { |x| x.to_i }.last 
+      last_rebuild_number = rebuild_numbers.sort_by { |x| x.to_i }.last
       "#{revision_number}.#{last_rebuild_number.next}"
     end
   end
-  
+
   def create_build_requested_flag_file
     FileUtils.touch(build_requested_flag_file)
   end
@@ -612,11 +612,11 @@ class Project
   def remove_build_requested_flag_file
     FileUtils.rm_f(Dir[build_requested_flag_file])
   end
-  
+
   def get_build_index(all_builds, build_label)
     result = 0;
     all_builds.each_with_index {|build, index| result = index if build.label == build_label}
-    result 
+    result
   end
   
 end
