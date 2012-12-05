@@ -8,6 +8,7 @@
       </li>
       <% @builds_for_navigation_list.each do |build| %>
         <li class="build_link<%= ' selected' if @build.label == build.label %>">
+          <%= coverage_icon(build) %>
           <%= link_to_build(@project, build) %>
         </li>
       <% end %>
@@ -90,6 +91,7 @@
         
         <div class="section" id="build_changeset">
           <a name="build_changeset"></a>
+          <%= link_to_changeset %>
           <div class="section_content terminal_output"><%= format_changeset_log(@build.changeset) %></div>
         </div>
 

@@ -1,6 +1,7 @@
 class ProjectsController < ApplicationController
   before_filter :disable_build_triggers, :only => [:build, :kill_build]
-
+  before_filter :disable_add_project, :only => :create
+  
   def index
     @projects = Project.all
     
@@ -105,5 +106,10 @@ class ProjectsController < ApplicationController
     
     def project_to_attributes(project)
       { 'name' => project.name }
+    end
+    
+    def disable_add_project
+      return unless Configuration.disable_add_project
+      render :text => 'Build requests are not allowed', :status => :forbidden
     end
 end

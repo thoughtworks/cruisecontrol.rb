@@ -278,6 +278,28 @@ class Project
     previously_built? ? last_complete_build.status : 'never_built'
   end
   
+  def last_successful_build
+    builds.reverse.find { |build| build.successful? }
+  end
+
+  def previous_successful_build
+    builds.reverse.select { |build| build.successful? }.second
+  end
+  
+  def last_successful_build_coverage
+    return 0 unless build = last_successful_build
+    build.coverage.to_f
+  end
+    
+  def previous_successful_build_coverage
+    return 0 unless build = previous_successful_build
+    build.coverage.to_f
+  end
+  
+  def last_coverage_delta
+    last_successful_build_coverage - previous_successful_build_coverage
+  end
+  
   def previously_built?
     not last_complete_build.nil?
   end

@@ -60,5 +60,12 @@ module ProjectsHelper
     else 'Unknown'
     end
   end
-
+  
+  def coverage_delta(project)
+    '%+0.1f' % project.last_coverage_delta
+  end
+  
+  def coverage_status(coverage)
+    Coverage.status(coverage).to_s
+  end
 end
