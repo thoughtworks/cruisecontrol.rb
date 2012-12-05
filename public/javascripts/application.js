@@ -17,6 +17,17 @@ $(document).ready(function() {
     }
   });
 
+  $("#generate_release_note").live("click", function(e) {
+    e.preventDefault();
+    $('#release_note_popup').dialog('close');
+    var button = $(this);
+    var form = $("#release_note_form");
+
+    $.post(form.attr("action"), form.serialize(), function(resp) {
+      $("#projects").html(resp);
+    });
+    
+  });
   $("#project_build_now .build_button").live("click", function(e) {
     e.preventDefault();
     var button = $(this);
@@ -33,6 +44,11 @@ $(document).ready(function() {
       $.get(path, function(resp) { projects.html(resp); });
     }, interval);
   });
+
+  $("#release_label_checkbox").click(function(){
+      $("#release_label").disabled = $(this).is(":checked");
+  });
+
 
   var sectionNames = $("#build .build_details .build_nav .section_name");
   var sections = $("#build .build_details .sections");
@@ -86,5 +102,20 @@ $(document).ready(function() {
   $("#select_build").live("change", function(evt) {
     evt.preventDefault();
     window.location = $(this).val();
+  });
+
+  function showOrHideBranchField(source_control_type) {
+    sourceControlsWithBranches = ['Git', 'Mercurial']
+    if($.inArray(source_control_type, sourceControlsWithBranches) != -1) {
+      $('#project_source_control_branch').show('fast');
+    }
+    else {
+      $('#project_source_control_branch').hide('fast'); 
+    }
+  }
+
+  showOrHideBranchField($('#project_source_control_source_control').first().val());
+  $('#project_source_control_source_control').change(function() {
+    showOrHideBranchField(this.value); 
   });
 });

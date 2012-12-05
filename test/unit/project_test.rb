@@ -523,6 +523,81 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
+  context "#generate_release_note" do
+    test "should notify listeners if release note generated and release_tagged" do
+      build = Object.new
+      build.expects(:generate_release_note).returns(true)
+      build.expects(:add_release_label).returns(true)
+      Build.stubs(:new).returns(build)
+      in_sandbox do |sandbox|
+        @project.path = sandbox.root
+
+        listener = Object.new
+        listener.expects(:release_tagged)
+        listener.expects(:release_note_generated)
+        latest_revision = Object.new
+        latest_revision.expects(:number).returns("latest_revision")
+        source_control = Object.new
+        source_control.expects(:latest_revision).returns(latest_revision)
+        source_control.expects(:path=).returns("DUMMY PATH")
+        @project.source_control = source_control 
+
+        @project.add_plugin listener
+
+        @project.generate_release_note('from_revision','to_revision','message','email','label' )
+      end
+    end
+
+    test "should not notify listeners if release note not generated" do
+      build = Object.new
+      build.expects(:generate_release_note).returns(false)
+      build.expects(:add_release_label).never
+      Build.stubs(:new).returns(build)
+      in_sandbox do |sandbox|
+        @project.path = sandbox.root
+
+        listener = Object.new
+        listener.expects(:release_tagged).never
+        listener.expects(:release_note_generated).never
+        latest_revision = Object.new
+        latest_revision.expects(:number).returns("latest_revision")
+        source_control = Object.new
+        source_control.expects(:latest_revision).returns(latest_revision)
+        source_control.expects(:path=).returns("DUMMY PATH")
+        @project.source_control = source_control 
+
+        @project.add_plugin listener
+
+        @project.generate_release_note('from_revision','to_revision','message','email','label' )
+      end
+    end
+
+    test "should not notify release_tagged listener if release note generated but release labelling not done" do
+      build = Object.new
+      build.expects(:generate_release_note).returns(true)
+      build.expects(:add_release_label).once.returns(false)
+      Build.stubs(:new).returns(build)
+      in_sandbox do |sandbox|
+        @project.path = sandbox.root
+
+        listener = Object.new
+        listener.expects(:release_tagged).never
+        listener.expects(:release_note_generated).once
+        latest_revision = Object.new
+        latest_revision.expects(:number).returns("latest_revision")
+        source_control = Object.new
+        source_control.expects(:latest_revision).returns(latest_revision)
+        source_control.expects(:path=).returns("DUMMY PATH")
+        @project.source_control = source_control 
+
+        @project.add_plugin listener
+
+        @project.generate_release_note('from_revision','to_revision','message','email','label' )
+      end
+    end
+    
+  end
+
   context "#kill_build" do
     test "should be able to kill a build on demand" do
       in_sandbox do |sandbox|

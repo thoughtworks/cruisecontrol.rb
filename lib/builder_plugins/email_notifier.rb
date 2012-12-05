@@ -43,6 +43,12 @@ class EmailNotifier < BuilderPlugin
           "The build failed."
   end
 
+  def release_note_generated(build , message , email = nil)
+    @emails = email.split(',') unless email.to_s.empty?
+    return if @emails.empty?
+    email(:send_release_note, build, build.project.name, message)
+  end
+
   def build_fixed(build, previous_build)
     return if @emails.empty?
     email :build_report, build, "#{build.project.name} build #{build.abbreviated_label} fixed",

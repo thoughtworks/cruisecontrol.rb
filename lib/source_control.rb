@@ -5,7 +5,7 @@ module SourceControl
   class << self
 
     def create(scm_options)
-      raise ArgumentError, "options should include repository" unless scm_options[:repository]
+      raise ArgumentError, "Repository path is required" if scm_options[:repository].blank?
       scm_type = scm_options[:source_control]
 
       source_control_class = if scm_type.nil?
