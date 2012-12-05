@@ -1,10 +1,10 @@
 <% @rss_feeds = { 'All projects' => {:controller => 'projects', :action => 'index', :format => 'rss'} } -%>
 <% @projects.each { |p| @rss_feeds["#{p.name} builds"] = project_url(p, :format => 'rss')} -%>
 
-<div id="projects" 
-  data-refresh-path="<%= projects_path %>" 
+<div id="projects"
+  data-refresh-path="<%= projects_path %>"
   data-refresh-interval="<%= Configuration.dashboard_refresh_interval.to_i * 1000 %>">
-  
+
   <% if @projects.empty? %>
     <%= render :partial => 'no_projects' %>
   <% else %>

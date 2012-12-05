@@ -1,6 +1,6 @@
 class BuildsController < ApplicationController
   caches_page :drop_down
-  
+
   def show
     render :text => 'Project not specified', :status => 404 and return unless params[:project]
     @project = Project.find(params[:project])
@@ -8,7 +8,7 @@ class BuildsController < ApplicationController
 
     if params[:build]
       @build = @project.find_build(params[:build])
-      render :text => "Build #{params[:build].inspect} not found", :status => 404 and return if @build.nil? 
+      render :text => "Build #{params[:build].inspect} not found", :status => 404 and return if @build.nil?
     else
       @build = @project.last_build
       render :action => 'no_builds_yet' and return if @build.nil?
@@ -17,6 +17,9 @@ class BuildsController < ApplicationController
     @builds_for_navigation_list, @builds_for_dropdown = partitioned_build_lists(@project)
 
     @autorefresh = @build.incomplete?
+
+    brakeman_csv = File.join(@build.work_directory, 'tmp/brakeman.csv')
+    @brakeman = BrakemanCharts.new(brakeman_csv)
   end
 
   def artifact
@@ -30,7 +33,7 @@ class BuildsController < ApplicationController
     render :text => "Build #{params[:build].inspect} not found", :status => 404 and return unless @build
 
     path = @build.artifact(params[:path])
-    
+
     if File.directory? path
       if File.exists?(File.join(path, 'index.html'))
         redirect_to request.fullpath + '/index.html'

@@ -13,7 +13,7 @@ module Platform
   module_function :running_as_daemon=
 
   def family
-    target_os = Config::CONFIG["target_os"] or raise 'Cannot determine operating system'
+    target_os = RbConfig::CONFIG["target_os"] or raise 'Cannot determine operating system'
     case target_os
     when /linux/i then 'linux'
     when /32/ then 'mswin32'

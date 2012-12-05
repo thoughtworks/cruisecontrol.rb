@@ -30,7 +30,7 @@ module SourceControl
       end
 
       update_options = []
-      update_options << '-C' << @branch if @branch
+      update_options << '-C' << @branch if ( @branch and !@branch.empty? )
       update_options << '-r' << revision if revision
       hg('update', update_options) unless update_options.empty?
     end
