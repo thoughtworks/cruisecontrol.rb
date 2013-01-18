@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
     [ "rake", "0.8.7" ],
     [ "jquery-rails", '1.0.9' ],
     [ "abstract", "1.0.0" ],
+    [ "mongrel", "1.1.5" ],
   ].each do |gem, version|
     s.add_dependency gem, version
   end
