@@ -76,6 +76,7 @@ module ApplicationHelper
   end
 
   def format_changeset_log(log)
+    log = "" if log.blank?
     h(log.strip)
   end
   
