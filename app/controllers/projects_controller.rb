@@ -27,7 +27,7 @@ class ProjectsController < ApplicationController
 
   def getting_started
     @project = Project.find(params[:id])
-    @config_example = File.read( File.join("config", "cruise_config.rb.example") )
+    @config_example = File.read( Rails.root.join("config", "cruise_config.rb.example") )
   end
 
   def show
