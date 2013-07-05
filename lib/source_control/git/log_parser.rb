@@ -5,6 +5,7 @@ module SourceControl
         @log = log
         revisions = []
         revision = nil
+        in_gpg_sig = false
 
         log.each do |line|
           next if line.blank?
@@ -17,11 +18,16 @@ module SourceControl
           when /^author /
             revision.author, revision.time = read_author_and_time(line)
 
+          when /^gpgsig /
+            in_gpg_sig = true
+          when / -----END PGP SIGNATURE/
+            in_gpg_sig = false
+
           when /^    /
             (revision.message ||= []) << line.strip
 
           when /^ /
-            (revision.changeset ||= []) << line.strip
+            (revision.changeset ||= []) << line.strip unless in_gpg_sig
 
           when /^tree /
           when /^parent /
@@ -42,7 +48,7 @@ module SourceControl
       end
 
       private
-      
+
       def read_author_and_time(line)
         author, seconds_from_epoch = line.match(/^author (.+) (\d+) [-+]\d{4}$/)[1, 2]
         [author, Time.at(seconds_from_epoch.to_i)]
