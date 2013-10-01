@@ -152,7 +152,8 @@ class SourceControl::SubversionTest < ActiveSupport::TestCase
   end
 
   def test_checkout_requires_repository_location
-    assert_raise_with_message(BuilderError, "'.' is not a working copy") { Subversion.new.checkout('.') }
+    # assert_raise_with_message(BuilderError, "'.' is not a working copy") { Subversion.new.checkout('.') }
+    assert_raise_with_message(BuilderError, "is not a working copy") { Subversion.new.checkout('.') }
   end
 
   def test_new_does_not_allow_random_params

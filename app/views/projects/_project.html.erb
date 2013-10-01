@@ -1,25 +1,44 @@
 <div id="project_<%= project.name %>" class="project build_<%= project.last_complete_build_status %>">
   <div class="upper">
-    <div class="name"><%= link_to project.name, project_path(project), :id => project.name %></div>
+    <div class="name">
+      <%= link_to project.name, project_path(project), :id => project.name %>
+    </div>
+
+<!--
+    TODO(mariozaizar) performance issues.
+    <div class="commit-avatar">
+      <%#= last_commit_avatar project -%>
+    </div>
+-->
+
     <div class="builder_control">
       <%= render :partial => "builds/build_buttons", :locals => { :project => project } %>
     </div>
   </div>
-  
+
   <div class="lower">
     <div class="rss">
       <%= link_to image_tag('rss_light.gif'), :action => 'show', :id => project.name, :format => 'rss' %>
     </div>
-    
+
     <% status = project.sleeping? ? project.last_complete_build_status : project.builder_state_and_activity %>
-    
+
     <div class="project_status <%= status %>">
       <%= status.titleize %>
     </div>
 
+
+    <!-- <% if 'success' == status %>
+      <% coverage = project.last_successful_build_coverage %>
+      <div class="coverage_status coverage_<%= coverage_status(coverage) %>">
+        Cov <%= format_percent(coverage) %>
+      </div>
+    <% end %> -->
+
     <div class="status <%= project.last_complete_build_status %>">
       <%= project.last_complete_build_status.humanize %>
     </div>
+
 
     <div class="builder_status">
       <% if project.building? %>
@@ -29,6 +48,6 @@
       <% end %>
     </div>
   </div>
-  
+
   <div class="clear"></div>
 </div>

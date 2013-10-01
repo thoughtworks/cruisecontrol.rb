@@ -13,6 +13,8 @@
 # * configuration_modified
 # * build_started
 # * build_finished
+# * release_note_generated
+# * release_tagged
 # * build_broken OR build_fixed
 # * build_loop_failed
 # * sleeping
@@ -111,6 +113,14 @@ class BuilderPlugin
   
   # Called by Project immediately after the build has finished running.
   def build_finished(build)
+  end
+  
+  # Called by Project immediately after the release note is generated.
+  def release_note_generated(build , message , email)
+  end
+
+  # Called by Project immediately after the release is tagged.
+  def release_tagged(revision , tag, build)
   end
   
   # Called by Project after the completion of a build if the previous build was successful and this one is a failure.

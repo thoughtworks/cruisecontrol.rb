@@ -11,12 +11,12 @@ module BuildsHelper
       mtime.strftime("%d-%m-%Y")
     end
   end
-  
+
   def file_size(path)
     file = @build.artifact(path)
     File.size(file)
   end
-  
+
   def file_type(path)
     file = @build.artifact(path)
     return 'directory' if File.directory?(file)
@@ -29,18 +29,26 @@ module BuildsHelper
     options = [ [ "Older Builds...", nil ] ] + builds.map do |build|
       [ build_to_text(build, false), build_path(project.id, build.label) ]
     end
-    
+
     select_tag "build", options_for_select(options)
   end
-  
+
   def format_build_log(log)
-    strip_ansi_colors(highlight_test_count(link_to_code(h(log))))
+    highlight_test_count(link_to_code(convert_ansi_colors(h(log))))
   end
   
+  def link_to_changeset
+    if review_changeset_url = Configuration.review_changeset_url
+      content_tag('p') do
+        button_tag('Review changeset', :href => review_changeset_url.sub('%{changeset}', @build.revision.to_s))
+      end
+    end
+  end
+
   def link_to_code(log)
     return log if Configuration.disable_code_browsing
     @work_path ||= File.expand_path(@project.path + '/work')
-    
+
     log.gsub(/(\#\{RAILS_ROOT\}\/)?([\w\.-]*\/[ \w\/\.-]+)\:(\d+)/) do |match|
       path = File.expand_path($2, @work_path)
       line = $3
@@ -52,21 +60,28 @@ module BuildsHelper
       end
     end
   end
-  
+
   def format_project_settings(settings)
     settings = settings.strip
     if settings.empty?
-      "This project has no custom configuration. Maybe it doesn't need it.<br/>" +
-      "Otherwise, #{link_to('the manual', document_path('manual'))} can tell you how."
+      "This project has no custom configuration. Maybe it doesn't need it."
     else
       h(settings)
     end
   end
-  
+
+  def format_build_script(script)
+    if script.blank?
+      "This project has no `build.sh` or `script/build` scripts. Maybe it doesn't need it."
+    else
+      h(script)
+    end
+  end
+
   def failures_and_errors_if_any(log)
     BuildLogParser.new(log).failures_and_errors
   end
-  
+
   def format_test_error_output(test_error)
     message = test_error.message
 
@@ -87,7 +102,23 @@ module BuildsHelper
       end
     else
       elapsed_time_text = elapsed_time(@build, :precise)
-      elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}".html_safe
+      result_text = elapsed_time_text.empty? ? "finished at #{build_time_text}" : "finished at #{build_time_text} taking #{elapsed_time_text}"
+      result_text << ", covered #{format_percent(@build.coverage)}%" if @build.coverage
+      result_text.html_safe
+    end
+  end
+  
+  def coverage_icon(build)
+    coverage = build.coverage
+    coverage_text = coverage ? format_percent(coverage) : ''
+    content_tag('div', coverage_text, :class => "coverage_icon coverage_#{coverage_status(coverage)}")
+  end
+  
+  def coverage_status_icon(build)
+    if coverage = build.coverage
+      image_tag("coverage_#{coverage_status(coverage)}.png", :class => 'coverage_icon')
+    else
+      image_tag('coverage_none.png', :class => 'coverage_icon')
     end
   end
 
@@ -101,4 +132,9 @@ module BuildsHelper
   def strip_ansi_colors(log)
     log.gsub(/\e\[\d+m/, '')
   end
+  
+  def convert_ansi_colors(log)
+    AnsiColors.ansi_escaped(log).html_safe
+  end
+  
 end

@@ -4,9 +4,9 @@ require 'fileutils'
 class BuilderStarter
 
   include FileUtils
-  
+
   @@run_builders_at_startup = true;
-  
+
   def self.run_builders_at_startup=(value)
     @@run_builders_at_startup = value
   end
@@ -18,7 +18,7 @@ class BuilderStarter
       end
     end
   end
-  
+
   def self.begin_builder(project_name)
     cruise_executable =
         if Platform.interpreter =~ /jruby/
