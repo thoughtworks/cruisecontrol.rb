@@ -12,19 +12,23 @@ class BuildsHelperTest < ActionView::TestCase
 
   context "#format_build_log" do
     test "should wrap a test-results div around the examples and failures text" do
-      assert_equal "Finished in 0.00723 seconds\n\n<div class=\"test-results\">3 examples, 2 failures</div> foo",
+      assert_equal "<span class=\"ansi_none\">\
+Finished in 0.00723 seconds\n\n<div class=\"test-results\">3 examples, 2 failures</div> foo</span>",
         format_build_log("Finished in 0.00723 seconds\n\n3 examples, 2 failures foo")
     end
 
     test "should wrap a test-results div around RSpec results text" do
-      assert_equal "limes <div class=\"test-results\">5 tests, 20 assertions, 10 failures, 2 errors</div> foo",
+      assert_equal "<span class=\"ansi_none\">\
+limes <div class=\"test-results\">5 tests, 20 assertions, 10 failures, 2 errors</div> foo</span>",
         format_build_log("limes 5 tests, 20 assertions, 10 failures, 2 errors foo")
     end
 
     test "should link to the right code location when it detects a code reference in a stack trace" do
       expected = <<-EOL
+<span class=\"ansi_none\">\
   <a href="/projects/code/mine/vendor/rails/activesupport/lib/active_support/dependencies.rb?line=477#477">/Users/jeremy/src/cruisecontrolrb/builds/CruiseControl/work/config/../vendor/rails/actionpack/lib/../../activesupport/lib/active_support/dependencies.rb:477</a>:in `const_missing'
   <a href="/projects/code/mine/test/unit/builder_status_test.rb?line=8#8">./test/unit/builder_status_test.rb:8</a>:in `setup'
+</span>
       EOL
       
       log = <<-EOL
@@ -32,28 +36,31 @@ class BuildsHelperTest < ActionView::TestCase
   ./test/unit/builder_status_test.rb:8:in `setup'
       EOL
       
-      assert_equal expected, format_build_log(log)
+      assert_equal expected.chomp, format_build_log(log)
     end
 
     test "should link to the right code location and understand paths that are relative to Rails root" do
       expected = <<-EOL
+<span class=\"ansi_none\">\
   <a href="/projects/code/mine/test/unit/builder_status_test.rb?line=8#8">test/unit/builder_status_test.rb:8</a>:in `setup'
   <a href="/projects/code/mine/test/unit/builder_status_test.rb?line=8#8">\#{RAILS_ROOT}/test/unit/builder_status_test.rb:8</a>:in `setup'
+</span>
       EOL
       
       log = <<-EOL
   test/unit/builder_status_test.rb:8:in `setup'
   \#{RAILS_ROOT}/test/unit/builder_status_test.rb:8:in `setup'
       EOL
-      
-      assert_equal expected, format_build_log(log)
+      assert_equal expected.chomp, format_build_log(log)
     end
 
     test "should not attempt to link to code that exists outside the current project" do
       expected = <<-EOL
+<span class=\"ansi_none\">\
   ../foo:20
   <a href="/projects/code/mine/index.html?line=30#30">../work/index.html:30</a>
   /ruby/gems/ruby.rb:25
+</span>
       EOL
       
       log = <<-EOL
@@ -62,7 +69,7 @@ class BuildsHelperTest < ActionView::TestCase
   /ruby/gems/ruby.rb:25
       EOL
       
-      assert_equal expected, format_build_log(log)
+      assert_equal expected.chomp, format_build_log(log)
     end
 
     test "should strip ANSI color codes if encountered" do
@@ -73,11 +80,13 @@ class BuildsHelperTest < ActionView::TestCase
       EOF
 
       expected_output = <<-EOF
-        GREEN
-        RED
-        BLACK
+<span class=\"ansi_none\">        </span>\
+<span class=\"ansi_32\">GREEN</span>\
+<span class=\"ansi_none\">\n        </span>\
+<span class=\"ansi_31\">RED</span>\
+<span class=\"ansi_none\">\n        BLACK\n</span>
       EOF
-      assert_equal expected_output, format_build_log(log_with_ansi_colors)    
+      assert_equal expected_output.chomp, format_build_log(log_with_ansi_colors)    
     end
   end
 

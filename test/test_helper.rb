@@ -9,6 +9,9 @@ require 'stringio'
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
 
+verbosity = $-v
+$-v = nil
+
 class ActiveSupport::TestCase
   class << self
     def context(name, &block)
