@@ -1,11 +1,32 @@
-/* if you'd like to add custom styles to cruise, add them here */
-/* the following will make successful builds green */
-/*
-a.success, a.success:visited {
-  color: #0A0;
+.cc_logo{
+  background: url(https://www.billfloat.com/images/BillFloat_Logo_130x61.png) no-repeat 0 0 transparent !important;
+  height: 75px !important;
 }
 
-.build_success {
-  background-image: url(/images/green_gradient.png);
+.cc_logo img{
+  display:none;
 }
-*/
+
+.main_menu{
+  top: 39px !important;
+}
+
+.header{
+  background: #FFF !important;
+}
+
+.tw_logo{
+  display: none;
+}
+
+#projects .project.build_success{
+  background: #AEF5AF;
+}
+
+#projects .project.build_failed{
+  background: #FFB3B3;
+}
+
+#projects .project.build_never_built{
+  background: #D7D7D7;
+}

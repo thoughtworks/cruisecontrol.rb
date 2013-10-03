@@ -4,8 +4,8 @@
 <head>
   <title>CruiseControl.rb<%= @title ? " - " + @title : '' %></title>
   <%= tag :link, :rel => "stylesheet/less", :type => "text/css", :href => path_to_stylesheet('cruisecontrol.less') %>
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/cupertino/jquery-ui.css" />
   <%= stylesheet_link_tag 'site', :media => 'all' if Rails.root.join("public", "stylesheets", "site.css").exist? %>
-  
 
   <% if @autorefresh %>
     <meta http-equiv="refresh" content="<%= Configuration.dashboard_refresh_interval.to_i %>">
@@ -17,6 +17,7 @@
     <% end -%>
   <% end -%>
   <%= javascript_include_tag "jquery-1.6.1" %>
+  <%= javascript_include_tag "jquery-ui/js/jquery-ui-1.8.21.custom.min" %>
   <%= javascript_include_tag "less-1.1.0" %>
   <%= javascript_include_tag "application" %>
 </head>
@@ -27,9 +28,24 @@
 
   <div id="content">
     <%= yield %>
-  </div>
 
+    <% if Project.all.any? -%>
+      <%= form_for :project, :url => projects_kill_all_builders_path, :action => :post do |p| %>
+        <button type="submit" name="kill_all" class="kill_all_build_button">Kill all Builders</button>
+      <% end -%>
+    <% end -%>
+  </div>
   <%= render :partial => '/layouts/footer' %>
+  
+  <style>
+    .builder_status>a.success, li.build_link a.success, #build .left_column .builds_list .build_link.selected a.success {
+        background-color: #3f3;
+    }
+
+    li.build_link a.failed, #build .left_column .builds_list .build_link.selected a.failed {
+        background-color: #f33;
+    }
+  </style>
 
 </body>
 </html>

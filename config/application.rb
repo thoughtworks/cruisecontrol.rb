@@ -14,7 +14,7 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module CruiseControl
   def self.home_directory
-    looks_like_windows = (Config::CONFIG["target_os"] =~ /32/)
+    looks_like_windows = (RbConfig::CONFIG["target_os"] =~ /32/)
 
     if ENV['HOME']
       ENV['HOME']
