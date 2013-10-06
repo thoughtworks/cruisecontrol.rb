@@ -4,6 +4,7 @@ ENV["RAILS_ENV"] = 'builder'
 
 require File.expand_path(File.dirname(__FILE__) + '/../config/boot')
 require 'optparse'
+require 'fileutils'
 
 CRUISE_OPTIONS = { :verbose => false }
 
@@ -26,7 +27,6 @@ ARGV.options do |opts|
   end
 
   CRUISE_OPTIONS[:project_name] = args[0]
-  CRUISE_OPTIONS[:log_file_name] = "log/#{CRUISE_OPTIONS[:project_name]}_builder.log"
 end
 
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
@@ -72,9 +72,22 @@ def load_project(path)
   end
 end
 
+def migrate_old_logs
+  old_log = File.expand_path("log/#{CRUISE_OPTIONS[:project_name]}_builder.log")
+  if File.exists? old_log
+    new_log = File.expand_path(CRUISE_OPTIONS[:log_file_name])
+    if File.exists? new_log
+      FileUtils.mv(old_log, "#{new_log}.old")
+    else
+      FileUtils.mv(old_log, new_log)
+    end
+  end
+end
+
 project = nil
 
 begin
+  migrate_old_logs
   project = load_project(project_path)
   startup(project)
 

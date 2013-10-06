@@ -1,6 +1,8 @@
 CruiseControl::Application.configure do
+  CRUISE_OPTIONS[:log_file_name] = 
+    "#{CruiseControl.data_root}/#{CRUISE_OPTIONS[:project_name] || "NOT_NAMED"}_builder.log"
   config.cache_classes = true
-  config.paths.log = CRUISE_OPTIONS[:log_file_name] || 'log/builder_WITHOUT_A_NAME.log'
+  config.paths.log = CRUISE_OPTIONS[:log_file_name]
   config.log_level = CRUISE_OPTIONS[:verbose] ? :debug : :info
   config.active_support.deprecation = :notify
 

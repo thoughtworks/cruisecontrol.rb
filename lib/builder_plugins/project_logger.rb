@@ -1,5 +1,5 @@
 #
-# this plugin logs build events to a project log file in logs/<project name>_builder.log
+# this plugin logs build events to a project log file in $CRUISE/<project name>_builder.log
 #
 # (this plugin is built in and needs no customization)
 #
