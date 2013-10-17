@@ -1,8 +1,8 @@
 source "http://rubygems.org"
 
-gem "rails", "3.0.7"
-gem "tzinfo", "0.3.27"
-gem "rack", "1.2.3"
+gem "rails", "3.2.15"
+gem "tzinfo"#, "0.3.27"
+gem "rack"#, "1.2.3"
 gem "bundler"#, "~> 1.0.12"
 
 gem "httparty", "0.6.1"

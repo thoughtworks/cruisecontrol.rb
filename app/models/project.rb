@@ -7,7 +7,7 @@ class Project
   alias_method :id, :name
 
   class << self
-    attr_accessor_with_default :plugin_names, []
+    attr_writer :plugin_names
     attr_accessor :current_project
 
     def all(dir=Configuration.projects_root)
@@ -33,6 +33,10 @@ class Project
 
     def plugin(plugin_name)
       self.plugin_names << plugin_name unless Rails.env == 'test' or self.plugin_names.include? plugin_name
+    end
+
+    def plugin_names
+      @plugin_names || []
     end
 
     def read(dir, load_config = true)

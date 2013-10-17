@@ -1,6 +1,6 @@
 require 'redcloth'
 
-class TextileTemplateHandler < ActionView::TemplateHandlers::ERB
+class TextileTemplateHandler < ActionView::Template::Handlers::ERB
   extend ActiveSupport::Memoizable
   
   def compile(template)
