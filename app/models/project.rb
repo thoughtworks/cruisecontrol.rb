@@ -36,7 +36,7 @@ class Project
     end
 
     def plugin_names
-      @plugin_names || []
+      @plugin_names ||= []
     end
 
     def read(dir, load_config = true)
