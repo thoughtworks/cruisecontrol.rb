@@ -1,5 +1,5 @@
 CruiseControl::Application.routes.draw do
-  match '/' => 'projects#index', :as => :root
+  match '/(.:format)' => 'projects#index', :as => :root
   match 'projects/code/:id/*path' => 'projects#code', :as => :code
   match 'projects/kill_all_builders' => 'projects#kill_all_builders'
 

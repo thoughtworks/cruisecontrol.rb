@@ -32,7 +32,8 @@ class RoutingTest < ActionController::TestCase
         :controller => 'projects',
         :action => 'code',
         :id => 'CruiseControl',
-        :path => 'my/code.rb'
+        :path => 'my/code',
+        :format => "rb"
     end
   end
   
@@ -69,7 +70,8 @@ class RoutingTest < ActionController::TestCase
         :action => 'artifact', 
         :project => 'CruiseControl', 
         :build => '1.2', 
-        :path => 'this/stuff.rb'
+        :path => 'this/stuff',
+        :format => "rb"
     end
   end
 
