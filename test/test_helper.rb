@@ -2,9 +2,12 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
-require 'mocha'
+require 'mocha/setup'
 require 'ostruct'
 require 'stringio'
+require 'lib/file_sandbox'
+require 'lib/build_factory'
+require 'lib/fake_source_control'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true

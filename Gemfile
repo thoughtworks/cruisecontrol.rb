@@ -16,7 +16,7 @@ gem 'thin'
 
 group :development do
   gem "rcov", '0.9.9'
-  gem "mocha", "0.9.12", :require => false
+  gem "mocha", :require => false#, "0.9.12", :require => false
   gem "rack-test", :require => "rack/test"
 end
 

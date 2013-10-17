@@ -17,7 +17,7 @@ CruiseControl::Application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
-  config.autoload_paths << Rails.root.join('test', 'lib')
+  config.autoload_paths += [Rails.root.join('test', 'lib')]
   
   config.active_support.deprecation = :stderr
 end

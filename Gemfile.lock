@@ -54,8 +54,10 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    metaclass (0.0.1)
     mime-types (1.25)
-    mocha (0.9.12)
+    mocha (0.14.0)
+      metaclass (~> 0.0.1)
     multi_json (1.8.2)
     polyglot (0.3.3)
     powder (0.1.8)
@@ -117,7 +119,7 @@ DEPENDENCIES
   httparty (= 0.6.1)
   jquery-rails (= 1.0.9)
   jruby-openssl
-  mocha (= 0.9.12)
+  mocha
   powder
   rack
   rack-test

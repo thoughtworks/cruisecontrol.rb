@@ -80,7 +80,7 @@ module ApplicationHelper
   end
 
   def format_changeset_log(log)
-    h(log.strip)
+    CGI.escapeHTML(log.strip)
   end
   
   def elapsed_time(build, format = :general)

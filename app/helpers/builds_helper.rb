@@ -34,7 +34,7 @@ module BuildsHelper
   end
 
   def format_build_log(log)
-    highlight_test_count(link_to_code(convert_ansi_colors(h(log))))
+    highlight_test_count(link_to_code(convert_ansi_colors(log.html_safe)))
   end
   
   def link_to_changeset
@@ -66,7 +66,7 @@ module BuildsHelper
     if settings.empty?
       "This project has no custom configuration. Maybe it doesn't need it."
     else
-      h(settings)
+      settings.html_safe
     end
   end
 
@@ -74,7 +74,7 @@ module BuildsHelper
     if script.blank?
       "This project has no `build.sh` or `script/build` scripts. Maybe it doesn't need it."
     else
-      h(script)
+      script.html_safe
     end
   end
 
