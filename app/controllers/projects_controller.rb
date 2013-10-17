@@ -16,7 +16,7 @@ class ProjectsController < ApplicationController
         end
       end
       format.rss { render :action => 'index_rss', :layout => false, :format => :xml }
-      format.cctray { render :action => 'index_cctray', :layout => false }
+      format.cctray { render :action => 'index_cctray', :layout => false, :format => :xml }
       format.json { render :json => @projects.map { |p| project_to_attributes(p) } }
     end
   end
