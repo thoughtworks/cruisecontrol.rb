@@ -33,7 +33,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 
 CruiseControl::Log.verbose = CRUISE_OPTIONS[:verbose]
 
-project_path = File.expand_path(Configuration.projects_root.join(CRUISE_OPTIONS[:project_name]))
+project_path = File.expand_path(CruiseControl::Configuration.projects_root.join(CRUISE_OPTIONS[:project_name]))
 
 unless File.directory? project_path
   STDERR.puts "Project '#{CRUISE_OPTIONS[:project_name]}' not found in '#{project_path}'"
