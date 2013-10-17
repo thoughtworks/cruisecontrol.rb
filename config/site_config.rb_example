@@ -34,47 +34,47 @@
 #
 # For further details about configuration of outgoing email, see Ruby On Rails documentation for ActionMailer::Base.
 
-# Other site-wide options are available through Configuration class:
+# Other site-wide options are available through CruiseControl::Configuration class:
 
 # Change how often CC.rb pings Subversion for new requests. Default is 10.seconds, which should be OK for a local
 # SVN repository, but probably isn't very polite for a public repository, such as RubyForge. This can also be set for
 # each project individually, through project.scheduler.polling_interval option:
-# Configuration.default_polling_interval = 1.minute
+# CruiseControl::Configuration.default_polling_interval = 1.minute
 
 # How often the dashboard page refreshes itself. If you have more than 10-20 dashboards open,
 # it is advisable to set it to something higher than the default 5 seconds:
-# Configuration.dashboard_refresh_interval = 20.seconds
+# CruiseControl::Configuration.dashboard_refresh_interval = 20.seconds
 
 # Site-wide setting for the email "from" field. This can also be set on per-project basis,
 # through project.email.notifier.from attribute
-# Configuration.email_from = 'cruisecontrolrb@mydomain.com'
+# CruiseControl::Configuration.email_from = 'cruisecontrolrb@mydomain.com'
 
 # Root URL of the dashboard application. Setting this attribute allows various notifiers to include a link to the
 # build page in the notification message.
-# Configuration.dashboard_url = 'http://my.cruisecontrolrb.host/'
+# CruiseControl::Configuration.dashboard_url = 'http://my.cruisecontrolrb.host/'
 
 # Disallow triggering, killing, and creating builds through the dashboard. Useful when you host CC.rb as a
 # public web site (such as http://cruisecontrolrb.thoughtworks.com/projects):
-# Configuration.disable_admin_ui = true
+# CruiseControl::Configuration.disable_admin_ui = true
 
 # If you want to only allow one project to build at a time, uncomment this line
 # by default, cruise allows multiple projects to build at a time
-# Configuration.serialize_builds = true
+# CruiseControl::Configuration.serialize_builds = true
 
 # Amount of time a project will wait to build before failing when build serialization is on
-# Configuration.serialized_build_timeout = 3.hours
+# CruiseControl::Configuration.serialized_build_timeout = 3.hours
 
 # Amount of time a project will wait for git to load new changesets before failing
-# Configuration.git_load_new_changesets_timeout = 5.minutes
+# CruiseControl::Configuration.git_load_new_changesets_timeout = 5.minutes
 
 # Disable URLs like /projects/code/[project name]/* - used for browsing source code
-# Configuration.disable_code_browsing = true
+# CruiseControl::Configuration.disable_code_browsing = true
 
 # To delete build when there are more than a certain number present, uncomment this line - it will make the dashboard 
 # perform better
 # BuildReaper.number_of_builds_to_keep = 20
 
 # any files that you'd like to override in cruise, keep in ~/.cruise, and copy over when this file is loaded like this
-site_css = Configuration.data_root.join('site.css')
+site_css = CruiseControl::Configuration.data_root.join('site.css')
 FileUtils.cp site_css, Rails.root.join('public', 'stylesheets', 'site.css') if site_css.exist?
 
