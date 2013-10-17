@@ -30,3 +30,6 @@ group :development do
   gem 'powder'
 end
 
+group :test do
+  gem 'debugger'
+end

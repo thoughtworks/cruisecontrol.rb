@@ -49,12 +49,15 @@ module BuildsHelper
     return log if Configuration.disable_code_browsing
     @work_path ||= File.expand_path(@project.path + '/work')
 
-    log.gsub(/(\#\{RAILS_ROOT\}\/)?([\w\.-]*\/[ \w\/\.-]+)\:(\d+)/) do |match|
+    # https://github.com/rails/rails/issues/1555
+    # Rails mucks with gsub with SafeBuffer...so turn it into a normal string first
+    # not sure if this is a security issue or not...
+    log.to_str.gsub(/(\#\{RAILS_ROOT\}\/)?([\w\.-]*\/[ \w\/\.-]+)\:(\d+)/) do |match|
       path = File.expand_path($2, @work_path)
       line = $3
       if path.index(@work_path) == 0
         path = path[@work_path.size..-1]
-        link_to(match, "/projects/code/#{h @project.name}#{path}?line=#{line}##{line}")
+        link_to(match, "/projects/code/#{@project.name.html_safe}#{path}?line=#{line}##{line}")
       else
         match
       end

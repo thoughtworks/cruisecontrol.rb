@@ -33,8 +33,15 @@ GEM
     arel (3.0.2)
     bouncy-castle-java (1.5.0146.1)
     builder (3.0.4)
+    columnize (0.3.6)
     crack (0.1.8)
     daemons (1.1.8)
+    debugger (1.6.1)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.2.0)
+      debugger-ruby_core_source (~> 1.2.3)
+    debugger-linecache (1.2.0)
+    debugger-ruby_core_source (1.2.3)
     erubis (2.7.0)
     eventmachine (0.12.10)
     eventmachine (0.12.10-java)
@@ -115,6 +122,7 @@ DEPENDENCIES
   abstract (= 1.0.0)
   api_cache (= 0.2.0)
   bundler
+  debugger
   googlecharts
   httparty (= 0.6.1)
   jquery-rails (= 1.0.9)
