@@ -350,7 +350,7 @@ class ProjectTest < ActiveSupport::TestCase
     end
 
     test "should utilize the BuildSerializer to serialize its output" do
-      Configuration.stubs(:serialize_builds).returns(true)
+      CruiseControl::Configuration.stubs(:serialize_builds).returns(true)
       project = Project.new(:name => "test")
       BuildSerializer.expects(:serialize).yields
       project.expects(:build_without_serialization)

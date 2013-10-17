@@ -79,7 +79,7 @@ class BuildsController < ApplicationController
 
     def partitioned_build_lists(project)
       builds = project.builds.reverse
-      partition_point = Configuration.build_history_limit
+      partition_point = CruiseControl::Configuration.build_history_limit
 
       return builds[0...partition_point], builds[partition_point..-1] || []
     end

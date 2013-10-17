@@ -13,7 +13,7 @@
 # Please note, this setting can be put into project specific cruise_config.rb, usually at ~/.cruise/projects/YourProject/cruise_config.rb
 # Or be put into repository specific cruise_config.rb, ie, YourRepository/cruise_config.rb
 
-# You can also specify who to send the email from, either for the entire site by setting Configuration.email_from
+# You can also specify who to send the email from, either for the entire site by setting CruiseControl::Configuration.email_from
 # in *$cruise_data*//site_config.rb, or on a per project basis, by placing the following line in cruise_config.rb:
 # <pre><code>Project.configure do |project|
 #   ...
@@ -24,7 +24,7 @@
 # The emails from CruiseControl.rb can have a lot of details about the build, or just a link to the build page in the dashboard.
 # Usually, you will want the latter. Set the dashboard URL in the *$cruise_data*/site_config.rb as follows:
 #
-# <pre><code>Configuration.dashboard_url = 'http://your.host.name.com:3333'</pre></code>
+# <pre><code>CruiseControl::Configuration.dashboard_url = 'http://your.host.name.com:3333'</pre></code>
 class EmailNotifier < BuilderPlugin
   attr_accessor :emails
   attr_writer :from
@@ -34,7 +34,7 @@ class EmailNotifier < BuilderPlugin
   end
 
   def from
-    @from || Configuration.email_from
+    @from || CruiseControl::Configuration.email_from
   end
 
   def build_finished(build)

@@ -3,7 +3,7 @@
 
 <div id="projects"
   data-refresh-path="<%= projects_path %>"
-  data-refresh-interval="<%= Configuration.dashboard_refresh_interval.to_i * 1000 %>">
+  data-refresh-interval="<%= CruiseControl::Configuration.dashboard_refresh_interval.to_i * 1000 %>">
 
   <% if @projects.empty? %>
     <%= render :partial => 'no_projects' %>

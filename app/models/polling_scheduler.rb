@@ -18,7 +18,7 @@ class PollingScheduler
         throw :reload_project if @project.config_modified?
       rescue => e
         log_error(e) unless (same_error_as_before(e) and last_logged_less_than_an_hour_ago)
-        sleep(Configuration.sleep_after_build_loop_error.to_i)
+        sleep(CruiseControl::Configuration.sleep_after_build_loop_error.to_i)
       end
     end
   end
@@ -36,11 +36,11 @@ class PollingScheduler
   end
 
   def polling_interval
-    @custom_polling_interval or Configuration.default_polling_interval
+    @custom_polling_interval or CruiseControl::Configuration.default_polling_interval
   end
 
   def build_request_checking_interval
-    Configuration.build_request_checking_interval
+    CruiseControl::Configuration.build_request_checking_interval
   end
 
   def polling_interval=(value)

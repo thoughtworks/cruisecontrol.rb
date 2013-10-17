@@ -1,7 +1,7 @@
 class ProjectsMigration
   include CommandLine
 
-  def initialize(data_dir = ::Configuration.data_root)
+  def initialize(data_dir = ::CruiseControl::Configuration.data_root)
     @data_dir = data_dir
     if File.exists? data_dir and not File.directory? data_dir
       raise "#{data_dir} is not a directory"

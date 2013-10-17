@@ -215,8 +215,8 @@ EOF
   end
 
   def url
-    dashboard_url = Configuration.dashboard_url
-    raise "Configuration.dashboard_url is not specified" if dashboard_url.nil? || dashboard_url.empty?
+    dashboard_url = CruiseControl::Configuration.dashboard_url
+    raise "CruiseControl::Configuration.dashboard_url is not specified" if dashboard_url.nil? || dashboard_url.empty?
     dashboard_url + Rails.application.routes.url_helpers.build_path(:project => project, :build => to_param)
   end
 
@@ -229,7 +229,7 @@ EOF
   end
 
   def exceeds_max_file_display_length?(file)
-    file.exist? && Configuration.max_file_display_length.present? && file.size > Configuration.max_file_display_length
+    file.exist? && CruiseControl::Configuration.max_file_display_length.present? && file.size > CruiseControl::Configuration.max_file_display_length
   end
 
   def output_exceeds_max_file_display_length?
@@ -243,7 +243,7 @@ EOF
   def contents_for_display(file)
     return '' unless file.file? && file.readable?
 
-    file.read(Configuration.max_file_display_length)
+    file.read(CruiseControl::Configuration.max_file_display_length)
   end
 
   def command
@@ -289,8 +289,8 @@ EOF
         # set OS variable CC_BUILD_ARTIFACTS so that custom build tasks know where to redirect their products
         ENV['CC_BUILD_ARTIFACTS'] = self.artifacts_directory
         # set OS variable so that custom build tasks can access db username and password
-        ENV['CC_DB_USERNAME'] = Configuration.db_username
-        ENV['CC_DB_PASSWORD'] = Configuration.db_password
+        ENV['CC_DB_USERNAME'] = CruiseControl::Configuration.db_username
+        ENV['CC_DB_PASSWORD'] = CruiseControl::Configuration.db_password
         # set OS variable so that custom build tasks can access the project name
         ENV['CC_PROJECT_NAME'] = self.project.name
         # set OS variablea CC_BUILD_LABEL & CC_BUILD_REVISION so that custom build tasks can use them

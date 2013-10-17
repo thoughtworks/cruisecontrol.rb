@@ -47,7 +47,7 @@ class EmailNotifierTest < ActiveSupport::TestCase
     end
 
     test "should send an email for a passing build that fixes a failing build" do
-      Configuration.stubs(:dashboard_url).returns(nil)
+      CruiseControl::Configuration.stubs(:dashboard_url).returns(nil)
       @build.expects(:output).at_least_once.returns(BUILD_LOG)
 
       @notifier.build_fixed(@build, @previous_build)
@@ -95,7 +95,7 @@ class EmailNotifierTest < ActiveSupport::TestCase
     end
 
     test "should use the default email recipients when explicit recipients are not specified" do
-      Configuration.expects(:email_from).returns('central@foo.com')
+      CruiseControl::Configuration.expects(:email_from).returns('central@foo.com')
       @notifier.from = nil
       build = failing_build()
 
@@ -106,7 +106,7 @@ class EmailNotifierTest < ActiveSupport::TestCase
     end
 
     test "should provide the URL of the build in the notification email" do
-      Configuration.stubs(:dashboard_url).returns("http://www.my.com")
+      CruiseControl::Configuration.stubs(:dashboard_url).returns("http://www.my.com")
       @notifier.emails = ['foo@happy.com']
       @notifier.build_finished(failing_build)
 
@@ -115,16 +115,16 @@ class EmailNotifierTest < ActiveSupport::TestCase
     end
 
     test "should list the build info in the notification email if the dashboard url is not set" do
-      Configuration.stubs(:dashboard_url).returns(nil)
+      CruiseControl::Configuration.stubs(:dashboard_url).returns(nil)
       @notifier.emails = ['foo@happy.com']
       @notifier.build_finished(failing_build)
 
       mail = ActionMailer::Base.deliveries[0]
-      assert_match /Note: if you set Configuration\.dashboard_url in site_config\.rb/, mail.body.to_s
+      assert_match /Note: if you set CruiseControl::Configuration\.dashboard_url in site_config\.rb/, mail.body.to_s
     end
 
     test "should contain unescaped build output in the notification email if the dashboard url is not set" do
-      Configuration.stubs(:dashboard_url).returns(nil)
+      CruiseControl::Configuration.stubs(:dashboard_url).returns(nil)
       @notifier.emails = ['foo@happy.com']
       @notifier.build_finished(failing_build)
 

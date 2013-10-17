@@ -10,13 +10,13 @@ class Project
     attr_writer :plugin_names
     attr_accessor :current_project
 
-    def all(dir=Configuration.projects_root)
+    def all(dir=CruiseControl::Configuration.projects_root)
       load_all(dir).map do |project_dir|
         load_project project_dir
       end
     end
 
-    def create(project_name, scm, dir=Configuration.projects_root)
+    def create(project_name, scm, dir=CruiseControl::Configuration.projects_root)
       raise ArgumentError, "Project Name is required" if project_name.blank?
       Project.new(:name => project_name, :scm => scm).tap do |project|
         raise "Project named #{project.name.inspect} already exists in #{dir}" if Project.all(dir).include?(project)
@@ -53,7 +53,7 @@ class Project
       yield current_project
     end
 
-    def find(project_name, dir=Configuration.projects_root)
+    def find(project_name, dir=CruiseControl::Configuration.projects_root)
       # TODO: sanitize project_name to prevent a query injection attack here
       path = dir.join(project_name)
       return nil unless File.directory?(path)
@@ -97,7 +97,7 @@ class Project
     attrs = attrs.with_indifferent_access
 
     @name = attrs[:name] || ""
-    @path = attrs[:path] || Configuration.projects_root.join(@name)
+    @path = attrs[:path] || CruiseControl::Configuration.projects_root.join(@name)
     @scheduler = PollingScheduler.new(self)
     @plugins = []
     @config_tracker = ProjectConfigTracker.new(self.path)
@@ -221,11 +221,11 @@ class Project
   end
 
   def can_build_now?
-    !(building? || builder_down? || Configuration.disable_admin_ui)
+    !(building? || builder_down? || CruiseControl::Configuration.disable_admin_ui)
   end
 
   def can_kill_builder?
-    !Configuration.disable_admin_ui
+    !CruiseControl::Configuration.disable_admin_ui
   end
 
   def building?
@@ -414,7 +414,7 @@ class Project
   end
 
   def build(revision = source_control.latest_revision, reasons = [])
-    if Configuration.serialize_builds
+    if CruiseControl::Configuration.serialize_builds
       BuildSerializer.serialize(self) { build_without_serialization(revision, reasons) }
     else
       build_without_serialization(revision, reasons)

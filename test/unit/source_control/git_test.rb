@@ -159,8 +159,8 @@ class SourceControl::GitTest < ActiveSupport::TestCase
       end
       
       begin
-        old_timeout = Configuration.git_load_new_changesets_timeout
-        Configuration.git_load_new_changesets_timeout = 0.5.seconds
+        old_timeout = CruiseControl::Configuration.git_load_new_changesets_timeout
+        CruiseControl::Configuration.git_load_new_changesets_timeout = 0.5.seconds
 
         assert_raise(BuilderError) do
           begin
@@ -171,7 +171,7 @@ class SourceControl::GitTest < ActiveSupport::TestCase
           end
         end
       ensure
-        Configuration.git_load_new_changesets_timeout = old_timeout
+        CruiseControl::Configuration.git_load_new_changesets_timeout = old_timeout
       end
     end
   end

@@ -118,7 +118,7 @@ class ProjectsController < ApplicationController
   end
 
   def code
-    if Configuration.disable_code_browsing
+    if CruiseControl::Configuration.disable_code_browsing
       render :text => "Code browsing disabled" and return
     end
 
@@ -153,7 +153,7 @@ class ProjectsController < ApplicationController
     end
     
     def disable_add_project
-      return unless Configuration.disable_add_project
+      return unless CruiseControl::Configuration.disable_add_project
       render :text => 'Build requests are not allowed', :status => :forbidden
     end
 end

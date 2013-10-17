@@ -38,7 +38,7 @@ module BuildsHelper
   end
   
   def link_to_changeset
-    if review_changeset_url = Configuration.review_changeset_url
+    if review_changeset_url = CruiseControl::Configuration.review_changeset_url
       content_tag('p') do
         button_tag('Review changeset', :href => review_changeset_url.sub('%{changeset}', @build.revision.to_s))
       end
@@ -46,7 +46,7 @@ module BuildsHelper
   end
 
   def link_to_code(log)
-    return log if Configuration.disable_code_browsing
+    return log if CruiseControl::Configuration.disable_code_browsing
     @work_path ||= File.expand_path(@project.path + '/work')
 
     # https://github.com/rails/rails/issues/1555

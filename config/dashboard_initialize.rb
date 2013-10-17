@@ -1,4 +1,4 @@
-site_css = Configuration.data_root.join("site.css")
+site_css = CruiseControl::Configuration.data_root.join("site.css")
 if File.exists?(site_css)
   copy_of_site_css = Rails.root.join('public', 'stylesheets', 'site.css')
   begin

@@ -116,7 +116,7 @@ class BuildTest < ActiveSupport::TestCase
 
     test "should truncate the output if it exceeds the configured display limit" do
       with_sandbox_project do |sandbox, project|
-        Configuration.stubs(:max_file_display_length).returns 1.kilobyte
+        CruiseControl::Configuration.stubs(:max_file_display_length).returns 1.kilobyte
         sandbox.new :file => "build-1/build.log", :with_content => "X" * ( 1.kilobyte + 1.byte )
         assert_equal 1.kilobyte, Build.new(project, 1).output.length
       end
@@ -124,7 +124,7 @@ class BuildTest < ActiveSupport::TestCase
 
     test "should not truncate the output if the configured display limit is nil" do
       with_sandbox_project do |sandbox, project|
-        Configuration.stubs(:max_file_display_length).returns nil
+        CruiseControl::Configuration.stubs(:max_file_display_length).returns nil
         sandbox.new :file => "build-1/build.log", :with_content => "X" * ( 1.kilobyte + 1.byte )
         assert_equal 1.kilobyte + 1.byte, Build.new(project, 1).output.length
       end      
@@ -137,22 +137,22 @@ class BuildTest < ActiveSupport::TestCase
     end
 
     test "should return false if the configured max file display length is nil" do
-      Configuration.stubs(:max_file_display_length).returns nil
+      CruiseControl::Configuration.stubs(:max_file_display_length).returns nil
       assert_equal false, Build.new(stub, 1).exceeds_max_file_display_length?(stub(:exist? => true))
     end
 
     test "should return false if the given file size is equal to the configured max file display length" do
-      Configuration.stubs(:max_file_display_length).returns 1.kilobyte
+      CruiseControl::Configuration.stubs(:max_file_display_length).returns 1.kilobyte
       assert_equal false, Build.new(stub, 1.kilobytes).exceeds_max_file_display_length?(stub(:exist? => true, :size => 1.kilobyte))
     end
 
     test "should return false if the given file size is less than the configured max file display length" do
-      Configuration.stubs(:max_file_display_length).returns 1.kilobyte
+      CruiseControl::Configuration.stubs(:max_file_display_length).returns 1.kilobyte
       assert_equal false, Build.new(stub, 1.kilobytes).exceeds_max_file_display_length?(stub(:exist? => true, :size => 10.bytes))
     end
 
     test "should return true if the given file size exceeds the configured max file display length" do
-      Configuration.stubs(:max_file_display_length).returns 1.kilobyte
+      CruiseControl::Configuration.stubs(:max_file_display_length).returns 1.kilobyte
       assert_equal true, Build.new(stub, 1.kilobytes).exceeds_max_file_display_length?(stub(:exist? => true, :size => 2.kilobytes))
     end
   end
@@ -388,7 +388,7 @@ class BuildTest < ActiveSupport::TestCase
         build = Build.new(project, 1)
 
         dashboard_url = "http://www.my.com"
-        Configuration.expects(:dashboard_url).returns(dashboard_url)      
+        CruiseControl::Configuration.expects(:dashboard_url).returns(dashboard_url)      
         assert_equal "#{dashboard_url}/builds/#{project.name}/#{build.to_param}", build.url
       end      
     end
@@ -398,7 +398,7 @@ class BuildTest < ActiveSupport::TestCase
         sandbox.new :file => "build-1/build_status.success.in0s"
         build = Build.new(project, 1)
 
-        Configuration.expects(:dashboard_url).returns(nil)
+        CruiseControl::Configuration.expects(:dashboard_url).returns(nil)
         assert_raise(RuntimeError) { build.url }
       end
     end

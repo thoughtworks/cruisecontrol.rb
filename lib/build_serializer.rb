@@ -11,7 +11,7 @@ class BuildSerializer
   
   def serialize
     @start_time = Time.now
-    lock = FileLock.new(Configuration.projects_root.join("build_serialization.lock"))
+    lock = FileLock.new(CruiseControl::Configuration.projects_root.join("build_serialization.lock"))
     begin
       lock.lock
     rescue FileLock::LockUnavailableError
@@ -29,7 +29,7 @@ class BuildSerializer
   end
   
   def timeout
-    if Time.now - @start_time >= Configuration.serialized_build_timeout
+    if Time.now - @start_time >= CruiseControl::Configuration.serialized_build_timeout
       @project.notify(:timed_out)
       raise "Timed out after waiting to build for #{distance_of_time_in_words(@start_time, Time.now)}"
     end
