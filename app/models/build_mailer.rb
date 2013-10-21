@@ -10,7 +10,7 @@ class BuildMailer < ActionMailer::Base
     @from                = from
     @sent_on             = sent_at
     @headers             = {}
-    mail(to: @recipients, subject: @subject, from: @from, headers: @headers)
+    mail(to: @recipients, subject: @subject, from: @from)
   end
 
   def send_release_note(build, recipients, from, subject, message, sent_at = Time.now)
