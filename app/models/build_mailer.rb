@@ -22,7 +22,7 @@ class BuildMailer < ActionMailer::Base
     @from                = from
     @sent_on             = sent_at
     @headers             = {}
-    mail(to: @recipients, subject: @subject, from: @from, headers: @headers)
+    mail(to: @recipients, subject: @subject, from: @from)
   end
 
   def test(recipients,  sent_at = Time.now)
@@ -33,7 +33,7 @@ class BuildMailer < ActionMailer::Base
     @recipients          = recipients
     @sent_on             = sent_at
     @headers             = {}
-    mail(to: @recipients, subject: @subject, headers: @headers)
+    mail(to: @recipients, subject: @subject)
   end
 
   def formatted_error(error)
