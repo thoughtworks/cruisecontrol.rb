@@ -8,7 +8,7 @@ class PollingSchedulerTest < ActiveSupport::TestCase
   end
 
   def test_polling_interval_default_value_and_overriding
-    assert_equal Configuration.default_polling_interval, @scheduler.polling_interval
+    assert_equal CruiseControl::Configuration.default_polling_interval, @scheduler.polling_interval
     @scheduler.polling_interval = 1.minute
     assert_equal 60, @scheduler.polling_interval
   end

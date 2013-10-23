@@ -9,9 +9,10 @@ class ProjectsControllerTest < ActionController::TestCase
 
   context "GET /projects" do
     test "renders HTML and assigns projects" do
+    
       p1 = create_project_stub('one', 'success')
       p2 = create_project_stub('two', 'failed', [create_build_stub('1', 'failed')])
-      Project.expects(:all).returns([p1, p2])
+      Project.expects(:all).twice.returns([p1, p2])
 
       get :index
       assert_response :success
@@ -20,12 +21,15 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     test "should render a dashboard with a link to each project" do
-      Project.expects(:all).returns([create_project_stub('one', 'success')])
+    
+      Project.expects(:all).twice.returns([create_project_stub('one', 'success')])
       get :index
       assert_select ".project .name a[href=?]", project_path("one")
     end
 
     test "should render a dashboard with a button to start the builder if the builder is down" do
+    
+
       project = create_project_stub('one', 'success')
       Project.stubs(:all).returns([project])
 
@@ -39,21 +43,23 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     test "should render disabled build buttons if the project cannot build now" do
+    
       stub_project = create_project_stub('one', 'success')
       stub_project.stubs(:can_build_now?).returns(false)
 
-      Project.expects(:all).returns([ stub_project ])
+      Project.expects(:all).twice.returns([ stub_project ])
       get :index
       assert_select "button.build_button[disabled=disabled]"
     end
 
     test "should render an Add Project tab in the menu header" do
+    
       get :index
       assert_select "li>a[href=?]", new_project_path
     end
 
     test "should not render the Add Project tab if the admin UI is disabled in the site configuration" do
-      Configuration.stubs(:disable_admin_ui).returns(true)
+      CruiseControl::Configuration.stubs(:disable_admin_ui).returns(true)
       get :index
       assert_select "li>a[href=?]", new_project_path, :count => 0
     end
@@ -254,7 +260,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     test "should refuse to build and render a 403 if the configuration does not permit build now" do
-      Configuration.stubs(:disable_admin_ui).returns(true)
+      CruiseControl::Configuration.stubs(:disable_admin_ui).returns(true)
 
       post :build, :id => 'one'
 
@@ -263,7 +269,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     test "should refuse to kill build and render a 403 if the configuration does not permit build now" do
-      Configuration.stubs(:disable_admin_ui).returns(true)
+      CruiseControl::Configuration.stubs(:disable_admin_ui).returns(true)
 
       post :kill_build, :id => 'one'
 

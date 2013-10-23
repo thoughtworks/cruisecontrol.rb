@@ -54,7 +54,7 @@ class JabberNotifier
         'successful'
       end
       message = "#{build.project.name} Build #{build.label} - #{status.upcase}"
-      if Configuration.dashboard_url
+      if CruiseControl::Configuration.dashboard_url
         message += ". See #{build.url}"
       end
       if build.successful?

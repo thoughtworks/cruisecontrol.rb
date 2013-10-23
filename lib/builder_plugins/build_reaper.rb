@@ -1,6 +1,6 @@
 # this plugin will delete builds that are no longer wanted, configure it by setting
 #
-# Configuration.number_of_builds_to_keep = 20
+# CruiseControl::Configuration.number_of_builds_to_keep = 20
 # 
 # in site_config.rb
 class BuildReaper < BuilderPlugin

@@ -1,4 +1,4 @@
-Capistrano::Configuration.instance(:must_exist).load do
+Capistrano::CruiseControl::Configuration.instance(:must_exist).load do
 
   namespace :deploy do
 

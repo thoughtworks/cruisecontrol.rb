@@ -9,7 +9,7 @@ class BuildSerializerTest < ActiveSupport::TestCase
   def test_serialize_when_lock_is_available
     lock = AvailableLock.new
     FileLock.expects(:new).
-             with(Configuration.projects_root.join("build_serialization.lock")).
+             with(CruiseControl::Configuration.projects_root.join("build_serialization.lock")).
              returns(lock)
     
     block_yielded = false
@@ -55,7 +55,7 @@ class BuildSerializerTest < ActiveSupport::TestCase
   end
     
   def test_serialize_when_times_out
-    Configuration.stubs(:serialized_build_timeout).returns(5.hours)
+    CruiseControl::Configuration.stubs(:serialized_build_timeout).returns(5.hours)
     lock = AvailableLock.new
     Time.stubs(:now).returns(Time.at(0))
     def @serializer.wait

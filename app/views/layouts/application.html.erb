@@ -8,7 +8,7 @@
   <%= stylesheet_link_tag 'site', :media => 'all' if Rails.root.join("public", "stylesheets", "site.css").exist? %>
 
   <% if @autorefresh %>
-    <meta http-equiv="refresh" content="<%= Configuration.dashboard_refresh_interval.to_i %>">
+    <meta http-equiv="refresh" content="<%= CruiseControl::Configuration.dashboard_refresh_interval.to_i %>">
     <meta http-equiv="cache-control" content="no-cache">
   <% end %>
   <% if @rss_feeds -%>

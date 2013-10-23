@@ -89,7 +89,7 @@
           <% if @build.output_exceeds_max_file_display_length? %>
             <p>
               The size of the file you're viewing now is <%= number_to_human_size(@build.build_log.size) %>, which is too big to display in the dashboard;
-              CC.rb is configured to truncate any files longer than <%= number_to_human_size(Configuration.max_file_display_length) %>.
+              CC.rb is configured to truncate any files longer than <%= number_to_human_size(CruiseControl::Configuration.max_file_display_length) %>.
               You can override this value in <code>site_config.rb</code> by setting <code>max_file_display_length</code>
               to your desired value in bytes (e.g. <code>50.kilobytes</code>), or <code>nil</code> to allow files of any length.
             </p>

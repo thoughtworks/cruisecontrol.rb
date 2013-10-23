@@ -4,7 +4,7 @@
   <h3>Installed Plugins</h3>
   
   <ul>
-    <% Dir[Configuration.plugins_root.join("*")].each do |plugin| %>
+    <% Dir[CruiseControl::Configuration.plugins_root.join("*")].each do |plugin| %>
       <% name = File.basename(plugin) %>
       <li>
         <%= link_to Inflector.titleize(name.sub(/\.rb$/, '')), :action => 'plugins', :type => 'installed', :name => name %> 

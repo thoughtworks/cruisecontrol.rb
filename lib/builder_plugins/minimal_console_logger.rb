@@ -28,7 +28,7 @@ class MinimalConsoleLogger < BuilderPlugin
   end
   
   def configuration_modified
-    puts "Configuration modification detected"
+    puts "CruiseControl::Configuration modification detected"
   end
 end
 

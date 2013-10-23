@@ -2,9 +2,12 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
-require 'mocha'
+require 'mocha/setup'
 require 'ostruct'
 require 'stringio'
+require 'lib/file_sandbox'
+require 'lib/build_factory'
+require 'lib/fake_source_control'
 
 ActionMailer::Base.delivery_method = :test
 ActionMailer::Base.perform_deliveries = true
@@ -62,9 +65,10 @@ class ActiveSupport::TestCase
     end
   end
   
-  def create_project_stub(name, last_complete_build_status = 'failed', last_five_builds = [])
+  def create_project_stub(name, last_complete_build_status = 'failed', last_five_builds = [], last_successful_build_coverage = 90)
     project = Object.new
     project.stubs(:name).returns(name)
+    project.stubs(:last_successful_build_coverage).returns(last_successful_build_coverage)
     project.stubs(:last_complete_build_status).returns(last_complete_build_status)
     project.stubs(:last_five_builds).returns(last_five_builds)
     project.stubs(:builder_state_and_activity).returns('building')

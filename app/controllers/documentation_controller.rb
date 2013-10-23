@@ -19,7 +19,7 @@ class DocumentationController < ApplicationController
       when 'builtin'
         @file = Rails.root.join('lib', 'builder_plugins', params[:name])
       when 'installed'
-        @file = Configuration.plugins_root.join(params[:name])
+        @file = CruiseControl::Configuration.plugins_root.join(params[:name])
       when 'available'
         #???
       end

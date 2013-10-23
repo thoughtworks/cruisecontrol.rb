@@ -154,8 +154,8 @@ class BuildsControllerTest < ActionController::TestCase
 
     test "should show a list of recent projects and a dropdown list of older projects" do
       begin
-        old_history_limit = Configuration.build_history_limit
-        Configuration.build_history_limit = 2
+        old_history_limit = CruiseControl::Configuration.build_history_limit
+        CruiseControl::Configuration.build_history_limit = 2
 
         with_sandbox_project do |sandbox, project|
           create_builds 1, 2, 3
@@ -179,7 +179,7 @@ class BuildsControllerTest < ActionController::TestCase
           end
         end
       ensure
-        Configuration.build_history_limit = old_history_limit
+        CruiseControl::Configuration.build_history_limit = old_history_limit
       end
     end
 

@@ -34,11 +34,11 @@ module BuildsHelper
   end
 
   def format_build_log(log)
-    highlight_test_count(link_to_code(convert_ansi_colors(h(log))))
+    highlight_test_count(link_to_code(convert_ansi_colors(log.html_safe)))
   end
   
   def link_to_changeset
-    if review_changeset_url = Configuration.review_changeset_url
+    if review_changeset_url = CruiseControl::Configuration.review_changeset_url
       content_tag('p') do
         button_tag('Review changeset', :href => review_changeset_url.sub('%{changeset}', @build.revision.to_s))
       end
@@ -46,15 +46,18 @@ module BuildsHelper
   end
 
   def link_to_code(log)
-    return log if Configuration.disable_code_browsing
+    return log if CruiseControl::Configuration.disable_code_browsing
     @work_path ||= File.expand_path(@project.path + '/work')
 
-    log.gsub(/(\#\{RAILS_ROOT\}\/)?([\w\.-]*\/[ \w\/\.-]+)\:(\d+)/) do |match|
+    # https://github.com/rails/rails/issues/1555
+    # Rails mucks with gsub with SafeBuffer...so turn it into a normal string first
+    # not sure if this is a security issue or not...
+    log.to_str.gsub(/(\#\{RAILS_ROOT\}\/)?([\w\.-]*\/[ \w\/\.-]+)\:(\d+)/) do |match|
       path = File.expand_path($2, @work_path)
       line = $3
       if path.index(@work_path) == 0
         path = path[@work_path.size..-1]
-        link_to(match, "/projects/code/#{h @project.name}#{path}?line=#{line}##{line}")
+        link_to(match, "/projects/code/#{@project.name.html_safe}#{path}?line=#{line}##{line}")
       else
         match
       end
@@ -66,7 +69,7 @@ module BuildsHelper
     if settings.empty?
       "This project has no custom configuration. Maybe it doesn't need it."
     else
-      h(settings)
+      settings.html_safe
     end
   end
 
@@ -74,7 +77,7 @@ module BuildsHelper
     if script.blank?
       "This project has no `build.sh` or `script/build` scripts. Maybe it doesn't need it."
     else
-      h(script)
+      script.html_safe
     end
   end
 

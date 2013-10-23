@@ -34,15 +34,15 @@ module FileSandbox
   def setup_sandbox(path = '__sandbox')
     @sandbox = Sandbox.new(path)
     @__old_path_for_sandbox = Dir.pwd
-    @__old_root_for_cruise = Configuration.data_root
-    Configuration.data_root = @sandbox.root
+    @__old_root_for_cruise = CruiseControl::Configuration.data_root
+    CruiseControl::Configuration.data_root = @sandbox.root
     Dir.chdir(@sandbox.root)
   end
 
   def teardown_sandbox
     if @sandbox
       Dir.chdir(@__old_path_for_sandbox)
-      Configuration.data_root = @__old_root_for_cruise
+      CruiseControl::Configuration.data_root = @__old_root_for_cruise
       @sandbox.clean_up
       @sandbox = nil
     end
