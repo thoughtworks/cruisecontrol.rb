@@ -1,3 +1,5 @@
+/*
+
 .cc_logo{
   background: url(https://www.billfloat.com/images/BillFloat_Logo_130x61.png) no-repeat 0 0 transparent !important;
   height: 75px !important;
@@ -18,6 +20,7 @@
 .tw_logo{
   display: none;
 }
+*/
 
 #projects .project.build_success{
   background: #AEF5AF;
