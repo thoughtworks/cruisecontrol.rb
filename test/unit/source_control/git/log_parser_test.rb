@@ -52,6 +52,31 @@ encoding ISO-8859-1
     a comment
 EOF
 
+GPG_SIGNED_LOG_ENTRY = <<EOF
+commit ff46dbbecd1afb257686aef32fd9e0f322dedbaf
+tree 35e5c4b9d9ce42caf26cbf13e61a9f92ab45ee55
+parent 237db9cb5eb2e88dc886d181be7b513cec78c7d6
+author Jonathon Ramsey <jonathon.ramsey@gmail.com> 1372956253 +0100
+committer Jonathon Ramsey <jonathon.ramsey@gmail.com> 1372956253 +0100
+gpgsig -----BEGIN PGP SIGNATURE-----
+ Version: GnuPG/MacGPG2 v2.0.18 (Darwin)
+ Comment: GPGTools - http://gpgtools.org
+
+ iQEcBAABAgAGBQJR1aZeAAoJEP70U8ILrBbLzfMH/ArvQN6CWvFDxbqtJMjjpWA6
+ uaHzn2aJZJCLPlrcPJc5HWzXDyvmiVazGQz0hMvJAPeim6BAt2a3DP2c7Epz1P3B
+ xY1qrR6cS4cxMzc50xis1WtGrqDa76NrU2mU+ygDAuUskArI/I4VSf8nZaMlPSOq
+ UlxF1OC2xh14xZCLNoN/qJ867wYHinkvEtX3e63qup+H/Skm5bdvOYtJ77GqEKSV
+ 4M+IoH5ydZ805kwT3ELs2ued7osDyGGvV2MNd/CRVczultppoHDuP0hj7fk2+6HQ
+ QN/arrcP6ki+xW4RDJb+LzHw7LCeSzA3sHdUnjmz6UNTOkriZYuYNwSW5BFdnME=
+ =pZ6o
+ -----END PGP SIGNATURE-----
+
+    Updated version to 4.0.1
+
+ VERSION |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+EOF
+
     def test_parse_should_work
       expected_revision = Git::Revision.new(
                               :number => 'e51d66aa4f708fff1c87eb9afc9c48eaa8d5ffce',
@@ -89,6 +114,22 @@ EOF
 
     def test_parse_line_should_regonize_and_discard_encoding
       Git::LogParser.new.parse ENCODING_SPECIFIED_LOG_ENTRY.split "\n"
+    end
+
+    def test_parsing_gpg_signed_log_entry
+      revisions = Git::LogParser.new.parse(GPG_SIGNED_LOG_ENTRY.split("\n"))
+      expected_revision = Git::Revision.new(
+                              :number => 'ff46dbbecd1afb257686aef32fd9e0f322dedbaf',
+                              :author => 'Jonathon Ramsey <jonathon.ramsey@gmail.com>',
+                              :time => Time.at(1372956253))
+      assert_equal [expected_revision], revisions
+      revision = revisions.first
+
+      assert_equal expected_revision.number, revision.number
+      assert_equal expected_revision.author, revision.author
+      assert_equal expected_revision.time, revision.time
+      assert_equal ["VERSION |    2 +-"], revision.changeset
+      assert_equal "1 files changed, 1 insertions(+), 1 deletions(-)", revision.summary
     end
   end
 end
