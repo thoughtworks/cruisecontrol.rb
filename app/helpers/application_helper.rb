@@ -80,6 +80,7 @@ module ApplicationHelper
   end
 
   def format_changeset_log(log)
+    log = "" if log.blank?
     CGI.escapeHTML(log.strip)
   end
   
