@@ -35,6 +35,10 @@ class ApplicationHelperTest < ActionView::TestCase
   end
 
   context "#format_changeset_log" do
+    test "should render nothing if log is nil" do
+      @helper.extend(ERB::Util)
+      assert_equal "", @helper.format_changeset_log(nil)
+    end
     test "should strip html tags" do
       @helper.extend(ERB::Util)
       assert_equal "&lt;hr /&gt;some changeset&lt;script&gt;alert('bad')&lt;/script&gt;",
