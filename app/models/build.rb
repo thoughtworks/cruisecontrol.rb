@@ -119,7 +119,9 @@ EOF
   alias abort destroy
 
   def additional_artifacts
-    Dir.entries(artifacts_directory).find_all {|artifact| !(artifact =~ IGNORE_ARTIFACTS) }
+    Dir.entries(artifacts_directory).find_all {|artifact| !(artifact =~ IGNORE_ARTIFACTS) }.map do |file_name|
+      File.ftype("#{artifacts_directory}/#{file_name}") == 'directory' ? file_name + '/' : file_name
+    end
   end
 
   def status
