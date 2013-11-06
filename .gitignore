@@ -16,6 +16,7 @@ cruisecontrol.iws
 .DS_Store
 tmtags
 .bundle
+bin/
 dist/
 vendor/plugins/rails_upgrade
 vendor/ruby/
