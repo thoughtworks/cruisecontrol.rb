@@ -13,7 +13,7 @@ CruiseControl::Application.routes.draw do
   end
 
   match 'builds/:project/latest_successful(/*path)' => 'builds#latest_successful', :as => :latest_successful_build, :project => /[^\/]+/
-  match 'builds/:project/:build/artifacts/*path(.:format)' => 'builds#artifact', :as => :build_artifact, :build => /[^\/]+/, :project => /[^\/]+/
+  match 'builds/:project/:build/artifacts/*path' => 'builds#artifact', :as => :build_artifact, :build => /[^\/]+/, :project => /[^\/]+/
   match 'builds/:project/:build' => 'builds#show', :as => :build, :build => /[^\/]+/, :project => /[^\/]+/
   match 'builds/:project' => 'builds#show', :as => :project_without_builds, :project => /[^\/]+/
 
