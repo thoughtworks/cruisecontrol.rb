@@ -34,4 +34,4 @@ group :test do
   gem 'debugger', :platforms => :ruby_19
 end
 
-gem 'system_timer'
+gem 'system_timer', :platforms => :ruby_18
