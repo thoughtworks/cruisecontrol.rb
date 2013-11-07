@@ -15,8 +15,8 @@ gem "xmpp4r"
 gem 'thin'
 
 group :development do
-  gem "rcov", '0.9.9', :platforms => [:ruby_18, :ruby_19]
-  gem "mocha", :require => false#, "0.9.12", :require => false
+  gem "rcov", '0.9.9', :platforms => [:ruby_18]
+  gem "mocha", :require => false #, "0.9.12", :require => false
   gem "rack-test", :require => "rack/test"
 end
 
