@@ -16,6 +16,7 @@ cruisecontrol.iws
 .DS_Store
 tmtags
 .bundle
+bin/
 dist/
 vendor/plugins/rails_upgrade
 vendor/ruby/
@@ -27,10 +28,12 @@ server_jar/target/
 config/ccrb.properties
 pkg
 reports
-<<<<<<< HEAD
 config/thin.yml
-=======
 
+.ruby-version
 .rbenv-version
 .rvmrc
->>>>>>> crowdint/master
+
+*.swp
+,*
+*.bak
