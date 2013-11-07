@@ -1,5 +1,5 @@
 language: ruby
-bundler_args: 
+bundler_args: --binstubs
 script: "bundle exec rake"
 notifications:
   email:
