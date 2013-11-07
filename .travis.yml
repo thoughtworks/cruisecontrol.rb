@@ -1,4 +1,11 @@
 language: ruby
+bundler_args: --binstubs
+script: "bundle exec rake"
+
+before_install:
+  - git config --global user.email "travis@example.com"
+  - git config --global user.name "Travis CI test of cruisecontrolrb"
+
 notifications:
   email:
     on_success: change
