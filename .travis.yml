@@ -1,4 +1,6 @@
 language: ruby
+bundler_args: 
+script: "bundle exec rake"
 notifications:
   email:
     on_success: change
