@@ -32,8 +32,7 @@ class BuildsController < ApplicationController
     @build = @project.find_build(params[:build])
     render :text => "Build #{params[:build].inspect} not found", :status => 404 and return unless @build
 
-    path = @build.artifact(params[:path])
-
+    path = @build.artifact(params[:path] + (params[:format] ? ".#{params[:format]}" : '' ))
     if File.directory? path
       if File.exists?(File.join(path, 'index.html'))
         redirect_to request.fullpath + '/index.html'
