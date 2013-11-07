@@ -199,7 +199,7 @@ EOF
   end
 
   def files_in(path)
-    Dir["#{artifacts_directory}/#{path}/*"].collect {|f| f.gsub("#{artifacts_directory}/", '') }
+    Dir["#{artifacts_directory}/#{path}/*"].collect {|f| f.gsub("#{artifacts_directory}/", '') }.sort
   end
 
   def artifacts_directory

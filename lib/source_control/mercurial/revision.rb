@@ -15,7 +15,7 @@ module SourceControl
         <<-EOL
 Revision #{number} committed by #{author} on #{time.strftime('%Y-%m-%d %H:%M:%S') if time}
 #{message}
-#{changeset ? changeset.collect { |entry| entry.to_s }.join("\n") : nil}
+#{changeset ? changeset.collect { |entry| entry.to_s }.sort.join("\n") : nil}
         EOL
       end
 
