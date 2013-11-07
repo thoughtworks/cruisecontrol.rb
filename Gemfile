@@ -31,5 +31,5 @@ group :development do
 end
 
 group :test do
-  gem 'debugger'
+  gem 'debugger', :platforms => :ruby_19
 end
