@@ -19,7 +19,7 @@ module SourceControl
         description = "Revision ...#{number} committed by #{author}"
         description << " on #{time.strftime('%Y-%m-%d %H:%M:%S')}" if time
         description << "\n\n    #{message.split("\n").join("\n    ")}" if message
-        description << "\n\n #{changeset.join("\n ")}" if changeset
+        description << "\n\n #{changeset.sort.join("\n ")}" if changeset
         description << "\n #{summary}" if summary
         description << "\n"
       end
