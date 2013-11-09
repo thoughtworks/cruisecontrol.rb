@@ -30,8 +30,8 @@ Updated passing test to use assert_equal instead of assert, which does not work 
 
 Revision 7 committed by averkhov on 2007-01-13 01:05:26
 Making both revision labels up to date
-  M /passing_project/revision_label.txt
   M /failing_project/revision_label.txt
+  M /passing_project/revision_label.txt
 
 Revision 4 committed by averkhov on 2007-01-11 21:02:03
 and one more revision, for good measure

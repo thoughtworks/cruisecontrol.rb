@@ -1,0 +1,27 @@
+language: ruby
+# Just to override the --deployment default arg
+bundler_args: --no-color
+script: "bundle exec rake"
+
+before_install:
+  - git config --global user.email "travis@example.com"
+  - git config --global user.name "Travis CI test of cruisecontrolrb"
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+
+rvm:
+  - 1.8.7
+  - 1.9.3
+  - 2.0.0
+  - jruby-19mode
+  - rbx-19mode
+
+matrix:
+  allow_failures:
+    - rvm: 2.0.0
+    - rvm: jruby-19mode
+    - rvm: rbx-19mode
+
