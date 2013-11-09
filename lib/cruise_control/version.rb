@@ -2,7 +2,7 @@ module CruiseControl
   module VERSION #:nodoc:
     unless defined? MAJOR
       MAJOR = 3
-      MINOR = 0
+      MINOR = 1
       MAINTENANCE = 0
       SPECIAL = ""
 
