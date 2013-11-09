@@ -6,6 +6,10 @@
 
 CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ruby and maintained in their spare time by developers at {ThoughtWorks}[http://www.thoughtworks.com], a software development consultancy.
 
+{<img src="https://travis-ci.org/ianheggie/cruisecontrol.rb.png?branch=master" alt="Build Status" />}[https://travis-ci.org/ianheggie/cruisecontrol.rb]
+{<img src="https://codeclimate.com/github/ianheggie/cruisecontrol.rb.png" alt="Static Code analysis" />}[https://codeclimate.com/github/ianheggie/cruisecontrol.rb]
+{<img src="https://gemnasium.com/ianheggie/cruisecontrol.rb.png" alt="Dependency Status" />}[https://gemnasium.com/ianheggie/cruisecontrol.rb]
+
 === Links
 
 * Documentation: http://cruisecontrolrb.thoughtworks.com/documentation
