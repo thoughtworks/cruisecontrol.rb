@@ -359,7 +359,7 @@ class BuildTest < ActiveSupport::TestCase
         sandbox.new :file => "changeset.log"
 
         build = Build.new(project, 1)
-        assert_equal(%w(coverage foo foo.txt), build.additional_artifacts.sort)
+        assert_equal(%w(coverage/ foo foo.txt), build.additional_artifacts.sort)
         assert_equal ["coverage/functionals", "coverage/index.html", "coverage/units"], build.files_in('coverage')
       end
     end
@@ -462,7 +462,7 @@ class BuildTest < ActiveSupport::TestCase
     test "should return a Ruby build command that utilizes cc_build.rake if no build_command is given" do
       with_sandbox_project do |sandbox, project|
         build_cmd = Build.new(project, "foo").command
-        assert_match /ruby -e/, build_cmd
+        assert_match /(ruby|rbx) -e/, build_cmd
         assert_match /cc_build.rake/, build_cmd
       end    
     end

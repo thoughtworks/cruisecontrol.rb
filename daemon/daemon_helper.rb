@@ -100,8 +100,12 @@ def stop
   cruise_child_processes = `ps -ea -o 'pid pgid command'`.split("\n").grep(/^\s*\d+\s+#{cruise_process_group}\s+/)
 
   print("Killing cruise process #{cruise_pid}: #{cruise_process_command}\n")
-  server = RUBY_VERSION =~ /^1.9/ ? 'thin -f' : 'mongrel_rails'
-  failed ||= !(system "#{server} stop -P #{cruise_pid_file}")
+  if RUBY_VERSION =~ /^1.9/
+    failed ||= !(system "kill -9 #{cruise_pid}")
+  else
+    server = 'mongrel_rails'
+    failed ||= !(system "#{server} stop -P #{cruise_pid_file}")
+  end
 
   cruise_child_processes.each do |child_process|
     child_process =~ /^\s*(\d+)\s+#{cruise_process_group}\s+(.*)/

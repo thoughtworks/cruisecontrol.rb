@@ -1,4 +1,36 @@
+# Bundler/Rubygems
+*.gem
+.bundle
+pkg/*
+tags
+test/tmp/
+bin/
+
+# Vagrant stuff
+acceptance_config.yml
+boxes/*
+/Vagrantfile
+/.vagrant
+
+# IDE junk
+.idea/*
+*.iml
+
+# Ruby Managers
+.rbenv
+.ruby-gemset
+.ruby-version
+.rvmrc
+
+# Temp files
 *~
+*.swp
+,*
+*.bak
+
+# OS-specific
+.DS_Store
+
 coverage
 __sandbox
 
@@ -13,9 +45,7 @@ cruisecontrol.iws
 *.ipr
 *.iml
 .tmtags
-.DS_Store
 tmtags
-.bundle
 dist/
 vendor/plugins/rails_upgrade
 vendor/ruby/
@@ -25,12 +55,6 @@ vendor/cache
 server_jar/target/
 
 config/ccrb.properties
-pkg
 reports
-<<<<<<< HEAD
 config/thin.yml
-=======
 
-.rbenv-version
-.rvmrc
->>>>>>> crowdint/master
