@@ -17,6 +17,8 @@ class GitIntegrationTest < ActiveSupport::TestCase
       FileUtils.touch tracked_file
       sandbox_git_add_and_commit(proj_dir, File.basename(tracked_file))
       untracked_file = File.join(proj_dir, 'untracked.txt')
+      git.expects(:latest_revision).returns(:foo)
+      git.expects(:update).with(:foo)
       git.clean_checkout
       assert File.exist? tracked_file
       assert_false File.exist? untracked_file
@@ -27,6 +29,8 @@ class GitIntegrationTest < ActiveSupport::TestCase
     with_sandboxed_git do |proj_dir, git|
       untracked_dirs = File.join(proj_dir, 'untracked/by/git')
       FileUtils.mkdir_p untracked_dirs
+      git.expects(:latest_revision).returns(:foo)
+      git.expects(:update).with(:foo)
       git.clean_checkout
       assert_false File.directory? untracked_dirs
     end
@@ -36,6 +40,8 @@ class GitIntegrationTest < ActiveSupport::TestCase
     with_sandboxed_git do |proj_dir, git|
       untracked_file = File.join(proj_dir, 'untracked.txt')
       FileUtils.touch untracked_file
+      git.expects(:latest_revision).returns(:foo)
+      git.expects(:update).with(:foo)
       git.clean_checkout
       assert_false File.exist? untracked_file
     end

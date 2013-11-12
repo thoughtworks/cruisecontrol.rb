@@ -36,6 +36,7 @@ module SourceControl
       # (-d) Directory clean
       # (-q) Quiet, prevent git from writing unnecessary information to stdout/stderr 
       git('clean', ['-q', '-d', '-f'])
+      update(revision || latest_revision)
     end
 
     def latest_commiter_email
