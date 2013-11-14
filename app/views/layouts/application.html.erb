@@ -4,7 +4,7 @@
 <head>
   <title>CruiseControl.rb<%= @title ? " - " + @title : '' %></title>
   <%= tag :link, :rel => "stylesheet/less", :type => "text/css", :href => path_to_stylesheet('cruisecontrol.less') %>
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/cupertino/jquery-ui.css" />
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/cupertino/jquery-ui.css" />
   <%= stylesheet_link_tag 'site', :media => 'all' if Rails.root.join("public", "stylesheets", "site.css").exist? %>
 
   <% if @autorefresh %>
