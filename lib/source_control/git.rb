@@ -32,10 +32,11 @@ module SourceControl
     end
 
     def clean_checkout(revision = nil, stdout = $stdout)
-      # (-f) Forcing the clean incase git clean.requireForce is set to true
+      # (-f) Forcing the clean in case git clean.requireForce is set to true
+      # (-x) Remove untracked files including build products
       # (-d) Directory clean
       # (-q) Quiet, prevent git from writing unnecessary information to stdout/stderr 
-      git('clean', ['-q', '-d', '-f'])
+      git('clean', ['-q', '-d', '-x', '-f'])
     end
 
     def latest_commiter_email
