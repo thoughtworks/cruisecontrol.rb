@@ -12,7 +12,7 @@ CC.rb is easy to install, pleasant to use and simple to hack. It's written in Ru
 
 ### Links
 
-* Documentation: http://cruisecontrolrb.thoughtworks.com/documentation
+* Documentation: http://cruisecontrolrb.thoughtworks.com/documentation/docs
 * Source: http://github.com/thoughtworks/cruisecontrol.rb
 * IRC: #cruisecontrol on freenode.
 * Download: `git clone git@github.com:thoughtworks/cruisecontrol.rb.git`
