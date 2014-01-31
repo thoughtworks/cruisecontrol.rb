@@ -103,7 +103,7 @@
             <%= link_to "View full log", build_artifact_path(:project => @project.name, :build => @build.label, :path => 'build.log') %>
           </p>
 
-          <div class="section_content terminal_output"><%= format_build_log(@build.output) %></div>
+          <div class="section_content terminal_output"><%= format_build_log(@build.output).html_safe %></div>
         </div>
 
         <div class="section" id="build_changeset">
