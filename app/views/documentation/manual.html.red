@@ -152,7 +152,7 @@ p(hint). Hint: You cannot set both the <code>rake_task</code> and <code>build_co
 h1(#handling_custom_build_artifacts). What should I do with custom build artifacts?
 
 Some build tasks generate custom output, like test coverage statistics, that you may want to keep and see on the build page.
-CruiseControl.rb supports the integration of that output by setting the <strong>CC_BUILD_ARTFACTS</strong> environment variable
+CruiseControl.rb supports the integration of that output by setting the <strong>CC_BUILD_ARTIFACTS</strong> environment variable
 to a directory that's been set aside specifically to collect them. 
 
 If you ensure that your special task writes its output to that directory or a subdirectory of it, then the resulting build artifacts page will automatically include links to every file or subdirectory found in the build artifacts directory.
