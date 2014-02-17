@@ -462,7 +462,7 @@ class BuildTest < ActiveSupport::TestCase
     test "should return a Ruby build command that utilizes cc_build.rake if no build_command is given" do
       with_sandbox_project do |sandbox, project|
         build_cmd = Build.new(project, "foo").command
-        assert_match /ruby -e/, build_cmd
+        assert_match /(ruby|rbx) -e/, build_cmd
         assert_match /cc_build.rake/, build_cmd
       end    
     end

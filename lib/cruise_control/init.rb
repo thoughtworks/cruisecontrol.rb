@@ -51,6 +51,10 @@ module CruiseControl
         ARGV << Rails.root.join('tmp', 'pids', 'server.pid').to_s
       end
       
+      unless ARGV.include?('webrick') || ARGV.include?('puma')
+        ARGV << 'puma'
+      end
+
       require File.join(File.dirname(__FILE__), '..', 'platform')
       Platform.running_as_daemon = ARGV.include?('-d') || ARGV.include?('--daemon')
       require 'rails/commands/server'
