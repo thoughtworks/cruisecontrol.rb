@@ -126,7 +126,7 @@ DEPENDENCIES
   jruby-openssl
   mocha
   powder
-  puma
+  puma (< 2.7.0)
   rack
   rack-test
   rails (= 3.2.15)
