@@ -31,7 +31,7 @@ group :development do
 end
 
 group :test do
-  gem 'debugger', :platforms => :mri_19
+  gem 'debugger', :platforms => :mri_19 unless ENV['TRAVIS'] == 'true'
 end
 
 gem 'system_timer', :platforms => :ruby_18
