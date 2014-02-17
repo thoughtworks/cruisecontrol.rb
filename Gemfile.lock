@@ -92,7 +92,7 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
-    rake (0.9.2.2)
+    rake (0.9.6)
     rcov (0.9.9)
     rdoc (3.12.2)
       json (~> 1.4)
@@ -130,7 +130,7 @@ DEPENDENCIES
   rack
   rack-test
   rails (= 3.2.15)
-  rake (~> 0.9.2.2)
+  rake (~> 0.9.3)
   rcov (= 0.9.9)
   system_timer
   tzinfo
