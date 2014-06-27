@@ -1,4 +1,4 @@
-CruiseControl::Application.configure do |config|
+CruiseControl::Application.configure do
   config.active_support.deprecation = :notify
   
   # No special settings required
